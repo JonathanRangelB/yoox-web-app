@@ -29,6 +29,7 @@
     "@angular/compiler-cli": "^16.2.0",
     "@commitlint/cli": "^17.7.2",
     "@commitlint/config-conventional": "^17.7.0",
+    "@schematics/angular": "^16.2.5",
     "@types/jasmine": "~4.3.0",
     "husky": "^8.0.3",
     "jasmine-core": "~4.6.0",
