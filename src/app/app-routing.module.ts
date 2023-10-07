@@ -1,10 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginPageComponent } from './components/login-page/login-page.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { AppComponent } from './app.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 const routes: Routes = [
+  { path: "", component: LandingComponent },
   { path: "login", component: LoginPageComponent },
-  { path: '', redirectTo: '/', pathMatch: 'full' },
+  { path: '**', component: NotFoundComponent },
 ];
 
 @NgModule({

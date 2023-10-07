@@ -7,12 +7,5 @@ import { Router } from '@angular/router';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'yoox-web-app';
 
-  constructor(private router: Router) {
-
-  }
-  navigatetoLogin() {
-    this.router.navigate(['/login'])
-  }
 }

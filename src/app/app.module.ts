@@ -6,11 +6,15 @@ import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { LoginPageComponent } from './components/login-page/login-page.component';
+import { NotFoundComponent } from './components/not-found/not-found.component';
+import { LandingComponent } from './components/landing/landing.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LoginPageComponent
+    LoginPageComponent,
+    NotFoundComponent,
+    LandingComponent
   ],
   imports: [
     CommonModule,
