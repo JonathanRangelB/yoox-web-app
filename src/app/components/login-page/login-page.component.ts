@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { AuthService } from '../../services/AuthService';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login-page',
@@ -8,15 +9,25 @@ import { AuthService } from '../../services/AuthService';
 })
 export class LoginPageComponent {
 
-  user: any
-  constructor(private authService: AuthService) {
-    this.requestLogin()
-  }
+  userData: any
+  user: string = ""
+  password: string = ""
+
+  constructor(private authService: AuthService) { }
 
   requestLogin() {
-    this.authService.login("SUPERVISOR", "1").subscribe((usr: any) => {
-      this.user = usr
+    // const token = localStorage.getItem('token')
+    // if (token) {
+    //   console.warn(token)
+    // }
+
+    this.authService.login(this.user, this.password.toUpperCase()).subscribe((usr: any) => {
+      this.userData = usr
       localStorage.setItem('token', usr.Autorization)
+    }, error => {
+      if (error instanceof HttpErrorResponse)
+        this.userData = { "message": error.error?.message, "statusCode": error.status }
     })
+
   }
 }
