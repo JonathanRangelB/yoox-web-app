@@ -1,23 +1,19 @@
-<div class="toolbar" role="banner">
-  <img width="40" alt="Angular Logo"
-    src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNTAgMjUwIj4KICAgIDxwYXRoIGZpbGw9IiNERDAwMzEiIGQ9Ik0xMjUgMzBMMzEuOSA2My4ybDE0LjIgMTIzLjFMMTI1IDIzMGw3OC45LTQzLjcgMTQuMi0xMjMuMXoiIC8+CiAgICA8cGF0aCBmaWxsPSIjQzMwMDJGIiBkPSJNMTI1IDMwdjIyLjItLjFWMjMwbDc4LjktNDMuNyAxNC4yLTEyMy4xTDEyNSAzMHoiIC8+CiAgICA8cGF0aCAgZmlsbD0iI0ZGRkZGRiIgZD0iTTEyNSA1Mi4xTDY2LjggMTgyLjZoMjEuN2wxMS43LTI5LjJoNDkuNGwxMS43IDI5LjJIMTgzTDEyNSA1Mi4xem0xNyA4My4zaC0zNGwxNy00MC45IDE3IDQwLjl6IiAvPgogIDwvc3ZnPg==" />
-  <span>Bienvenido</span>
-  <div class="spacer"></div>
-</div>
-
-<div class="content" role="main">
-
-  <div
-    class="flex flex-col w-full max-w-md px-4 py-8 bg-white rounded-lg shadow dark:bg-gray-800 sm:px-6 md:px-8 lg:px-10">
-    <div class="self-center mb-6 text-xl font-light text-gray-600 sm:text-2xl dark:text-white">
-      Accede a tu cuenta
+<div class="flex flex-wrap w-full">
+  <div class="flex flex-col w-full md:w-1/2">
+    <div class="flex justify-center pt-12 md:justify-start md:pl-12 md:-mb-24">
+      <a href="#" class="p-4 text-xl font-bold text-white bg-black">
+        Regresar.
+      </a>
     </div>
-    <div class="mt-8">
-      <form action="#" autoComplete="off">
-        <div class="flex flex-col mb-2">
+    <div class="flex flex-col justify-center px-8 pt-8 my-auto md:justify-start md:pt-0 md:px-24 lg:px-32">
+      <p class="text-3xl text-center">
+        Bienvenido.
+      </p>
+      <form class="flex flex-col pt-3 md:pt-8">
+        <div class="flex flex-col pt-4">
           <div class="flex relative ">
             <span
-              class="rounded-l-md inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
+              class=" inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 1792 1792"
                 xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -25,15 +21,15 @@
                 </path>
               </svg>
             </span>
-            <input [(ngModel)]="user" name="user" type="text" id="sign-in-user"
-              class=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+            <input [(ngModel)]="user" name="user" type="text" id="design-login-email"
+              class=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
               placeholder="Usuario" />
           </div>
         </div>
-        <div class="flex flex-col mb-6">
+        <div class="flex flex-col pt-4 mb-12">
           <div class="flex relative ">
             <span
-              class="rounded-l-md inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
+              class=" inline-flex  items-center px-3 border-t bg-white border-l border-b  border-gray-300 text-gray-500 shadow-sm text-sm">
               <svg width="15" height="15" fill="currentColor" viewBox="0 0 1792 1792"
                 xmlns="http://www.w3.org/2000/svg">
                 <path
@@ -41,37 +37,32 @@
                 </path>
               </svg>
             </span>
-            <input [(ngModel)]="password" name="password" type="password" id="sign-in-email"
-              class=" rounded-r-lg flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
-              placeholder="Contraseña" />
+            <input [(ngModel)]="password" name="password" type="password" id="design-login-password"
+              class=" flex-1 appearance-none border border-gray-300 w-full py-2 px-4 bg-white text-gray-700 placeholder-gray-400 shadow-sm text-base focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent"
+              placeholder="Password" />
           </div>
         </div>
-        <div class="flex items-center mb-6 -mt-4">
-          <div class="flex ml-auto">
-            <a href="#"
-              class="inline-flex text-xs font-thin text-gray-500 sm:text-sm dark:text-gray-100 hover:text-gray-700 dark:hover:text-white">
-              Olvidaste tu assword?
-            </a>
-          </div>
-        </div>
-        <div class="flex w-full">
-          <button (click)="requestLogin()" type="submit"
-            class="py-2 px-4  bg-purple-600 hover:bg-purple-700 focus:ring-purple-500 focus:ring-offset-purple-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2  rounded-lg ">
+        <button (click)="requestLogin()" type="submit"
+          class="w-full px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-black shadow-md hover:text-black hover:bg-white focus:outline-none focus:ring-2">
+          <span class="w-full">
             Acceder
-          </button>
-        </div>
+          </span>
+        </button>
+        <p *ngIf="error" class="text-red-500 text-center text-xl mt-2"><span><em>Error:</em> {{error}}</span></p>
       </form>
-    </div>
-    <div class="flex items-center justify-center mt-6">
-      <a href="#" target="_blank"
-        class="inline-flex items-center text-xs font-thin text-center text-gray-500 hover:text-gray-700 dark:text-gray-100 dark:hover:text-white">
-        <span class="ml-2">
-          No tienes una cuenta?
-        </span>
-      </a>
+      <div class="pt-12 pb-12 text-center">
+        <p>
+          No tienes cuenta?
+          <a href="#" class="font-semibold underline">
+            Registrate aquí.
+          </a>
+        </p>
+      </div>
+      <!-- visualiza la respuesta de la peticion http de la API -->
+      <pre>{{ userData | json }}</pre>
     </div>
   </div>
-
-  <!-- visualiza la respuesta de la peticion http de la API -->
-  <pre>{{ userData | json }}</pre>
+  <div class="w-1/2 shadow-2xl">
+    <img class="hidden object-cover w-full h-screen md:block" src="../../../assets/yoox.jpg" />
+  </div>
 </div>
