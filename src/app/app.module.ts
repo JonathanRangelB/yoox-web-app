@@ -17,7 +17,7 @@ import { FormsModule } from '@angular/forms';
     AppComponent,
     LoginPageComponent,
     NotFoundComponent,
-    LandingComponent
+    LandingComponent,
   ],
   imports: [
     CommonModule,
@@ -26,9 +26,9 @@ import { FormsModule } from '@angular/forms';
     HttpClientModule,
     BrowserAnimationsModule,
     MatSlideToggleModule,
-    FormsModule
+    FormsModule,
   ],
   providers: [],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}
