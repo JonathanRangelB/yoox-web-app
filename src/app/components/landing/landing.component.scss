@@ -44,7 +44,8 @@ nav button{
 
 .contacto,
 .button {
-  background-color: transparent;
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
   border: 1px solid whitesmoke;
   padding: 0.6rem;
   border-radius: 6px;
@@ -54,7 +55,8 @@ nav button{
 }
 
 .contacto {
-  background-color: var(--third-color);
+  --tw-bg-opacity: 1;
+  background-color: rgb(31 41 55 / var(--tw-bg-opacity));
 }
 
 picture .logo {
