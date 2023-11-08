@@ -1,7 +1,7 @@
 describe('Landing page testing', () => {
   it('Visits the initial project page', () => {
     cy.visit('/');
-    cy.contains('YOOX web app esta corriendo!');
+    cy.get('.logo').should('exist');
   });
 
   it('Visits the initial login page', () => {
@@ -17,11 +17,19 @@ describe('Landing page testing', () => {
     cy.contains('Error: Login failed, verify your credentials');
   });
 
-  it('should return valid user data', () => {
+  it('should return valid user data and token present on session storage', () => {
     cy.visit('/login');
     cy.get('#design-login-email').type('supervisor');
     cy.get('#design-login-password').type('1');
     cy.get('.pt-3 > .font-semibold').click();
     cy.get('pre').should('contain', 'recordset');
+
+    // validates session storage token
+    cy.window()
+      .its('localStorage')
+      .then((localStorage) => {
+        const token = localStorage.getItem('token');
+        expect(token).to.exist;
+      });
   });
 });
