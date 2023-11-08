@@ -71,10 +71,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "yoox-web-app:build:production"
+              "buildTarget": "yoox-web-app:build:production"
             },
             "development": {
-              "browserTarget": "yoox-web-app:build:development"
+              "buildTarget": "yoox-web-app:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -82,7 +82,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "yoox-web-app:build"
+            "buildTarget": "yoox-web-app:build"
           }
         },
         "test": {
