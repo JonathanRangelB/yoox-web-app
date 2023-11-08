@@ -1,41 +1,19 @@
-<body>
-  <header class="top-header"></header>
-
-  <!--dust particel-->
-  <div>
-    <div class="starsec"></div>
-    <div class="starthird"></div>
-    <div class="starfourth"></div>
-    <div class="starfifth"></div>
-  </div>
-  <!--Dust particle end--->
-
-  <div class="lamp__wrap">
-    <div class="lamp">
-      <div class="cable"></div>
-      <div class="cover"></div>
-      <div class="in-cover">
-        <div class="bulb"></div>
-      </div>
-      <div class="light"></div>
-    </div>
-  </div>
-  <!-- END Lamp -->
-  <section class="error">
-    <!-- Content -->
-    <div class="error__content">
-      <div class="error__message message">
-        <h1 class="message__title">404 - not found</h1>
-        <p class="message__text">
-          Lo sentimos, la página que estabas buscando no se encuentra aquí. El
-          link que usaste esta roto o ya no está disponible. Intenta nuevamente,
-          o regresa a la página principal.
+<div class="wrap-error">
+  <div class="flex items-center justify-center h-screen">
+    <div class="container">
+      <div class="text-center text-white">
+        <h1 class=""><span>4</span><span>0</span><span>4</span></h1>
+        <h5 class="">Oops! Página no encontrada</h5>
+        <p class="mb-4">
+          Lo sentimos, pero no encontramos la página solicitada.
         </p>
-      </div>
-      <div class="error__nav e-nav">
-        <a href="#" class="e-nav__link"> </a>
+        <button
+          class="rounded bg-gray-800 py-2 px-4"
+          (click)="goBack()"
+          title="Ir a inicio">
+          Inicio
+        </button>
       </div>
     </div>
-    <!-- END Content -->
-  </section>
-</body>
+  </div>
+</div>
