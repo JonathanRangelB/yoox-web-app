@@ -62,24 +62,27 @@
           class="w-full px-4 py-2 text-base font-semibold text-center text-white transition duration-200 ease-in bg-black shadow-md hover:text-black hover:bg-white focus:outline-none focus:ring-2 rounded-lg">
           <span class="w-full"> Acceder </span>
         </button>
-        <p *ngIf="error" class="text-red-500 text-center text-xl mt-2">
+        <p *ngIf="error" class="text-red-500 text-center text-xl mt-2 pt-4">
           <span><em>Error:</em> {{ error }}</span>
         </p>
       </form>
-      <div class="pt-12 pb-12 text-center">
+      <!-- <div class="pt-12 pb-12 text-center">
         <p>
           No tienes cuenta?
           <a href="#" class="font-semibold underline"> Registrate aquí. </a>
         </p>
-      </div>
+      </div> -->
       <!-- visualiza la respuesta de la peticion http de la API -->
       <pre>{{ userData | json }}</pre>
     </div>
   </div>
-  <div class="w-1/2 shadow-2xl">
+  <div class="w-1/2 shadow-2xl bg-blue-800">
     <img
       class="hidden object-cover w-full h-screen md:block"
-      src="../../../assets/yoox.jpg"
-      alt="logo" />
+      ngSrc="../../../assets/yoox.jpg"
+      alt="YOOX Logo"
+      width="500"
+      height="500"
+      priority />
   </div>
 </div>
