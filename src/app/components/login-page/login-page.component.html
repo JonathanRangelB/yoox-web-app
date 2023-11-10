@@ -66,23 +66,24 @@
           <span><em>Error:</em> {{ error }}</span>
         </p>
       </form>
-      <!-- <div class="pt-12 pb-12 text-center">
-        <p>
-          No tienes cuenta?
-          <a href="#" class="font-semibold underline"> Registrate aquí. </a>
-        </p>
-      </div> -->
-      <!-- visualiza la respuesta de la peticion http de la API -->
       <pre>{{ userData | json }}</pre>
     </div>
   </div>
-  <div class="w-1/2 shadow-2xl bg-blue-800">
+  <div
+    class="w-1/2 shadow-2x"
+    style="
+      background: linear-gradient(
+        140deg,
+        rgba(2, 0, 36, 1) 0%,
+        rgba(2, 15, 24, 1) 35%,
+        rgba(20, 133, 227, 1) 100%
+      );
+    ">
     <img
       class="hidden object-cover w-full h-screen md:block"
-      ngSrc="../../../assets/yoox.jpg"
+      ngSrc="../../../assets/yoox.webp"
       alt="YOOX Logo"
-      width="500"
-      height="500"
-      priority />
+      width="150"
+      height="150" />
   </div>
 </div>
