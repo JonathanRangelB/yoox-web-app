@@ -1,0 +1,24 @@
+name: CI CD workflow
+on:
+  push:
+    branches:
+      - staging
+      - development
+jobs:
+  Continuous_Integration:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      - name: Install dependencies
+        run: npm ci
+      - name: Linting
+        run: npm run lint:ci
+      - name: Unit Testing
+        run: npm run test:ci
+      - name: E2E Testing
+        run: npm run e2e:ci

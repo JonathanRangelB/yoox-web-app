@@ -23,8 +23,8 @@ describe('LandingComponent', () => {
     const fixture = TestBed.createComponent(LandingComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('.content span')?.textContent).toContain(
-      'YOOX web app esta corriendo!'
+    expect(compiled.querySelector('button.contacto')?.textContent).toContain(
+      'Acceder'
     );
   });
 });
