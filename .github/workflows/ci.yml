@@ -1,6 +1,6 @@
 name: CI CD workflow
 on:
-  pull_request:
+  push:
     branches:
       - staging
       - development
