@@ -1,6 +1,24 @@
-# YooxWebApp
+# YooxWebApp (Angular v17)
 
 ## Installation
+
+First you should install the [Angular CLI](https://angular.io/cli) globally to be able to use
+
+```bash
+npm install -g @angular/cli
+```
+
+This project uses [pnpm](https://pnpm.io/) by default, using npm also works but pnpm is preffered
+
+### using pnpm
+
+run this command nad you should ready to go:
+
+```bash
+pnpm i
+```
+
+### using npm
 
 First install all dependencies with npm
 
