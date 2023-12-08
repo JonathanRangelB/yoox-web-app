@@ -1,0 +1,36 @@
+<span class="p-input-icon-right">
+  <i class="pi pi-search"></i>
+  <p-inputNumber
+    mode="decimal"
+    inputId="withoutgrouping"
+    [useGrouping]="false"
+    placeholder="folio">
+  </p-inputNumber>
+</span>
+<br />
+<p-orderList
+  class="mx-2"
+  [value]="pagosPendientesDelFolio"
+  [listStyle]="{ height: '25rem' }"
+  header="Pagos pendientes">
+  <ng-template let-pago pTemplate="item">
+    <div class="flex flex-wrap p-2 align-items-center gap-4">
+      <div class="flex-1 flex flex-column gap-2">
+        <span class="font-bold">Folio: {{ pago.folio }}</span>
+        <div class="flex align-items-center gap-2">
+          <i class="pi pi-dollar text-sm"></i>
+          <span>Pago de la semana {{ pago.numeroSemana }}</span>
+        </div>
+      </div>
+      <span>Cliente: {{ pago.nombreCliente }}</span>
+      <span>Fecha: {{ pago.fecha | date: 'fullDate' : 'GMT-6' }}</span>
+      <span class="font-bold text-900"
+        >Monto: {{ pago.monto | currency: 'MXN' : 'symbol' : '1.2-2' }}</span
+      >
+      <span class="font-bold text-900"
+        >Status de pago:
+        <p [class]="getStatusClass(pago.status)">{{ pago.status }}</p></span
+      >
+    </div>
+  </ng-template>
+</p-orderList>

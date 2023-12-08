@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { UserData } from 'src/app/models/userData';
 import { AuthService } from '../../services/AuthService';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
 const errorMessage = 'Ocurrio un error al intentar ingresar, intente mas tarde';
 @Component({
@@ -16,7 +17,10 @@ export class LoginPageComponent {
   error = '';
   loading = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   requestLogin() {
     // clean up the messages of previous calls
@@ -36,6 +40,7 @@ export class LoginPageComponent {
     this.userData = usr;
     this.loading = false;
     localStorage.setItem('token', usr.Autorization);
+    this.router.navigate(['/pagos']);
   };
 
   handleError = (error: Error) => {
