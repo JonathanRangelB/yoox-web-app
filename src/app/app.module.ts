@@ -10,6 +10,9 @@ import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { PasswordModule } from 'primeng/password';
 
 @NgModule({
   declarations: [
@@ -26,6 +29,9 @@ import { FormsModule } from '@angular/forms';
     BrowserAnimationsModule,
     FormsModule,
     NgOptimizedImage,
+    ButtonModule,
+    InputTextModule,
+    PasswordModule,
   ],
   providers: [],
   bootstrap: [AppComponent],
