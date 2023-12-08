@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { LoginPageComponent } from './login-page.component';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
 
 describe('LoginPageComponent', () => {
   let component: LoginPageComponent;
@@ -11,7 +12,7 @@ describe('LoginPageComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LoginPageComponent],
-      imports: [HttpClientModule, FormsModule],
+      imports: [HttpClientModule, FormsModule, ButtonModule],
     });
     fixture = TestBed.createComponent(LoginPageComponent);
     component = fixture.componentInstance;
