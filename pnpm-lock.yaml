@@ -8,6 +8,9 @@ dependencies:
   '@angular/animations':
     specifier: ^17.0.6
     version: 17.0.6(@angular/core@17.0.6)
+  '@angular/cdk':
+    specifier: ^17.0.3
+    version: 17.0.3(@angular/common@17.0.6)(@angular/core@17.0.6)(rxjs@7.8.1)
   '@angular/common':
     specifier: ^17.0.6
     version: 17.0.6(@angular/core@17.0.6)(rxjs@7.8.1)
@@ -29,6 +32,12 @@ dependencies:
   '@angular/router':
     specifier: ^17.0.6
     version: 17.0.6(@angular/common@17.0.6)(@angular/core@17.0.6)(@angular/platform-browser@17.0.6)(rxjs@7.8.1)
+  primeflex:
+    specifier: ^3.3.1
+    version: 3.3.1
+  primeicons:
+    specifier: ^6.0.1
+    version: 6.0.1
   primeng:
     specifier: ^17.0.0
     version: 17.0.0(@angular/common@17.0.6)(@angular/core@17.0.6)(@angular/forms@17.0.6)(rxjs@7.8.1)(zone.js@0.14.2)
@@ -482,6 +491,21 @@ packages:
     dependencies:
       '@angular/core': 17.0.6(rxjs@7.8.1)(zone.js@0.14.2)
       tslib: 2.6.2
+    dev: false
+
+  /@angular/cdk@17.0.3(@angular/common@17.0.6)(@angular/core@17.0.6)(rxjs@7.8.1):
+    resolution: {integrity: sha512-Qd5uvC09B3+uk2uX1JxmiWrD7wueMHSxNBoCbDEmnrsdDVUta0wN/jj/CtATljxUM8ZqvEvkqgxJCig1od9oyQ==}
+    peerDependencies:
+      '@angular/common': ^17.0.0 || ^18.0.0
+      '@angular/core': ^17.0.0 || ^18.0.0
+      rxjs: ^6.5.3 || ^7.4.0
+    dependencies:
+      '@angular/common': 17.0.6(@angular/core@17.0.6)(rxjs@7.8.1)
+      '@angular/core': 17.0.6(rxjs@7.8.1)(zone.js@0.14.2)
+      rxjs: 7.8.1
+      tslib: 2.6.2
+    optionalDependencies:
+      parse5: 7.1.2
     dev: false
 
   /@angular/cli@17.0.6:
@@ -5201,7 +5225,6 @@ packages:
   /entities@4.5.0:
     resolution: {integrity: sha512-V0hjH4dGPh9Ao5p0MoRY6BVqtwCjhz6vI5LT8AJ55H+4g9/4vbHx1I54fS0XuclLhDHArPQCiMjDxjaL8fPxhw==}
     engines: {node: '>=0.12'}
-    dev: true
 
   /env-paths@2.2.1:
     resolution: {integrity: sha512-+h1lkLKhZMTYjog1VEpJNG7NZJWcuc2DDk/qsqSTRRCOXiLjeQ1d1/udrUGhqMxUgAlwKNZ0cf2uqan5GLuS2A==}
@@ -8140,7 +8163,6 @@ packages:
     resolution: {integrity: sha512-Czj1WaSVpaoj0wbhMzLmWD69anp2WH7FXMB9n1Sy8/ZFF9jolSQVMu1Ij5WIyGmcBmhk7EOndpO4mIpihVqAXw==}
     dependencies:
       entities: 4.5.0
-    dev: true
 
   /parseurl@1.3.3:
     resolution: {integrity: sha512-CiyeOxFT/JZyN5m0z9PfXw4SCBJ6Sygz1Dpl0wqjlhDEGGBP1GnsUVEL0p63hoG1fcj3fHynXi9NYO4nWOL+qQ==}
@@ -8445,6 +8467,14 @@ packages:
       ansi-styles: 5.2.0
       react-is: 18.2.0
     dev: true
+
+  /primeflex@3.3.1:
+    resolution: {integrity: sha512-zaOq3YvcOYytbAmKv3zYc+0VNS9Wg5d37dfxZnveKBFPr7vEIwfV5ydrpiouTft8MVW6qNjfkaQphHSnvgQbpQ==}
+    dev: false
+
+  /primeicons@6.0.1:
+    resolution: {integrity: sha512-KDeO94CbWI4pKsPnYpA1FPjo79EsY9I+M8ywoPBSf9XMXoe/0crjbUK7jcQEDHuc0ZMRIZsxH3TYLv4TUtHmAA==}
+    dev: false
 
   /primeng@17.0.0(@angular/common@17.0.6)(@angular/core@17.0.6)(@angular/forms@17.0.6)(rxjs@7.8.1)(zone.js@0.14.2):
     resolution: {integrity: sha512-6ja5koKWaENKr2C1o8N5xqRII/yA0Byy9AHeb25f4vQ9gEivkRit8O9tqoiaG9fncZUL8gLVjbImUtZj2kw4gQ==}
