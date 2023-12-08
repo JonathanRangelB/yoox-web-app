@@ -9,7 +9,6 @@ import { LoginPageComponent } from './components/login-page/login-page.component
 import { NotFoundComponent } from './components/not-found/not-found.component';
 import { LandingComponent } from './components/landing/landing.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { FormsModule } from '@angular/forms';
 
 @NgModule({
@@ -25,7 +24,6 @@ import { FormsModule } from '@angular/forms';
     AppRoutingModule,
     HttpClientModule,
     BrowserAnimationsModule,
-    MatSlideToggleModule,
     FormsModule,
     NgOptimizedImage,
   ],
