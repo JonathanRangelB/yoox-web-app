@@ -17,8 +17,7 @@
     "test:ci": "ng test --browsers ChromeHeadless --watch false",
     "e2e:ci": "ng e2e --watch false --headless",
     "all:ci": "npm run lint:ci && npm run test:ci && npm run e2e:ci",
-    "prepare": "husky install",
-    "postbuild": "node postbuild.js"
+    "prepare": "husky install"
   },
   "private": true,
   "dependencies": {
