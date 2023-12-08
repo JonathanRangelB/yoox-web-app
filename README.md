@@ -1,3 +1,5 @@
+[![Netlify Status](https://api.netlify.com/api/v1/badges/68695be5-069d-4cdc-9a24-c6fff93d42d8/deploy-status)](https://app.netlify.com/sites/financierayoox/deploys)
+
 # YooxWebApp (Angular v17)
 
 ## Installation
