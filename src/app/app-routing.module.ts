@@ -7,6 +7,11 @@ import { LandingComponent } from './components/landing/landing.component';
 const routes: Routes = [
   { path: '', component: LandingComponent },
   { path: 'login', component: LoginPageComponent },
+  {
+    path: 'pagos',
+    loadChildren: () =>
+      import('./components/pagos/pagos.module').then((m) => m.PagosModule),
+  },
   { path: '**', component: NotFoundComponent },
 ];
 

@@ -14,7 +14,7 @@ describe('Landing page testing', () => {
     cy.get('#design-login-email').type('test');
     cy.get('#design-login-password').type('1234');
     cy.get('.pt-3 > .font-semibold').click();
-    cy.contains('Error: Login failed, verify your credentials');
+    cy.contains('Login failed, verify your credentials');
   });
 
   it('should return valid user data and token present on session storage', () => {
@@ -22,7 +22,7 @@ describe('Landing page testing', () => {
     cy.get('#design-login-email').type('supervisor');
     cy.get('#design-login-password').type('1');
     cy.get('.pt-3 > .font-semibold').click();
-    cy.get('pre').should('contain', 'recordset');
+    cy.url().should('include', '/pagos');
 
     // validates session storage token
     cy.window()

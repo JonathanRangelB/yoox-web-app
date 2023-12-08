@@ -2,8 +2,9 @@ import { Component } from '@angular/core';
 import { UserData } from 'src/app/models/userData';
 import { AuthService } from '../../services/AuthService';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
 
-const errorMessage = 'Ocurrio un error, intenta nuevamente';
+const errorMessage = 'Ocurrio un error al intentar ingresar, intente mas tarde';
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
@@ -14,13 +15,18 @@ export class LoginPageComponent {
   user = '';
   password = '';
   error = '';
+  loading = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) {}
 
   requestLogin() {
     // clean up the messages of previous calls
     this.error = '';
     this.userData = undefined;
+    this.loading = true;
 
     this.authService
       .login({ userId: this.user, password: this.password.toUpperCase() })
@@ -32,11 +38,13 @@ export class LoginPageComponent {
 
   handleSuccessfullLogin = (usr: UserData) => {
     this.userData = usr;
+    this.loading = false;
     localStorage.setItem('token', usr.Autorization);
-    console.log(this.userData);
+    this.router.navigate(['/pagos']);
   };
 
   handleError = (error: Error) => {
+    this.loading = false;
     if (error instanceof HttpErrorResponse) {
       if (error.status == 404) {
         this.error = error.error?.message;
