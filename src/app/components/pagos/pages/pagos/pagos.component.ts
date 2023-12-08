@@ -16,6 +16,8 @@ interface Pago {
 })
 export class PagosComponent implements OnInit {
   pagosPendientesDelFolio: Pago[] = [];
+  header: string = 'Registro de semanas con folio 123456 del cliente Juan';
+
   ngOnInit(): void {
     this.pagosPendientesDelFolio = [
       {
@@ -31,7 +33,7 @@ export class PagosComponent implements OnInit {
         monto: 1000,
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
-        numeroSemana: 1,
+        numeroSemana: 2,
         status: 'Pagado',
       },
       {
@@ -39,7 +41,7 @@ export class PagosComponent implements OnInit {
         monto: 1000,
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
-        numeroSemana: 1,
+        numeroSemana: 3,
         status: 'Pagado',
       },
       {
@@ -47,7 +49,7 @@ export class PagosComponent implements OnInit {
         monto: 1000,
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
-        numeroSemana: 1,
+        numeroSemana: 4,
         status: 'Pendiente',
       },
       {
@@ -55,7 +57,7 @@ export class PagosComponent implements OnInit {
         monto: 1000,
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
-        numeroSemana: 1,
+        numeroSemana: 5,
         status: 'Pendiente',
       },
       {
@@ -63,7 +65,71 @@ export class PagosComponent implements OnInit {
         monto: 1000,
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
-        numeroSemana: 1,
+        numeroSemana: 6,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 7,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 8,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 9,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 10,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 11,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 12,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 13,
+        status: 'Pendiente',
+      },
+      {
+        folio: '123456',
+        monto: 1000,
+        fecha: '2021-01-01',
+        nombreCliente: 'Juan',
+        numeroSemana: 14,
         status: 'Pendiente',
       },
     ];

@@ -9,18 +9,16 @@
 </span>
 <br />
 <p-orderList
-  class="mx-2"
+  class="mx-2 h-screen"
   [value]="pagosPendientesDelFolio"
-  [listStyle]="{ height: '25rem' }"
-  header="Pagos pendientes">
+  [responsive]="true"
+  [stripedRows]="true"
+  [header]="header">
   <ng-template let-pago pTemplate="item">
     <div class="flex flex-wrap p-2 align-items-center gap-4">
-      <div class="flex-1 flex flex-column gap-2">
-        <span class="font-bold">Folio: {{ pago.folio }}</span>
-        <div class="flex align-items-center gap-2">
-          <i class="pi pi-dollar text-sm"></i>
-          <span>Pago de la semana {{ pago.numeroSemana }}</span>
-        </div>
+      <div class="flex-1 flex-column gap-2">
+        <div>Semana:</div>
+        <strong>#{{ pago.numeroSemana }}</strong>
       </div>
       <span>Cliente: {{ pago.nombreCliente }}</span>
       <span>Fecha: {{ pago.fecha | date: 'fullDate' : 'GMT-6' }}</span>
