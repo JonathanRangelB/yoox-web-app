@@ -1,13 +1,16 @@
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { Component, OnInit } from '@angular/core';
 
-interface Pago {
+type Pago = {
   folio: string;
   monto: number;
   fecha: string;
   nombreCliente: string;
   numeroSemana: number;
-  status: 'Pagado' | 'Pendiente';
-}
+  status: StatusDePago;
+};
+
+type StatusDePago = 'Pagado' | 'Pendiente' | 'Vencido';
 
 @Component({
   selector: 'app-pagos',
@@ -16,7 +19,13 @@ interface Pago {
 })
 export class PagosComponent implements OnInit {
   pagosPendientesDelFolio: Pago[] = [];
+  dialogIsVisible: boolean = false;
   header: string = 'Registro de semanas con folio 123456 del cliente Juan';
+
+  constructor(
+    private confirmationService: ConfirmationService,
+    private messageService: MessageService
+  ) {}
 
   ngOnInit(): void {
     this.pagosPendientesDelFolio = [
@@ -50,7 +59,7 @@ export class PagosComponent implements OnInit {
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
         numeroSemana: 4,
-        status: 'Pendiente',
+        status: 'Pagado',
       },
       {
         folio: '123456',
@@ -58,7 +67,7 @@ export class PagosComponent implements OnInit {
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
         numeroSemana: 5,
-        status: 'Pendiente',
+        status: 'Pagado',
       },
       {
         folio: '123456',
@@ -66,7 +75,7 @@ export class PagosComponent implements OnInit {
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
         numeroSemana: 6,
-        status: 'Pendiente',
+        status: 'Pagado',
       },
       {
         folio: '123456',
@@ -74,7 +83,7 @@ export class PagosComponent implements OnInit {
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
         numeroSemana: 7,
-        status: 'Pendiente',
+        status: 'Vencido',
       },
       {
         folio: '123456',
@@ -82,7 +91,7 @@ export class PagosComponent implements OnInit {
         fecha: '2021-01-01',
         nombreCliente: 'Juan',
         numeroSemana: 8,
-        status: 'Pendiente',
+        status: 'Vencido',
       },
       {
         folio: '123456',
@@ -135,7 +144,46 @@ export class PagosComponent implements OnInit {
     ];
   }
 
-  getStatusClass(statusDePago: string): string {
-    return statusDePago === 'Pagado' ? 'text-green-500' : 'text-red-500';
+  getStatusClass(statusDePago: StatusDePago): string {
+    if (statusDePago === 'Pagado') return 'text-green-500';
+    else if (statusDePago === 'Pendiente') return 'text-yellow-500';
+    else return 'text-red-500';
+  }
+
+  getSeverity(item: Pago): string {
+    if (item.status === 'Pagado') return 'success';
+    else if (item.status === 'Pendiente') return 'warning';
+    else return 'danger';
+  }
+
+  activarBotonPago(item: Pago): boolean {
+    if (item.status === 'Pagado') return true;
+    else return false;
+  }
+
+  pagar(item: Pago): void {
+    this.confirmationService.confirm({
+      message: `¿Estás seguro de pagar la semana ${item.numeroSemana} del folio ${item.folio}?`,
+      accept: () => {
+        this.pagosPendientesDelFolio = this.pagosPendientesDelFolio.map(
+          (pago) => {
+            if (pago.numeroSemana === item.numeroSemana) {
+              return {
+                ...pago,
+                status: 'Pagado',
+              };
+            } else return pago;
+          }
+        );
+      },
+      reject: () => {
+        this.messageService.add({
+          severity: 'warn',
+          summary: 'Acción cancelada',
+          detail: 'El pago no se ha registrado',
+          icon: 'pi pi-exclamation-triangle',
+        });
+      },
+    });
   }
 }

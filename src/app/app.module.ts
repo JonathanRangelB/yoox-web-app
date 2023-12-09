@@ -18,6 +18,8 @@ import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
+import { PanelModule } from 'primeng/panel';
+import { ReactiveFormsModule } from '@angular/forms';
 import localeEsMX from '@angular/common/locales/es-MX';
 
 registerLocaleData(localeEsMX);
@@ -40,6 +42,8 @@ registerLocaleData(localeEsMX);
     ButtonModule,
     InputTextModule,
     PasswordModule,
+    PanelModule,
+    ReactiveFormsModule,
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'es-MX' }],
   bootstrap: [AppComponent],
