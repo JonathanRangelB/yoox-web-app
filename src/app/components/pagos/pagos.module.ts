@@ -6,6 +6,12 @@ import { PagosRoutingModule } from './pagos-routing.module';
 import { InputTextModule } from 'primeng/inputtext';
 import { InputNumberModule } from 'primeng/inputnumber';
 import { OrderListModule } from 'primeng/orderlist';
+import { DataViewModule } from 'primeng/dataview';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [PagosComponent],
@@ -16,7 +22,13 @@ import { OrderListModule } from 'primeng/orderlist';
     InputTextModule,
     InputNumberModule,
     OrderListModule,
+    DataViewModule,
+    TagModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    ToastModule,
   ],
   exports: [PagosComponent],
+  providers: [ConfirmationService, MessageService],
 })
 export class PagosModule {}
