@@ -1,21 +1,30 @@
-import { Component } from '@angular/core';
-import { UserData } from 'src/app/models/userData';
-import { AuthService } from '../../services/AuthService';
 import { HttpErrorResponse } from '@angular/common/http';
+import { Component, OnInit } from '@angular/core';
+import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
+import { UserData } from 'src/app/models/userData';
+import { AuthService } from 'src/app/services/AuthService';
 
-const errorMessage = 'Ocurrio un error al intentar ingresar, intente mas tarde';
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrls: ['./login-page.component.scss'],
 })
-export class LoginPageComponent {
+export class LoginPageComponent implements OnInit {
+  loginForm!: FormGroup;
   userData: UserData | undefined;
-  user = '';
-  password = '';
   error = '';
   loading = false;
+  errorMessage = 'Ocurrio un error al intentar ingresar, intente mas tarde';
+
+  submitted = false;
+
+  ngOnInit() {
+    this.loginForm = new FormGroup({
+      user: new FormControl('', Validators.required),
+      password: new FormControl('', Validators.required),
+    });
+  }
 
   constructor(
     private authService: AuthService,
@@ -29,7 +38,10 @@ export class LoginPageComponent {
     this.loading = true;
 
     this.authService
-      .login({ userId: this.user, password: this.password.toUpperCase() })
+      .login({
+        userId: this.loginForm.value.user,
+        password: this.loginForm.value.password.toUpperCase(),
+      })
       .subscribe({
         next: this.handleSuccessfullLogin,
         error: this.handleError,
@@ -48,10 +60,8 @@ export class LoginPageComponent {
     if (error instanceof HttpErrorResponse) {
       if (error.status == 404) {
         this.error = error.error?.message;
-        console.log(this.error);
       } else {
-        this.error = errorMessage;
-        console.log(this.error);
+        this.error = this.errorMessage;
       }
     }
   };
