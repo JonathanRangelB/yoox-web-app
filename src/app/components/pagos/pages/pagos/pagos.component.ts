@@ -179,8 +179,9 @@ export class PagosComponent implements OnInit {
       reject: () => {
         this.messageService.add({
           severity: 'warn',
-          summary: 'Pago cancelado',
+          summary: 'Acción cancelada',
           detail: 'El pago no se ha registrado',
+          icon: 'pi pi-exclamation-triangle',
         });
       },
     });
