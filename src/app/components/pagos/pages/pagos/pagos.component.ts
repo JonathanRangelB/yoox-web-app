@@ -11,6 +11,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 })
 export class PagosComponent implements OnInit {
   loading = false;
+  hiddenTable = true;
   folioForm!: FormGroup;
   pagosPendientesDelFolio: PrestamosDetalle[] = [];
   dialogIsVisible: boolean = false;
@@ -82,6 +83,7 @@ export class PagosComponent implements OnInit {
 
   buscarFolio(): void {
     this.loading = true;
+    this.hiddenTable = false;
     this.pagosService
       .getPaymentsById(this.folioForm.value.folio)
       .subscribe((registroDePagos) => {
