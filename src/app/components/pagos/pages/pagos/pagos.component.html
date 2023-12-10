@@ -1,13 +1,22 @@
 <section class="flex flex-column align-items-center p-3">
-  <p-inputNumber
-    class="mb-3"
-    mode="decimal"
-    inputId="withoutgrouping"
-    [useGrouping]="false"
-    placeholder="folio">
-  </p-inputNumber>
+  <form (ngSubmit)="buscarFolio()" [formGroup]="folioForm">
+    <p-inputNumber
+      class="mb-3"
+      mode="decimal"
+      formControlName="folio"
+      inputId="withoutgrouping"
+      [useGrouping]="false"
+      placeholder="Número de folio o prestamo">
+    </p-inputNumber>
+    <button
+      pButton
+      label="Buscar"
+      [disabled]="!folioForm.valid"
+      [loading]="loading"
+      class="mb-3"></button>
+  </form>
 
-  <p-dataView #dv [value]="pagosPendientesDelFolio">
+  <p-dataView #dv [value]="pagosPendientesDelFolio" [loading]="loading">
     <ng-template pTemplate="list" let-products>
       <div class="grid grid-nogutter">
         <div class="col-12" *ngFor="let item of products; let first = first">
@@ -19,25 +28,28 @@
               <div
                 class="flex flex-column align-items-center sm:align-items-start gap-3">
                 <div class="text-2xl font-bold text-900">
-                  Fecha: {{ item.fecha }}
+                  Fecha de vencimiento:
+                  <div class="text-cyan-700">
+                    {{ item.FECHA_VENCIMIENTO | date: 'EEEE d MMMM, y' }}
+                  </div>
                 </div>
 
                 <div class="flex align-items-center gap-3">
                   <span class="flex align-items-center gap-2">
                     <i class="pi pi-tag"></i>
                     <span class="font-semibold"
-                      >Semana {{ item.numeroSemana }}</span
+                      >Semana {{ item.NUMERO_SEMANA }}</span
                     >
                   </span>
                   <p-tag
-                    [value]="item.status"
+                    [value]="item.STATUS"
                     [severity]="getSeverity(item)"></p-tag>
                 </div>
               </div>
               <div
                 class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
                 <span class="text-2xl font-semibold">{{
-                  item.monto | currency: 'MXN' : 'symbol' : '1.2-2'
+                  item.CANTIDAD | currency: 'MXN' : 'symbol' : '1.2-2'
                 }}</span>
                 <button
                   pButton
