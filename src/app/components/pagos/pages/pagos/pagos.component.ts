@@ -1,16 +1,8 @@
+import { PrestamosDetalle } from './../../../../models/db/prestamos_detalle';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Component, OnInit } from '@angular/core';
-
-type Pago = {
-  folio: string;
-  monto: number;
-  fecha: string;
-  nombreCliente: string;
-  numeroSemana: number;
-  status: StatusDePago;
-};
-
-type StatusDePago = 'Pagado' | 'Pendiente' | 'Vencido';
+import { PagosService } from 'src/app/services/pagos-service';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-pagos',
@@ -18,172 +10,83 @@ type StatusDePago = 'Pagado' | 'Pendiente' | 'Vencido';
   styleUrl: './pagos.component.scss',
 })
 export class PagosComponent implements OnInit {
-  pagosPendientesDelFolio: Pago[] = [];
+  loading = false;
+  folioForm!: FormGroup;
+  pagosPendientesDelFolio: PrestamosDetalle[] = [];
   dialogIsVisible: boolean = false;
   header: string = 'Registro de semanas con folio 123456 del cliente Juan';
 
   constructor(
     private confirmationService: ConfirmationService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private pagosService: PagosService
   ) {}
 
   ngOnInit(): void {
-    this.pagosPendientesDelFolio = [
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 1,
-        status: 'Pagado',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 2,
-        status: 'Pagado',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 3,
-        status: 'Pagado',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 4,
-        status: 'Pagado',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 5,
-        status: 'Pagado',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 6,
-        status: 'Pagado',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 7,
-        status: 'Vencido',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 8,
-        status: 'Vencido',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 9,
-        status: 'Pendiente',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 10,
-        status: 'Pendiente',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 11,
-        status: 'Pendiente',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 12,
-        status: 'Pendiente',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 13,
-        status: 'Pendiente',
-      },
-      {
-        folio: '123456',
-        monto: 1000,
-        fecha: '2021-01-01',
-        nombreCliente: 'Juan',
-        numeroSemana: 14,
-        status: 'Pendiente',
-      },
-    ];
+    this.folioForm = new FormGroup({
+      folio: new FormControl(null, Validators.required),
+    });
   }
 
-  getStatusClass(statusDePago: StatusDePago): string {
-    if (statusDePago === 'Pagado') return 'text-green-500';
-    else if (statusDePago === 'Pendiente') return 'text-yellow-500';
-    else return 'text-red-500';
-  }
-
-  getSeverity(item: Pago): string {
-    if (item.status === 'Pagado') return 'success';
-    else if (item.status === 'Pendiente') return 'warning';
+  getSeverity(item: PrestamosDetalle): string {
+    if (item.STATUS === 'PAGADO') return 'success';
+    else if (item.STATUS === 'NO PAGADO') return 'warning';
+    else if (item.STATUS === 'CANCELADO') return 'warning';
     else return 'danger';
   }
 
-  activarBotonPago(item: Pago): boolean {
-    if (item.status === 'Pagado') return true;
+  activarBotonPago(item: PrestamosDetalle): boolean {
+    if (item.STATUS === 'PAGADO') return true;
+    else if (item.STATUS === 'CANCELADO') return true;
     else return false;
   }
 
-  pagar(item: Pago): void {
+  pagar(item: PrestamosDetalle): void {
     this.confirmationService.confirm({
-      message: `¿Estás seguro de pagar la semana ${item.numeroSemana} del folio ${item.folio}?`,
-      accept: () => {
-        this.pagosPendientesDelFolio = this.pagosPendientesDelFolio.map(
-          (pago) => {
-            if (pago.numeroSemana === item.numeroSemana) {
-              return {
-                ...pago,
-                status: 'Pagado',
-              };
-            } else return pago;
-          }
-        );
-      },
-      reject: () => {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Acción cancelada',
-          detail: 'El pago no se ha registrado',
-          icon: 'pi pi-exclamation-triangle',
-        });
-      },
+      message: `¿Estás seguro de pagar ${item.CANTIDAD} correspondientes a la semana ${item.NUMERO_SEMANA} para el folio ${item.ID_PRESTAMO}?`,
+      accept: () => this.pagoExitoso(item),
+      reject: () => this.pagoCancelado(item),
     });
+  }
+
+  pagoExitoso(item: PrestamosDetalle): void {
+    // esto es un mock solo para simular el pago
+    this.pagosPendientesDelFolio = this.pagosPendientesDelFolio.map((pago) => {
+      if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
+        return {
+          ...pago,
+          STATUS: 'PAGADO',
+        };
+      } else return pago;
+    });
+    // fin del mock
+
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Pago exitoso',
+      detail: `El pago correspondiendte a ${item.NUMERO_SEMANA} del folio ${item.ID_PRESTAMO} se ha registrado`,
+      icon: 'pi pi-check',
+      life: 5000,
+    });
+  }
+
+  pagoCancelado(item: PrestamosDetalle): void {
+    this.messageService.add({
+      severity: 'warn',
+      summary: 'Acción cancelada',
+      detail: `El pago correspondiendte a ${item.NUMERO_SEMANA} del folio ${item.ID_PRESTAMO} no se ha registrado`,
+      icon: 'pi pi-exclamation-triangle',
+      life: 5000,
+    });
+  }
+
+  buscarFolio(): void {
+    this.loading = true;
+    this.pagosService
+      .getPaymentsById(this.folioForm.value.folio)
+      .subscribe((registroDePagos) => {
+        this.pagosPendientesDelFolio = registroDePagos;
+        this.loading = false;
+      });
   }
 }
