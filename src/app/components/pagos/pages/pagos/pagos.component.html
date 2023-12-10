@@ -1,5 +1,8 @@
 <section class="flex flex-column align-items-center p-3">
-  <form (ngSubmit)="buscarFolio()" [formGroup]="folioForm">
+  <form
+    (ngSubmit)="buscarFolio()"
+    [formGroup]="folioForm"
+    style="margin: 1rem auto; display: grid; place-items: center">
     <p-inputNumber
       class="mb-3"
       mode="decimal"
@@ -16,7 +19,11 @@
       class="mb-3"></button>
   </form>
 
-  <p-dataView #dv [value]="pagosPendientesDelFolio" [loading]="loading">
+  <p-dataView
+    #dv
+    [value]="pagosPendientesDelFolio"
+    [loading]="loading"
+    [hidden]="hiddenTable">
     <ng-template pTemplate="list" let-products>
       <div class="grid grid-nogutter">
         <div class="col-12" *ngFor="let item of products; let first = first">
@@ -64,6 +71,6 @@
       </div>
     </ng-template>
   </p-dataView>
-  <p-confirmDialog [style]="{ width: '50vw' }"></p-confirmDialog>
+  <p-confirmDialog [style]="{ width: '80vw' }"></p-confirmDialog>
   <p-toast></p-toast>
 </section>

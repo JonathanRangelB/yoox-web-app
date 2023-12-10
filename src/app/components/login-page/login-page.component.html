@@ -1,4 +1,7 @@
-<form (ngSubmit)="requestLogin()" [formGroup]="loginForm">
+<form
+  (ngSubmit)="requestLogin()"
+  [formGroup]="loginForm"
+  style="margin: 1rem auto; display: grid; place-items: center">
   <p-panel header="Ingresa tus credenciales">
     <div
       class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid"
@@ -6,13 +9,20 @@
       <div class="ui-grid-row">
         <div class="ui-grid-col-2 mb-1">Usuario:</div>
         <div class="ui-grid-col-6">
-          <input
-            pInputText
-            type="text"
-            formControlName="user"
-            placeholder="Ej: jonathan"
-            class="form-control mb-3"
-            name="user" />
+          <span class="p-input-icon-right">
+            <i
+              class="pi pi-times-circle"
+              style="margin-top: -1rem; cursor: pointer"
+              *ngIf="loginForm.value.user"
+              (click)="loginForm.get('user')?.reset()"></i>
+            <input
+              pInputText
+              type="text"
+              formControlName="user"
+              placeholder="Ej: jonathan"
+              class="form-control mb-3"
+              name="user" />
+          </span>
         </div>
         <div class="ui-grid-col-4">
           <div
@@ -28,13 +38,20 @@
       <div class="ui-grid-row mt-3">
         <div class="ui-grid-col-2 mb-1">Contraseña:</div>
         <div class="ui-grid-col-6">
-          <input
-            pInputText
-            type="password"
-            formControlName="password"
-            placeholder="Ej: k3dhu4"
-            class="form-control mb-3"
-            name="password" />
+          <span class="p-input-icon-right">
+            <i
+              class="pi pi-times-circle"
+              style="margin-top: -1rem; cursor: pointer"
+              *ngIf="loginForm.value.password"
+              (click)="loginForm.get('password')?.reset()"></i>
+            <input
+              pInputText
+              type="password"
+              formControlName="password"
+              placeholder="Ej: k3dhu4"
+              class="form-control mb-3"
+              name="password" />
+          </span>
         </div>
         <div class="ui-grid-col-4">
           <div
