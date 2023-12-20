@@ -16,7 +16,6 @@ export const authGuardGuard: CanActivateFn = async () => {
       },
       error: (err) => {
         router.navigate(['/login']);
-        console.log(err);
       },
     });
   } else if (redirectToLogin) {
