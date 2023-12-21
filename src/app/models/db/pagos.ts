@@ -8,7 +8,7 @@ export type Pago = {
   CANTIDAD_PAGADA: number;
   ID_CORTE: number;
   CANCELADO: string;
-  FECHA_cANCELADO: Date;
+  FECHA_CANCELADO: Date;
   USUARIO_CANCELO: number;
   ID_MULTA: number;
   ID_COBRADOR: number;

@@ -1,10 +1,9 @@
 export interface UserData {
-  recordset: Recordset[];
-  rowsAffected: number;
+  user: User;
   Autorization: string;
 }
 
-export interface Recordset {
+export interface User {
   ID: number;
   NOMBRE: string;
   ROL: string;

@@ -12,12 +12,14 @@ export class PagosService {
   getPaymentsById(folio: string) {
     // get the authorization token from the local storage and set it in the get request header using httpClient
     const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId');
     return this.http
       .get<PrestamosDetalle[]>(
-        `https://pcii32quc8.execute-api.us-east-2.amazonaws.com/v1/payments/${folio}`,
+        `https://pcii32quc8.execute-api.us-east-2.amazonaws.com/v1/loan/${folio}`,
         {
           headers: {
             Authorization: `${token}`,
+            userId: `${userId}`,
           },
         }
       )

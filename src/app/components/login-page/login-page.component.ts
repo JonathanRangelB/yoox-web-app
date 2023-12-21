@@ -52,6 +52,10 @@ export class LoginPageComponent implements OnInit {
     this.userData = usr;
     this.loading = false;
     localStorage.setItem('token', usr.Autorization);
+    console.log(usr);
+
+    localStorage.setItem('userId', usr.user.ID.toString());
+
     this.router.navigate(['/pagos']);
   };
 
