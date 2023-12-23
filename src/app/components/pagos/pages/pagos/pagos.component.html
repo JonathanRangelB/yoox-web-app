@@ -3,14 +3,21 @@
     (ngSubmit)="buscarFolio()"
     [formGroup]="folioForm"
     style="margin: 1rem auto; display: grid; place-items: center">
-    <p-inputNumber
-      class="mb-3"
-      mode="decimal"
-      formControlName="folio"
-      inputId="withoutgrouping"
-      [useGrouping]="false"
-      placeholder="Número de folio o prestamo">
-    </p-inputNumber>
+    <span class="p-input-icon-right">
+      <i
+        class="pi pi-times-circle"
+        style="margin-top: -1rem; cursor: pointer"
+        *ngIf="folioForm.value.folio"
+        (click)="folioForm.get('folio')?.reset()"></i>
+      <p-inputNumber
+        class="mb-3"
+        mode="decimal"
+        formControlName="folio"
+        inputId="withoutgrouping"
+        [useGrouping]="false"
+        placeholder="Número de folio o prestamo">
+      </p-inputNumber>
+    </span>
     <button
       pButton
       label="Buscar"
@@ -25,32 +32,43 @@
     [toggleable]="true"
     [collapsed]="true"
     class="mb-3"
+    [style]="{ width: '90vw' }"
     [hidden]="hiddenTable">
-    <div class="information">
-      <p class="m-0">Cantidad prestada:</p>
-      <span
-        ><strong>{{ prestamo.CANTIDAD_PRESTADA }}</strong></span
-      >
-      <p class="m-0">Cantidad restante:</p>
-      <span
-        ><strong>{{ prestamo.CANTIDAD_RESTANTE }}</strong></span
-      >
-      <p class="m-0">Status:</p>
-      <span
-        ><strong>{{ prestamo.STATUS }}</strong></span
-      >
-      <p class="m-0">Fecha de inicio:</p>
-      <span
-        ><strong>{{
-          prestamo.FECHA_INICIAL | date: 'EEEE d MMMM, y'
-        }}</strong></span
-      >
-      <p class="m-0">Fecha de finalización:</p>
-      <span
-        ><strong>{{
-          prestamo.FECHA_FINAL_ESTIMADA | date: 'EEEE d MMMM, y'
-        }}</strong></span
-      >
+    <div class="flex gap-3 flex-wrap justify-content-between">
+      <div>
+        <p class="m-0">Cantidad prestada:</p>
+        <span
+          ><strong>{{ prestamo.CANTIDAD_PRESTADA }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Cantidad restante:</p>
+        <span
+          ><strong>{{ prestamo.CANTIDAD_RESTANTE }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Status del prestamo:</p>
+        <span
+          ><strong>{{ prestamo.STATUS }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Fecha de inicio:</p>
+        <span
+          ><strong>{{
+            prestamo.FECHA_INICIAL | date: 'EEEE d MMMM, y'
+          }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Fecha de finalización estimada:</p>
+        <span
+          ><strong>{{
+            prestamo.FECHA_FINAL_ESTIMADA | date: 'EEEE d MMMM, y'
+          }}</strong></span
+        >
+      </div>
     </div>
   </p-fieldset>
 

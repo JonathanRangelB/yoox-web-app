@@ -95,8 +95,7 @@ export class PagosComponent implements OnInit {
           this.messageService.add({
             severity: 'warn',
             summary: 'No se encontro el folio',
-            detail:
-              'El folio no existe o no esta asignado a ti como usuario para poder verlo',
+            detail: 'El folio no existe o no esta asignado a su usuario',
             icon: 'pi pi-exclamation-triangle',
             life: 5000,
           });
