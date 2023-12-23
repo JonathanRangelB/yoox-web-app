@@ -19,6 +19,41 @@
       class="mb-3"></button>
   </form>
 
+  <p-fieldset
+    *ngIf="prestamo"
+    legend="Información del prestamo"
+    [toggleable]="true"
+    [collapsed]="true"
+    class="mb-3"
+    [hidden]="hiddenTable">
+    <div class="information">
+      <p class="m-0">Cantidad prestada:</p>
+      <span
+        ><strong>{{ prestamo.CANTIDAD_PRESTADA }}</strong></span
+      >
+      <p class="m-0">Cantidad restante:</p>
+      <span
+        ><strong>{{ prestamo.CANTIDAD_RESTANTE }}</strong></span
+      >
+      <p class="m-0">Status:</p>
+      <span
+        ><strong>{{ prestamo.STATUS }}</strong></span
+      >
+      <p class="m-0">Fecha de inicio:</p>
+      <span
+        ><strong>{{
+          prestamo.FECHA_INICIAL | date: 'EEEE d MMMM, y'
+        }}</strong></span
+      >
+      <p class="m-0">Fecha de finalización:</p>
+      <span
+        ><strong>{{
+          prestamo.FECHA_FINAL_ESTIMADA | date: 'EEEE d MMMM, y'
+        }}</strong></span
+      >
+    </div>
+  </p-fieldset>
+
   <p-dataView
     #dv
     [value]="pagosPendientesDelFolio"

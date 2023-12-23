@@ -3,6 +3,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Component, OnInit } from '@angular/core';
 import { PagosService } from 'src/app/services/pagos-service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Prestamos } from 'src/app/models/db/prestamos';
 
 @Component({
   selector: 'app-pagos',
@@ -12,6 +13,7 @@ import { FormControl, FormGroup, Validators } from '@angular/forms';
 export class PagosComponent implements OnInit {
   loading = false;
   hiddenTable = true;
+  prestamo: Prestamos | undefined;
   folioForm!: FormGroup;
   pagosPendientesDelFolio: PrestamosDetalle[] = [];
   dialogIsVisible: boolean = false;
@@ -84,11 +86,38 @@ export class PagosComponent implements OnInit {
   buscarFolio(): void {
     this.loading = true;
     this.hiddenTable = false;
-    this.pagosService
-      .getPaymentsById(this.folioForm.value.folio)
-      .subscribe((registroDePagos) => {
-        this.pagosPendientesDelFolio = registroDePagos;
+    this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
+      next: (pagos) => {
+        console.warn(pagos);
+        if (!pagos.prestamos) {
+          this.pagosPendientesDelFolio = [];
+          this.prestamo = undefined;
+          this.messageService.add({
+            severity: 'warn',
+            summary: 'No se encontro el folio',
+            detail:
+              'El folio no existe o no esta asignado a ti como usuario para poder verlo',
+            icon: 'pi pi-exclamation-triangle',
+            life: 5000,
+          });
+        } else {
+          this.pagosPendientesDelFolio = pagos.prestamosDetalle;
+          this.prestamo = pagos.prestamos;
+        }
         this.loading = false;
-      });
+      },
+      error: (err) => {
+        console.log(err);
+        this.messageService.add({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudo obtener la información del folio',
+          icon: 'pi pi-exclamation-triangle',
+          life: 5000,
+        });
+        this.prestamo = undefined;
+        this.loading = false;
+      },
+    });
   }
 }

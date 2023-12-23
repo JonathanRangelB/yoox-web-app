@@ -12,6 +12,7 @@ import { ButtonModule } from 'primeng/button';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { FieldsetModule } from 'primeng/fieldset';
 import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
@@ -29,6 +30,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     ConfirmDialogModule,
     ToastModule,
     ReactiveFormsModule,
+    FieldsetModule,
   ],
   exports: [PagosComponent],
   providers: [ConfirmationService, MessageService],
