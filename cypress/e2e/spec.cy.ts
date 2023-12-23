@@ -51,7 +51,7 @@ describe('Landing page testing', () => {
     );
     cy.get(':nth-child(3) > .ui-grid-col-6 > .p-element').click();
 
-    cy.get('#withoutgrouping').type('23400');
+    cy.get('#withoutgrouping').type('8509');
     cy.get('.p-button').click();
     cy.get(':nth-child(1) > .xl\\:flex-row').should('exist');
   });
