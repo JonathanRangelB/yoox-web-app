@@ -15,9 +15,10 @@ export class PagosComponent implements OnInit {
   hiddenTable = true;
   prestamo: Prestamos | undefined;
   folioForm!: FormGroup;
-  pagosPendientesDelFolio: PrestamosDetalle[] = [];
+  prestamosDetalle: PrestamosDetalle[] = [];
   dialogIsVisible: boolean = false;
   header: string = 'Registro de semanas con folio 123456 del cliente Juan';
+  numeroDeCliente: number = 0;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -53,24 +54,46 @@ export class PagosComponent implements OnInit {
   }
 
   pagoExitoso(item: PrestamosDetalle): void {
-    // esto es un mock solo para simular el pago
-    this.pagosPendientesDelFolio = this.pagosPendientesDelFolio.map((pago) => {
-      if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
-        return {
-          ...pago,
-          STATUS: 'PAGADO',
-        };
-      } else return pago;
-    });
-    // fin del mock
+    this.pagosService
+      .pay({
+        ID_PRESTAMO: +item.ID_PRESTAMO,
+        ID_MULTA: 0,
+        NUMERO_SEMANA: item.NUMERO_SEMANA,
+        ID_CLIENTE: this.numeroDeCliente,
+        ID_USUARIO: +(localStorage.getItem('idusuario') || ''),
+        CANTIDAD_PAGADA: item.CANTIDAD,
+        FECHA_ACTUAL: new Date(),
+        ID_COBRADOR: +(localStorage.getItem('idusuario') || ''),
+      })
+      .subscribe({
+        next: () => {
+          this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
+            if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
+              return {
+                ...pago,
+                STATUS: 'PAGADO',
+              };
+            } else return pago;
+          });
 
-    this.messageService.add({
-      severity: 'success',
-      summary: 'Pago exitoso',
-      detail: `El pago correspondiendte a ${item.NUMERO_SEMANA} del folio ${item.ID_PRESTAMO} se ha registrado`,
-      icon: 'pi pi-check',
-      life: 5000,
-    });
+          this.messageService.add({
+            severity: 'success',
+            summary: 'Pago exitoso',
+            detail: `El pago correspondiendte a ${item.NUMERO_SEMANA} del folio ${item.ID_PRESTAMO} se ha registrado`,
+            icon: 'pi pi-check',
+            life: 5000,
+          });
+        },
+        error: (err) => {
+          this.messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: `Ocurrio un error al interntar registrar el pago: ${err.error.message}`,
+            icon: 'pi pi-exclamation-triangle',
+            life: 5000,
+          });
+        },
+      });
   }
 
   pagoCancelado(item: PrestamosDetalle): void {
@@ -90,7 +113,7 @@ export class PagosComponent implements OnInit {
       next: (pagos) => {
         console.warn(pagos);
         if (!pagos.prestamos) {
-          this.pagosPendientesDelFolio = [];
+          this.prestamosDetalle = [];
           this.prestamo = undefined;
           this.messageService.add({
             severity: 'warn',
@@ -100,8 +123,9 @@ export class PagosComponent implements OnInit {
             life: 5000,
           });
         } else {
-          this.pagosPendientesDelFolio = pagos.prestamosDetalle;
+          this.prestamosDetalle = pagos.prestamosDetalle;
           this.prestamo = pagos.prestamos;
+          this.numeroDeCliente = pagos.prestamos.ID_CLIENTE;
         }
         this.loading = false;
       },

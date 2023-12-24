@@ -1,25 +1,20 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/AuthService';
 
-export const authGuardGuard: CanActivateFn = async () => {
+export const authGuardGuard = () => {
   const router = inject(Router);
-  const authService = inject(AuthService);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || '';
 
-  let redirectToLogin = true;
-
-  if (token) {
-    await authService.tokenValidation(token).subscribe({
+  return inject(AuthService)
+    .tokenValidation(token)
+    .subscribe({
       next: (response) => {
-        redirectToLogin = !response.isValid;
+        return !response.isValid;
       },
-      error: () => {
+      error: (error) => {
+        console.warn(`GuardError: ${error.error.error}`);
         router.navigate(['/login']);
       },
     });
-  } else if (redirectToLogin) {
-    router.navigate(['/login']);
-  }
-  return redirectToLogin;
 };
