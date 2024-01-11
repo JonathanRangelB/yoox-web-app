@@ -64,15 +64,17 @@ export class PagosComponent implements OnInit {
       ID_USUARIO: +(localStorage.getItem('idusuario') || ''),
       CANTIDAD_PAGADA: item.CANTIDAD,
       FECHA_ACTUAL: new Date(),
-      ID_COBRADOR: +(localStorage.getItem('idusuario') || ''),
+      ID_COBRADOR: item.ID_COBRADOR, // asegurarme de obtener el id del cobrador y no hardcodearlo
     };
+
     this.pagosService.pay(sPAltaPago).subscribe({
-      next: () => this.resgistrarPagoExitoso(item),
+      next: (data) => this.resgistrarPagoExitoso(item, data),
       error: (err) => this.errorAlRegistrarPago(err),
     });
   }
 
-  resgistrarPagoExitoso(item: PrestamosDetalle) {
+  resgistrarPagoExitoso(item: PrestamosDetalle, data: any) {
+    console.log(data);
     this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
       if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
         return {
@@ -99,6 +101,7 @@ export class PagosComponent implements OnInit {
       icon: 'pi pi-exclamation-triangle',
       life: 5000,
     });
+    console.log(err);
   }
 
   rechazarPago(item: PrestamosDetalle): void {
