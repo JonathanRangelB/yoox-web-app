@@ -4,7 +4,6 @@ import { Validators, FormControl, FormGroup } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserData } from 'src/app/models/userData';
 import { AuthService } from 'src/app/services/AuthService';
-import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login-page',
@@ -12,8 +11,8 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent implements OnInit {
-  isProdEnv = environment.production;
-  environmentName = environment.ENV_NAME;
+  isProdEnv = process.env['PRODUCTION'];
+  environmentName = process.env['ENV_NAME'];
   loginForm!: FormGroup;
   userData: UserData | undefined;
   error = '';

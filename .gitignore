@@ -3,6 +3,7 @@ environment.ts
 environment.development.ts
 environment.staging.ts
 environment.local.ts
+.env
 
 # Compiled output
 /dist
