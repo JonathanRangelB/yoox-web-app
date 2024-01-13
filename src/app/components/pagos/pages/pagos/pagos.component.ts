@@ -4,6 +4,8 @@ import { Component, OnInit } from '@angular/core';
 import { PagosService } from 'src/app/services/pagos-service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Prestamos } from 'src/app/models/db/prestamos';
+import { PrestamoConDetallesCompletos } from '../../../../models/db/prestamos';
+import { SPAltaPago } from 'src/app/models/storedProcedures/SPAltaPago';
 
 @Component({
   selector: 'app-pagos',
@@ -15,9 +17,10 @@ export class PagosComponent implements OnInit {
   hiddenTable = true;
   prestamo: Prestamos | undefined;
   folioForm!: FormGroup;
-  pagosPendientesDelFolio: PrestamosDetalle[] = [];
+  prestamosDetalle: PrestamosDetalle[] = [];
   dialogIsVisible: boolean = false;
   header: string = 'Registro de semanas con folio 123456 del cliente Juan';
+  numeroDeCliente: number = 0;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -47,14 +50,32 @@ export class PagosComponent implements OnInit {
   pagar(item: PrestamosDetalle): void {
     this.confirmationService.confirm({
       message: `¿Estás seguro de pagar ${item.CANTIDAD} correspondientes a la semana ${item.NUMERO_SEMANA} para el folio ${item.ID_PRESTAMO}?`,
-      accept: () => this.pagoExitoso(item),
-      reject: () => this.pagoCancelado(item),
+      accept: () => this.registrarPago(item),
+      reject: () => this.rechazarPago(item),
     });
   }
 
-  pagoExitoso(item: PrestamosDetalle): void {
-    // esto es un mock solo para simular el pago
-    this.pagosPendientesDelFolio = this.pagosPendientesDelFolio.map((pago) => {
+  registrarPago(item: PrestamosDetalle): void {
+    const sPAltaPago: SPAltaPago = {
+      ID_PRESTAMO: +item.ID_PRESTAMO,
+      ID_MULTA: 0,
+      NUMERO_SEMANA: item.NUMERO_SEMANA,
+      ID_CLIENTE: this.numeroDeCliente,
+      ID_USUARIO: +(localStorage.getItem('idusuario') || ''),
+      CANTIDAD_PAGADA: item.CANTIDAD,
+      FECHA_ACTUAL: new Date(),
+      ID_COBRADOR: item.ID_COBRADOR, // asegurarme de obtener el id del cobrador y no hardcodearlo
+    };
+
+    this.pagosService.pay(sPAltaPago).subscribe({
+      next: (data) => this.resgistrarPagoExitoso(item, data),
+      error: (err) => this.errorAlRegistrarPago(err),
+    });
+  }
+
+  resgistrarPagoExitoso(item: PrestamosDetalle, data: any) {
+    console.log(data);
+    this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
       if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
         return {
           ...pago,
@@ -62,7 +83,6 @@ export class PagosComponent implements OnInit {
         };
       } else return pago;
     });
-    // fin del mock
 
     this.messageService.add({
       severity: 'success',
@@ -73,7 +93,18 @@ export class PagosComponent implements OnInit {
     });
   }
 
-  pagoCancelado(item: PrestamosDetalle): void {
+  errorAlRegistrarPago(err: any): void {
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: `Ocurrio un error al interntar registrar el pago: ${err.error.message}`,
+      icon: 'pi pi-exclamation-triangle',
+      life: 5000,
+    });
+    console.log(err);
+  }
+
+  rechazarPago(item: PrestamosDetalle): void {
     this.messageService.add({
       severity: 'warn',
       summary: 'Acción cancelada',
@@ -87,37 +118,40 @@ export class PagosComponent implements OnInit {
     this.loading = true;
     this.hiddenTable = false;
     this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
-      next: (pagos) => {
-        console.warn(pagos);
-        if (!pagos.prestamos) {
-          this.pagosPendientesDelFolio = [];
-          this.prestamo = undefined;
-          this.messageService.add({
-            severity: 'warn',
-            summary: 'No se encontro el folio',
-            detail:
-              'El folio no existe o no esta asignado a ti como usuario para poder verlo',
-            icon: 'pi pi-exclamation-triangle',
-            life: 5000,
-          });
-        } else {
-          this.pagosPendientesDelFolio = pagos.prestamosDetalle;
-          this.prestamo = pagos.prestamos;
-        }
-        this.loading = false;
-      },
-      error: (err) => {
-        console.log(err);
-        this.messageService.add({
-          severity: 'error',
-          summary: 'Error',
-          detail: 'No se pudo obtener la información del folio',
-          icon: 'pi pi-exclamation-triangle',
-          life: 5000,
-        });
-        this.prestamo = undefined;
-        this.loading = false;
-      },
+      next: (pagos) => this.datosDelFolio(pagos),
+      error: (err) => this.errorEnDatosDelFolio(err),
     });
+  }
+
+  datosDelFolio(pagos: PrestamoConDetallesCompletos): void {
+    if (!pagos.prestamos) {
+      this.prestamosDetalle = [];
+      this.prestamo = undefined;
+      this.messageService.add({
+        severity: 'warn',
+        summary: 'No se encontro el folio',
+        detail: 'El folio no existe o no esta asignado a su usuario',
+        icon: 'pi pi-exclamation-triangle',
+        life: 5000,
+      });
+    } else {
+      this.prestamosDetalle = pagos.prestamosDetalle;
+      this.prestamo = pagos.prestamos;
+      this.numeroDeCliente = pagos.prestamos.ID_CLIENTE;
+    }
+    this.loading = false;
+  }
+
+  errorEnDatosDelFolio(err: unknown): void {
+    console.log(err);
+    this.messageService.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'No se pudo obtener la información del folio',
+      icon: 'pi pi-exclamation-triangle',
+      life: 5000,
+    });
+    this.prestamo = undefined;
+    this.loading = false;
   }
 }

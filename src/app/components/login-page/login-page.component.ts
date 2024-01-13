@@ -11,6 +11,8 @@ import { AuthService } from 'src/app/services/AuthService';
   styleUrls: ['./login-page.component.scss'],
 })
 export class LoginPageComponent implements OnInit {
+  isProdEnv = process.env['PRODUCTION'];
+  environmentName = process.env['ENV_NAME'];
   loginForm!: FormGroup;
   userData: UserData | undefined;
   error = '';
@@ -53,7 +55,7 @@ export class LoginPageComponent implements OnInit {
     this.loading = false;
     localStorage.setItem('token', usr.Autorization);
     console.log(usr);
-
+    // TODO: hacer un servicio para poder guardar los datos de usuario en el y evitar el uso de localStorage
     localStorage.setItem('idusuario', usr.user.ID.toString());
 
     this.router.navigate(['/pagos']);

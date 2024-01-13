@@ -21,7 +21,7 @@
               formControlName="user"
               placeholder="Ej: jonathan"
               class="form-control mb-3"
-              name="user" />
+              name="username" />
           </span>
         </div>
         <div class="ui-grid-col-4">
@@ -79,4 +79,7 @@
     </div>
     <p *ngIf="error" class="text-red-500">{{ error }}</p>
   </p-panel>
+  <pre *ngIf="isProdEnv === 'false'">
+  Entorno actual: {{ environmentName }}
+  </pre>
 </form>

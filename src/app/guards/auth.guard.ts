@@ -1,25 +1,21 @@
+/*eslint no-unused-vars: "error"*/
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { AuthService } from '../services/AuthService';
+import { catchError, map, of } from 'rxjs';
 
-export const authGuardGuard: CanActivateFn = async () => {
+export const authGuardGuard = () => {
   const router = inject(Router);
-  const authService = inject(AuthService);
-  const token = localStorage.getItem('token');
+  const token = localStorage.getItem('token') || '';
 
-  let redirectToLogin = true;
-
-  if (token) {
-    await authService.tokenValidation(token).subscribe({
-      next: (response) => {
-        redirectToLogin = !response.isValid;
-      },
-      error: () => {
+  return inject(AuthService)
+    .tokenValidation(token)
+    .pipe(
+      map((response) => of(response.isValid)),
+      catchError(({ error }) => {
+        console.warn(`GuardError: ${error.error}`);
         router.navigate(['/login']);
-      },
-    });
-  } else if (redirectToLogin) {
-    router.navigate(['/login']);
-  }
-  return redirectToLogin;
+        return of(false);
+      })
+    );
 };
