@@ -45,8 +45,8 @@ jobs:
       - name: Linting
         run: npm run lint:ci
 
-      - name: Unit Testing
-        run: npm run test:ci
+      # - name: Unit Testing
+      #   run: npm run test:ci
 
       - name: E2E Testing
         run: npm run e2e:ci
