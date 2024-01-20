@@ -1,0 +1,129 @@
+<section class="flex flex-column align-items-center p-3">
+  <form
+    (ngSubmit)="buscarFolio()"
+    [formGroup]="folioForm"
+    style="margin: 1rem auto; display: grid; place-items: center">
+    <span class="p-input-icon-right">
+      <i
+        class="pi pi-times-circle"
+        style="margin-top: -1rem; cursor: pointer"
+        *ngIf="folioForm.value.folio"
+        (click)="folioForm.get('folio')?.reset()"></i>
+      <p-inputNumber
+        class="mb-3"
+        mode="decimal"
+        formControlName="folio"
+        inputId="withoutgrouping"
+        [useGrouping]="false"
+        placeholder="Número de folio o prestamo">
+      </p-inputNumber>
+    </span>
+    <button
+      pButton
+      label="Buscar"
+      [disabled]="!folioForm.valid"
+      [loading]="loading"
+      class="mb-3"></button>
+  </form>
+
+  <p-fieldset
+    *ngIf="prestamo"
+    legend="Información del prestamo"
+    [toggleable]="true"
+    [collapsed]="true"
+    class="mb-3"
+    [style]="{ width: '90vw' }"
+    [hidden]="hiddenTable">
+    <div class="flex gap-3 flex-wrap justify-content-between">
+      <div>
+        <p class="m-0">Cantidad prestada:</p>
+        <span
+          ><strong>{{ prestamo.CANTIDAD_PRESTADA }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Cantidad restante:</p>
+        <span
+          ><strong>{{ prestamo.CANTIDAD_RESTANTE }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Status del prestamo:</p>
+        <span
+          ><strong>{{ prestamo.STATUS }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Fecha de inicio:</p>
+        <span
+          ><strong>{{
+            prestamo.FECHA_INICIAL | date: 'EEEE d MMMM, y'
+          }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Fecha de finalización estimada:</p>
+        <span
+          ><strong>{{
+            prestamo.FECHA_FINAL_ESTIMADA | date: 'EEEE d MMMM, y'
+          }}</strong></span
+        >
+      </div>
+    </div>
+  </p-fieldset>
+
+  <p-dataView
+    #dv
+    [value]="prestamosDetalle"
+    [loading]="loading"
+    [hidden]="hiddenTable">
+    <ng-template pTemplate="list" let-products>
+      <div class="grid grid-nogutter">
+        <div class="col-12" *ngFor="let item of products; let first = first">
+          <div
+            class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
+            [ngClass]="{ 'border-top-1 surface-border': !first }">
+            <div
+              class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+              <div
+                class="flex flex-column align-items-center sm:align-items-start gap-3">
+                <div class="text-2xl font-bold text-900">
+                  Fecha de vencimiento:
+                  <div class="text-cyan-700">
+                    {{ item.FECHA_VENCIMIENTO | date: 'EEEE d MMMM, y' }}
+                  </div>
+                </div>
+
+                <div class="flex align-items-center gap-3">
+                  <span class="flex align-items-center gap-2">
+                    <i class="pi pi-tag"></i>
+                    <span class="font-semibold"
+                      >Semana {{ item.NUMERO_SEMANA }}</span
+                    >
+                  </span>
+                  <p-tag
+                    [value]="item.STATUS"
+                    [severity]="getSeverity(item)"></p-tag>
+                </div>
+              </div>
+              <div
+                class="flex sm:flex-column align-items-center sm:align-items-end gap-3 sm:gap-2">
+                <span class="text-2xl font-semibold">{{
+                  item.CANTIDAD | currency: 'MXN' : 'symbol' : '1.2-2'
+                }}</span>
+                <button
+                  pButton
+                  icon="pi pi-money-bill"
+                  class="md:align-self-end mb-2 p-button-rounded"
+                  (click)="pagar(item)"
+                  [disabled]="activarBotonPago(item)"></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-template>
+  </p-dataView>
+  <p-confirmDialog [style]="{ width: '80vw' }"></p-confirmDialog>
+  <p-toast></p-toast>
+</section>
