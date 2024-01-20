@@ -67,10 +67,20 @@ export class PagosComponent implements OnInit {
       ID_COBRADOR: item.ID_COBRADOR, // asegurarme de obtener el id del cobrador y no hardcodearlo
     };
 
-    this.pagosService.pay(sPAltaPago).subscribe({
-      next: (data) => this.resgistrarPagoExitoso(item, data),
-      error: (err) => this.errorAlRegistrarPago(err),
-    });
+    if (!this.comprobarSecuenciaDeSemanas(item)) {
+      this.pagosService.pay(sPAltaPago).subscribe({
+        next: (data) => this.resgistrarPagoExitoso(item, data),
+        error: (err) => this.errorAlRegistrarPago(err),
+      });
+    } else {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `No se puede registrar el pago de la semana ${item.NUMERO_SEMANA} porque no es el siguiente pago a realizar`,
+        icon: 'pi pi-exclamation-triangle',
+        life: 5000,
+      });
+    }
   }
 
   resgistrarPagoExitoso(item: PrestamosDetalle, data: any) {
@@ -153,5 +163,12 @@ export class PagosComponent implements OnInit {
     });
     this.prestamo = undefined;
     this.loading = false;
+  }
+
+  comprobarSecuenciaDeSemanas(semana: PrestamosDetalle): boolean {
+    const semanaCorrecta = this.prestamosDetalle.find(
+      (semana) => semana.STATUS === 'NO PAGADO' || semana.STATUS === 'VENCIDO'
+    );
+    return semanaCorrecta?.NUMERO_SEMANA !== semana.NUMERO_SEMANA;
   }
 }
