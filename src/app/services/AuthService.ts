@@ -4,12 +4,13 @@ import { shareReplay } from 'rxjs';
 import { User } from '../models/user';
 import { UserData } from '../models/userData';
 import { TokenValidationResponse } from '../models/tokenValidationResponse';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
-  private readonly API_URL = process.env['API_URL'] || 'http://localhost:3000/';
+  private readonly API_URL = environment.API_URL;
 
   constructor(private http: HttpClient) {}
 
