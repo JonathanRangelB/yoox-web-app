@@ -13,7 +13,7 @@ import { SPAltaPago } from 'src/app/models/storedProcedures/SPAltaPago';
   styleUrl: './pagos.component.scss',
 })
 export class PagosComponent implements OnInit {
-  loading = false;
+  cargandoDatosDePrestamo = false;
   hiddenTable = true;
   prestamo: Prestamos | undefined;
   folioForm!: FormGroup;
@@ -56,6 +56,7 @@ export class PagosComponent implements OnInit {
   }
 
   registrarPago(item: PrestamosDetalle): void {
+    item.LOADING = true;
     const sPAltaPago: SPAltaPago = {
       ID_PRESTAMO: +item.ID_PRESTAMO,
       ID_MULTA: 0,
@@ -73,6 +74,7 @@ export class PagosComponent implements OnInit {
         error: (err) => this.errorAlRegistrarPago(err),
       });
     } else {
+      item.LOADING = false;
       this.messageService.add({
         severity: 'error',
         summary: 'Error',
@@ -84,7 +86,8 @@ export class PagosComponent implements OnInit {
   }
 
   resgistrarPagoExitoso(item: PrestamosDetalle, data: any) {
-    console.log(data);
+    // console.log(data); // TODO: la variable data es la respuesta del storedProcedure, pero de momento no se usa
+    item.LOADING = false;
     this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
       if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
         return {
@@ -125,7 +128,7 @@ export class PagosComponent implements OnInit {
   }
 
   buscarFolio(): void {
-    this.loading = true;
+    this.cargandoDatosDePrestamo = true;
     this.hiddenTable = false;
     this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
       next: (pagos) => this.datosDelFolio(pagos),
@@ -149,7 +152,7 @@ export class PagosComponent implements OnInit {
       this.prestamo = pagos.prestamos;
       this.numeroDeCliente = pagos.prestamos.ID_CLIENTE;
     }
-    this.loading = false;
+    this.cargandoDatosDePrestamo = false;
   }
 
   errorEnDatosDelFolio(err: unknown): void {
@@ -162,7 +165,7 @@ export class PagosComponent implements OnInit {
       life: 5000,
     });
     this.prestamo = undefined;
-    this.loading = false;
+    this.cargandoDatosDePrestamo = false;
   }
 
   comprobarSecuenciaDeSemanas(semana: PrestamosDetalle): boolean {
@@ -170,5 +173,14 @@ export class PagosComponent implements OnInit {
       (semana) => semana.STATUS === 'NO PAGADO' || semana.STATUS === 'VENCIDO'
     );
     return semanaCorrecta?.NUMERO_SEMANA !== semana.NUMERO_SEMANA;
+  }
+
+  obtenerIcono({ LOADING, STATUS }: PrestamosDetalle): string {
+    if (LOADING) return 'pi pi-spin pi-spinner';
+    else if (STATUS === 'PAGADO') return 'pi pi-check';
+    else if (STATUS === 'NO PAGADO') return 'pi pi-money-bill';
+    else if (STATUS === 'CANCELADO') return 'pi pi-times';
+    else if (STATUS === 'VENCIDO') return 'pi pi-money-bill';
+    else return 'pi pi-question';
   }
 }

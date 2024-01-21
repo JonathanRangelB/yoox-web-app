@@ -22,7 +22,7 @@
       pButton
       label="Buscar"
       [disabled]="!folioForm.valid"
-      [loading]="loading"
+      [loading]="cargandoDatosDePrestamo"
       class="mb-3"></button>
   </form>
 
@@ -75,7 +75,7 @@
   <p-dataView
     #dv
     [value]="prestamosDetalle"
-    [loading]="loading"
+    [loading]="cargandoDatosDePrestamo"
     [hidden]="hiddenTable">
     <ng-template pTemplate="list" let-products>
       <div class="grid grid-nogutter">
@@ -96,7 +96,7 @@
 
                 <div class="flex align-items-center gap-3">
                   <span class="flex align-items-center gap-2">
-                    <i class="pi pi-tag"></i>
+                    <i class="pi pi-calendar"></i>
                     <span class="font-semibold"
                       >Semana {{ item.NUMERO_SEMANA }}</span
                     >
@@ -113,7 +113,8 @@
                 }}</span>
                 <button
                   pButton
-                  icon="pi pi-money-bill"
+                  [icon]="obtenerIcono(item)"
+                  [loading]="item.LOADING"
                   class="md:align-self-end mb-2 p-button-rounded"
                   (click)="pagar(item)"
                   [disabled]="activarBotonPago(item)"></button>
