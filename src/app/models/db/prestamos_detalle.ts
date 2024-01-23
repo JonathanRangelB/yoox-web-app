@@ -10,4 +10,5 @@ export type PrestamosDetalle = {
   PROMESA_PAGO: Date;
   MODO_INSERCION: string;
   INSERTADO_POR: number;
+  LOADING?: boolean;
 };
