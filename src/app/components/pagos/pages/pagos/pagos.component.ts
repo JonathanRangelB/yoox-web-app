@@ -70,7 +70,7 @@ export class PagosComponent implements OnInit {
 
     if (!this.comprobarSecuenciaDeSemanas(item)) {
       this.pagosService.pay(sPAltaPago).subscribe({
-        next: (data) => this.resgistrarPagoExitoso(item, data),
+        next: () => this.resgistrarPagoExitoso(item),
         error: (err) => this.errorAlRegistrarPago(err),
       });
     } else {
@@ -85,7 +85,7 @@ export class PagosComponent implements OnInit {
     }
   }
 
-  resgistrarPagoExitoso(item: PrestamosDetalle, data: any) {
+  resgistrarPagoExitoso(item: PrestamosDetalle) {
     // console.log(data); // TODO: la variable data es la respuesta del storedProcedure, pero de momento no se usa
     item.LOADING = false;
     this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
