@@ -27,10 +27,6 @@ export class LoginPageComponent implements OnInit {
       user: new FormControl('', Validators.required),
       password: new FormControl('', Validators.required),
     });
-    console.log({
-      isProdEnv: this.isProdEnv,
-      environmentName: this.environmentName,
-    });
   }
 
   constructor(
