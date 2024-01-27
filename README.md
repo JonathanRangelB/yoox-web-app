@@ -1,4 +1,6 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/68695be5-069d-4cdc-9a24-c6fff93d42d8/deploy-status)](https://app.netlify.com/sites/financierayoox/deploys)
+[![CI CD workflow - Development](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml)
+[![Cypress Tests - MAIN](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/cypress.yml/badge.svg?branch=main)](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/cypress.yml)
 
 # YooxWebApp (Angular v17)
 

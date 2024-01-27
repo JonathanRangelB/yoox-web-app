@@ -5,7 +5,7 @@ on:
       - staging
       - development
 jobs:
-  Continuous_Integration:
+  CI:
     runs-on: ubuntu-latest
     env:
       NG_APP_PRODUCTION: ${{secrets.NG_APP_PRODUCTION}}
@@ -13,12 +13,12 @@ jobs:
       NG_APP_API_URL: ${{secrets.NG_APP_API_URL}}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4.1.1
 
       - name: Setup Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v4.0.1
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Install pnpm
         uses: pnpm/action-setup@v2.4.0
@@ -31,7 +31,7 @@ jobs:
         run: |
           echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
 
-      - uses: actions/cache@v3.3.2
+      - uses: actions/cache@v4.0.0
         name: Setup pnpm cache
         with:
           path: |
@@ -47,8 +47,8 @@ jobs:
       - name: Linting
         run: npm run lint:ci
 
-      # - name: Unit Testing
-      #   run: npm run test:ci
+      - name: Unit Testing
+        run: npm run test:ci
 
       - name: E2E Testing
         run: npm run e2e:ci
