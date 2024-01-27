@@ -5,7 +5,7 @@ on:
       - staging
       - development
 jobs:
-  Continuous_Integration:
+  CI:
     runs-on: ubuntu-latest
     env:
       NG_APP_PRODUCTION: ${{secrets.NG_APP_PRODUCTION}}
