@@ -42,8 +42,8 @@ export class LoginPageComponent implements OnInit {
 
     this.authService
       .login({
-        userId: this.loginForm.value.user,
-        password: this.loginForm.value.password.toUpperCase(),
+        userId: this.loginForm.value.user.toUpperCase(),
+        password: this.loginForm.value.password,
       })
       .subscribe({
         next: this.handleSuccessfullLogin,
