@@ -59,16 +59,17 @@ export class PagosComponent implements OnInit {
   }
 
   registrarPago(item: PrestamosDetalle): void {
+    const usuarioActual: number = +(localStorage.getItem('idusuario') || '');
     item.LOADING = true;
     const sPAltaPago: SPAltaPago = {
       ID_PRESTAMO: +item.ID_PRESTAMO,
       ID_MULTA: 0,
       NUMERO_SEMANA: item.NUMERO_SEMANA,
       ID_CLIENTE: this.numeroDeCliente,
-      ID_USUARIO: +(localStorage.getItem('idusuario') || ''),
+      ID_USUARIO: usuarioActual,
       CANTIDAD_PAGADA: item.CANTIDAD,
       FECHA_ACTUAL: new Date(),
-      ID_COBRADOR: item.ID_COBRADOR, // asegurarme de obtener el id del cobrador y no hardcodearlo
+      ID_COBRADOR: usuarioActual, // asegurarme de obtener el id del cobrador y no hardcodearlo
     };
 
     if (!this.comprobarSecuenciaDeSemanas(item)) {
