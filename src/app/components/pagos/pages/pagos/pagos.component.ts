@@ -40,6 +40,7 @@ export class PagosComponent implements OnInit {
     if (item.STATUS === 'PAGADO') return 'success';
     else if (item.STATUS === 'NO PAGADO') return 'warning';
     else if (item.STATUS === 'CANCELADO') return 'warning';
+    else if (item.STATUS === 'ANULADO') return 'success';
     else return 'danger';
   }
 
@@ -155,7 +156,10 @@ export class PagosComponent implements OnInit {
       this.numeroDeCliente = pagos.prestamos.ID_CLIENTE;
       this.totalPagos = pagos.prestamosDetalle.length;
       this.pagosPendientes = pagos.prestamosDetalle.filter(
-        (pagos) => pagos.STATUS === 'PAGADO' || pagos.STATUS === 'CANCELADO'
+        (pagos) =>
+          pagos.STATUS === 'PAGADO' ||
+          pagos.STATUS === 'CANCELADO' ||
+          pagos.STATUS === 'ANULADO'
       ).length;
     }
     this.cargandoDatosDePrestamo = false;
@@ -187,6 +191,7 @@ export class PagosComponent implements OnInit {
     else if (STATUS === 'NO PAGADO') return 'pi pi-money-bill';
     else if (STATUS === 'CANCELADO') return 'pi pi-times';
     else if (STATUS === 'VENCIDO') return 'pi pi-money-bill';
+    else if (STATUS === 'ANULADO') return 'pi pi-money-bill';
     else return 'pi pi-question';
   }
 }
