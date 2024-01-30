@@ -1,6 +1,5 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/68695be5-069d-4cdc-9a24-c6fff93d42d8/deploy-status)](https://app.netlify.com/sites/financierayoox/deploys)
-[![CI-CD Dev](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml/badge.svg?branch=development)](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml)
-[![CI-CD Stg](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml/badge.svg?branch=staging)](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml)
+[![CI-CD Dev](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml/badge.svg)](https://github.com/JonathanRangelB/yoox-web-app/actions/workflows/ci.yml)
 
 # YooxWebApp (Angular v17)
 
