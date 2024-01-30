@@ -21,6 +21,7 @@ export interface Prestamos {
   ID_MULTA: null;
   TASA_INTERES: number;
   ID_GRUPO_ORIGINAL: number;
+  NOMBRE_CLIENTE?: string;
 }
 
 export enum Status {
