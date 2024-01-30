@@ -36,6 +36,12 @@
     [hidden]="hiddenTable">
     <div class="flex gap-3 flex-wrap justify-content-between">
       <div>
+        <p class="m-0">Nombre del Cliente:</p>
+        <span
+          ><strong>{{ prestamo.NOMBRE_CLIENTE }}</strong></span
+        >
+      </div>
+      <div>
         <p class="m-0">Cantidad prestada:</p>
         <span
           ><strong>{{ prestamo.CANTIDAD_PRESTADA }}</strong></span
@@ -51,6 +57,12 @@
         <p class="m-0">Status del prestamo:</p>
         <span
           ><strong>{{ prestamo.STATUS }}</strong></span
+        >
+      </div>
+      <div>
+        <p class="m-0">Pagos registrados:</p>
+        <span
+          ><strong>{{ pagosPendientes }} de {{ totalPagos }}</strong></span
         >
       </div>
       <div>
