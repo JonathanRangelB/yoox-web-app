@@ -21,6 +21,8 @@ export class PagosComponent implements OnInit {
   dialogIsVisible: boolean = false;
   header: string = 'Registro de semanas con folio 123456 del cliente Juan';
   numeroDeCliente: number = 0;
+  pagosPendientes: number = 0;
+  totalPagos: number = 0;
 
   constructor(
     private confirmationService: ConfirmationService,
@@ -151,6 +153,10 @@ export class PagosComponent implements OnInit {
       this.prestamosDetalle = pagos.prestamosDetalle;
       this.prestamo = pagos.prestamos;
       this.numeroDeCliente = pagos.prestamos.ID_CLIENTE;
+      this.totalPagos = pagos.prestamosDetalle.length;
+      this.pagosPendientes = pagos.prestamosDetalle.filter(
+        (pagos) => pagos.STATUS === 'PAGADO' || pagos.STATUS === 'CANCELADO'
+      ).length;
     }
     this.cargandoDatosDePrestamo = false;
   }
