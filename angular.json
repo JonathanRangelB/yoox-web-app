@@ -30,8 +30,7 @@
                 "glob": "_redirects",
                 "input": "src",
                 "output": "/"
-              },
-              "src/manifest.webmanifest"
+              }
             ],
             "styles": [
               "node_modules/primeng/resources/themes/lara-dark-indigo/theme.css",
@@ -40,9 +39,7 @@
               "node_modules/primeflex/primeflex.css",
               "src/styles.scss"
             ],
-            "scripts": [],
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -60,20 +57,6 @@
               ],
               "outputHashing": "all"
             },
-            "staging": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.staging.ts"
-                }
-              ]
-            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
@@ -88,21 +71,6 @@
                   "with": "src/environments/environment.development.ts"
                 }
               ]
-            },
-            "local": {
-              "buildOptimizer": false,
-              "optimization": false,
-              "vendorChunk": true,
-              "extractLicenses": false,
-              "sourceMap": true,
-              "namedChunks": true,
-              "serviceWorker": false,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.local.ts"
-                }
-              ]
             }
           },
           "defaultConfiguration": "production"
@@ -113,14 +81,8 @@
             "production": {
               "buildTarget": "yoox-web-app:build:production"
             },
-            "staging": {
-              "buildTarget": "yoox-web-app:build:staging"
-            },
             "development": {
               "buildTarget": "yoox-web-app:build:development"
-            },
-            "local": {
-              "buildTarget": "yoox-web-app:build:local"
             }
           },
           "defaultConfiguration": "development"
@@ -137,11 +99,7 @@
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
             "inlineStyleLanguage": "scss",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets",
-              "src/manifest.webmanifest"
-            ],
+            "assets": ["src/favicon.ico", "src/assets"],
             "styles": ["src/styles.scss"],
             "scripts": []
           }
