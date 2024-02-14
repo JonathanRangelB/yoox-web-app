@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
-import { UpdateService } from './services/update.service';
 
 @Component({
   selector: 'app-root',
@@ -8,10 +7,7 @@ import { UpdateService } from './services/update.service';
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent implements OnInit {
-  constructor(
-    private primengConfig: PrimeNGConfig,
-    private nwUpdate: UpdateService
-  ) {}
+  constructor(private primengConfig: PrimeNGConfig) {}
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
