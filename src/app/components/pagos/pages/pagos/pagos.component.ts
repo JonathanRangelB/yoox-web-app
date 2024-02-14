@@ -14,7 +14,7 @@ import { SPAltaPago } from 'src/app/models/storedProcedures/SPAltaPago';
 })
 export class PagosComponent implements OnInit {
   cargandoDatosDePrestamo = false;
-  hiddenTable = true;
+  hideTable = true;
   prestamo: Prestamos | undefined;
   folioForm!: FormGroup;
   prestamosDetalle: PrestamosDetalle[] = [];
@@ -36,17 +36,18 @@ export class PagosComponent implements OnInit {
     });
   }
 
-  getSeverity(item: PrestamosDetalle): string {
-    if (item.STATUS === 'PAGADO') return 'success';
-    else if (item.STATUS === 'NO PAGADO') return 'warning';
-    else if (item.STATUS === 'CANCELADO') return 'warning';
-    else if (item.STATUS === 'ANULADO') return 'success';
+  getSeverity({ STATUS }: PrestamosDetalle): string {
+    if (STATUS === 'PAGADO') return 'success';
+    else if (STATUS === 'NO PAGADO') return 'warning';
+    else if (STATUS === 'CANCELADO') return 'warning';
+    else if (STATUS === 'ANULADO') return 'warning';
     else return 'danger';
   }
 
-  activarBotonPago(item: PrestamosDetalle): boolean {
-    if (item.STATUS === 'PAGADO') return true;
-    else if (item.STATUS === 'CANCELADO') return true;
+  activarBotonPago({ STATUS }: PrestamosDetalle): boolean {
+    if (STATUS === 'PAGADO') return true;
+    else if (STATUS === 'CANCELADO') return true;
+    else if (STATUS === 'ANULADO') return true;
     else return false;
   }
 
@@ -121,11 +122,11 @@ export class PagosComponent implements OnInit {
     console.log(err);
   }
 
-  rechazarPago(item: PrestamosDetalle): void {
+  rechazarPago({ NUMERO_SEMANA, ID_PRESTAMO }: PrestamosDetalle): void {
     this.messageService.add({
       severity: 'warn',
       summary: 'Acción cancelada',
-      detail: `El pago correspondiendte a ${item.NUMERO_SEMANA} del folio ${item.ID_PRESTAMO} no se ha registrado`,
+      detail: `El pago correspondiendte a ${NUMERO_SEMANA} del folio ${ID_PRESTAMO} no se ha registrado`,
       icon: 'pi pi-exclamation-triangle',
       life: 5000,
     });
@@ -133,7 +134,7 @@ export class PagosComponent implements OnInit {
 
   buscarFolio(): void {
     this.cargandoDatosDePrestamo = true;
-    this.hiddenTable = false;
+    this.hideTable = false;
     this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
       next: (pagos) => this.datosDelFolio(pagos),
       error: (err) => this.errorEnDatosDelFolio(err),
@@ -157,10 +158,8 @@ export class PagosComponent implements OnInit {
       this.numeroDeCliente = pagos.prestamos.ID_CLIENTE;
       this.totalPagos = pagos.prestamosDetalle.length;
       this.pagosPendientes = pagos.prestamosDetalle.filter(
-        (pagos) =>
-          pagos.STATUS === 'PAGADO' ||
-          pagos.STATUS === 'CANCELADO' ||
-          pagos.STATUS === 'ANULADO'
+        ({ STATUS }) =>
+          STATUS === 'PAGADO' || STATUS === 'CANCELADO' || STATUS === 'ANULADO'
       ).length;
     }
     this.cargandoDatosDePrestamo = false;
@@ -181,7 +180,7 @@ export class PagosComponent implements OnInit {
 
   comprobarSecuenciaDeSemanas(semana: PrestamosDetalle): boolean {
     const semanaCorrecta = this.prestamosDetalle.find(
-      (semana) => semana.STATUS === 'NO PAGADO' || semana.STATUS === 'VENCIDO'
+      ({ STATUS }) => STATUS === 'NO PAGADO' || STATUS === 'VENCIDO'
     );
     return semanaCorrecta?.NUMERO_SEMANA !== semana.NUMERO_SEMANA;
   }
