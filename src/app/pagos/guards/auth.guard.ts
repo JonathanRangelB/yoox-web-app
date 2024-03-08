@@ -1,7 +1,7 @@
 /*eslint no-unused-vars: "error"*/
 import { inject } from '@angular/core';
 import { Router } from '@angular/router';
-import { AuthService } from '../services/AuthService';
+import { AuthService } from '../../login/services/AuthService';
 import { catchError, map, of } from 'rxjs';
 
 export const authGuardGuard = () => {
