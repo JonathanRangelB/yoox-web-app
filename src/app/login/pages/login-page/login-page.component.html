@@ -48,8 +48,10 @@
         label="Acceder"
         [loading]="loading"
         [disabled]="!loginForm.valid"></button>
+      <p *ngIf="error" class="text-red-500 text-center mb-0" id="error-message">
+        {{ error }}.
+      </p>
     </p-panel>
-
     <pre *ngIf="isProdEnv !== 'true'">
   Entorno actual: {{ environmentName }}
   </pre
