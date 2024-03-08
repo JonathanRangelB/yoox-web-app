@@ -1,11 +1,11 @@
-import { PrestamosDetalle } from '../../../models/db/prestamos_detalle';
+import { PrestamosDetalle } from '../../interfaces/prestamos_detalle.interface';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Component, OnInit } from '@angular/core';
-import { PagosService } from 'src/app/login/services/pagos-service';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Prestamos } from 'src/app/models/db/prestamos';
-import { PrestamoConDetallesCompletos } from '../../../models/db/prestamos';
-import { SPAltaPago } from 'src/app/models/storedProcedures/SPAltaPago';
+import { Prestamos } from 'src/app/pagos/interfaces/prestamos.interface';
+import { PrestamoConDetallesCompletos } from '../../interfaces/prestamos.interface';
+import { SPAltaPago } from 'src/app/pagos/interfaces/SPAltaPago.interface';
+import { PagosService } from '../../services/pagos-service';
 
 @Component({
   selector: 'app-pagos',
