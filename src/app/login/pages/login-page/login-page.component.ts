@@ -2,7 +2,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserData } from 'src/app/models/userData';
+import { UserData } from 'src/app/shared/interfaces/userData.interface';
 import { AuthService } from 'src/app/login/services/AuthService';
 import { environment } from 'src/environments/environment';
 

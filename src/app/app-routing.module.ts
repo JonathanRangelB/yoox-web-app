@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { LandingComponent } from './landing/landing.component';
-import { authGuardGuard } from './pagos/guards/auth.guard';
+import { authGuardGuard } from './shared/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },

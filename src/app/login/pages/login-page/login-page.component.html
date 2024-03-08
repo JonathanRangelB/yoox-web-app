@@ -1,85 +1,63 @@
-<form
-  (ngSubmit)="requestLogin()"
-  [formGroup]="loginForm"
-  style="margin: 1rem auto; display: grid; place-items: center">
-  <p-panel header="Ingresa tus credenciales" class="max-w-20rem">
-    <div
-      class="ui-grid ui-grid-responsive ui-grid-pad ui-fluid"
-      style="margin: 10px 0px">
-      <div class="ui-grid-row">
-        <div class="ui-grid-col-2 mb-1">Usuario:</div>
-        <div class="ui-grid-col-6">
-          <span class="p-input-icon-right">
-            <i
-              class="pi pi-times-circle"
-              style="margin-top: -1rem; cursor: pointer"
-              *ngIf="loginForm.value.user"
-              (click)="loginForm.get('user')?.reset()"></i>
-            <input
-              pInputText
-              type="text"
-              formControlName="user"
-              placeholder="Ej: jonathan"
-              class="form-control mb-3"
-              name="username" />
-          </span>
-        </div>
-        <div class="ui-grid-col-4">
-          <div
-            [hidden]="
-              loginForm.controls['user'].valid ||
-              !loginForm.controls['user'].dirty
-            "
-            class="text-red-500">
-            Usuario es requerido
-          </div>
-        </div>
-      </div>
-      <div class="ui-grid-row mt-3">
-        <div class="ui-grid-col-2 mb-1">Contraseña:</div>
-        <div class="ui-grid-col-6">
-          <span class="p-input-icon-right">
-            <i
-              class="pi pi-times-circle"
-              style="margin-top: -1rem; cursor: pointer"
-              *ngIf="loginForm.value.password"
-              (click)="loginForm.get('password')?.reset()"></i>
-            <input
-              pInputText
-              type="password"
-              formControlName="password"
-              placeholder="Ej: k3dhu4"
-              class="form-control mb-3"
-              name="password" />
-          </span>
-        </div>
-        <div class="ui-grid-col-4">
-          <div
-            [hidden]="
-              loginForm.controls['password'].valid ||
-              !loginForm.controls['password'].dirty
-            "
-            class="text-red-500">
-            Contraseña es requerida
-          </div>
-        </div>
-      </div>
-      <div class="ui-grid-row">
-        <div class="ui-grid-col-2"></div>
-        <div class="ui-grid-col-6">
-          <button
-            pButton
-            type="submit"
-            label="Acceder"
-            [loading]="loading"
-            [disabled]="!loginForm.valid"></button>
-        </div>
-        <div class="ui-grid-col-4"></div>
-      </div>
-    </div>
-    <p *ngIf="error" class="text-red-500" id="error-message">{{ error }}.</p>
-  </p-panel>
-  <pre *ngIf="isProdEnv !== 'true'">
+<div class="grid justify-content-center h-full">
+  <form
+    (ngSubmit)="requestLogin()"
+    [formGroup]="loginForm"
+    class="col-12 md:col-6 lg:col-4 m-auto">
+    <p-panel header="Ingresa tus credenciales">
+      <span class="p-float-label mt-3">
+        <input
+          pInputText
+          data-cy="username-input"
+          id="usuario"
+          type="text"
+          formControlName="user"
+          required
+          class="w-full" />
+        <label for="usuario">Usuario:</label>
+      </span>
+      <small
+        id="username-help"
+        class="text-red-500"
+        [hidden]="
+          loginForm.controls['user'].valid || !loginForm.controls['user'].dirty
+        "
+        >El usuario es requerido.</small
+      >
+      <span class="p-float-label mt-5">
+        <input
+          pInputText
+          data-cy="password-input"
+          formControlName="password"
+          id="password"
+          type="password"
+          class="w-full"
+          aria-errormessage="user-error" />
+        <label for="password">Contraseña:</label>
+      </span>
+      <small
+        id="user-error"
+        class="text-red-500"
+        [hidden]="
+          loginForm.controls['password'].valid ||
+          !loginForm.controls['password'].dirty
+        "
+        >La contraseña es requerida.</small
+      >
+      <button
+        pButton
+        data-cy="login-button"
+        class="mt-4 w-full"
+        type="submit"
+        label="Acceder"
+        [loading]="loading"
+        [disabled]="!loginForm.valid"></button>
+      <p *ngIf="error" class="text-red-500 text-center mb-0" id="error-message">
+        {{ error }}.
+      </p>
+    </p-panel>
+    <pre *ngIf="isProdEnv !== 'true'">
   Entorno actual: {{ environmentName }}
-  </pre>
-</form>
+  </pre
+    >
+  </form>
+</div>

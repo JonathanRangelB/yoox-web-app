@@ -14,7 +14,7 @@ import { LandingComponent } from './landing/landing.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import localeEsMX from '@angular/common/locales/es-MX';
 import { ServiceWorkerModule } from '@angular/service-worker';
-import { LoginModule } from './login/login.module';
+import { HttpClientModule } from '@angular/common/http';
 
 registerLocaleData(localeEsMX);
 
@@ -32,7 +32,7 @@ registerLocaleData(localeEsMX);
       // or after 30 seconds (whichever comes first).
       registrationStrategy: 'registerWhenStable:30000',
     }),
-    LoginModule,
+    HttpClientModule,
   ],
   providers: [{ provide: LOCALE_ID, useValue: 'es-MX' }],
   bootstrap: [AppComponent],

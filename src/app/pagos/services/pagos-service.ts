@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { shareReplay } from 'rxjs';
-import { PrestamoConDetallesCompletos } from '../../models/db/prestamos';
-import { SPAltaPago } from '../../models/storedProcedures/SPAltaPago';
+import { PrestamoConDetallesCompletos } from '../interfaces/prestamos.interface';
+import { SPAltaPago } from '../interfaces/SPAltaPago.interface';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
