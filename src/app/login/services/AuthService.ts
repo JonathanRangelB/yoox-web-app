@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { shareReplay } from 'rxjs';
-import { User } from '../models/user';
-import { UserData } from '../models/userData';
-import { TokenValidationResponse } from '../models/tokenValidationResponse';
+import { User } from '../../models/user';
+import { UserData } from '../../models/userData';
+import { TokenValidationResponse } from '../../models/tokenValidationResponse';
 import { environment } from 'src/environments/environment';
 
 @Injectable({

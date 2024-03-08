@@ -1,15 +1,15 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit } from '@angular/core';
-import { Validators, FormControl, FormGroup } from '@angular/forms';
+import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserData } from 'src/app/models/userData';
-import { AuthService } from 'src/app/services/AuthService';
+import { AuthService } from 'src/app/login/services/AuthService';
 import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
-  styleUrls: ['./login-page.component.scss'],
+  styleUrl: './login-page.component.scss',
 })
 export class LoginPageComponent implements OnInit {
   isProdEnv = environment.production;
