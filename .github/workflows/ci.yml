@@ -8,12 +8,15 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     env:
-      PRODUCTION: ${{env.PRODUCTION}}
-      ENV_NAME: ${{env.ENV_NAME}}
-      API_URL: ${{env.API_URL}}
+      PRODUCTION: ${{secret.PRODUCTION}}
+      ENV_NAME: ${{secret.ENV_NAME}}
+      API_URL: ${{secret.API_URL}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
+
+      - name: Print
+        run: echo "$PRODUCTION and $ENV_NAME"
 
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.1
