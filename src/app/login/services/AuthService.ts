@@ -5,11 +5,13 @@ import { UserData } from '../../shared/interfaces/userData.interface';
 import { TokenValidationResponse } from '../interfaces/tokenValidationResponse';
 import { environment } from 'src/environments/environment';
 import { UserCredentials } from 'src/app/shared/interfaces/user.interface';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AuthService {
+  private router = inject(Router);
   private http = inject(HttpClient);
   private readonly baseUrl = environment.API_URL;
   private userData?: UserData;
@@ -28,6 +30,12 @@ export class AuthService {
         headers,
       }
     );
+  }
+
+  logout(): void {
+    this.userData = undefined;
+    localStorage.clear();
+    this.router.navigate(['/login']);
   }
 
   get currentUser() {
