@@ -15,7 +15,7 @@ export class LoginPageComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
   fb = inject(FormBuilder);
-  isProdEnv = environment.production;
+  isProdEnv = environment.PRODUCTION;
   environmentName = environment.ENV_NAME;
   loginForm!: FormGroup;
   userData?: UserData;
