@@ -47,9 +47,9 @@ jobs:
       - name: 'Create env file'
         run: |
           touch .env
-          echo PRODUCTION=${{ secrets.PRODUCTION }} >> .env
-          echo ENV_NAME=${{ secrets.ENV_NAME }} >> .env
-          echo API_URL=${{ secrets.API_URL }} >> .env
+          echo PRODUCTION=$PRODUCTION >> .env
+          echo ENV_NAME=$ENV_NAME >> .env
+          echo API_URL=$API_URL >> .env
           cat .env
 
       - name: Generate environment.ts file
