@@ -47,11 +47,11 @@ jobs:
       - name: Linting
         run: npm run lint:ci
 
-      - name: Print
-        run: cat "src/environments/environment.ts"
-
       - name: Unit Testing
         run: npm run test:ci
+
+      - name: Print
+        run: cat "src/environments/environment.ts"
 
       - name: E2E Testing
         run: npm run e2e:ci
