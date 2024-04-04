@@ -47,8 +47,10 @@ jobs:
       - name: Linting
         run: pnpm run lint:ci
 
+      - name: E2E Testing
+        run: pnpm run e2e:ci
+
       - name: Unit Testing
         run: pnpm run test:ci
 
-      - name: E2E Testing
-        run: pnpm run e2e:ci
+
