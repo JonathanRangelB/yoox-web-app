@@ -34,4 +34,5 @@ export enum Status {
 export interface PrestamoConDetallesCompletos {
   prestamos: Prestamos;
   prestamosDetalle: PrestamosDetalle[];
+  pagosAdelantadosPermitidos: number;
 }

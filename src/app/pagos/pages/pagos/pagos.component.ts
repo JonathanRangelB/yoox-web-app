@@ -1,11 +1,14 @@
-import { PrestamosDetalle } from '../../interfaces/prestamos_detalle.interface';
-import { ConfirmationService, MessageService } from 'primeng/api';
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { Prestamos } from 'src/app/pagos/interfaces/prestamos.interface';
-import { PrestamoConDetallesCompletos } from '../../interfaces/prestamos.interface';
-import { SPAltaPago } from 'src/app/pagos/interfaces/SPAltaPago.interface';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+
+import { ConfirmationService, MessageService } from 'primeng/api';
+
+import { obtenerFechaEnEspanol } from 'src/app/shared/utils/date.utils';
 import { PagosService } from '../../services/pagos-service';
+import { PrestamoConDetallesCompletos } from '../../interfaces/prestamos.interface';
+import { Prestamos } from 'src/app/pagos/interfaces/prestamos.interface';
+import { PrestamosDetalle } from '../../interfaces/prestamos_detalle.interface';
+import { SPAltaPago } from 'src/app/pagos/interfaces/SPAltaPago.interface';
 
 @Component({
   selector: 'app-pagos',
@@ -13,26 +16,28 @@ import { PagosService } from '../../services/pagos-service';
   styleUrl: './pagos.component.scss',
 })
 export class PagosComponent implements OnInit {
-  cargandoDatosDePrestamo = false;
-  hideTable = true;
-  prestamo: Prestamos | undefined;
-  folioForm!: FormGroup;
-  prestamosDetalle: PrestamosDetalle[] = [];
-  dialogIsVisible: boolean = false;
-  header: string = 'Registro de semanas con folio 123456 del cliente Juan';
-  numeroDeCliente: number = 0;
-  pagosPendientes: number = 0;
-  totalPagos: number = 0;
+  public cargandoDatosDePrestamo = false;
+  public hideTable = true;
+  public prestamo: Prestamos | undefined;
+  public folioForm!: FormGroup;
+  public prestamosDetalle: PrestamosDetalle[] = [];
+  public dialogIsVisible: boolean = false;
+  public numeroDeCliente: number = 0;
+  public pagosPendientes: number = 0;
+  public totalPagos: number = 0;
+  public pagosAdelantadosPermitidos?: number;
+  public pagosAdelantadosPermitidosRestantes?: number;
 
   constructor(
     private confirmationService: ConfirmationService,
     private messageService: MessageService,
-    private pagosService: PagosService
+    private pagosService: PagosService,
+    private fb: FormBuilder
   ) {}
 
   ngOnInit(): void {
-    this.folioForm = new FormGroup({
-      folio: new FormControl(null, Validators.required),
+    this.folioForm = this.fb.group({
+      folio: [null, Validators.required],
     });
   }
 
@@ -72,26 +77,23 @@ export class PagosComponent implements OnInit {
       FECHA_ACTUAL: new Date(),
       ID_COBRADOR: usuarioActual, // asegurarme de obtener el id del cobrador y no hardcodearlo
     };
-
-    if (!this.comprobarSecuenciaDeSemanas(item)) {
-      this.pagosService.pay(sPAltaPago).subscribe({
-        next: () => this.resgistrarPagoExitoso(item),
-        error: (err) => this.errorAlRegistrarPago(err),
-      });
-    } else {
+    if (!this.esPagoAdelantadoPermitido(item)) {
       item.LOADING = false;
-      this.messageService.add({
-        severity: 'error',
-        summary: 'Error',
-        detail: `No se puede registrar el pago de la semana ${item.NUMERO_SEMANA} porque no es el siguiente pago a realizar`,
-        icon: 'pi pi-exclamation-triangle',
-        life: 5000,
-      });
+      return;
     }
+    if (!this.comprobarSecuenciaDeSemanas(item)) {
+      item.LOADING = false;
+      return;
+    }
+
+    // Si las validaciones anteriores pasaron, se procede a registrar el pago
+    this.pagosService.pay(sPAltaPago).subscribe({
+      next: () => this.resgistrarPagoExitoso(item),
+      error: (err) => this.errorAlRegistrarPago(err),
+    });
   }
 
   resgistrarPagoExitoso(item: PrestamosDetalle) {
-    // console.log(data); // TODO: la variable data es la respuesta del storedProcedure, pero de momento no se usa
     item.LOADING = false;
     this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
       if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
@@ -135,14 +137,17 @@ export class PagosComponent implements OnInit {
   buscarFolio(): void {
     this.cargandoDatosDePrestamo = true;
     this.hideTable = false;
-    this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
-      next: (pagos) => this.datosDelFolio(pagos),
+    this.pagosService.getPaymentsById(this.folioForm!.value.folio).subscribe({
+      next: (prestamoConDetallesCompletos) =>
+        this.datosDelFolio(prestamoConDetallesCompletos),
       error: (err) => this.errorEnDatosDelFolio(err),
     });
   }
 
-  datosDelFolio(pagos: PrestamoConDetallesCompletos): void {
-    if (!pagos.prestamos) {
+  datosDelFolio(
+    prestamoConDetallesCompletos: PrestamoConDetallesCompletos
+  ): void {
+    if (!prestamoConDetallesCompletos.prestamos) {
       this.prestamosDetalle = [];
       this.prestamo = undefined;
       this.messageService.add({
@@ -153,11 +158,14 @@ export class PagosComponent implements OnInit {
         life: 5000,
       });
     } else {
-      this.prestamosDetalle = pagos.prestamosDetalle;
-      this.prestamo = pagos.prestamos;
-      this.numeroDeCliente = pagos.prestamos.ID_CLIENTE;
-      this.totalPagos = pagos.prestamosDetalle.length;
-      this.pagosPendientes = pagos.prestamosDetalle.filter(
+      const { prestamos, prestamosDetalle, pagosAdelantadosPermitidos } =
+        prestamoConDetallesCompletos;
+      this.prestamosDetalle = prestamosDetalle;
+      this.prestamo = prestamos;
+      this.pagosAdelantadosPermitidos = pagosAdelantadosPermitidos || 3;
+      this.numeroDeCliente = prestamos.ID_CLIENTE;
+      this.totalPagos = prestamosDetalle.length;
+      this.pagosPendientes = prestamosDetalle.filter(
         ({ STATUS }) =>
           STATUS === 'PAGADO' || STATUS === 'CANCELADO' || STATUS === 'ANULADO'
       ).length;
@@ -182,7 +190,17 @@ export class PagosComponent implements OnInit {
     const semanaCorrecta = this.prestamosDetalle.find(
       ({ STATUS }) => STATUS === 'NO PAGADO' || STATUS === 'VENCIDO'
     );
-    return semanaCorrecta?.NUMERO_SEMANA !== semana.NUMERO_SEMANA;
+    if (semanaCorrecta?.NUMERO_SEMANA !== semana.NUMERO_SEMANA) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: `No se puede registrar el pago de la semana ${semana.NUMERO_SEMANA} porque no es el siguiente pago a realizar`,
+        icon: 'pi pi-exclamation-triangle',
+        life: 5000,
+      });
+      return false;
+    }
+    return true;
   }
 
   obtenerIcono({ LOADING, STATUS }: PrestamosDetalle): string {
@@ -193,5 +211,44 @@ export class PagosComponent implements OnInit {
     else if (STATUS === 'VENCIDO') return 'pi pi-money-bill';
     else if (STATUS === 'ANULADO') return 'pi pi-money-bill';
     else return 'pi pi-question';
+  }
+
+  esPagoAdelantadoPermitido(semana: PrestamosDetalle): boolean {
+    // Inicializo la fecha actual y posteriormente la hora, minuto y segundo los pongo en 0 para evitar que por cambios de zona horaria existan comportamientos inesperados como por ejemplo el cambio de dia anterior por la zona horaria en la cual nos encontramos, actualmente -6 hrs. GMT
+    // NOTA: tengo que manejar la fecha en formato utc ya que el backend me envia la fecha de vencimiento en formato utc y necesito que ambos tengan la misma zona horaria
+    const fechaMaxima = new Date();
+    fechaMaxima.setUTCHours(0, 0, 0);
+    fechaMaxima.setUTCDate(
+      fechaMaxima.getUTCDate() + this.pagosAdelantadosPermitidos! * 7
+    );
+
+    // Obtengo la fecha de vencimiento de la semana a la cual se quiere registrar el pago. La fecha esta en formato utc, que es lo que me da el backend
+    const fechaDeVencimiento = new Date(semana.FECHA_VENCIMIENTO.toString());
+
+    // Valido que la fecha de vencimiento no sea mayor a la fecha maxima permitida, en caso de serlo no se puede registrar el pago y regreso false
+    if (fechaMaxima <= fechaDeVencimiento) {
+      this.messageService.add({
+        severity: 'error',
+        summary: 'Pago adelantado no permitido',
+        detail: `Para este cliente solo se permiten registrar pagos con fecha de vencimiento menor o igual a: ${obtenerFechaEnEspanol(fechaMaxima)}`,
+        icon: 'pi pi-exclamation-triangle',
+        life: 5000,
+      });
+      return false;
+    }
+
+    // si lleue a este punto todo es correcto y se puede registrar el pago
+    return true;
+  }
+  dateToUtc(date: Date) {
+    const utcDate = Date.UTC(
+      date.getUTCFullYear(),
+      date.getUTCMonth(),
+      date.getUTCDate(),
+      date.getUTCHours(),
+      date.getUTCMinutes(),
+      date.getUTCSeconds()
+    );
+    return utcDate;
   }
 }

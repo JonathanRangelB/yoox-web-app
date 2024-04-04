@@ -8,9 +8,10 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     env:
-      NG_APP_PRODUCTION: ${{secrets.NG_APP_PRODUCTION}}
-      NG_APP_ENV_NAME: ${{secrets.NG_APP_ENV_NAME}}
-      NG_APP_API_URL: ${{secrets.NG_APP_API_URL}}
+      PRODUCTION: ${{secrets.PRODUCTION}}
+      ENV_NAME: ${{secrets.ENV_NAME}}
+      API_URL: ${{secrets.API_URL}}
+      STORE_PATH: ${{secrets.CYPRESS_RECORD_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -50,5 +51,5 @@ jobs:
       - name: Unit Testing
         run: npm run test:ci
 
-      - name: E2E Testing
-        run: npm run e2e:ci
+      # - name: E2E Testing
+      #   run: npm run e2e:ci

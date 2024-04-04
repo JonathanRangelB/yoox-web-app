@@ -1,6 +1,6 @@
 import { HttpErrorResponse } from '@angular/common/http';
-import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { Component, OnInit, inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserData } from 'src/app/shared/interfaces/userData.interface';
 import { AuthService } from 'src/app/login/services/AuthService';
@@ -12,10 +12,13 @@ import { environment } from 'src/environments/environment';
   styleUrl: './login-page.component.scss',
 })
 export class LoginPageComponent implements OnInit {
-  isProdEnv = environment.production;
+  authService = inject(AuthService);
+  router = inject(Router);
+  fb = inject(FormBuilder);
+  isProdEnv = environment.PRODUCTION;
   environmentName = environment.ENV_NAME;
   loginForm!: FormGroup;
-  userData: UserData | undefined;
+  userData?: UserData;
   error = '';
   loading = false;
   errorMessage = 'Ocurrio un error al intentar ingresar, intente mas tarde';
@@ -23,16 +26,11 @@ export class LoginPageComponent implements OnInit {
   submitted = false;
 
   ngOnInit() {
-    this.loginForm = new FormGroup({
-      user: new FormControl('', Validators.required),
-      password: new FormControl('', Validators.required),
+    this.loginForm = this.fb.group({
+      user: ['', Validators.required],
+      password: ['', Validators.required],
     });
   }
-
-  constructor(
-    private authService: AuthService,
-    private router: Router
-  ) {}
 
   requestLogin() {
     // clean up the messages of previous calls
@@ -42,8 +40,8 @@ export class LoginPageComponent implements OnInit {
 
     this.authService
       .login({
-        userId: this.loginForm.value.user.toUpperCase(),
-        password: this.loginForm.value.password,
+        userId: this.loginForm?.controls['user'].value.toUpperCase(),
+        password: this.loginForm?.get('password')?.value,
       })
       .subscribe({
         next: this.handleSuccessfullLogin,
@@ -51,13 +49,11 @@ export class LoginPageComponent implements OnInit {
       });
   }
 
-  handleSuccessfullLogin = (usr: UserData) => {
-    this.userData = usr;
+  handleSuccessfullLogin = (user: UserData) => {
+    this.userData = user;
     this.loading = false;
-    localStorage.setItem('token', usr.Autorization);
-    console.log(usr);
-    // TODO: hacer un servicio para poder guardar los datos de usuario en el y evitar el uso de localStorage
-    localStorage.setItem('idusuario', usr.user.ID.toString());
+    localStorage.setItem('token', user.Autorization);
+    localStorage.setItem('idusuario', user.user.ID.toString());
 
     this.router.navigate(['/pagos']);
   };

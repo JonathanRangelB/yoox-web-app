@@ -15,11 +15,11 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@ngx-env/builder:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist/yoox-web-app",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
@@ -38,9 +38,7 @@
               "node_modules/primeicons/primeicons.css",
               "src/styles.scss"
             ],
-            "scripts": [],
-            "serviceWorker": true,
-            "ngswConfigPath": "ngsw-config.json"
+            "scripts": []
           },
           "configurations": {
             "production": {
@@ -56,28 +54,21 @@
                   "maximumError": "15kb"
                 }
               ],
-              "outputHashing": "all"
+              "outputHashing": "all",
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {
-              "buildOptimizer": false,
               "optimization": false,
-              "vendorChunk": true,
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true,
-              "serviceWorker": false,
-              "fileReplacements": [
-                {
-                  "replace": "src/environments/environment.ts",
-                  "with": "src/environments/environment.development.ts"
-                }
-              ]
+              "serviceWorker": false
             }
           },
           "defaultConfiguration": "production"
         },
         "serve": {
-          "builder": "@ngx-env/builder:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
               "buildTarget": "yoox-web-app:build:production"
@@ -89,13 +80,13 @@
           "defaultConfiguration": "development"
         },
         "extract-i18n": {
-          "builder": "@ngx-env/builder:extract-i18n",
+          "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
             "buildTarget": "yoox-web-app:build"
           }
         },
         "test": {
-          "builder": "@ngx-env/builder:karma",
+          "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "polyfills": ["zone.js", "zone.js/testing"],
             "tsConfig": "tsconfig.spec.json",
