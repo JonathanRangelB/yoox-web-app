@@ -44,6 +44,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: Generate environment.ts file
+        run: pnpm run env
+
       - name: Linting
         run: pnpm run lint:ci
 

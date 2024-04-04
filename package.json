@@ -15,7 +15,7 @@
     "cypress:open": "cypress open",
     "cypress:run": "cypress run",
     "lint:ci": "ng lint --fix",
-    "test:ci": "pnpm run env && ng test --browsers ChromeHeadless --watch false",
+    "test:ci": "ng test --browsers ChromeHeadless --watch false",
     "e2e:ci": "ng e2e --watch false --headless",
     "all:ci": "pnpm run env && npm run lint:ci && npm run test:ci && npm run e2e:ci",
     "prepare": "husky install"
