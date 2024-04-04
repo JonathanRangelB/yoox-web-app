@@ -11,5 +11,15 @@ export const environment = {
 };
 `;
 
+if (!process.env.PRODUCTION) {
+  console.log('PRODUCTION is not defined.');
+}
+if (!process.env.ENV_NAME) {
+  console.log('ENV_NAME is not defined.');
+}
+if (!process.env.API_URL) {
+  console.log('API_URL is not defined.');
+}
+
 mkdirSync('./src/environments', { recursive: true });
 writeFileSync(targetPath, envFileContent);
