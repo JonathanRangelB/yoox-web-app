@@ -11,7 +11,6 @@ jobs:
       PRODUCTION: ${{secrets.PRODUCTION}}
       ENV_NAME: ${{secrets.ENV_NAME}}
       API_URL: ${{secrets.API_URL}}
-      STORE_PATH: ${{secrets.CYPRESS_RECORD_KEY}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -46,10 +45,10 @@ jobs:
         run: pnpm install
 
       - name: Linting
-        run: npm run lint:ci
+        run: pnpm run lint:ci
 
       - name: Unit Testing
-        run: npm run test:ci
+        run: pnpm run test:ci
 
-      # - name: E2E Testing
-      #   run: npm run e2e:ci
+      - name: E2E Testing
+        run: pnpm run e2e:ci
