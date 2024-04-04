@@ -15,9 +15,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.1.1
 
-      - name: Print
-        run: cat "src/environments/environment.ts"
-
       - name: Setup Node.js
         uses: actions/setup-node@v4.0.1
         with:
@@ -49,6 +46,9 @@ jobs:
 
       - name: Linting
         run: npm run lint:ci
+
+      - name: Print
+        run: cat "src/environments/environment.ts"
 
       - name: Unit Testing
         run: npm run test:ci
