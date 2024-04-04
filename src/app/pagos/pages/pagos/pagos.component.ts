@@ -77,11 +77,11 @@ export class PagosComponent implements OnInit {
       FECHA_ACTUAL: new Date(),
       ID_COBRADOR: usuarioActual, // asegurarme de obtener el id del cobrador y no hardcodearlo
     };
-    if (!this.esPagoAdelantadoPermitido(item)) {
+    if (!this.comprobarSecuenciaDeSemanas(item)) {
       item.LOADING = false;
       return;
     }
-    if (!this.comprobarSecuenciaDeSemanas(item)) {
+    if (!this.esPagoAdelantadoPermitido(item)) {
       item.LOADING = false;
       return;
     }
