@@ -8,10 +8,9 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     env:
-      PRODUCTION: ${{secrets.PRODUCTION}}
-      ENV_NAME: ${{secrets.ENV_NAME}}
-      API_URL: ${{secrets.API_URL}}
-      STORE_PATH: ${{secrets.CYPRESS_RECORD_KEY}}
+      PRODUCTION: ${{secrets.NG_APP_PRODUCTION}}
+      ENV_NAME: ${{secrets.NG_APP_ENV_NAME}}
+      API_URL: ${{secrets.NG_APP_API_URL}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -45,11 +44,24 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
+      - name: 'Create env file'
+        run: |
+          touch .env
+          echo PRODUCTION=$PRODUCTION >> .env
+          echo ENV_NAME=$ENV_NAME >> .env
+          echo API_URL=$API_URL >> .env
+          cat .env
+
+      - name: Generate environment.ts file
+        run: pnpm run env
+
       - name: Linting
-        run: npm run lint:ci
+        run: pnpm run lint:ci
+
+      - name: E2E Testing
+        run: pnpm run e2e:ci
 
       - name: Unit Testing
-        run: npm run test:ci
+        run: pnpm run test:ci
 
-      # - name: E2E Testing
-      #   run: npm run e2e:ci
+
