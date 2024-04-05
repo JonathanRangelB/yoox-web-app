@@ -162,7 +162,7 @@ export class PagosComponent implements OnInit {
         prestamoConDetallesCompletos;
       this.prestamosDetalle = prestamosDetalle;
       this.prestamo = prestamos;
-      this.pagosAdelantadosPermitidos = pagosAdelantadosPermitidos || 3;
+      this.pagosAdelantadosPermitidos = pagosAdelantadosPermitidos;
       this.numeroDeCliente = prestamos.ID_CLIENTE;
       this.totalPagos = prestamosDetalle.length;
       this.pagosPendientes = prestamosDetalle.filter(
