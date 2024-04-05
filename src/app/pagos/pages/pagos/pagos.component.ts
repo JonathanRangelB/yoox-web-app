@@ -174,6 +174,8 @@ export class PagosComponent implements OnInit {
   }
 
   errorEnDatosDelFolio(err: unknown): void {
+    this.prestamosDetalle = [];
+    this.prestamo = undefined;
     console.log(err);
     this.messageService.add({
       severity: 'error',
