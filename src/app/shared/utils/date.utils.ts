@@ -23,10 +23,10 @@ export function obtenerFechaEnEspanol(fecha: Date) {
     'diciembre',
   ];
 
-  const diaSemana = diasSemana[fecha.getUTCDay()];
-  const dia = fecha.getUTCDate();
-  const mes = meses[fecha.getUTCMonth()];
-  const anio = fecha.getUTCFullYear();
+  const diaSemana = diasSemana[fecha.getDay()];
+  const dia = fecha.getDate();
+  const mes = meses[fecha.getMonth()];
+  const anio = fecha.getFullYear();
 
   return `${diaSemana}, ${dia} de ${mes} de ${anio}`;
 }
