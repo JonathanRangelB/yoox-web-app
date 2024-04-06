@@ -219,9 +219,9 @@ export class PagosComponent implements OnInit {
     // Inicializo la fecha actual y posteriormente la hora, minuto y segundo los pongo en 0 para evitar que por cambios de zona horaria existan comportamientos inesperados como por ejemplo el cambio de dia anterior por la zona horaria en la cual nos encontramos, actualmente -6 hrs. GMT
     // NOTA: tengo que manejar la fecha en formato utc ya que el backend me envia la fecha de vencimiento en formato utc y necesito que ambos tengan la misma zona horaria
     const fechaMaxima = new Date();
-    fechaMaxima.setUTCHours(0, 0, 0);
-    fechaMaxima.setUTCDate(
-      fechaMaxima.getUTCDate() + this.pagosAdelantadosPermitidos! * 7
+    fechaMaxima.setHours(0, 0, 0);
+    fechaMaxima.setDate(
+      fechaMaxima.getDate() + this.pagosAdelantadosPermitidos! * 7
     );
 
     // Obtengo la fecha de vencimiento de la semana a la cual se quiere registrar el pago. La fecha esta en formato utc, que es lo que me da el backend
@@ -239,18 +239,7 @@ export class PagosComponent implements OnInit {
       return false;
     }
 
-    // si lleue a este punto todo es correcto y se puede registrar el pago
+    // si llegue a este punto todo es correcto y se puede registrar el pago
     return true;
-  }
-  dateToUtc(date: Date) {
-    const utcDate = Date.UTC(
-      date.getUTCFullYear(),
-      date.getUTCMonth(),
-      date.getUTCDate(),
-      date.getUTCHours(),
-      date.getUTCMinutes(),
-      date.getUTCSeconds()
-    );
-    return utcDate;
   }
 }
