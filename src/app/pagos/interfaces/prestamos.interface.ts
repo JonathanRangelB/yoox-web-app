@@ -1,4 +1,4 @@
-import { PrestamosDetalle } from './prestamos_detalle';
+import { PrestamosDetalle } from './prestamos_detalle.interface';
 
 export interface Prestamos {
   ID: number;
@@ -34,4 +34,5 @@ export enum Status {
 export interface PrestamoConDetallesCompletos {
   prestamos: Prestamos;
   prestamosDetalle: PrestamosDetalle[];
+  pagosAdelantadosPermitidos: number;
 }

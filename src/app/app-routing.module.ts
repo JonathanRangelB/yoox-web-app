@@ -1,20 +1,27 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginPageComponent } from './components/login-page/login-page.component';
-import { NotFoundComponent } from './components/not-found/not-found.component';
-import { LandingComponent } from './components/landing/landing.component';
-import { authGuardGuard } from './guards/auth.guard';
+import { NotFoundComponent } from './not-found/not-found.component';
+import { LandingComponent } from './landing/landing.component';
+import { authGuardGuard } from './shared/guards/auth.guard';
 
 const routes: Routes = [
   { path: '', component: LandingComponent },
-  { path: 'login', component: LoginPageComponent },
+  {
+    path: 'login',
+    loadChildren: () =>
+      import('./login/login.module').then((m) => m.LoginModule),
+  },
   {
     path: 'pagos',
     canActivate: [authGuardGuard],
     loadChildren: () =>
-      import('./components/pagos/pagos.module').then((m) => m.PagosModule),
+      import('./pagos/pagos.module').then((m) => m.PagosModule),
   },
-  { path: '**', component: NotFoundComponent },
+  {
+    path: 'not-found',
+    component: NotFoundComponent,
+  },
+  { path: '**', redirectTo: 'not-found' },
 ];
 
 @NgModule({

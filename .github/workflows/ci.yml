@@ -8,9 +8,9 @@ jobs:
   CI:
     runs-on: ubuntu-latest
     env:
-      NG_APP_PRODUCTION: ${{secrets.NG_APP_PRODUCTION}}
-      NG_APP_ENV_NAME: ${{secrets.NG_APP_ENV_NAME}}
-      NG_APP_API_URL: ${{secrets.NG_APP_API_URL}}
+      PRODUCTION: ${{secrets.NG_APP_PRODUCTION}}
+      ENV_NAME: ${{secrets.NG_APP_ENV_NAME}}
+      API_URL: ${{secrets.NG_APP_API_URL}}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.1.1
@@ -44,11 +44,24 @@ jobs:
       - name: Install dependencies
         run: pnpm install
 
-      - name: Linting
-        run: npm run lint:ci
+      - name: 'Create env file'
+        run: |
+          touch .env
+          echo PRODUCTION=$PRODUCTION >> .env
+          echo ENV_NAME=$ENV_NAME >> .env
+          echo API_URL=$API_URL >> .env
+          cat .env
 
-      - name: Unit Testing
-        run: npm run test:ci
+      - name: Generate environment.ts file
+        run: pnpm run env
+
+      - name: Linting
+        run: pnpm run lint:ci
 
       - name: E2E Testing
-        run: npm run e2e:ci
+        run: pnpm run e2e:ci
+
+      - name: Unit Testing
+        run: pnpm run test:ci
+
+

@@ -1,0 +1,63 @@
+<div class="grid justify-content-center h-full mx-1">
+  <form
+    (ngSubmit)="requestLogin()"
+    [formGroup]="loginForm"
+    class="col-12 md:col-6 lg:col-4 mx-2 my-auto">
+    <p-panel header="Ingresa tus credenciales">
+      <span class="p-float-label mt-3">
+        <input
+          pInputText
+          data-cy="username-input"
+          id="usuario"
+          type="text"
+          formControlName="user"
+          required
+          class="w-full" />
+        <label for="usuario">Usuario:</label>
+      </span>
+      <small
+        id="username-help"
+        class="text-red-500"
+        [hidden]="
+          loginForm.controls['user'].valid || !loginForm.controls['user'].dirty
+        "
+        >El usuario es requerido.</small
+      >
+      <span class="p-float-label mt-5">
+        <input
+          pInputText
+          data-cy="password-input"
+          formControlName="password"
+          id="password"
+          type="password"
+          class="w-full"
+          aria-errormessage="user-error" />
+        <label for="password">Contraseña:</label>
+      </span>
+      <small
+        id="user-error"
+        class="text-red-500"
+        [hidden]="
+          loginForm.controls['password'].valid ||
+          !loginForm.controls['password'].dirty
+        "
+        >La contraseña es requerida.</small
+      >
+      <button
+        pButton
+        data-cy="login-button"
+        class="mt-4 w-full"
+        type="submit"
+        label="Acceder"
+        [loading]="loading"
+        [disabled]="!loginForm.valid"></button>
+      <p *ngIf="error" class="text-red-500 text-center mb-0" id="error-message">
+        {{ error }}.
+      </p>
+    </p-panel>
+    <pre *ngIf="isProdEnv !== 'true'">
+  Entorno actual: {{ environmentName }}
+  </pre
+    >
+  </form>
+</div>

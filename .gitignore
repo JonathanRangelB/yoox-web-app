@@ -2,7 +2,10 @@
 environment.staging.ts
 environment.local.ts
 .env
-.env.development
+.env.staging
+.env.prod
+.infisical.json
+/src/environments
 
 # Compiled output
 /dist

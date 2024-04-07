@@ -2,11 +2,13 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { PagosComponent } from './pages/pagos/pagos.component';
+import { LayoutComponent } from './pages/layout/layout.component';
 
 const routes: Routes = [
   {
     path: '',
-    component: PagosComponent,
+    component: LayoutComponent,
+    children: [{ path: '', component: PagosComponent }],
   },
 ];
 

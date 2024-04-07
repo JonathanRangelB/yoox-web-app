@@ -14,9 +14,13 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { FieldsetModule } from 'primeng/fieldset';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LayoutComponent } from './pages/layout/layout.component';
+import { MenubarModule } from 'primeng/menubar';
+import { SidebarModule } from 'primeng/sidebar';
+import { AvatarModule } from 'primeng/avatar';
 
 @NgModule({
-  declarations: [PagosComponent],
+  declarations: [PagosComponent, LayoutComponent],
   imports: [
     CommonModule,
     MenuModule,
@@ -31,6 +35,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     ToastModule,
     ReactiveFormsModule,
     FieldsetModule,
+    MenubarModule,
+    SidebarModule,
+    AvatarModule,
   ],
   exports: [PagosComponent],
   providers: [ConfirmationService, MessageService],

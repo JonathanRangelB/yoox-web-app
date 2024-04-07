@@ -25,7 +25,6 @@ exec(
   'purgecss -css dist/**/*.css --content dist/index.html dist/*.js -o dist/yoox-web-app/',
   function (error, stdout, stderr) {
     console.log('PurgeCSS done');
-    console.log();
 
     for (let d of data) {
       // get new file size
