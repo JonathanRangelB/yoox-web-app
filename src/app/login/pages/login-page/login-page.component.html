@@ -2,7 +2,7 @@
   <form
     (ngSubmit)="requestLogin()"
     [formGroup]="loginForm"
-    class="col-12 md:col-6 lg:col-4 mx-2 my-auto">
+    class="col-12 md:col-6 lg:col-4 mx-2 my-auto max-w-full">
     <p-panel header="Ingresa tus credenciales">
       <span class="p-float-label mt-3">
         <input
@@ -46,7 +46,7 @@
       <button
         pButton
         data-cy="login-button"
-        class="mt-4 w-full"
+        class="mt-5 w-full"
         type="submit"
         label="Acceder"
         [loading]="loading"

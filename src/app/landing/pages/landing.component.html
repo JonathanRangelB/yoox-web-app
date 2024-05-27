@@ -1,0 +1,64 @@
+<body>
+  <section class="menu">
+    <nav>
+      <picture>
+        <img
+          class="logo"
+          src="assets/YOOX_transparente_nav.webp"
+          alt="logo"
+          height="64"
+          width="96" />
+      </picture>
+      <section class="links">
+        <button
+          pButton
+          class="contacto"
+          label="Acceder"
+          (click)="navigatetoLogin()"></button>
+      </section>
+    </nav>
+  </section>
+  <main class="main">
+    <div class="main__carousel">
+      <picture>
+        <img
+          src="assets/sample1.webp"
+          alt="captura"
+          height="214"
+          width="360"
+          priority />
+      </picture>
+      <picture>
+        <img src="assets/sample2.webp" alt="captura" height="214" width="360" />
+      </picture>
+      <picture>
+        <img src="assets/sample3.webp" alt="captura" height="214" width="360" />
+      </picture>
+      <picture>
+        <img
+          src="assets/YOOX_transparente.webp"
+          alt="captura"
+          height="240"
+          width="360"
+          priority />
+      </picture>
+    </div>
+    <section class="main__description">
+      <span>Descargar la última version de la aplicación</span>
+      <div class="link-wrapper" id="download-section">
+        <a
+          href="https://www.mediafire.com/file/vwgt6n7um6y3af7/InstaladorYOOX-Release_13-02-2024.msi/file"
+          class="contacto"
+          >Windows App</a
+        >
+        o
+        <a
+          href="https://www.mediafire.com/file/6ih17k6o5d9h9sp/yoox-app.apk/file"
+          class="contacto"
+          >Android APK</a
+        >
+      </div>
+    </section>
+  </main>
+  <footer class="footer">Created with ❤ by Jonathan Rangel</footer>
+</body>

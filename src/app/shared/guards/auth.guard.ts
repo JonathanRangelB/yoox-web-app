@@ -6,7 +6,7 @@ import { catchError, map, of } from 'rxjs';
 
 export const authGuardGuard = () => {
   const router = inject(Router);
-  const token = localStorage.getItem('token') || '';
+  const token = localStorage.getItem('token') ?? '';
 
   return inject(AuthService)
     .tokenValidation(token)

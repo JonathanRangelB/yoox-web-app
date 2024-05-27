@@ -1,11 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { NotFoundComponent } from './not-found/not-found.component';
-import { LandingComponent } from './landing/landing.component';
 import { authGuardGuard } from './shared/guards/auth.guard';
 
 const routes: Routes = [
-  { path: '', component: LandingComponent },
+  {
+    path: '',
+    loadChildren() {
+      return import('./landing/landing.module').then((m) => m.LandingModule);
+    },
+  },
   {
     path: 'login',
     loadChildren: () =>
@@ -19,7 +22,9 @@ const routes: Routes = [
   },
   {
     path: 'not-found',
-    component: NotFoundComponent,
+    // component: NotFoundComponent,
+    loadChildren: () =>
+      import('./not-found/not-found.module').then((m) => m.NotFoundModule),
   },
   { path: '**', redirectTo: 'not-found' },
 ];

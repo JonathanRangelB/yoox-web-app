@@ -40,7 +40,7 @@ describe('Landing page testing', () => {
     cy.get('[data-cy="login-button"]').click();
 
     cy.get('#withoutgrouping').type('8509');
-    cy.get('.p-button').click();
+    cy.get('[data-cy="buscar-button"]').click();
     cy.get(':nth-child(1) > .xl\\:flex-row').should('exist');
   });
 });

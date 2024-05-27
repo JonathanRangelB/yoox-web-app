@@ -2,7 +2,7 @@
   <form
     (ngSubmit)="buscarFolio()"
     [formGroup]="folioForm"
-    style="margin: 1rem auto; display: grid; place-items: center">
+    class="flex column-gap-3 flex-wrap">
     <span class="p-input-icon-right">
       <i
         class="pi pi-times-circle"
@@ -23,6 +23,7 @@
       label="Buscar"
       [disabled]="!folioForm.valid"
       [loading]="cargandoDatosDePrestamo"
+      data-cy="buscar-button"
       class="mb-3"></button>
   </form>
 
@@ -32,7 +33,6 @@
     [toggleable]="true"
     [collapsed]="true"
     class="mb-3"
-    [style]="{ width: '90vw' }"
     [hidden]="hideTable">
     <div class="flex gap-3 flex-wrap justify-content-between">
       <div>
@@ -84,15 +84,9 @@
       <div>
         <p class="m-0">Pagos adelantados permitidos:</p>
         <span
-          ><strong>{{ pagosAdelantadosPermitidos || 0 }}</strong></span
-        >
+          ><strong>{{ pagosAdelantadosPermitidos || 0 }}</strong>
+        </span>
       </div>
-      <!-- <div>
-        <p class="m-0">Pagos adelantados restantes:</p>
-        <span
-          ><strong>{{ pagosAdelantadosPermitidosRestantes || 0 }}</strong></span
-        >
-      </div> -->
     </div>
   </p-fieldset>
 
@@ -108,7 +102,7 @@
             class="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4"
             [ngClass]="{ 'border-top-1 surface-border': !first }">
             <div
-              class="flex flex-column sm:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
+              class="flex flex-column sm:flex-row md:flex-row xl:flex-row justify-content-between align-items-center xl:align-items-start flex-1 gap-4">
               <div
                 class="flex flex-column align-items-center sm:align-items-start gap-3">
                 <div class="text-2xl font-bold text-900">

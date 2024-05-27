@@ -10,6 +10,15 @@ import { Prestamos } from 'src/app/pagos/interfaces/prestamos.interface';
 import { PrestamosDetalle } from '../../interfaces/prestamos_detalle.interface';
 import { SPAltaPago } from 'src/app/pagos/interfaces/SPAltaPago.interface';
 
+type severity =
+  | 'success'
+  | 'secondary'
+  | 'info'
+  | 'warning'
+  | 'danger'
+  | 'contrast'
+  | undefined;
+
 @Component({
   selector: 'app-pagos',
   templateUrl: './pagos.component.html',
@@ -41,7 +50,7 @@ export class PagosComponent implements OnInit {
     });
   }
 
-  getSeverity({ STATUS }: PrestamosDetalle): string {
+  getSeverity({ STATUS }: PrestamosDetalle): severity {
     if (STATUS === 'PAGADO') return 'success';
     else if (STATUS === 'NO PAGADO') return 'warning';
     else if (STATUS === 'CANCELADO') return 'warning';
@@ -65,7 +74,7 @@ export class PagosComponent implements OnInit {
   }
 
   registrarPago(item: PrestamosDetalle): void {
-    const usuarioActual: number = +(localStorage.getItem('idusuario') || '');
+    const usuarioActual: number = +(localStorage.getItem('idusuario') ?? '');
     item.LOADING = true;
     const sPAltaPago: SPAltaPago = {
       ID_PRESTAMO: +item.ID_PRESTAMO,
@@ -137,7 +146,7 @@ export class PagosComponent implements OnInit {
   buscarFolio(): void {
     this.cargandoDatosDePrestamo = true;
     this.hideTable = false;
-    this.pagosService.getPaymentsById(this.folioForm!.value.folio).subscribe({
+    this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
       next: (prestamoConDetallesCompletos) =>
         this.datosDelFolio(prestamoConDetallesCompletos),
       error: (err) => this.errorEnDatosDelFolio(err),
@@ -216,12 +225,13 @@ export class PagosComponent implements OnInit {
   }
 
   esPagoAdelantadoPermitido(semana: PrestamosDetalle): boolean {
+    if (!this.pagosAdelantadosPermitidos) return false;
     // Inicializo la fecha actual y posteriormente la hora, minuto y segundo los pongo en 0 para evitar que por cambios de zona horaria existan comportamientos inesperados como por ejemplo el cambio de dia anterior por la zona horaria en la cual nos encontramos, actualmente -6 hrs. GMT
     // NOTA: tengo que manejar la fecha en formato utc ya que el backend me envia la fecha de vencimiento en formato utc y necesito que ambos tengan la misma zona horaria
     const fechaMaxima = new Date();
     fechaMaxima.setHours(0, 0, 0);
     fechaMaxima.setDate(
-      fechaMaxima.getDate() + this.pagosAdelantadosPermitidos! * 7
+      fechaMaxima.getDate() + this.pagosAdelantadosPermitidos * 7
     );
 
     // Obtengo la fecha de vencimiento de la semana a la cual se quiere registrar el pago. La fecha esta en formato utc, que es lo que me da el backend
