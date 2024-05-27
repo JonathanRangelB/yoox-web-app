@@ -9,24 +9,41 @@ import { AuthService } from 'src/app/login/services/AuthService';
 })
 export class LayoutComponent {
   private authService = inject(AuthService);
-  menuItems: MenuItem[] = [
+  isSidebarVisible = false;
+
+  items: MenuItem[] = [
     {
       label: 'Altas',
-      icon: 'pi pi-fw pi-plus',
       items: [
-        // { label: 'Clientes', icon: 'pi pi-fw pi-money-bill' },
-        // { label: 'Avales', icon: 'pi pi-fw pi-money-bill' },
-        // { label: 'Prestamos', icon: 'pi pi-fw pi-user-plus' },
         { label: 'Pagos', icon: 'pi pi-fw pi-user-plus', routerLink: '/pagos' },
-        // { label: 'Usuarios', icon: 'pi pi-fw pi-user-plus' },
-        // { label: 'Grupos', icon: 'pi pi-fw pi-user-plus' },
-        // { label: 'Plazos', icon: 'pi pi-fw pi-user-plus' },
-        // { label: 'Definicion de multas', icon: 'pi pi-fw pi-user-plus' },
-        // { label: 'Cortes', icon: 'pi pi-fw pi-user-plus' },
-        // { label: 'Recalculo de intereses', icon: 'pi pi-fw pi-user-plus' },
-        // { label: 'Domicilios', icon: 'pi pi-fw pi-user-plus' },
       ],
     },
+    {
+      label: 'Cerrar sesión',
+      icon: 'pi pi-fw pi-power-off',
+      command: () => this.logout(),
+    },
+  ];
+
+  menuItems: MenuItem[] = [
+    { icon: 'pi pi-bars', command: () => this.toggleSidebar() },
+    // {
+    //   label: 'Altas',
+    //   icon: 'pi pi-fw pi-plus',
+    //   items: [
+    // { label: 'Clientes', icon: 'pi pi-fw pi-money-bill' },
+    // { label: 'Avales', icon: 'pi pi-fw pi-money-bill' },
+    // { label: 'Prestamos', icon: 'pi pi-fw pi-user-plus' },
+    // { label: 'Pagos', icon: 'pi pi-fw pi-user-plus', routerLink: '/pagos' },
+    // { label: 'Usuarios', icon: 'pi pi-fw pi-user-plus' },
+    // { label: 'Grupos', icon: 'pi pi-fw pi-user-plus' },
+    // { label: 'Plazos', icon: 'pi pi-fw pi-user-plus' },
+    // { label: 'Definicion de multas', icon: 'pi pi-fw pi-user-plus' },
+    // { label: 'Cortes', icon: 'pi pi-fw pi-user-plus' },
+    // { label: 'Recalculo de intereses', icon: 'pi pi-fw pi-user-plus' },
+    // { label: 'Domicilios', icon: 'pi pi-fw pi-user-plus' },
+    //   ],
+    // },
     // {
     //   label: 'Buscar',
     //   icon: 'pi pi-fw pi-search',
@@ -91,13 +108,12 @@ export class LayoutComponent {
     //   icon: 'pi pi-fw pi-unlock',
     //   items: [{ label: 'Permisos', icon: 'pi pi-fw pi-user-plus' }],
     // },
-    {
-      label: 'Cerrar sesión',
-      icon: 'pi pi-fw pi-power-off',
-      command: () => this.logout(),
-    },
+    // {
+    //   label: 'Cerrar sesión',
+    //   icon: 'pi pi-fw pi-power-off',
+    //   command: () => this.logout(),
+    // },
   ];
-  isSidebarVisible = false;
 
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;
