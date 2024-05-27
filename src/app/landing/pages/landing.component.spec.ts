@@ -23,8 +23,11 @@ describe('LandingComponent', () => {
     const fixture = TestBed.createComponent(LandingComponent);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('button.contacto')?.textContent).toContain(
-      'Acceder'
+    expect(
+      compiled
+        .querySelector('button.contacto')
+        ?.attributes.getNamedItem('label')
+        ?.value.includes('Acceder')
     );
   });
 });
