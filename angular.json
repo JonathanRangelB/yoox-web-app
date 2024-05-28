@@ -35,12 +35,10 @@
             "styles": [
               "src/styles.scss",
               {
-                "input": "node_modules/primeng/resources/themes/lara-dark-indigo/theme.css",
-                "bundleName": "lara-dark-indigo",
-                "inject": true
-              },
-              "node_modules/primeng/resources/primeng.css",
-              "node_modules/primeicons/primeicons.css"
+                "input": "node_modules/primeng/resources/themes/lara-light-blue/theme.css",
+                "bundleName": "lara-light-blue",
+                "inject": false
+              }
             ],
             "scripts": []
           },
