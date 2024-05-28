@@ -24,7 +24,7 @@ console.log('Run PurgeCSS...');
 
 exec(
   // 'purgecss -css dist/**/*.css --content dist/**/index.html dist/**/*.js -o ./',
-  'npx purgecss -c ./purgecss.config.js',
+  'purgecss -c ./purgecss.config.js',
   function (error, stdout, stderr) {
     for (let d of data) {
       // get new file size
@@ -44,5 +44,6 @@ function getFilesizeInKiloBytes(filename) {
 
 function getFilesFromPath(dir, extension) {
   let files = fs.readdirSync(dir);
+  console.log(files);
   return files.filter((e) => path.extname(e).toLowerCase() === extension);
 }
