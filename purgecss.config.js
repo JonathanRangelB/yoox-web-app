@@ -1,6 +1,6 @@
 module.exports = {
-  content: ['dist/**/index.html', 'dist/**/*.js'],
-  css: ['dist/**/*.css'],
+  content: ['./dist/**/index.html', './dist/**/*.js'],
+  css: ['./dist/**/*.css'],
   output: './',
   safelist: {
     standard: [
