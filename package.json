@@ -6,7 +6,7 @@
     "env": "node ./scripts/set-env.js",
     "start": "pnpm run env && ng serve --configuration development",
     "build": "pnpm run env && ng build --configuration production",
-    "build:purgecss": "pnpm run env && ng build --configuration production && pnpm run purgecss && pnpm httpserver",
+    "build:purgecss": "pnpm run env && ng build --configuration production && pnpm run purgecss",
     "watch": "pnpm run env && ng build --watch --configuration development",
     "test": "pnpm run env && ng test --configuration development",
     "commitlint": "commitlint --edit",
