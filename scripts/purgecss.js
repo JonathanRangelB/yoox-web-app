@@ -24,7 +24,7 @@ console.log('Run PurgeCSS...');
 
 exec(
   // 'purgecss -css dist/**/*.css --content dist/**/index.html dist/**/*.js -o ./',
-  'purgecss --config ./purgecss.config.js',
+  'npx purgecss -c ./purgecss.config.js',
   function (error, stdout, stderr) {
     for (let d of data) {
       // get new file size

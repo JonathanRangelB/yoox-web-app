@@ -1,7 +1,7 @@
 module.exports = {
   content: ['dist/**/index.html', 'dist/**/*.js'],
   css: ['dist/**/*.css'],
-  output: './',
+  output: '.',
   safelist: {
     standard: [
       // Agrega aquí otros patrones de PrimeFlex que necesites
@@ -9,6 +9,14 @@ module.exports = {
       /(^|\s)md:(\s|$)/,
       /(^|\s)lg:(\s|$)/,
       /(^|\s)xl:(\s|$)/,
+      /-success$/,
+      /-info$/,
+      /-error$/,
+      /-danger$/,
+      /-warn$/,
+      /-warning$/,
+      /-secondary$/,
+      /-contrast$/,
     ],
   },
   extractors: [
