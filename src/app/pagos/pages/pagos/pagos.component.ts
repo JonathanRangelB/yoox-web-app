@@ -5,7 +5,10 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { obtenerFechaEnEspanol } from 'src/app/shared/utils/date.utils';
 import { PagosService } from '../../services/pagos-service';
-import { PrestamoConDetallesCompletos } from '../../interfaces/prestamos.interface';
+import {
+  PrestamoConDetallesCompletos,
+  Status,
+} from '../../interfaces/prestamos.interface';
 import { Prestamos } from 'src/app/pagos/interfaces/prestamos.interface';
 import { PrestamosDetalle } from '../../interfaces/prestamos_detalle.interface';
 import { SPAltaPago } from 'src/app/pagos/interfaces/SPAltaPago.interface';
@@ -55,13 +58,20 @@ export class PagosComponent implements OnInit {
     else if (STATUS === 'NO PAGADO') return 'warning';
     else if (STATUS === 'CANCELADO') return 'warning';
     else if (STATUS === 'ANULADO') return 'warning';
+    else if (STATUS === 'REFINANCIADO') return 'warning';
     else return 'danger';
   }
 
+  /**
+   * Usado para definir el campo disabled en el boton de pagar
+   * @param PrestamosDetalle El item  a evaluar
+   * @returns boolean
+   */
   activarBotonPago({ STATUS }: PrestamosDetalle): boolean {
     if (STATUS === 'PAGADO') return true;
     else if (STATUS === 'CANCELADO') return true;
     else if (STATUS === 'ANULADO') return true;
+    else if (STATUS === 'REFINANCIADO') return true;
     else return false;
   }
 
@@ -112,6 +122,14 @@ export class PagosComponent implements OnInit {
         };
       } else return pago;
     });
+
+    // Actualiza la informacion del prestamo para mostrarlo en la UI
+    this.pagosPendientes = this.pagosPendientes + 1;
+    this.prestamo!.CANTIDAD_RESTANTE =
+      this.prestamo!.CANTIDAD_RESTANTE - item.CANTIDAD;
+    if (this.totalPagos === this.pagosPendientes) {
+      this.prestamo!.STATUS = Status.Pagado;
+    }
 
     this.messageService.add({
       severity: 'success',
@@ -176,7 +194,10 @@ export class PagosComponent implements OnInit {
       this.totalPagos = prestamosDetalle.length;
       this.pagosPendientes = prestamosDetalle.filter(
         ({ STATUS }) =>
-          STATUS === 'PAGADO' || STATUS === 'CANCELADO' || STATUS === 'ANULADO'
+          STATUS === 'PAGADO' ||
+          STATUS === 'CANCELADO' ||
+          STATUS === 'ANULADO' ||
+          STATUS === 'REFINANCIADO'
       ).length;
     }
     this.cargandoDatosDePrestamo = false;
@@ -221,6 +242,7 @@ export class PagosComponent implements OnInit {
     else if (STATUS === 'CANCELADO') return 'pi pi-times';
     else if (STATUS === 'VENCIDO') return 'pi pi-money-bill';
     else if (STATUS === 'ANULADO') return 'pi pi-money-bill';
+    else if (STATUS === 'REFINANCIADO') return 'pi pi-money-bill';
     else return 'pi pi-question';
   }
 
