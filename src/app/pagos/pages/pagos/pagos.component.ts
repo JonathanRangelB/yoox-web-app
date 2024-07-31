@@ -170,7 +170,7 @@ export class PagosComponent implements OnInit {
     this.messageService.add({
       severity: 'success',
       summary: 'Pago exitoso',
-      detail: `El pago correspondiendte a ${item.NUMERO_SEMANA} del folio ${item.ID_PRESTAMO} se ha registrado`,
+      detail: `El pago de la semana ${item.NUMERO_SEMANA} correspondiente al folio ${item.ID_PRESTAMO} se ha registrado`,
       icon: 'pi pi-check',
       life: 5000,
     });
@@ -203,7 +203,7 @@ export class PagosComponent implements OnInit {
     this.messageService.add({
       severity: 'warn',
       summary: 'Acción cancelada',
-      detail: `El pago correspondiendte a ${NUMERO_SEMANA} del folio ${ID_PRESTAMO} no se ha registrado`,
+      detail: `El pago de la semana ${NUMERO_SEMANA} correspondiente al folio ${ID_PRESTAMO} no se ha registrado`,
       icon: 'pi pi-exclamation-triangle',
       life: 5000,
     });
@@ -218,9 +218,9 @@ export class PagosComponent implements OnInit {
     this.cargandoDatosDePrestamo = true;
     this.hideTable = false;
     this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
-      next: (prestamoConDetallesCompletos) =>
+      next: (prestamoConDetallesCompletos: PrestamoConDetallesCompletos) =>
         this.datosDelFolio(prestamoConDetallesCompletos),
-      error: (err) => this.errorEnDatosDelFolio(err),
+      error: (err: unknown) => this.errorEnDatosDelFolio(err),
     });
   }
 
