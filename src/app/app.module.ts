@@ -6,20 +6,25 @@ import { AppComponent } from './app.component';
 import { CommonModule, registerLocaleData } from '@angular/common';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import localeEsMX from '@angular/common/locales/es-MX';
-import { HttpClientModule } from '@angular/common/http';
+import {
+  provideHttpClient,
+  withInterceptorsFromDi,
+} from '@angular/common/http';
 
 registerLocaleData(localeEsMX);
 
 @NgModule({
   declarations: [AppComponent],
+  bootstrap: [AppComponent],
   imports: [
     CommonModule,
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule,
     BrowserAnimationsModule,
   ],
-  providers: [{ provide: LOCALE_ID, useValue: 'es-MX' }],
-  bootstrap: [AppComponent],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'es-MX' },
+    provideHttpClient(withInterceptorsFromDi()),
+  ],
 })
 export class AppModule {}
