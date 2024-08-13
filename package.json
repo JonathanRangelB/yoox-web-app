@@ -20,7 +20,7 @@
     "e2e:ci": "ng e2e --watch false --headless",
     "all:ci": "pnpm run env && npm run lint:ci && npm run test:ci && npm run e2e:ci",
     "prepare": "husky install",
-    "purgecss": "node scripts/purgecss.mjs",
+    "purgecss": "node scripts/purgecss.js",
     "httpserver": "pnpm dlx http-server dist/yoox-web-app/browser/ -p 4200"
   },
   "private": true,

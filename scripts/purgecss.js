@@ -39,14 +39,14 @@ exec(
 );
 
 function getFilesizeInKiloBytes(filename) {
-  const stats = statSync(filename);
+  const stats = fs.statSync(filename);
   const fileSizeInBytes = stats.size / 1000;
   return fileSizeInBytes.toFixed(2);
 }
 
 function getFilesFromPath(dir, extension) {
-  let files = readdirSync(dir);
-  return files.filter((e) => extname(e).toLowerCase() === extension);
+  let files = fs.readdirSync(dir);
+  return files.filter((e) => path.extname(e).toLowerCase() === extension);
 }
 
 function getReductionPercentage(initial, compressed) {
