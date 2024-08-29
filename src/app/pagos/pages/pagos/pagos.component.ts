@@ -138,7 +138,7 @@ export class PagosComponent implements OnInit {
     // Si las validaciones anteriores pasaron, se procede a registrar el pago
     this.pagosService.pay(sPAltaPago).subscribe({
       next: () => this.resgistrarPagoExitoso(item),
-      error: (err) => this.errorAlRegistrarPago(err),
+      error: (err) => this.errorAlRegistrarPago(item, err),
     });
   }
 
@@ -148,7 +148,7 @@ export class PagosComponent implements OnInit {
    * @param {PrestamosDetalle} item - The item to update the payment status for.
    * @return {void} This function does not return anything.
    */
-  resgistrarPagoExitoso(item: PrestamosDetalle) {
+  resgistrarPagoExitoso(item: PrestamosDetalle): void {
     item.LOADING = false;
     this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
       if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
@@ -182,11 +182,12 @@ export class PagosComponent implements OnInit {
    * @param {any} err - The error object containing information about the error.
    * @return {void} This function does not return anything.
    */
-  errorAlRegistrarPago(err: any): void {
+  errorAlRegistrarPago(item: PrestamosDetalle, err: any): void {
+    item.LOADING = false;
     this.messageService.add({
       severity: 'error',
       summary: 'Error',
-      detail: `Ocurrio un error al interntar registrar el pago: ${err.error.message}`,
+      detail: `${err.error.message}`,
       icon: 'pi pi-exclamation-triangle',
       life: 5000,
     });
