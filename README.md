@@ -20,7 +20,7 @@
 
 ## Installation
 
-First you should install the [Angular CLI](https://angular.io/cli) globally to be able to use
+First you should install the [Angular CLI](https://angular.dev/tools/cli) globally to be able to use
 
 ```bash
 pnpm install -g @angular/cli
@@ -97,5 +97,3 @@ Run `ng e2e` to execute the end-to-end tests with [Cypress.io](https://www.cypre
 [Auto Close Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-close-tag)
 
 [Auto Rename Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag)
-
-[Tailwind CSS IntelliSense](https://marketplace.visualstudio.com/items?itemName=bradlc.vscode-tailwindcss)
