@@ -3,11 +3,13 @@
 
 # YooxWebApp (Angular v18)
 
+![angularLogo](./src/assets/angular.webp)
+
 <!--toc:start-->
 
 - [YooxWebApp (Angular v18)](#yooxwebapp-angular-v18)
   - [Installation](#installation)
-    - [Generate environment file](#generate-environment-file)
+    - [Getting .env data from Infisical](#getting-env-data-from-infisical)
   - [Development server](#development-server)
   - [Code scaffolding](#code-scaffolding)
   - [Build](#build)
@@ -38,9 +40,9 @@ Then configure husky with the next npm command
 pnpm run husky:init
 ```
 
-### Generate environment file
+### Getting .env data from Infisical
 
-First make sure to have a .env file on the root of the project with at least the following content:
+`.env` Example content. Current needed environment variables are:
 
 ```text
 PRODUCTION: <true|false>,
@@ -48,11 +50,17 @@ ENV_NAME: <env-name>,
 API_URL: <api-url>,`
 ```
 
-And then run the following command:
+1. Create a new account on Infisical.
+2. Ask to this repo owner to add your account to the YOOX app project.
+3. Download `.env` file from Infisical for the 'Development' environment or install the [Infisical CLI](https://infisical.com/docs/cli/overview) and follow the instructions there (infisical login and then infisical export > `.env`)
+4. Finally, once you have the `.env` file, you can run the following command to generate the `.env` file in the project root:
 
 ```bash
 pnpm run env
 ```
+
+> [!NOTE]
+> Validate if the contents of the `.env` file matches the contents of the `.env` example above since the environment.ts file contents might have invalid data injected
 
 ## Development server
 
