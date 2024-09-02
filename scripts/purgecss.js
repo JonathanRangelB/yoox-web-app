@@ -1,7 +1,7 @@
 const exec = require('child_process').exec;
 const fs = require('fs');
 const path = require('path');
-
+console.time('time')
 const buildDir = './dist/yoox-web-app/browser/';
 
 // find the styles css file
@@ -31,9 +31,10 @@ exec(
       const newSize = getFilesizeInKiloBytes(buildDir + d.file);
       const compression = getReductionPercentage(d.originalSize.slice(0, -2), newSize);
       d.newSize = newSize + 'kb';
-      d.compressedRatio = compression;
+      d.compressionRatio = compression;
     }
     console.log('PurgeCSS done');
+    console.timeEnd('time')
     console.table(data);
   }
 );
@@ -50,7 +51,6 @@ function getFilesFromPath(dir, extension) {
 }
 
 function getReductionPercentage(initial, compressed) {
-  console.log(initial, compressed);
   initial = +initial;
   compressed = +compressed;
   const compressionRatio = (((initial - compressed) / initial) * 100).toFixed(2)

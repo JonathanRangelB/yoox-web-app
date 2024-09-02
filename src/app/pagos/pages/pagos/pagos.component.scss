@@ -1,3 +1,7 @@
 :host ::ng-deep .p-orderlist-controls {
   display: none !important;
 }
+
+p-fieldset {
+  width: 100%;
+}
