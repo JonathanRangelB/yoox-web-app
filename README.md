@@ -4,6 +4,7 @@
 # YooxWebApp (Angular v18)
 
 ![angularLogo](./src/assets/angular.webp)
+[![angularLogo](./src/assets/angular.webp)](https://angular.dev/)
 
 <!--toc:start-->
 
