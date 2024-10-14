@@ -10,12 +10,32 @@ import { AuthService } from 'src/app/login/services/AuthService';
 export class DashboardComponent {
   private authService = inject(AuthService);
   isSidebarVisible = false;
+  nombreUsuario = localStorage.getItem('nombreusuario') || 'quien eres?';
 
   items: MenuItem[] = [
     {
       label: 'Altas',
       items: [
-        { label: 'Pagos', icon: 'pi pi-fw pi-user-plus', routerLink: '/pagos' },
+        {
+          label: 'Pagos',
+          icon: 'pi pi-fw pi-credit-card',
+          routerLink: '/dashboard/pagos',
+        },
+        {
+          label: 'Solicitud de prestamo',
+          icon: 'pi pi-fw pi-file-plus',
+          routerLink: '/dashboard/pagos',
+        },
+      ],
+    },
+    {
+      label: 'Consultas',
+      items: [
+        {
+          label: 'Solicitud de prestamo',
+          icon: 'pi pi-fw pi-file',
+          routerLink: '/dashboard/pagos',
+        },
       ],
     },
     {

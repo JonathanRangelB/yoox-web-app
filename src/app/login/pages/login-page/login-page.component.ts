@@ -54,6 +54,7 @@ export class LoginPageComponent implements OnInit {
     this.loading = false;
     localStorage.setItem('token', user.Autorization);
     localStorage.setItem('idusuario', user.user.ID.toString());
+    localStorage.setItem('nombreusuario', user.user.NOMBRE.toString());
 
     this.router.navigate(['/dashboard']);
   };

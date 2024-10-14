@@ -16,6 +16,16 @@
         alt="logo" /> </ng-template
   ></p-menubar>
   <p-sidebar [(visible)]="isSidebarVisible">
+    <ng-template pTemplate="header">
+      <div class="flex align-items-center gap-2">
+        <p-avatar
+          [label]="nombreUsuario.slice(0, 2).toUpperCase()"
+          styleClass="mr-2"
+          size="large"
+          shape="circle" />
+        <span class="font-bold">{{ nombreUsuario | titlecase }} 👋</span>
+      </div>
+    </ng-template>
     <p-panelMenu [model]="items" styleClass="w-full" pRipple />
   </p-sidebar>
 </div>
