@@ -3,11 +3,11 @@ import { MenuItem } from 'primeng/api';
 import { AuthService } from 'src/app/login/services/AuthService';
 
 @Component({
-  selector: 'app-layout',
-  templateUrl: './layout.component.html',
-  styles: [],
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css'],
 })
-export class LayoutComponent {
+export class DashboardComponent {
   private authService = inject(AuthService);
   isSidebarVisible = false;
 

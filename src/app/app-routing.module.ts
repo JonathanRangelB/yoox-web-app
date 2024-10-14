@@ -10,15 +10,15 @@ const routes: Routes = [
     },
   },
   {
+    path: 'dashboard',
+    canActivate: [authGuardGuard],
+    loadChildren: () =>
+      import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
+  },
+  {
     path: 'login',
     loadChildren: () =>
       import('./login/login.module').then((m) => m.LoginModule),
-  },
-  {
-    path: 'pagos',
-    canActivate: [authGuardGuard],
-    loadChildren: () =>
-      import('./pagos/pagos.module').then((m) => m.PagosModule),
   },
   {
     path: 'not-found',
