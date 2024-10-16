@@ -17,6 +17,13 @@ const routes: Routes = [
         loadChildren: () =>
           import('../pagos/pagos.module').then((m) => m.PagosModule),
       },
+      {
+        path: 'loan-request',
+        loadChildren: () =>
+          import('../loan-request/loan-request.module').then(
+            (m) => m.LoanRequestModule
+          ),
+      },
       { path: '**', redirectTo: 'not-found' },
     ],
   },

@@ -24,7 +24,7 @@ export class DashboardComponent {
         {
           label: 'Solicitud de prestamo',
           icon: 'pi pi-fw pi-file-plus',
-          routerLink: '/dashboard/pagos',
+          routerLink: '/dashboard/loan-request',
         },
       ],
     },
@@ -34,7 +34,7 @@ export class DashboardComponent {
         {
           label: 'Solicitud de prestamo',
           icon: 'pi pi-fw pi-file',
-          routerLink: '/dashboard/pagos',
+          routerLink: '/dashboard/loan-request/view',
         },
       ],
     },

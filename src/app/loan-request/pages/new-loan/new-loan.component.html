@@ -1,0 +1,93 @@
+<p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
+  <p-stepperPanel header="Cantidades y plazos">
+    <ng-template
+      pTemplate="content"
+      let-nextCallback="nextCallback"
+      let-index="index">
+      <div class="flex flex-column h-12rem">
+        <!-- inicio de currency de ejemplo -->
+        <div class="flex flex-column gap-2 mt-3">
+          <label for="cantidad">Cantidad a prestar</label>
+          <p-inputNumber
+            inputId="integeronly"
+            [min]="1000"
+            [style]="{ width: '99%' }" />
+          <small id="cantidad-help"
+            >Ingresa la cantidad que el cliente solicita</small
+          >
+        </div>
+        <!-- final de currency de ejemplo -->
+        <!-- inicio de campo de texto de ejemplo -->
+        <div class="flex flex-column gap-2 mt-3" style="width: 99%">
+          <label for="motivo">Motivo</label>
+          <input pInputText id="motivo" aria-describedby="motivo-help" />
+          <small id="motivo-help">ingresa el motivo del prestamo</small>
+        </div>
+        <!-- final de campo de texto de ejemplo -->
+      </div>
+      <div class="flex py-4 mt-3">
+        <p-button label="Next" (onClick)="nextCallback.emit()" /></div
+    ></ng-template>
+  </p-stepperPanel>
+  <p-stepperPanel header="Datos del cliente">
+    <ng-template
+      pTemplate="content"
+      let-prevCallback="prevCallback"
+      let-nextCallback="nextCallback"
+      let-index="index">
+      <div class="flex flex-column h-12rem">
+        <div
+          class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+          Content II
+        </div>
+      </div>
+      <div class="flex py-4 gap-2">
+        <p-button
+          label="Back"
+          severity="secondary"
+          (onClick)="prevCallback.emit()" />
+        <p-button label="Next" (onClick)="nextCallback.emit()" />
+      </div>
+    </ng-template>
+  </p-stepperPanel>
+  <p-stepperPanel header="Datos de aval">
+    <ng-template
+      pTemplate="content"
+      let-prevCallback="prevCallback"
+      let-nextCallback="nextCallback"
+      let-index="index">
+      <div class="flex flex-column h-12rem">
+        <div
+          class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+          Content III
+        </div>
+      </div>
+      <div class="flex py-4 gap-2">
+        <p-button
+          label="Back"
+          severity="secondary"
+          (onClick)="prevCallback.emit()" />
+        <p-button label="Next" (onClick)="nextCallback.emit()" />
+      </div>
+    </ng-template>
+  </p-stepperPanel>
+  <p-stepperPanel header="Documentacion">
+    <ng-template
+      pTemplate="content"
+      let-prevCallback="prevCallback"
+      let-index="index">
+      <div class="flex flex-column h-12rem">
+        <div
+          class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+          Content IV
+        </div>
+      </div>
+      <div class="flex py-4">
+        <p-button
+          label="Back"
+          severity="secondary"
+          (onClick)="prevCallback.emit()" />
+      </div>
+    </ng-template>
+  </p-stepperPanel>
+</p-stepper>
