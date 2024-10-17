@@ -1,33 +1,77 @@
 <p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
   <p-stepperPanel header="Cantidades y plazos">
-    <ng-template
-      pTemplate="content"
-      let-nextCallback="nextCallback"
-      let-index="index">
-      <div class="flex flex-column h-12rem">
+    <ng-template pTemplate="content" let-index="index">
+      <div class="flex flex-column py-3">
         <!-- inicio de currency de ejemplo -->
-        <div class="flex flex-column gap-2 mt-3">
+        <div class="flex flex-column gap-2">
           <label for="cantidad">Cantidad a prestar</label>
           <p-inputNumber
             inputId="integeronly"
-            [min]="1000"
+            mode="currency"
+            currency="MXN"
+            locale="es-MX"
+            maxFractionDigits="0"
+            autofocus="true"
+            showClear="true"
+            (onInput)="onInputCantidad($event)"
             [style]="{ width: '99%' }" />
           <small id="cantidad-help"
             >Ingresa la cantidad que el cliente solicita</small
           >
         </div>
         <!-- final de currency de ejemplo -->
-        <!-- inicio de campo de texto de ejemplo -->
-        <div class="flex flex-column gap-2 mt-3" style="width: 99%">
-          <label for="motivo">Motivo</label>
-          <input pInputText id="motivo" aria-describedby="motivo-help" />
-          <small id="motivo-help">ingresa el motivo del prestamo</small>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="tipoCalle">Plazo</label>
+          <p-dropdown
+            [options]="plazos"
+            optionLabel="name"
+            (onChange)="onPlazoChanged($event)"
+            placeholder="Selecciona el plazo de semanas" />
+          <small id="tipoCalle-help">placeholder</small>
         </div>
-        <!-- final de campo de texto de ejemplo -->
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="fechaInicial">Fecha inicial</label>
+          <p-calendar
+            id="fechaInicial"
+            [iconDisplay]="'input'"
+            [showIcon]="true"
+            [showButtonBar]="true"
+            inputId="icondisplay" />
+          <small id="fechaInicial-help"
+            >Fecha tentativa para inicio de prestamo</small
+          >
+        </div>
+        <!-- inicio valores calculados -->
+        <p-inputGroup [style]="{ width: '99%' }">
+          <p-inputGroupAddon>
+            <i class="pi pi-percentage"></i>
+          </p-inputGroupAddon>
+          <input
+            pInputText
+            placeholder="Taza de interes"
+            [(ngModel)]="tazaDeInteres" />
+        </p-inputGroup>
+        <p-inputGroup [style]="{ width: '99%' }">
+          <p-inputGroupAddon>
+            <i class="pi pi-receipt"></i>
+          </p-inputGroupAddon>
+          <input pInputText placeholder="Dia de la semana que se abona" />
+        </p-inputGroup>
+        <p-inputGroup [style]="{ width: '99%' }">
+          <p-inputGroupAddon>
+            <i class="pi pi-wallet"></i>
+          </p-inputGroupAddon>
+          <input pInputText placeholder="Cantidad total a pagar" />
+        </p-inputGroup>
+        <p-inputGroup [style]="{ width: '99%' }">
+          <p-inputGroupAddon>
+            <i class="pi pi-calendar-clock"></i>
+          </p-inputGroupAddon>
+          <input type="text" pInputText placeholder="Fecha final estimada" />
+        </p-inputGroup>
+        <!-- fin valores calculados -->
       </div>
-      <div class="flex py-4 mt-3">
-        <p-button label="Next" (onClick)="nextCallback.emit()" /></div
-    ></ng-template>
+    </ng-template>
   </p-stepperPanel>
   <p-stepperPanel header="Datos del cliente">
     <ng-template
@@ -35,18 +79,123 @@
       let-prevCallback="prevCallback"
       let-nextCallback="nextCallback"
       let-index="index">
-      <div class="flex flex-column h-12rem">
-        <div
-          class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-          Content II
+      <div class="flex flex-column py-3">
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="nombreCliente">Nombre del cliente</label>
+          <input
+            pInputText
+            id="nombreCliente"
+            aria-describedby="nombreCliente-help" />
+          <small id="nombreCliente-help">placeholder</small>
         </div>
-      </div>
-      <div class="flex py-4 gap-2">
-        <p-button
-          label="Back"
-          severity="secondary"
-          (onClick)="prevCallback.emit()" />
-        <p-button label="Next" (onClick)="nextCallback.emit()" />
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="apellidoPaternoCliente">Apellido paterno</label>
+          <input
+            pInputText
+            id="apellidoPaternoCliente"
+            aria-describedby="apellidoPaternoCliente-help" />
+          <small id="apellidoPaternoCliente-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="apellidoMaternoCliente">Apellido materno</label>
+          <input
+            pInputText
+            id="apellidoMaternoCliente"
+            aria-describedby="apellidoMaternoCliente-help" />
+          <small id="apellidoMaternoCliente-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2">
+          <label for="cantidad">Telefono fijo</label>
+          <p-inputMask mask="999-999-9999" placeholder="999-999-9999" />
+        </div>
+        <div class="flex flex-column gap-2">
+          <label for="cantidad">Telefono movil</label>
+          <p-inputMask mask="999-999-9999" placeholder="999-999-9999" />
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="email">Correo electronico</label>
+          <input pInputText id="email" aria-describedby="email-help" />
+          <small id="email-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="ocupacion">Ocupacion</label>
+          <input pInputText id="ocupacion" aria-describedby="ocupacion-help" />
+          <small id="ocupacion-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2">
+          <label for="cantidad">CURP</label>
+          <p-inputMask
+            mask="aaaa-999999-aaaaaa-99"
+            placeholder="0000-000000-000000-00" />
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="tipoCalle">Tipo de calle</label>
+          <p-dropdown
+            [options]="tiposCalle"
+            optionLabel="name"
+            [showClear]="true"
+            placeholder="Select a City" />
+          <small id="tipoCalle-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="nombreCalle">Nombre de la calle</label>
+          <input
+            pInputText
+            id="nombreCalle"
+            aria-describedby="nombreCalle-help" />
+          <small id="nombreCalle-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="numeroExterior">Numero Exterior</label>
+          <input
+            pInputText
+            id="numeroExterior"
+            aria-describedby="numeroExterior-help" />
+          <small id="numeroExterior-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="numeroInterior">Numero Interior</label>
+          <input
+            pInputText
+            id="numeroInterior"
+            aria-describedby="numeroInterior-help" />
+          <small id="numeroInterior-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="colonia">Colonia</label>
+          <input pInputText id="colonia" aria-describedby="colonia-help" />
+          <small id="colonia-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="municipio">Municipio</label>
+          <input pInputText id="municipio" aria-describedby="municipio-help" />
+          <small id="municipio-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2" style="width: 99%">
+          <label for="estado">Entidad Federativa</label>
+          <p-dropdown
+            [options]="estadosDeLaRepublica"
+            optionLabel="name"
+            [filter]="true"
+            filterBy="name"
+            [showClear]="true"
+            placeholder="Selecciona un estado"></p-dropdown>
+          <small id="estado-help">placeholder</small>
+        </div>
+        <div class="flex flex-column gap-2">
+          <label for="codigoPostal">Código postal</label>
+          <p-inputMask id="codigoPostal" mask="99999" placeholder="99999" />
+        </div>
+        <div class="flex flex-column gap-2">
+          <label for="codigoPostal">Observaciones adicionales</label>
+          <textarea
+            rows="5"
+            cols="30"
+            autoResize="true"
+            pInputTextarea
+            style="width: 99%">
+          </textarea>
+        </div>
       </div>
     </ng-template>
   </p-stepperPanel>
