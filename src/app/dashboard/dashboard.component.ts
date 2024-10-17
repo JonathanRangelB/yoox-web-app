@@ -15,6 +15,7 @@ export class DashboardComponent {
   items: MenuItem[] = [
     {
       label: 'Altas',
+      expanded: true,
       items: [
         {
           label: 'Pagos',

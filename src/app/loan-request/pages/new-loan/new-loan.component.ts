@@ -132,7 +132,7 @@ export class NewLoanComponent implements OnInit {
   }
 
   calculaFechaFinal() {
-    if (this.fechaInicial && this.semanasDePlazo) return;
+    if (!this.fechaInicial || !this.semanasDePlazo) return;
     const result = new Date(this.fechaInicial!);
     result.setDate(result.getDate() + this.semanasDePlazo! * 7);
     this.fechaFinal = result.toLocaleDateString('es-MX', {
