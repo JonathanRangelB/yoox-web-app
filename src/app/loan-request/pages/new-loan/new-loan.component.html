@@ -36,6 +36,9 @@
             [iconDisplay]="'input'"
             [showIcon]="true"
             [showButtonBar]="true"
+            [(ngModel)]="fechaInicial"
+            (onSelect)="calculaDiaDeLaSemana()"
+            dateFormat="dd/mm/yy"
             inputId="icondisplay" />
           <small id="fechaInicial-help"
             >Fecha tentativa para inicio de prestamo</small
@@ -55,13 +58,19 @@
           <p-inputGroupAddon>
             <i class="pi pi-receipt"></i>
           </p-inputGroupAddon>
-          <input pInputText placeholder="Dia de la semana que se abona" />
+          <input
+            pInputText
+            placeholder="Dia de la semana que se abona"
+            [value]="diaDeLaSemana" />
         </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>
             <i class="pi pi-wallet"></i>
           </p-inputGroupAddon>
-          <input pInputText placeholder="Cantidad total a pagar" />
+          <input
+            pInputText
+            placeholder="Cantidad total a pagar"
+            [value]="totalAPagar" />
         </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>

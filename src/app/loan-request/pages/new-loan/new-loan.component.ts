@@ -16,10 +16,14 @@ export class NewLoanComponent implements OnInit {
   tiposCalle: dropDownCollection[] | undefined;
   estadosDeLaRepublica: dropDownCollection[] | undefined;
   plazos: dropDownCollection[] | undefined;
-  cantidadIngresada: number = 0;
   calleSeleccionada: dropDownCollection | undefined;
   estadosDeLaRepublicaSeleccionado: dropDownCollection | undefined;
+  fechaInicial: Date | undefined;
+  diaDeLaSemana: string | null = null;
+  days: string[] = [];
+  cantidadIngresada: number = 0;
   tazaDeInteres: number = 0;
+  totalAPagar: number = 0;
 
   ngOnInit(): void {
     this.tiposCalle = [
@@ -76,6 +80,16 @@ export class NewLoanComponent implements OnInit {
       { name: '26', value: '80' },
       { name: '24', value: '56' },
     ];
+
+    this.days = [
+      'Domingo',
+      'Lunes',
+      'Martes',
+      'Miércoles',
+      'Jueves',
+      'Viernes',
+      'Sábado',
+    ];
   }
 
   onPlazoChanged({ value }: DropdownChangeEvent) {
@@ -87,14 +101,26 @@ export class NewLoanComponent implements OnInit {
   onInputCantidad({ value }: InputNumberInputEvent) {
     if (!value) return;
     this.cantidadIngresada = +value;
+    if (this.cantidadIngresada < 1000) return;
     this.calculaPrestamo();
   }
 
   calculaPrestamo() {
+    if (!this.cantidadIngresada || !this.tazaDeInteres) return;
+    this.totalAPagar = +(
+      this.cantidadIngresada *
+      (1 + this.tazaDeInteres / 100)
+    ).toFixed(2);
     console.table({
       tazaDeInteres: this.tazaDeInteres,
       cantidadIngresada: this.cantidadIngresada,
-      total: this.cantidadIngresada * (1 + this.tazaDeInteres / 100),
+      total: this.totalAPagar,
     });
+  }
+
+  calculaDiaDeLaSemana() {
+    if (!this.fechaInicial) return;
+    const dayIndex = this.fechaInicial.getDay();
+    this.diaDeLaSemana = this.days[dayIndex];
   }
 }
