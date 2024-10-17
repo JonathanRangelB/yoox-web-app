@@ -7,6 +7,7 @@
           <label for="cantidad">Cantidad a prestar</label>
           <p-inputNumber
             inputId="integeronly"
+            placeholder="$1,000"
             mode="currency"
             currency="MXN"
             locale="es-MX"
@@ -15,7 +16,7 @@
             showClear="true"
             (onInput)="onInputCantidad($event)"
             [style]="{ width: '99%' }" />
-          <small id="cantidad-help"
+          <small id="cantidad-help" class="mb-2"
             >Ingresa la cantidad que el cliente solicita</small
           >
         </div>
@@ -27,12 +28,13 @@
             optionLabel="name"
             (onChange)="onPlazoChanged($event)"
             placeholder="Selecciona el plazo de semanas" />
-          <small id="tipoCalle-help">placeholder</small>
+          <small id="tipoCalle-help" class="mb-2">placeholder</small>
         </div>
         <div class="flex flex-column gap-2" style="width: 99%">
           <label for="fechaInicial">Fecha inicial</label>
           <p-calendar
             id="fechaInicial"
+            placeholder="dd/mm/aaaa"
             [iconDisplay]="'input'"
             [showIcon]="true"
             [showButtonBar]="true"
@@ -40,11 +42,22 @@
             (onSelect)="calculaDiaDeLaSemana()"
             dateFormat="dd/mm/yy"
             inputId="icondisplay" />
-          <small id="fechaInicial-help"
+          <small id="fechaInicial-help" class="mb-2"
             >Fecha tentativa para inicio de prestamo</small
           >
         </div>
         <!-- inicio valores calculados -->
+        <p-inputGroup [style]="{ width: '99%' }">
+          <p-inputGroupAddon>
+            <i class="pi pi-money-bill"></i>
+            <span> Cada semana se pagarian:</span>
+          </p-inputGroupAddon>
+          <input
+            pInputText
+            disabled="true"
+            placeholder="Cantidad semanal"
+            [value]="pagoSemanal" />
+        </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>
             <i class="pi pi-percentage"></i>
@@ -58,17 +71,6 @@
         </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>
-            <i class="pi pi-receipt"></i>
-            <span> Pagaria los dias:</span>
-          </p-inputGroupAddon>
-          <input
-            pInputText
-            disabled="true"
-            placeholder="Dia de la semana que se abona"
-            [value]="diaDeLaSemana" />
-        </p-inputGroup>
-        <p-inputGroup [style]="{ width: '99%' }">
-          <p-inputGroupAddon>
             <i class="pi pi-wallet"></i>
             <span> Total a pagar:</span>
           </p-inputGroupAddon>
@@ -77,6 +79,17 @@
             disabled="true"
             placeholder="Cantidad total a pagar"
             [value]="totalAPagar" />
+        </p-inputGroup>
+        <p-inputGroup [style]="{ width: '99%' }">
+          <p-inputGroupAddon>
+            <i class="pi pi-receipt"></i>
+            <span> Pagaria los dias:</span>
+          </p-inputGroupAddon>
+          <input
+            pInputText
+            disabled="true"
+            placeholder="Dia de la semana que se abona"
+            [value]="diaDeLaSemana" />
         </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>

@@ -16,7 +16,7 @@ export class NewLoanComponent implements OnInit {
   tiposCalle: dropDownCollection[] | undefined;
   estadosDeLaRepublica: dropDownCollection[] | undefined;
   plazos: dropDownCollection[] | undefined;
-  semanasDePlazo: string | undefined;
+  semanasDePlazo: number | undefined;
   calleSeleccionada: dropDownCollection | undefined;
   estadosDeLaRepublicaSeleccionado: dropDownCollection | undefined;
   fechaInicial: Date | undefined;
@@ -26,6 +26,7 @@ export class NewLoanComponent implements OnInit {
   cantidadIngresada: number = 0;
   tasaDeInteres: number = 0;
   totalAPagar: number = 0;
+  pagoSemanal: number | null = null;
 
   ngOnInit(): void {
     this.tiposCalle = [
@@ -73,14 +74,14 @@ export class NewLoanComponent implements OnInit {
     ];
 
     this.plazos = [
-      { name: '14', value: '40' },
-      { name: '28', value: '82' },
+      { name: '11', value: '10' },
       { name: '12', value: '20' },
       { name: '13', value: '30' },
-      { name: '11', value: '10' },
-      { name: '35', value: '110' },
-      { name: '26', value: '80' },
+      { name: '14', value: '40' },
       { name: '24', value: '56' },
+      { name: '26', value: '80' },
+      { name: '28', value: '82' },
+      { name: '35', value: '110' },
     ];
 
     this.days = [
@@ -97,9 +98,9 @@ export class NewLoanComponent implements OnInit {
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
     this.semanasDePlazo = value.name;
-    this.tasaDeInteres = +value.value;
+    this.tasaDeInteres = value.value;
     this.calculaPrestamo();
-    if (this.fechaInicial && this.semanasDePlazo) this.calculaFechaFinal();
+    this.calculaFechaFinal();
   }
 
   onInputCantidad({ value }: InputNumberInputEvent) {
@@ -116,22 +117,24 @@ export class NewLoanComponent implements OnInit {
       (1 + this.tasaDeInteres / 100)
     ).toFixed(2);
     console.table({
-      tazaDeInteres: this.tasaDeInteres,
+      tasaDeInteres: this.tasaDeInteres,
       cantidadIngresada: this.cantidadIngresada,
       total: this.totalAPagar,
     });
+    this.pagoSemanal = this.totalAPagar / this.semanasDePlazo!;
   }
 
   calculaDiaDeLaSemana() {
     if (!this.fechaInicial) return;
     const dayIndex = this.fechaInicial.getDay();
     this.diaDeLaSemana = this.days[dayIndex];
-    if (this.fechaInicial && this.semanasDePlazo) this.calculaFechaFinal();
+    this.calculaFechaFinal();
   }
 
   calculaFechaFinal() {
+    if (this.fechaInicial && this.semanasDePlazo) return;
     const result = new Date(this.fechaInicial!);
-    result.setDate(result.getDate() + +this.semanasDePlazo! * 7);
+    result.setDate(result.getDate() + this.semanasDePlazo! * 7);
     this.fechaFinal = result.toLocaleDateString('es-MX', {
       weekday: 'long',
       year: 'numeric',
