@@ -16,13 +16,15 @@ export class NewLoanComponent implements OnInit {
   tiposCalle: dropDownCollection[] | undefined;
   estadosDeLaRepublica: dropDownCollection[] | undefined;
   plazos: dropDownCollection[] | undefined;
+  semanasDePlazo: string | undefined;
   calleSeleccionada: dropDownCollection | undefined;
   estadosDeLaRepublicaSeleccionado: dropDownCollection | undefined;
   fechaInicial: Date | undefined;
+  fechaFinal: string | undefined;
   diaDeLaSemana: string | null = null;
   days: string[] = [];
   cantidadIngresada: number = 0;
-  tazaDeInteres: number = 0;
+  tasaDeInteres: number = 0;
   totalAPagar: number = 0;
 
   ngOnInit(): void {
@@ -94,8 +96,10 @@ export class NewLoanComponent implements OnInit {
 
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
-    this.tazaDeInteres = +value.value;
+    this.semanasDePlazo = value.name;
+    this.tasaDeInteres = +value.value;
     this.calculaPrestamo();
+    if (this.fechaInicial && this.semanasDePlazo) this.calculaFechaFinal();
   }
 
   onInputCantidad({ value }: InputNumberInputEvent) {
@@ -106,13 +110,13 @@ export class NewLoanComponent implements OnInit {
   }
 
   calculaPrestamo() {
-    if (!this.cantidadIngresada || !this.tazaDeInteres) return;
+    if (!this.cantidadIngresada || !this.tasaDeInteres) return;
     this.totalAPagar = +(
       this.cantidadIngresada *
-      (1 + this.tazaDeInteres / 100)
+      (1 + this.tasaDeInteres / 100)
     ).toFixed(2);
     console.table({
-      tazaDeInteres: this.tazaDeInteres,
+      tazaDeInteres: this.tasaDeInteres,
       cantidadIngresada: this.cantidadIngresada,
       total: this.totalAPagar,
     });
@@ -122,5 +126,17 @@ export class NewLoanComponent implements OnInit {
     if (!this.fechaInicial) return;
     const dayIndex = this.fechaInicial.getDay();
     this.diaDeLaSemana = this.days[dayIndex];
+    if (this.fechaInicial && this.semanasDePlazo) this.calculaFechaFinal();
+  }
+
+  calculaFechaFinal() {
+    const result = new Date(this.fechaInicial!);
+    result.setDate(result.getDate() + +this.semanasDePlazo! * 7);
+    this.fechaFinal = result.toLocaleDateString('es-MX', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    });
   }
 }

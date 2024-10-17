@@ -48,35 +48,47 @@
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>
             <i class="pi pi-percentage"></i>
+            <span> Tasa de interes:</span>
           </p-inputGroupAddon>
           <input
+            disabled="true"
             pInputText
-            placeholder="Taza de interes"
-            [(ngModel)]="tazaDeInteres" />
+            placeholder="Tasa de interes"
+            [(ngModel)]="tasaDeInteres" />
         </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>
             <i class="pi pi-receipt"></i>
+            <span> Pagaria los dias:</span>
           </p-inputGroupAddon>
           <input
             pInputText
+            disabled="true"
             placeholder="Dia de la semana que se abona"
             [value]="diaDeLaSemana" />
         </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>
             <i class="pi pi-wallet"></i>
+            <span> Total a pagar:</span>
           </p-inputGroupAddon>
           <input
             pInputText
+            disabled="true"
             placeholder="Cantidad total a pagar"
             [value]="totalAPagar" />
         </p-inputGroup>
         <p-inputGroup [style]="{ width: '99%' }">
           <p-inputGroupAddon>
             <i class="pi pi-calendar-clock"></i>
+            <span> Fecha final estimada:</span>
           </p-inputGroupAddon>
-          <input type="text" pInputText placeholder="Fecha final estimada" />
+          <input
+            type="text"
+            pInputText
+            [(ngModel)]="fechaFinal"
+            placeholder="Fecha final estimada"
+            disabled="true" />
         </p-inputGroup>
         <!-- fin valores calculados -->
       </div>
