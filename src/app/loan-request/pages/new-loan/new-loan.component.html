@@ -1,7 +1,7 @@
-<p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
-  <p-stepperPanel header="Cantidades y plazos">
-    <ng-template pTemplate="content" let-index="index">
-      <form [formGroup]="mainForm" (ngSubmit)="saludar()">
+<form [formGroup]="mainForm" (ngSubmit)="saludar()">
+  <p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
+    <p-stepperPanel header="Cantidades y plazos">
+      <ng-template pTemplate="content" let-index="index">
         <p>Todos los campos son obligatorios</p>
         <div class="grid py-3 pr-2">
           <!-- inicio de currency de ejemplo -->
@@ -102,7 +102,11 @@
               <i class="pi pi-percentage"></i>
               <span> Tasa de interes:</span>
             </p-inputGroupAddon>
-            <input disabled="true" pInputText placeholder="Tasa de interes" />
+            <input
+              disabled="true"
+              pInputText
+              placeholder="Tasa de interes"
+              [value]="tasaDeInteres" />
           </p-inputGroup>
           <p-inputGroup [style]="{ width: '99%' }">
             <p-inputGroupAddon>
@@ -141,186 +145,192 @@
           </p-inputGroup>
           <!-- fin valores calculados -->
         </div>
-      </form>
-    </ng-template>
-  </p-stepperPanel>
-  <!-- pasos del cliente -->
-  <p-stepperPanel header="Datos del cliente">
-    <ng-template
-      pTemplate="content"
-      let-prevCallback="prevCallback"
-      let-nextCallback="nextCallback"
-      let-index="index">
-      <div class="grid py-3 pr-2">
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="nombreCliente">Nombre del cliente</label>
-          <input
-            pInputText
-            id="nombreCliente"
-            aria-describedby="nombreCliente-help" />
-          <small id="nombreCliente-help">placeholder</small>
+      </ng-template>
+    </p-stepperPanel>
+    <!-- pasos del cliente -->
+    <p-stepperPanel header="Datos del cliente">
+      <ng-template
+        pTemplate="content"
+        let-prevCallback="prevCallback"
+        let-nextCallback="nextCallback"
+        let-index="index">
+        <div class="grid py-3 pr-2">
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="nombreCliente">Nombre del cliente</label>
+            <input
+              pInputText
+              id="nombreCliente"
+              aria-describedby="nombreCliente-help" />
+            <small id="nombreCliente-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="apellidoPaternoCliente">Apellido paterno</label>
+            <input
+              pInputText
+              id="apellidoPaternoCliente"
+              aria-describedby="apellidoPaternoCliente-help" />
+            <small id="apellidoPaternoCliente-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="apellidoMaternoCliente">Apellido materno</label>
+            <input
+              pInputText
+              id="apellidoMaternoCliente"
+              aria-describedby="apellidoMaternoCliente-help" />
+            <small id="apellidoMaternoCliente-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="cantidad">Telefono fijo</label>
+            <p-inputMask
+              mask="999-999-9999"
+              placeholder="999-999-9999"
+              [style]="{ width: '100%' }" />
+            <small id="apellidoMaternoCliente-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="cantidad">Telefono movil</label>
+            <p-inputMask
+              mask="999-999-9999"
+              placeholder="999-999-9999"
+              [style]="{ width: '100%' }" />
+            <small id="apellidoMaternoCliente-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="email">Correo electronico</label>
+            <input pInputText id="email" aria-describedby="email-help" />
+            <small id="email-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="ocupacion">Ocupacion</label>
+            <input
+              pInputText
+              id="ocupacion"
+              aria-describedby="ocupacion-help" />
+            <small id="ocupacion-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="cantidad">CURP</label>
+            <p-inputMask
+              mask="aaaa-999999-aaaaaa-99"
+              placeholder="0000-000000-000000-00"
+              [style]="{ width: '100%' }" />
+            <small id="ocupacion-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="tipoCalle">Tipo de calle</label>
+            <p-dropdown
+              [options]="tiposCalle"
+              optionLabel="name"
+              [showClear]="true"
+              placeholder="Selecciona el tipo de calle"
+              [style]="{ width: '100%' }" />
+            <small id="tipoCalle-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="nombreCalle">Nombre de la calle</label>
+            <input
+              pInputText
+              id="nombreCalle"
+              aria-describedby="nombreCalle-help" />
+            <small id="nombreCalle-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="numeroExterior">Numero Exterior</label>
+            <input
+              pInputText
+              id="numeroExterior"
+              aria-describedby="numeroExterior-help" />
+            <small id="numeroExterior-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="numeroInterior">Numero Interior</label>
+            <input
+              pInputText
+              id="numeroInterior"
+              aria-describedby="numeroInterior-help" />
+            <small id="numeroInterior-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="colonia">Colonia</label>
+            <input pInputText id="colonia" aria-describedby="colonia-help" />
+            <small id="colonia-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="municipio">Municipio</label>
+            <input
+              pInputText
+              id="municipio"
+              aria-describedby="municipio-help" />
+            <small id="municipio-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="estado">Entidad Federativa</label>
+            <p-dropdown
+              [options]="estadosDeLaRepublica"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              placeholder="Selecciona un estado"
+              [style]="{ width: '100%' }"></p-dropdown>
+            <small id="estado-help">placeholder</small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="codigoPostal">Código postal</label>
+            <p-inputMask
+              id="codigoPostal"
+              mask="99999"
+              placeholder="99999"
+              [style]="{ width: '100%' }" />
+            <small id="estado-help">placeholder</small>
+          </div>
+          <div class="col-12 flex flex-column gap-2">
+            <label for="codigoPostal">Observaciones adicionales</label>
+            <textarea rows="5" cols="30" autoResize="true" pInputTextarea>
+            </textarea>
+          </div>
         </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="apellidoPaternoCliente">Apellido paterno</label>
-          <input
-            pInputText
-            id="apellidoPaternoCliente"
-            aria-describedby="apellidoPaternoCliente-help" />
-          <small id="apellidoPaternoCliente-help">placeholder</small>
+      </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Datos de aval">
+      <ng-template
+        pTemplate="content"
+        let-prevCallback="prevCallback"
+        let-nextCallback="nextCallback"
+        let-index="index">
+        <div class="flex flex-column h-12rem">
+          <div
+            class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+            Content III
+          </div>
         </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="apellidoMaternoCliente">Apellido materno</label>
-          <input
-            pInputText
-            id="apellidoMaternoCliente"
-            aria-describedby="apellidoMaternoCliente-help" />
-          <small id="apellidoMaternoCliente-help">placeholder</small>
+        <div class="flex py-4 gap-2">
+          <p-button
+            label="Back"
+            severity="secondary"
+            (onClick)="prevCallback.emit()" />
+          <p-button label="Next" (onClick)="nextCallback.emit()" />
         </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="cantidad">Telefono fijo</label>
-          <p-inputMask
-            mask="999-999-9999"
-            placeholder="999-999-9999"
-            [style]="{ width: '100%' }" />
-          <small id="apellidoMaternoCliente-help">placeholder</small>
+      </ng-template>
+    </p-stepperPanel>
+    <p-stepperPanel header="Documentacion">
+      <ng-template
+        pTemplate="content"
+        let-prevCallback="prevCallback"
+        let-index="index">
+        <div class="flex flex-column h-12rem">
+          <div
+            class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
+            Content IV
+          </div>
         </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="cantidad">Telefono movil</label>
-          <p-inputMask
-            mask="999-999-9999"
-            placeholder="999-999-9999"
-            [style]="{ width: '100%' }" />
-          <small id="apellidoMaternoCliente-help">placeholder</small>
+        <div class="flex py-4">
+          <p-button
+            label="Back"
+            severity="secondary"
+            (onClick)="prevCallback.emit()" />
         </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="email">Correo electronico</label>
-          <input pInputText id="email" aria-describedby="email-help" />
-          <small id="email-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="ocupacion">Ocupacion</label>
-          <input pInputText id="ocupacion" aria-describedby="ocupacion-help" />
-          <small id="ocupacion-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="cantidad">CURP</label>
-          <p-inputMask
-            mask="aaaa-999999-aaaaaa-99"
-            placeholder="0000-000000-000000-00"
-            [style]="{ width: '100%' }" />
-          <small id="ocupacion-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="tipoCalle">Tipo de calle</label>
-          <p-dropdown
-            [options]="tiposCalle"
-            optionLabel="name"
-            [showClear]="true"
-            placeholder="Selecciona el tipo de calle"
-            [style]="{ width: '100%' }" />
-          <small id="tipoCalle-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="nombreCalle">Nombre de la calle</label>
-          <input
-            pInputText
-            id="nombreCalle"
-            aria-describedby="nombreCalle-help" />
-          <small id="nombreCalle-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="numeroExterior">Numero Exterior</label>
-          <input
-            pInputText
-            id="numeroExterior"
-            aria-describedby="numeroExterior-help" />
-          <small id="numeroExterior-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="numeroInterior">Numero Interior</label>
-          <input
-            pInputText
-            id="numeroInterior"
-            aria-describedby="numeroInterior-help" />
-          <small id="numeroInterior-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="colonia">Colonia</label>
-          <input pInputText id="colonia" aria-describedby="colonia-help" />
-          <small id="colonia-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="municipio">Municipio</label>
-          <input pInputText id="municipio" aria-describedby="municipio-help" />
-          <small id="municipio-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="estado">Entidad Federativa</label>
-          <p-dropdown
-            [options]="estadosDeLaRepublica"
-            optionLabel="name"
-            [filter]="true"
-            filterBy="name"
-            [showClear]="true"
-            placeholder="Selecciona un estado"
-            [style]="{ width: '100%' }"></p-dropdown>
-          <small id="estado-help">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-6 flex flex-column">
-          <label for="codigoPostal">Código postal</label>
-          <p-inputMask
-            id="codigoPostal"
-            mask="99999"
-            placeholder="99999"
-            [style]="{ width: '100%' }" />
-          <small id="estado-help">placeholder</small>
-        </div>
-        <div class="col-12 flex flex-column gap-2">
-          <label for="codigoPostal">Observaciones adicionales</label>
-          <textarea rows="5" cols="30" autoResize="true" pInputTextarea>
-          </textarea>
-        </div>
-      </div>
-    </ng-template>
-  </p-stepperPanel>
-  <p-stepperPanel header="Datos de aval">
-    <ng-template
-      pTemplate="content"
-      let-prevCallback="prevCallback"
-      let-nextCallback="nextCallback"
-      let-index="index">
-      <div class="flex flex-column h-12rem">
-        <div
-          class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-          Content III
-        </div>
-      </div>
-      <div class="flex py-4 gap-2">
-        <p-button
-          label="Back"
-          severity="secondary"
-          (onClick)="prevCallback.emit()" />
-        <p-button label="Next" (onClick)="nextCallback.emit()" />
-      </div>
-    </ng-template>
-  </p-stepperPanel>
-  <p-stepperPanel header="Documentacion">
-    <ng-template
-      pTemplate="content"
-      let-prevCallback="prevCallback"
-      let-index="index">
-      <div class="flex flex-column h-12rem">
-        <div
-          class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-          Content IV
-        </div>
-      </div>
-      <div class="flex py-4">
-        <p-button
-          label="Back"
-          severity="secondary"
-          (onClick)="prevCallback.emit()" />
-      </div>
-    </ng-template>
-  </p-stepperPanel>
-</p-stepper>
+      </ng-template>
+    </p-stepperPanel>
+  </p-stepper>
+</form>
