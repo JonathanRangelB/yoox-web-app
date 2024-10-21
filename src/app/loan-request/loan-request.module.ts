@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { StepperModule } from 'primeng/stepper';
 import { ButtonModule } from 'primeng/button';
@@ -34,6 +34,7 @@ import { ViewLoanComponent } from './pages/view-loan/view-loan.component';
     InputGroupModule,
     InputGroupAddonModule,
     FormsModule,
+    ReactiveFormsModule,
   ],
 })
 export class LoanRequestModule {}

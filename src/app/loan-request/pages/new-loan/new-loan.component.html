@@ -1,117 +1,150 @@
 <p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
   <p-stepperPanel header="Cantidades y plazos">
     <ng-template pTemplate="content" let-index="index">
-      <div class="grid py-3 pr-2">
-        <!-- inicio de currency de ejemplo -->
-        <div class="col-12 sm:col-4 flex flex-column">
-          <label for="cantidad">Cantidad a prestar</label>
-          <p-inputNumber
-            inputId="integeronly"
-            placeholder="Cantidad"
-            mode="currency"
-            currency="MXN"
-            locale="es-MX"
-            maxFractionDigits="0"
-            autofocus="true"
-            showClear="true"
-            [style]="{ width: '100%' }"
-            [inputStyle]="{ width: '100%' }"
-            (onInput)="onInputCantidad($event)" />
-          <small id="cantidad-help" class="mb-2"
-            >Ingresa la cantidad que el cliente solicita</small
-          >
+      <form [formGroup]="mainForm" (ngSubmit)="saludar()">
+        <p>Todos los campos son obligatorios</p>
+        <div class="grid py-3 pr-2">
+          <!-- inicio de currency de ejemplo -->
+          <div class="col-12 sm:col-4 flex flex-column">
+            <label for="cantidad">Cantidad a prestar *</label>
+            <p-inputNumber
+              id="cantidad"
+              name="cantidad"
+              formControlName="cantidad"
+              inputId="integeronly"
+              placeholder="Cantidad"
+              mode="currency"
+              currency="MXN"
+              locale="es-MX"
+              maxFractionDigits="0"
+              autofocus="true"
+              showClear="true"
+              [style]="{ width: '100%' }"
+              [inputStyle]="{ width: '100%' }"
+              (onInput)="onInputCantidad($event)" />
+            <small
+              id="cantidad-help"
+              class="mb-2 text-red-500"
+              [hidden]="
+                mainForm.controls['cantidad'].valid ||
+                !mainForm.controls['cantidad'].dirty
+              ">
+              <ng-container
+                *ngIf="mainForm.get('cantidad')?.errors?.['required']">
+                Cantidad requerida</ng-container
+              >
+              <ng-container *ngIf="mainForm.get('cantidad')?.errors?.['min']">
+                Cantidad minima de 1000</ng-container
+              >
+            </small>
+          </div>
+          <!-- final de currency de ejemplo -->
+          <div class="col-12 sm:col-4 flex flex-column">
+            <label for="tipoCalle">Plazo *</label>
+            <p-dropdown
+              id="plazos"
+              name="palzos"
+              formControlName="plazos"
+              [options]="plazos"
+              optionLabel="name"
+              (onChange)="onPlazoChanged($event)"
+              placeholder="Plazo de semanas"
+              [style]="{ width: '100%' }" />
+            <small
+              id="tipoCalle-help"
+              class="mb-2"
+              [hidden]="
+                mainForm.controls['plazos'].valid ||
+                !mainForm.controls['plazos'].dirty
+              "
+              >Selecciona un plazo</small
+            >
+          </div>
+          <div class="col-12 sm:col-4 flex flex-column">
+            <label for="fechaInicial">Fecha inicial *</label>
+            <p-calendar
+              id="fechaInicial"
+              formControlName="fechaInicial"
+              placeholder="dd/mm/aaaa"
+              [iconDisplay]="'input'"
+              [showIcon]="true"
+              [showButtonBar]="true"
+              (onSelect)="calculaDiaDeLaSemana($event)"
+              dateFormat="dd/mm/yy"
+              inputId="icondisplay"
+              [style]="{ width: '100%' }" />
+            <small
+              id="fechaInicial-help"
+              class="mb-2 text-red-500"
+              [hidden]="
+                mainForm.controls['fechaInicial'].valid ||
+                !mainForm.controls['fechaInicial'].dirty
+              "
+              >Fecha Inicial requerida</small
+            >
+          </div>
+          <!-- inicio valores calculados -->
+
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-money-bill"></i>
+              <span> Cada semana se pagarian:</span>
+            </p-inputGroupAddon>
+            <input
+              pInputText
+              disabled="true"
+              placeholder="Cantidad semanal"
+              style="color: green; font-weight: bold"
+              [value]="pagoSemanal" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-percentage"></i>
+              <span> Tasa de interes:</span>
+            </p-inputGroupAddon>
+            <input disabled="true" pInputText placeholder="Tasa de interes" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-wallet"></i>
+              <span> Total a pagar:</span>
+            </p-inputGroupAddon>
+            <input
+              pInputText
+              disabled="true"
+              placeholder="Cantidad total a pagar"
+              style="color: green; font-weight: bold"
+              [value]="totalAPagar" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-receipt"></i>
+              <span> Pagaria los dias:</span>
+            </p-inputGroupAddon>
+            <input
+              pInputText
+              disabled="true"
+              placeholder="Dia de la semana que se abona"
+              [value]="diaDeLaSemana" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-calendar-clock"></i>
+              <span> Fecha final estimada:</span>
+            </p-inputGroupAddon>
+            <input
+              type="text"
+              pInputText
+              placeholder="Fecha final estimada"
+              disabled="true"
+              [value]="fechaFinal" />
+          </p-inputGroup>
+          <!-- fin valores calculados -->
         </div>
-        <!-- final de currency de ejemplo -->
-        <div class="col-12 sm:col-4 flex flex-column">
-          <label for="tipoCalle">Plazo</label>
-          <p-dropdown
-            [options]="plazos"
-            optionLabel="name"
-            (onChange)="onPlazoChanged($event)"
-            placeholder="Plazo de semanas"
-            [style]="{ width: '100%' }" />
-          <small id="tipoCalle-help" class="mb-2">placeholder</small>
-        </div>
-        <div class="col-12 sm:col-4 flex flex-column">
-          <label for="fechaInicial">Fecha inicial</label>
-          <p-calendar
-            id="fechaInicial"
-            placeholder="dd/mm/aaaa"
-            [iconDisplay]="'input'"
-            [showIcon]="true"
-            [showButtonBar]="true"
-            [(ngModel)]="fechaInicial"
-            (onSelect)="calculaDiaDeLaSemana()"
-            dateFormat="dd/mm/yy"
-            inputId="icondisplay"
-            [style]="{ width: '100%' }" />
-          <small id="fechaInicial-help" class="mb-2"
-            >Fecha tentativa para inicio de prestamo</small
-          >
-        </div>
-        <!-- inicio valores calculados -->
-        <p-inputGroup [style]="{ width: '99%' }">
-          <p-inputGroupAddon>
-            <i class="pi pi-money-bill"></i>
-            <span> Cada semana se pagarian:</span>
-          </p-inputGroupAddon>
-          <input
-            pInputText
-            disabled="true"
-            placeholder="Cantidad semanal"
-            style="color: green; font-weight: bold"
-            [value]="pagoSemanal" />
-        </p-inputGroup>
-        <p-inputGroup [style]="{ width: '99%' }">
-          <p-inputGroupAddon>
-            <i class="pi pi-percentage"></i>
-            <span> Tasa de interes:</span>
-          </p-inputGroupAddon>
-          <input
-            disabled="true"
-            pInputText
-            placeholder="Tasa de interes"
-            [(ngModel)]="tasaDeInteres" />
-        </p-inputGroup>
-        <p-inputGroup [style]="{ width: '99%' }">
-          <p-inputGroupAddon>
-            <i class="pi pi-wallet"></i>
-            <span> Total a pagar:</span>
-          </p-inputGroupAddon>
-          <input
-            pInputText
-            disabled="true"
-            placeholder="Cantidad total a pagar"
-            style="color: green; font-weight: bold"
-            [value]="totalAPagar" />
-        </p-inputGroup>
-        <p-inputGroup [style]="{ width: '99%' }">
-          <p-inputGroupAddon>
-            <i class="pi pi-receipt"></i>
-            <span> Pagaria los dias:</span>
-          </p-inputGroupAddon>
-          <input
-            pInputText
-            disabled="true"
-            placeholder="Dia de la semana que se abona"
-            [value]="diaDeLaSemana" />
-        </p-inputGroup>
-        <p-inputGroup [style]="{ width: '99%' }">
-          <p-inputGroupAddon>
-            <i class="pi pi-calendar-clock"></i>
-            <span> Fecha final estimada:</span>
-          </p-inputGroupAddon>
-          <input
-            type="text"
-            pInputText
-            [(ngModel)]="fechaFinal"
-            placeholder="Fecha final estimada"
-            disabled="true" />
-        </p-inputGroup>
-        <!-- fin valores calculados -->
-      </div>
+      </form>
     </ng-template>
   </p-stepperPanel>
+  <!-- pasos del cliente -->
   <p-stepperPanel header="Datos del cliente">
     <ng-template
       pTemplate="content"

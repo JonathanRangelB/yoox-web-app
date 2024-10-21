@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
 
@@ -13,6 +14,7 @@ interface dropDownCollection {
   styleUrls: ['./new-loan.component.css'],
 })
 export class NewLoanComponent implements OnInit {
+  mainForm: FormGroup;
   tiposCalle: dropDownCollection[] | undefined;
   estadosDeLaRepublica: dropDownCollection[] | undefined;
   plazos: dropDownCollection[] | undefined;
@@ -20,13 +22,21 @@ export class NewLoanComponent implements OnInit {
   calleSeleccionada: dropDownCollection | undefined;
   estadosDeLaRepublicaSeleccionado: dropDownCollection | undefined;
   fechaInicial: Date | undefined;
-  fechaFinal: string | undefined;
+  fechaFinal: string | null = null;
   diaDeLaSemana: string | null = null;
   days: string[] = [];
   cantidadIngresada: number = 0;
   tasaDeInteres: number = 0;
   totalAPagar: number = 0;
   pagoSemanal: number | null = null;
+
+  constructor(private fb: FormBuilder) {
+    this.mainForm = this.fb.group({
+      cantidad: [null, [Validators.required, Validators.min(1000)]],
+      plazos: [null, Validators.required],
+      fechaInicial: [null, Validators.required],
+    });
+  }
 
   ngOnInit(): void {
     this.tiposCalle = [
@@ -95,6 +105,10 @@ export class NewLoanComponent implements OnInit {
     ];
   }
 
+  saludar() {
+    console.log();
+  }
+
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
     this.semanasDePlazo = value.name;
@@ -116,16 +130,11 @@ export class NewLoanComponent implements OnInit {
       this.cantidadIngresada *
       (1 + this.tasaDeInteres / 100)
     ).toFixed(2);
-    console.table({
-      tasaDeInteres: this.tasaDeInteres,
-      cantidadIngresada: this.cantidadIngresada,
-      total: this.totalAPagar,
-    });
     this.pagoSemanal = this.totalAPagar / this.semanasDePlazo!;
   }
 
-  calculaDiaDeLaSemana() {
-    if (!this.fechaInicial) return;
+  calculaDiaDeLaSemana(date: Date) {
+    this.fechaInicial = date;
     const dayIndex = this.fechaInicial.getDay();
     this.diaDeLaSemana = this.days[dayIndex];
     this.calculaFechaFinal();
@@ -133,7 +142,7 @@ export class NewLoanComponent implements OnInit {
 
   calculaFechaFinal() {
     if (!this.fechaInicial || !this.semanasDePlazo) return;
-    const result = new Date(this.fechaInicial!);
+    const result = new Date(this.fechaInicial);
     result.setDate(result.getDate() + this.semanasDePlazo! * 7);
     this.fechaFinal = result.toLocaleDateString('es-MX', {
       weekday: 'long',
