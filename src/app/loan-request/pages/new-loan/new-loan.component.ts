@@ -23,6 +23,7 @@ export class NewLoanComponent implements OnInit {
   estadosDeLaRepublicaSeleccionado: dropDownCollection | undefined;
   fechaInicial: Date | undefined;
   fechaFinal: string | null = null;
+  fechaMinima: Date | undefined;
   diaDeLaSemana: string | null = null;
   days: string[] = [];
   cantidadIngresada: number = 0;
@@ -103,6 +104,8 @@ export class NewLoanComponent implements OnInit {
       'Viernes',
       'Sábado',
     ];
+
+    this.fechaMinima = new Date();
   }
 
   saludar() {

@@ -71,6 +71,8 @@
               [showButtonBar]="true"
               (onSelect)="calculaDiaDeLaSemana($event)"
               dateFormat="dd/mm/yy"
+              readonlyInput="true"
+              [minDate]="fechaMinima"
               inputId="icondisplay"
               [style]="{ width: '100%' }" />
             <small
