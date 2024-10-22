@@ -1,4 +1,4 @@
-<form [formGroup]="mainForm" (ngSubmit)="saludar()">
+<form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
   <p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
     <p-stepperPanel header="Cantidades y plazos">
       <ng-template pTemplate="content" let-index="index">
@@ -27,7 +27,8 @@
               class="mb-2 text-red-500"
               [hidden]="
                 mainForm.controls['cantidad'].valid ||
-                !mainForm.controls['cantidad'].dirty
+                (!mainForm.controls['cantidad'].dirty &&
+                  !mainForm.controls['cantidad'].touched)
               ">
               <ng-container
                 *ngIf="mainForm.get('cantidad')?.errors?.['required']">
@@ -52,10 +53,11 @@
               [style]="{ width: '100%' }" />
             <small
               id="tipoCalle-help"
-              class="mb-2"
+              class="mb-2 text-red-500"
               [hidden]="
                 mainForm.controls['plazos'].valid ||
-                !mainForm.controls['plazos'].dirty
+                (!mainForm.controls['plazos'].dirty &&
+                  !mainForm.controls['plazos'].touched)
               "
               >Selecciona un plazo</small
             >
@@ -80,7 +82,8 @@
               class="mb-2 text-red-500"
               [hidden]="
                 mainForm.controls['fechaInicial'].valid ||
-                !mainForm.controls['fechaInicial'].dirty
+                (!mainForm.controls['fechaInicial'].dirty &&
+                  !mainForm.controls['fechaInicial'].touched)
               "
               >Fecha Inicial requerida</small
             >
@@ -331,8 +334,15 @@
             label="Back"
             severity="secondary"
             (onClick)="prevCallback.emit()" />
+          <button pButton type="submit">Enviar solicitud</button>
         </div>
       </ng-template>
     </p-stepperPanel>
   </p-stepper>
 </form>
+
+<p-toast />
+<p-confirmDialog
+  key="positionDialog"
+  [position]="position"
+  rejectButtonStyleClass="p-button-outlined" />

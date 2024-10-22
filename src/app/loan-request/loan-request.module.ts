@@ -17,6 +17,9 @@ import { LoanRequestRoutingModule } from './loan-request-routing.module';
 import { NewLoanComponent } from './pages/new-loan/new-loan.component';
 import { UpdateLoanComponent } from './pages/update-loan/update-loan.component';
 import { ViewLoanComponent } from './pages/view-loan/view-loan.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ConfirmationService, MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @NgModule({
   declarations: [NewLoanComponent, UpdateLoanComponent, ViewLoanComponent],
@@ -35,6 +38,9 @@ import { ViewLoanComponent } from './pages/view-loan/view-loan.component';
     InputGroupAddonModule,
     FormsModule,
     ReactiveFormsModule,
+    ConfirmDialogModule,
+    ToastModule,
   ],
+  providers: [ConfirmationService, MessageService],
 })
 export class LoanRequestModule {}

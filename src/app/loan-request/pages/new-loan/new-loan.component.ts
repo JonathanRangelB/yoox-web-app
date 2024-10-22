@@ -1,5 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
 
@@ -14,6 +15,10 @@ interface dropDownCollection {
   styleUrls: ['./new-loan.component.css'],
 })
 export class NewLoanComponent implements OnInit {
+  fb = inject(FormBuilder);
+  cs = inject(ConfirmationService);
+  ms = inject(MessageService);
+  position: string = 'bottom';
   mainForm: FormGroup;
   tiposCalle: dropDownCollection[] | undefined;
   estadosDeLaRepublica: dropDownCollection[] | undefined;
@@ -31,7 +36,7 @@ export class NewLoanComponent implements OnInit {
   totalAPagar: number = 0;
   pagoSemanal: number | null = null;
 
-  constructor(private fb: FormBuilder) {
+  constructor() {
     this.mainForm = this.fb.group({
       cantidad: [null, [Validators.required, Validators.min(1000)]],
       plazos: [null, Validators.required],
@@ -108,10 +113,6 @@ export class NewLoanComponent implements OnInit {
     this.fechaMinima = new Date();
   }
 
-  saludar() {
-    console.log();
-  }
-
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
     this.semanasDePlazo = value.name;
@@ -152,6 +153,44 @@ export class NewLoanComponent implements OnInit {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
+    });
+  }
+
+  onSubmit() {
+    if (!this.mainForm.valid) {
+      this.ms.add({
+        severity: 'error',
+        summary: 'Rechazado',
+        detail:
+          'Algún dato en el formulario es incorrecto o aun no se ha proporcionado, revisa nuevamente los campos.',
+        life: 3000,
+      });
+      this.mainForm.markAllAsTouched();
+      return;
+    }
+    this.cs.confirm({
+      message: 'Estas seguro que deseas continunar con la solicitud?',
+      header: 'Confirmacion',
+      icon: 'pi pi-info-circle',
+      acceptIcon: 'none',
+      rejectIcon: 'none',
+      rejectButtonStyleClass: 'p-button-text',
+      accept: () => {
+        this.ms.add({
+          severity: 'info',
+          summary: 'Confirmado',
+          detail: 'Solicitud enviada',
+        });
+      },
+      reject: () => {
+        this.ms.add({
+          severity: 'error',
+          summary: 'Rechazado',
+          detail: 'Proceso cancelado',
+          life: 3000,
+        });
+      },
+      key: 'positionDialog',
     });
   }
 }
