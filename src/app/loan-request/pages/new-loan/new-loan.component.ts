@@ -156,23 +156,34 @@ export class NewLoanComponent implements OnInit {
     });
   }
 
+  esCampoOculto(nombreDelCampo: string) {
+    return (
+      this.mainForm.controls[nombreDelCampo].valid ||
+      (!this.mainForm.controls[nombreDelCampo].dirty &&
+        !this.mainForm.controls[nombreDelCampo].touched)
+    );
+  }
+
   onSubmit() {
     if (!this.mainForm.valid) {
       this.ms.add({
         severity: 'error',
         summary: 'Rechazado',
         detail:
-          'Algún dato en el formulario es incorrecto o aun no se ha proporcionado, revisa nuevamente los campos.',
-        life: 3000,
+          'Algún dato es incorrecto o aun no se ha proporcionado, revisa nuevamente los campos en el formulario.',
+        life: 5000,
       });
       this.mainForm.markAllAsTouched();
       return;
     }
     this.cs.confirm({
-      message: 'Estas seguro que deseas continunar con la solicitud?',
-      header: 'Confirmacion',
+      message:
+        'Valida que la información de este formulario es correcta y veridica. Estas seguro que deseas continunar con la solicitud?',
+      header: 'Confirmación',
       icon: 'pi pi-info-circle',
+      acceptLabel: 'Enviar solicitud',
       acceptIcon: 'none',
+      rejectLabel: 'Regresar',
       rejectIcon: 'none',
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
@@ -180,13 +191,14 @@ export class NewLoanComponent implements OnInit {
           severity: 'info',
           summary: 'Confirmado',
           detail: 'Solicitud enviada',
+          life: 3000,
         });
       },
       reject: () => {
         this.ms.add({
           severity: 'error',
           summary: 'Rechazado',
-          detail: 'Proceso cancelado',
+          detail: 'No se envio la solicitud',
           life: 3000,
         });
       },
