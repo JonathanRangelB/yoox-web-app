@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
@@ -10,7 +10,12 @@ import {
   plazos,
   tiposCalle,
 } from '../../utils/consts';
-import { curpValidator, length10 } from '../../utils/customValidators';
+import {
+  asyncValidator,
+  curpValidator,
+  emailValidator,
+  lengthValidator,
+} from '../../utils/customValidators';
 
 interface dropDownCollection {
   name: string;
@@ -22,7 +27,7 @@ interface dropDownCollection {
   templateUrl: './new-loan.component.html',
   styleUrls: ['./new-loan.component.css'],
 })
-export class NewLoanComponent implements OnInit {
+export class NewLoanComponent {
   fb = inject(FormBuilder);
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
@@ -36,36 +41,38 @@ export class NewLoanComponent implements OnInit {
   estadosDeLaRepublicaSeleccionado: dropDownCollection | undefined;
   fechaInicial: Date | undefined;
   fechaFinal: string | null = null;
-  fechaMinima: Date | undefined;
+  fechaMinima: Date = new Date();
   diaDeLaSemana: string | null = null;
   days: string[] = days;
   cantidadIngresada: number = 0;
   tasaDeInteres: number = 0;
   totalAPagar: number = 0;
   pagoSemanal: number | null = null;
-  emailRegex =
-    /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
   constructor() {
     this.mainForm = this.fb.group({
-      cantidad: [null, [Validators.required, Validators.min(1000)]],
-      plazos: [null, Validators.required],
-      fechaInicial: [null, Validators.required],
+      cantidad: [
+        '',
+        [Validators.required, Validators.min(1000)],
+        asyncValidator(),
+      ],
+      plazos: ['', Validators.required],
+      fechaInicial: ['', Validators.required],
       nombreCliente: ['', Validators.required],
       apellidoPaternoCliente: ['', Validators.required],
       apellidoMaternoCliente: ['', Validators.required],
-      telefonoFijoCliente: ['', [Validators.required, length10()]],
-      telefonoMovilCliente: ['', [Validators.required, length10()]],
-      correoCliente: [
-        '',
-        [Validators.required, Validators.pattern(this.emailRegex)],
-      ],
+      telefonoFijoCliente: ['', [Validators.required]],
+      telefonoMovilCliente: ['', [Validators.required]],
+      correoCliente: ['', [Validators.required, emailValidator()]],
       curpCliente: ['', [Validators.required, curpValidator()]],
+      tipoCalleCliente: [null, Validators.required],
+      nombreCalleCliente: ['', Validators.required],
+      numeroExteriorCliente: [null, Validators.required],
+      coloniaCliente: ['', Validators.required],
+      municipioCliente: ['', Validators.required],
+      estadoCliente: ['', Validators.required],
+      codigoPostalCliente: [null, [Validators.required, lengthValidator(5)]],
     });
-  }
-
-  ngOnInit(): void {
-    this.fechaMinima = new Date();
   }
 
   onPlazoChanged({ value }: DropdownChangeEvent) {

@@ -243,7 +243,7 @@
                 Correo electronico requerido</ng-container
               >
               <ng-container
-                *ngIf="mainForm.get('correoCliente')?.errors?.['pattern']">
+                *ngIf="mainForm.get('correoCliente')?.errors?.['invalidEmail']">
                 Formato de correo invalido</ng-container
               ></small
             >
@@ -254,7 +254,7 @@
               pInputText
               id="ocupacion"
               aria-describedby="ocupacion-help" />
-            <small id="ocupacion-help">placeholder</small>
+            <small id="ocupacion-help" [hidden]="true">ocupacion</small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="curpCliente">CURP</label>
@@ -273,7 +273,6 @@
                 *ngIf="mainForm.get('curpCliente')?.errors?.['required']">
                 CURP requerido</ng-container
               >
-
               <ng-container
                 *ngIf="mainForm.get('curpCliente')?.errors?.['invalidCurp']">
                 Formato de CURP invalido</ng-container
@@ -283,55 +282,95 @@
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="tipoCalle">Tipo de calle</label>
             <p-dropdown
+              id="tipoCalle"
+              name="tipoCalle"
+              formControlName="tipoCalleCliente"
               [options]="tiposCalle"
               optionLabel="name"
               [showClear]="true"
               placeholder="Selecciona el tipo de calle"
               [style]="{ width: '100%' }" />
-            <small id="tipoCalle-help">placeholder</small>
+            <small
+              id="tipoCalle-help"
+              class="mb-2 text-red-500"
+              [hidden]="esCampoOculto('tipoCalleCliente')"
+              >Selecciona un tipo de calle</small
+            >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="nombreCalle">Nombre de la calle</label>
+            <label for="nombreCalleCliente">Nombre de la calle</label>
             <input
               pInputText
-              id="nombreCalle"
-              aria-describedby="nombreCalle-help" />
-            <small id="nombreCalle-help">placeholder</small>
+              formControlName="nombreCalleCliente"
+              id="nombreCalleCliente"
+              aria-describedby="nombreCalleCliente-help" />
+            <small
+              id="nombreCalleCliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="esCampoOculto('nombreCalleCliente')"
+              >Nombre de calle es requerido</small
+            >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="numeroExterior">Numero Exterior</label>
-            <input
-              pInputText
-              id="numeroExterior"
-              aria-describedby="numeroExterior-help" />
-            <small id="numeroExterior-help">placeholder</small>
+            <label for="numeroExteriorCliente">Número Exterior</label>
+            <p-inputNumber
+              formControlName="numeroExteriorCliente"
+              showClear="true"
+              [style]="{ width: '100%' }"
+              [inputStyle]="{ width: '100%' }"
+              id="numeroExteriorCliente"
+              aria-describedby="numeroExteriorCliente-help" />
+            <small
+              id="numeroExteriorCliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="esCampoOculto('numeroExteriorCliente')"
+              >El numero de exterior es requerido</small
+            >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="numeroInterior">Numero Interior</label>
-            <input
-              pInputText
+            <label for="numeroInterior">Número Interior</label>
+            <p-inputNumber
               id="numeroInterior"
+              showClear="true"
+              [style]="{ width: '100%' }"
+              [inputStyle]="{ width: '100%' }"
               aria-describedby="numeroInterior-help" />
-            <small id="numeroInterior-help">placeholder</small>
+            <small id="numeroInterior-help" [hidden]="true">placeholder</small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="colonia">Colonia</label>
-            <input pInputText id="colonia" aria-describedby="colonia-help" />
-            <small id="colonia-help">placeholder</small>
-          </div>
-          <div class="col-12 sm:col-6 flex flex-column">
-            <label for="municipio">Municipio</label>
+            <label for="coloniaCliente">Colonia</label>
             <input
               pInputText
-              id="municipio"
-              aria-describedby="municipio-help" />
-            <small id="municipio-help">placeholder</small>
+              id="coloniaCliente"
+              aria-describedby="coloniaCliente-help"
+              formControlName="coloniaCliente" />
+            <small
+              id="coloniaCliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="esCampoOculto('coloniaCliente')"
+              >La colonia es requerida</small
+            >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="estado">Entidad Federativa</label>
+            <label for="municipioCliente">Municipio</label>
+            <input
+              pInputText
+              formControlName="municipioCliente"
+              id="municipioCliente"
+              aria-describedby="municipioCliente-help" />
+            <small
+              id="municipioCliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="esCampoOculto('municipioCliente')"
+              >Municipio Requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="estadoCliente">Entidad Federativa</label>
             <p-dropdown
               [options]="estadosDeLaRepublica"
               emptyFilterMessage="Sin resultados"
+              formControlName="estadoCliente"
               optionLabel="name"
               [filter]="true"
               filterBy="name"
@@ -339,19 +378,46 @@
               placeholder="Selecciona un estado"
               [style]="{ width: '100%' }">
             </p-dropdown>
-            <small id="estado-help">placeholder</small>
+            <small
+              id="estadoCliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="esCampoOculto('estadoCliente')"
+              >El estado es requerido</small
+            >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="codigoPostal">Código postal</label>
-            <p-inputMask
-              id="codigoPostal"
-              mask="99999"
+            <p-inputNumber
+              id="codigoPostalCliente"
+              formControlName="codigoPostalCliente"
+              autoClear="false"
+              showClear="true"
+              useGrouping="false"
               placeholder="99999"
+              [maxlength]="5"
               [style]="{ width: '100%' }" />
-            <small id="estado-help">placeholder</small>
+            <small
+              id="codigoPostalCliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="esCampoOculto('codigoPostalCliente')"
+              ><ng-container
+                *ngIf="
+                  mainForm.get('codigoPostalCliente')?.errors?.['required']
+                ">
+                Código postal requerido</ng-container
+              >
+              <ng-container
+                *ngIf="
+                  mainForm.get('codigoPostalCliente')?.errors?.[
+                    'lenghtNotMatch'
+                  ]
+                ">
+                El número debe de tener 5 digitos</ng-container
+              ></small
+            >
           </div>
           <div class="col-12 flex flex-column gap-2">
-            <label for="codigoPostal">Observaciones adicionales</label>
+            <label for="observacionesCliente">Observaciones adicionales</label>
             <textarea rows="5" cols="30" autoResize="true" pInputTextarea>
             </textarea>
           </div>
