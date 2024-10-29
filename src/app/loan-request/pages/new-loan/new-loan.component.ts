@@ -37,8 +37,6 @@ export class NewLoanComponent {
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
   plazos: dropDownCollection[] = plazos;
   semanasDePlazo: number | undefined;
-  calleSeleccionada: dropDownCollection | undefined;
-  estadosDeLaRepublicaSeleccionado: dropDownCollection | undefined;
   fechaInicial: Date | undefined;
   fechaFinal: string | null = null;
   fechaMinima: Date = new Date();
@@ -140,7 +138,7 @@ export class NewLoanComponent {
     }
     this.cs.confirm({
       message:
-        'Valida que la información de este formulario es correcta y veridica. Estas seguro que deseas continunar con la solicitud?',
+        'Valida que la información de este formulario es correcta y verídica. Estas seguro que deseas continuar con la solicitud?',
       header: 'Confirmación',
       icon: 'pi pi-info-circle',
       acceptLabel: 'Enviar solicitud',
@@ -160,7 +158,7 @@ export class NewLoanComponent {
         this.ms.add({
           severity: 'error',
           summary: 'Rechazado',
-          detail: 'No se envio la solicitud',
+          detail: 'No se envió la solicitud',
           life: 3000,
         });
       },
