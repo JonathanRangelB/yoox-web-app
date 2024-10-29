@@ -16,6 +16,7 @@ import {
   emailValidator,
   lengthValidator,
 } from '../../utils/customValidators';
+import { S3BucketService } from '../../services/s3-bucket.service';
 
 interface dropDownCollection {
   name: string;
@@ -31,6 +32,7 @@ export class NewLoanComponent {
   fb = inject(FormBuilder);
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
+  s3 = inject(S3BucketService);
   position: string = 'bottom';
   mainForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
@@ -124,6 +126,35 @@ export class NewLoanComponent {
     );
   }
 
+  onUpload(event: any) {
+    const files = event.files;
+    // TODO: generar el nombre del folder para el usuario
+    const customerFolderName = 'jonathan';
+
+    this.s3.uploadFiles(files, customerFolderName).subscribe({
+      next: () => {
+        this.ms.add({
+          severity: 'info',
+          summary: 'Confirmado',
+          detail: 'Subida de archivos completada!',
+          life: 3000,
+        });
+      },
+      error: (err) => {
+        console.log('ocurrio un error al subir archivos', err);
+        this.ms.add({
+          severity: 'error',
+          summary: 'Rechazado',
+          detail: 'Ocurrio un problema al intentar subir los archivos',
+          life: 3000,
+        });
+      },
+      complete: () => {
+        console.log('subida de archivos completada con exito');
+      },
+    });
+  }
+
   onSubmit() {
     if (!this.mainForm.valid) {
       this.ms.add({
@@ -147,20 +178,10 @@ export class NewLoanComponent {
       rejectIcon: 'none',
       rejectButtonStyleClass: 'p-button-text',
       accept: () => {
-        this.ms.add({
-          severity: 'info',
-          summary: 'Confirmado',
-          detail: 'Solicitud enviada',
-          life: 3000,
-        });
+        console.log('accept en construccion');
       },
       reject: () => {
-        this.ms.add({
-          severity: 'error',
-          summary: 'Rechazado',
-          detail: 'No se envió la solicitud',
-          life: 3000,
-        });
+        console.error('error en construccion');
       },
       key: 'positionDialog',
     });

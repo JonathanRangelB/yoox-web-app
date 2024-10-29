@@ -12,6 +12,7 @@ import { InputTextareaModule } from 'primeng/inputtextarea';
 import { CalendarModule } from 'primeng/calendar';
 import { InputGroupModule } from 'primeng/inputgroup';
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { FileUploadModule } from 'primeng/fileupload';
 
 import { LoanRequestRoutingModule } from './loan-request-routing.module';
 import { NewLoanComponent } from './pages/new-loan/new-loan.component';
@@ -40,6 +41,7 @@ import { ToastModule } from 'primeng/toast';
     ReactiveFormsModule,
     ConfirmDialogModule,
     ToastModule,
+    FileUploadModule,
   ],
   providers: [ConfirmationService, MessageService],
 })

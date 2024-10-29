@@ -451,11 +451,14 @@
         pTemplate="content"
         let-prevCallback="prevCallback"
         let-index="index">
-        <div class="flex flex-column h-12rem">
-          <div
-            class="border-2 border-dashed surface-border border-round surface-ground flex-auto flex justify-content-center align-items-center font-medium">
-            Content IV
-          </div>
+        <div class="flex flex-column">
+          <p-fileUpload
+            customUpload="true"
+            (uploadHandler)="onUpload($event)"
+            chooseLabel="Selecciona los documententos"
+            uploadLabel="Subir Documentacion"
+            cancelLabel="Cancelar"
+            multiple="true" />
         </div>
         <div class="flex py-4 gap-2">
           <p-button
