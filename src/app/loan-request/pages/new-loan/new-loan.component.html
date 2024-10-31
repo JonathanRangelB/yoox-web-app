@@ -143,7 +143,11 @@
           <!-- final de valores calculados -->
         </div>
         <div class="flex justify-content-end pb-4 gap-2 pr-3">
-          <p-button label="Siguiente" (onClick)="nextCallback.emit()" />
+          <p-button
+            label="Siguiente"
+            icon="pi pi-angle-double-right"
+            iconPos="right"
+            (onClick)="nextCallback.emit()" />
         </div>
       </ng-template>
     </p-stepperPanel>
@@ -441,9 +445,14 @@
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
           <p-button
             label="Paso anterior"
+            icon="pi pi-angle-double-left"
             severity="secondary"
             (onClick)="prevCallback.emit()" />
-          <p-button label="Siguiente" (onClick)="nextCallback.emit()" />
+          <p-button
+            label="Siguiente"
+            icon="pi pi-angle-double-right"
+            iconPos="right"
+            (onClick)="nextCallback.emit()" />
         </div>
       </ng-template>
     </p-stepperPanel>
@@ -755,9 +764,14 @@
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
           <p-button
             label="Paso anterior"
+            icon="pi pi-angle-double-left"
             severity="secondary"
             (onClick)="prevCallback.emit()" />
-          <p-button label="Siguiente" (onClick)="nextCallback.emit()" />
+          <p-button
+            label="Siguiente"
+            icon="pi pi-angle-double-right"
+            iconPos="right"
+            (onClick)="nextCallback.emit()" />
         </div>
       </ng-template>
     </p-stepperPanel>
@@ -785,12 +799,17 @@
             fileLimit="5"
             multiple="true" />
         </div>
-        <div class="flex justify-content-between pb-4 gap-2 pr-3">
+        <div class="flex justify-content-between py-4 gap-2 pr-3">
           <p-button
             label="Paso anterior"
+            icon="pi pi-angle-double-left"
             severity="secondary"
             (onClick)="prevCallback.emit()" />
-          <button pButton type="submit">Enviar solicitud</button>
+          <p-button
+            type="submit"
+            label="Enviar"
+            icon="pi pi-cloud-upload"
+            iconPos="right" />
         </div>
       </ng-template>
     </p-stepperPanel>
