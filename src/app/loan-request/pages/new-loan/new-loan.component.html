@@ -8,10 +8,8 @@
           <div class="col-12 sm:col-4 flex flex-column">
             <label for="cantidad">Cantidad a prestar</label>
             <p-inputNumber
-              id="cantidad"
-              name="cantidad"
+              inputId="cantidad"
               formControlName="cantidad"
-              inputId="integeronly"
               placeholder="Cantidad"
               mode="currency"
               currency="MXN"
@@ -36,10 +34,10 @@
             </small>
           </div>
           <div class="col-12 sm:col-4 flex flex-column">
-            <label for="tipoCalle">Plazo</label>
+            <label for="plazos">Plazo</label>
             <p-dropdown
+              inputId="plazos"
               id="plazos"
-              name="palzos"
               formControlName="plazos"
               [options]="plazos"
               optionLabel="name"
@@ -47,7 +45,7 @@
               placeholder="Plazo de semanas"
               [style]="{ width: '100%' }" />
             <small
-              id="tipoCalle-help"
+              id="plazos-help"
               class="mb-2 text-red-500"
               [hidden]="esCampoOculto('plazos')"
               >Selecciona un plazo</small
@@ -56,7 +54,7 @@
           <div class="col-12 sm:col-4 flex flex-column">
             <label for="fechaInicial">Fecha inicial</label>
             <p-calendar
-              id="fechaInicial"
+              inputId="fechaInicial"
               formControlName="fechaInicial"
               placeholder="dd/mm/aaaa"
               [iconDisplay]="'input'"
@@ -66,7 +64,6 @@
               dateFormat="dd/mm/yy"
               readonlyInput="true"
               [minDate]="fechaMinima"
-              inputId="icondisplay"
               [style]="{ width: '100%' }" />
             <small
               id="fechaInicial-help"
@@ -85,6 +82,7 @@
             <input
               pInputText
               disabled="true"
+              id="cantidadSemanal"
               placeholder="Cantidad semanal"
               style="color: green; font-weight: bold"
               [value]="pagoSemanal" />
@@ -97,6 +95,7 @@
             <input
               disabled="true"
               pInputText
+              id="tasaDeInteres"
               placeholder="Tasa de interes"
               [value]="tasaDeInteres" />
           </p-inputGroup>
@@ -108,6 +107,7 @@
             <input
               pInputText
               disabled="true"
+              id="cantidadTotal"
               placeholder="Cantidad total a pagar"
               style="color: green; font-weight: bold"
               [value]="totalAPagar" />
@@ -120,6 +120,7 @@
             <input
               pInputText
               disabled="true"
+              id="diaDeLaSemana"
               placeholder="Dia de la semana que se abona"
               [value]="diaDeLaSemana" />
           </p-inputGroup>
@@ -131,6 +132,7 @@
             <input
               type="text"
               pInputText
+              id="fechaFinal"
               placeholder="Fecha final estimada"
               disabled="true"
               [value]="fechaFinal" />
@@ -193,9 +195,10 @@
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="cantidad">Telefono fijo</label>
+            <label for="telefonoFijoCliente">Telefono fijo</label>
             <p-inputMask
               formControlName="telefonoFijoCliente"
+              inputId="telefonoFijoCliente"
               mask="999-999-9999"
               unmask="true"
               showClear="true"
@@ -210,9 +213,10 @@
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="cantidad">Telefono movil</label>
+            <label for="telefonoMovilCliente">Telefono movil</label>
             <p-inputMask
               formControlName="telefonoMovilCliente"
+              inputId="telefonoMovilCliente"
               mask="999-999-9999"
               unmask="true"
               showClear="true"
@@ -231,7 +235,7 @@
             <input
               pInputText
               formControlName="correoCliente"
-              id="correoCliente"
+              id="emailCliente"
               aria-describedby="emailCliente-help" />
             <small
               id="correoCliente-help"
@@ -259,6 +263,7 @@
             <label for="curpCliente">CURP</label>
             <p-inputMask
               mask="aaaa-999999-aaaaaa-99"
+              inputId="curpCliente"
               unmask="true"
               showClear="true"
               formControlName="curpCliente"
@@ -281,8 +286,8 @@
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="tipoCalle">Tipo de calle</label>
             <p-dropdown
+              inputId="tipoCalle"
               id="tipoCalle"
-              name="tipoCalle"
               formControlName="tipoCalleCliente"
               [options]="tiposCalle"
               optionLabel="name"
@@ -317,7 +322,7 @@
               showClear="true"
               [style]="{ width: '100%' }"
               [inputStyle]="{ width: '100%' }"
-              id="numeroExteriorCliente"
+              inputId="numeroExteriorCliente"
               aria-describedby="numeroExteriorCliente-help" />
             <small
               id="numeroExteriorCliente-help"
@@ -329,7 +334,7 @@
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="numeroInterior">Número Interior</label>
             <p-inputNumber
-              id="numeroInterior"
+              inputId="numeroInterior"
               showClear="true"
               [style]="{ width: '100%' }"
               [inputStyle]="{ width: '100%' }"
@@ -368,6 +373,8 @@
             <label for="estadoCliente">Entidad Federativa</label>
             <p-dropdown
               [options]="estadosDeLaRepublica"
+              inputId="estadoCliente"
+              id="estadoCliente"
               emptyFilterMessage="Sin resultados"
               formControlName="estadoCliente"
               optionLabel="name"
@@ -375,8 +382,7 @@
               filterBy="name"
               [showClear]="true"
               placeholder="Selecciona un estado"
-              [style]="{ width: '100%' }">
-            </p-dropdown>
+              [style]="{ width: '100%' }" />
             <small
               id="estadoCliente-help"
               class="mb-2 text-red-500"
@@ -385,9 +391,9 @@
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="codigoPostal">Código postal</label>
+            <label for="codigoPostalCliente">Código postal</label>
             <p-inputNumber
-              id="codigoPostalCliente"
+              inputId="codigoPostalCliente"
               formControlName="codigoPostalCliente"
               autoClear="false"
               showClear="true"
@@ -417,7 +423,12 @@
           </div>
           <div class="col-12 flex flex-column gap-2">
             <label for="observacionesCliente">Observaciones adicionales</label>
-            <textarea rows="5" cols="30" autoResize="true" pInputTextarea>
+            <textarea
+              rows="5"
+              cols="30"
+              autoResize="true"
+              pInputTextarea
+              id="observacionesCliente">
             </textarea>
           </div>
         </div>
@@ -446,18 +457,26 @@
         </div>
       </ng-template>
     </p-stepperPanel>
-    <p-stepperPanel header="Documentacion">
+    <p-stepperPanel header="Documentación">
       <ng-template
         pTemplate="content"
         let-prevCallback="prevCallback"
+        let-class="pl-0"
         let-index="index">
         <div class="flex flex-column">
           <p-fileUpload
             customUpload="true"
             (uploadHandler)="onUpload($event)"
-            chooseLabel="Selecciona los documententos"
-            uploadLabel="Subir Documentacion"
-            cancelLabel="Cancelar"
+            chooseLabel="Agregar"
+            uploadLabel="Subir"
+            mode="advanced"
+            cancelLabel="Limpiar"
+            maxFileSize="10485760"
+            invalidFileLimitMessageDetail="Limite de {0} como máximo"
+            invalidFileLimitMessageSummary="Limite de archivos exedido"
+            invalidFileSizeMessageDetail="Máximo permitido es de {0}"
+            invalidFileSizeMessageSummary="Tamaño excedido"
+            fileLimit="5"
             multiple="true" />
         </div>
         <div class="flex py-4 gap-2">

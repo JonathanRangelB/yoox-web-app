@@ -145,7 +145,7 @@ export class NewLoanComponent {
         this.ms.add({
           severity: 'error',
           summary: 'Rechazado',
-          detail: 'Ocurrio un problema al intentar subir los archivos',
+          detail: `Ocurrio un problema al intentar subir los archivos: ${err?.status} ${err?.error.message}`,
           life: 3000,
         });
       },

@@ -38,6 +38,7 @@ export class S3BucketService {
   }
 
   uploadFiles(files: File[], customerFolderName: string) {
+    // TODO: cambiar el formato del back para que acepte un body distinto: string[]
     const temp = files.map((file) => `${customerFolderName}/${file.name}`);
     const filesToUpload = { filenames: temp };
 
