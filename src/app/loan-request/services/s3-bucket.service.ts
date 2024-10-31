@@ -19,10 +19,11 @@ interface UploadURL {
 export class S3BucketService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.API_URL;
-  constructor() {}
 
   getSignedUrls(filesToUpload: { filenames: string[] }) {
     const token = localStorage.getItem('token');
+    if (!token) throw new Error('Token not found');
+
     return this.http.post<SignedUrls>(`${this.baseUrl}upload`, filesToUpload, {
       headers: { authorization: `${token}` },
     });
@@ -33,14 +34,12 @@ export class S3BucketService {
       'Content-type': file.type,
     });
 
-    console.log({ signedUrl, file });
     return this.http.put(signedUrl, file, { headers });
   }
 
   uploadFiles(files: File[], customerFolderName: string) {
-    // TODO: cambiar el formato del back para que acepte un body distinto: string[]
-    const temp = files.map((file) => `${customerFolderName}/${file.name}`);
-    const filesToUpload = { filenames: temp };
+    const filenames = files.map((file) => `${customerFolderName}/${file.name}`);
+    const filesToUpload = { filenames };
 
     return this.getSignedUrls(filesToUpload).pipe(
       switchMap(({ uploadUrls }) => {

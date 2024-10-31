@@ -7,9 +7,6 @@ import {
 } from '@angular/forms';
 import { map, Observable, of, switchMap, tap, timer } from 'rxjs';
 
-// Las funciones validadoras regresan null cuando no hay error.
-// Debe regresar cualquier tipo de objeto cuando hay error
-
 export function lengthValidator(desiredLength: number): ValidatorFn {
   return ({ value }: AbstractControl): ValidationErrors | null => {
     if (!value) return { noValue: null };

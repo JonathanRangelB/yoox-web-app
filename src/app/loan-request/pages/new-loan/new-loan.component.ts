@@ -1,6 +1,11 @@
 /* eslint-disable no-useless-escape */
-import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
@@ -17,6 +22,7 @@ import {
   lengthValidator,
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
+import { Subject, takeUntil } from 'rxjs';
 
 interface dropDownCollection {
   name: string;
@@ -28,11 +34,12 @@ interface dropDownCollection {
   templateUrl: './new-loan.component.html',
   styleUrls: ['./new-loan.component.css'],
 })
-export class NewLoanComponent {
+export class NewLoanComponent implements OnInit, OnDestroy {
   fb = inject(FormBuilder);
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
   s3 = inject(S3BucketService);
+  destroy$ = new Subject();
   position: string = 'bottom';
   mainForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
@@ -48,6 +55,7 @@ export class NewLoanComponent {
   tasaDeInteres: number = 0;
   totalAPagar: number = 0;
   pagoSemanal: number | null = null;
+  camposAval = false;
 
   constructor() {
     this.mainForm = this.fb.group({
@@ -72,7 +80,43 @@ export class NewLoanComponent {
       municipioCliente: ['', Validators.required],
       estadoCliente: ['', Validators.required],
       codigoPostalCliente: [null, [Validators.required, lengthValidator(5)]],
+      habilitarCamposAval: [false],
+      nombreAval: [''],
+      apellidoPaternoAval: [''],
+      apellidoMaternoAval: [''],
     });
+  }
+
+  ngOnInit(): void {
+    this.mainForm
+      .get('habilitarCamposAval')
+      ?.valueChanges.pipe(takeUntil(this.destroy$))
+      .subscribe(() => {
+        this.camposAval = !this.camposAval;
+
+        const nombreAval = this.mainForm.get('nombreAval')!;
+        const apellidoPaternoAval = this.mainForm.get('apellidoPaternoAval')!;
+        const apellidoMaternoAval = this.mainForm.get('apellidoMaternoAval')!;
+
+        if (this.camposAval) {
+          nombreAval?.setValidators([Validators.required]);
+          apellidoPaternoAval?.setValidators([Validators.required]);
+          apellidoMaternoAval?.setValidators([Validators.required]);
+        } else {
+          nombreAval?.clearValidators();
+          apellidoPaternoAval?.clearValidators();
+          apellidoMaternoAval?.clearValidators();
+        }
+
+        nombreAval?.updateValueAndValidity({ onlySelf: true });
+        apellidoPaternoAval?.updateValueAndValidity({ onlySelf: true });
+        apellidoMaternoAval?.updateValueAndValidity({ onlySelf: true });
+      });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next(null);
+    this.destroy$.complete();
   }
 
   onPlazoChanged({ value }: DropdownChangeEvent) {
