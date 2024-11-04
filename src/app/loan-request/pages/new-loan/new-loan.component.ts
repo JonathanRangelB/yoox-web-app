@@ -1,11 +1,6 @@
 /* eslint-disable no-useless-escape */
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
@@ -16,13 +11,14 @@ import {
   tiposCalle,
 } from '../../utils/consts';
 import {
-  asyncValidator,
+  genericAsyncValidator,
   curpValidator,
   emailValidator,
   lengthValidator,
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
 import { Subject, takeUntil } from 'rxjs';
+import { FileUpload } from 'primeng/fileupload';
 
 interface dropDownCollection {
   name: string;
@@ -35,6 +31,8 @@ interface dropDownCollection {
   styleUrls: ['./new-loan.component.css'],
 })
 export class NewLoanComponent implements OnInit, OnDestroy {
+  @ViewChild('fileUpload') fileUpload!: FileUpload;
+
   fb = inject(FormBuilder);
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
@@ -62,7 +60,7 @@ export class NewLoanComponent implements OnInit, OnDestroy {
       cantidad: [
         '',
         [Validators.required, Validators.min(1000)],
-        asyncValidator(),
+        genericAsyncValidator(),
       ],
       plazos: ['', Validators.required],
       fechaInicial: ['', Validators.required],
@@ -72,18 +70,39 @@ export class NewLoanComponent implements OnInit, OnDestroy {
       telefonoFijoCliente: ['', [Validators.required]],
       telefonoMovilCliente: ['', [Validators.required]],
       correoCliente: ['', [Validators.required, emailValidator()]],
+      ocupacionCliente: [''],
       curpCliente: ['', [Validators.required, curpValidator()]],
       tipoCalleCliente: [null, Validators.required],
       nombreCalleCliente: ['', Validators.required],
       numeroExteriorCliente: [null, Validators.required],
+      numeroInteriorCliente: [null],
       coloniaCliente: ['', Validators.required],
       municipioCliente: ['', Validators.required],
       estadoCliente: ['', Validators.required],
       codigoPostalCliente: [null, [Validators.required, lengthValidator(5)]],
+      observacionesCliente: [''],
+      // campos opcionales de Aval
       habilitarCamposAval: [false],
       nombreAval: [''],
       apellidoPaternoAval: [''],
       apellidoMaternoAval: [''],
+      telefonoFijoAval: [''],
+      telefonoMovilAval: [''],
+      emailAval: [''],
+      ocupacionAval: [''],
+      curpAval: [''],
+      tipoCalleAval: [null],
+      nombreCalleAval: [''],
+      numeroExteriorAval: [null],
+      numeroInteriorAval: [null],
+      coloniaAval: [''],
+      municipioAval: [''],
+      estadoAval: [''],
+      codigoPostalAval: [null],
+      observacionesAval: [''],
+      nuevoForm: this.fb.group({
+        algo: [''],
+      }),
     });
   }
 
@@ -97,20 +116,67 @@ export class NewLoanComponent implements OnInit, OnDestroy {
         const nombreAval = this.mainForm.get('nombreAval')!;
         const apellidoPaternoAval = this.mainForm.get('apellidoPaternoAval')!;
         const apellidoMaternoAval = this.mainForm.get('apellidoMaternoAval')!;
+        const telefonoFijoAval = this.mainForm.get('telefonoFijoAval')!;
+        const telefonoMovilAval = this.mainForm.get('telefonoMovilAval')!;
+        const emailAval = this.mainForm.get('emailAval')!;
+        const curpAval = this.mainForm.get('curpAval')!;
+        const tipoCalleAval = this.mainForm.get('tipoCalleAval')!;
+        const nombreCalleAval = this.mainForm.get('nombreCalleAval')!;
+        const numeroExteriorAval = this.mainForm.get('numeroExteriorAval')!;
+        const coloniaAval = this.mainForm.get('coloniaAval')!;
+        const municipioAval = this.mainForm.get('municipioAval')!;
+        const codigoPostalAval = this.mainForm.get('codigoPostalAval')!;
+        const algo = this.mainForm.get('nuevoForm')?.get('algo');
 
         if (this.camposAval) {
           nombreAval?.setValidators([Validators.required]);
           apellidoPaternoAval?.setValidators([Validators.required]);
           apellidoMaternoAval?.setValidators([Validators.required]);
+          telefonoFijoAval?.setValidators([Validators.required]);
+          telefonoMovilAval?.setValidators([Validators.required]);
+          emailAval?.setValidators([Validators.required, emailValidator()]);
+          curpAval?.setValidators([Validators.required, curpValidator()]);
+          tipoCalleAval?.setValidators([Validators.required]);
+          nombreCalleAval?.setValidators([Validators.required]);
+          numeroExteriorAval?.setValidators([Validators.required]);
+          coloniaAval?.setValidators([Validators.required]);
+          municipioAval?.setValidators([Validators.required]);
+          codigoPostalAval?.setValidators([
+            Validators.required,
+            lengthValidator(5),
+          ]);
+          algo?.setValidators([Validators.required]);
         } else {
           nombreAval?.clearValidators();
           apellidoPaternoAval?.clearValidators();
           apellidoMaternoAval?.clearValidators();
+          telefonoFijoAval?.clearValidators();
+          telefonoMovilAval?.clearValidators();
+          emailAval?.clearValidators();
+          curpAval?.clearValidators();
+          tipoCalleAval?.clearValidators();
+          nombreCalleAval?.clearValidators();
+          numeroExteriorAval?.clearValidators();
+          coloniaAval?.clearValidators();
+          municipioAval?.clearValidators();
+          codigoPostalAval?.clearValidators();
+          algo?.clearValidators();
         }
 
         nombreAval?.updateValueAndValidity({ onlySelf: true });
         apellidoPaternoAval?.updateValueAndValidity({ onlySelf: true });
         apellidoMaternoAval?.updateValueAndValidity({ onlySelf: true });
+        telefonoFijoAval?.updateValueAndValidity({ onlySelf: true });
+        telefonoMovilAval?.updateValueAndValidity({ onlySelf: true });
+        emailAval?.updateValueAndValidity({ onlySelf: true });
+        curpAval?.updateValueAndValidity({ onlySelf: true });
+        tipoCalleAval?.updateValueAndValidity({ onlySelf: true });
+        nombreCalleAval?.updateValueAndValidity({ onlySelf: true });
+        numeroExteriorAval?.updateValueAndValidity({ onlySelf: true });
+        coloniaAval?.updateValueAndValidity({ onlySelf: true });
+        municipioAval?.updateValueAndValidity({ onlySelf: true });
+        codigoPostalAval?.updateValueAndValidity({ onlySelf: true });
+        algo?.updateValueAndValidity({ onlySelf: true });
       });
   }
 
@@ -221,13 +287,24 @@ export class NewLoanComponent implements OnInit, OnDestroy {
       rejectLabel: 'Regresar',
       rejectIcon: 'none',
       rejectButtonStyleClass: 'p-button-text',
-      accept: () => {
-        console.log('accept en construccion');
-      },
+      accept: () => this.onFormAccept(),
       reject: () => {
         console.error('error en construccion');
       },
       key: 'positionDialog',
     });
+  }
+
+  onFormAccept() {
+    // TODO: esperar a que el backend inserte la informacion,
+    // si fue correcto entonces subir documentacion,
+    // caso contrario no hacer nada pero informar al usuario con un toast
+    this.triggerUpload();
+  }
+
+  triggerUpload() {
+    if (this.fileUpload.hasFiles()) this.fileUpload.upload();
+    else console.warn('no habia archivos por subir');
+    console.log('triggerUpload');
   }
 }

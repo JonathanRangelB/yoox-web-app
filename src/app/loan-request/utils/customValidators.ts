@@ -5,7 +5,7 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { map, Observable, of, switchMap, tap, timer } from 'rxjs';
+import { map, Observable, of, switchMap, timer } from 'rxjs';
 
 export function lengthValidator(desiredLength: number): ValidatorFn {
   return ({ value }: AbstractControl): ValidationErrors | null => {
@@ -37,15 +37,14 @@ export function emailValidator(): ValidatorFn {
 
 // TODO: este validador debe de usar un service, queda pendiente su implementacion
 // tambien faltaria la implementacion de un servicio para este modulo
-export function asyncValidator(): AsyncValidatorFn {
+export function genericAsyncValidator(): AsyncValidatorFn {
   return ({ value }: AbstractControl): Observable<ValidationErrors | null> => {
     if (!value) return of(null);
-    return timer(1000).pipe(
-      switchMap(() => of(null)),
-      tap(console.log),
-      map((temporal) => {
-        console.log('valor evaluado: ', value);
-        return temporal;
+    return timer(2000).pipe(
+      switchMap(() => of(true)),
+      map((cambioCorrectoEnBD) => {
+        console.log({ cambioCorrectoEnBD });
+        return cambioCorrectoEnBD ? null : { cambioCorrectoEnBD };
       })
     );
   };
