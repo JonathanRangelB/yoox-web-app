@@ -1,5 +1,6 @@
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
   <p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
+    <!-- inicio de Cantidades y plazos -->
     <p-stepperPanel header="Cantidades y plazos">
       <ng-template
         pTemplate="content"
@@ -9,10 +10,10 @@
         <div class="grid py-3 pr-2" style="margin-right: 0">
           <!-- inicio de cantidades y plazos -->
           <div class="col-12 sm:col-4 flex flex-column">
-            <label for="cantidad">Cantidad a prestar</label>
+            <label for="cantidad_prestada">Cantidad a prestar</label>
             <p-inputNumber
-              inputId="cantidad"
-              formControlName="cantidad"
+              inputId="cantidad_prestada"
+              formControlName="cantidad_prestada"
               placeholder="Cantidad"
               mode="currency"
               currency="MXN"
@@ -25,12 +26,13 @@
             <small
               id="cantidad-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('cantidad')">
+              [hidden]="esCampoOculto('cantidad_prestada')">
               <ng-container
-                *ngIf="mainForm.get('cantidad')?.errors?.['required']">
+                *ngIf="mainForm.get('cantidad_prestada')?.errors?.['required']">
                 Cantidad requerida</ng-container
               >
-              <ng-container *ngIf="mainForm.get('cantidad')?.errors?.['min']">
+              <ng-container
+                *ngIf="mainForm.get('cantidad_prestada')?.errors?.['min']">
                 Cantidad minima de 1000</ng-container
               >
             </small>
@@ -41,7 +43,7 @@
               inputId="plazos"
               id="plazos"
               formControlName="plazos"
-              [options]="plazos"
+              [options]="plazo"
               optionLabel="name"
               (onChange)="onPlazoChanged($event)"
               placeholder="Plazo de semanas"
@@ -54,10 +56,10 @@
             >
           </div>
           <div class="col-12 sm:col-4 flex flex-column">
-            <label for="fechaInicial">Fecha inicial</label>
+            <label for="fecha_inicial">Fecha inicial</label>
             <p-calendar
-              inputId="fechaInicial"
-              formControlName="fechaInicial"
+              inputId="fecha_inicial"
+              formControlName="fecha_inicial"
               placeholder="dd/mm/aaaa"
               [iconDisplay]="'input'"
               [showIcon]="true"
@@ -68,9 +70,9 @@
               [minDate]="fechaMinima"
               [style]="{ width: '100%' }" />
             <small
-              id="fechaInicial-help"
+              id="fecha_inicial-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('fechaInicial')"
+              [hidden]="esCampoOculto('fecha_inicial')"
               >Fecha Inicial requerida</small
             >
           </div>
@@ -99,7 +101,7 @@
               pInputText
               id="tasaDeInteres"
               placeholder="Tasa de interes"
-              [value]="tasaDeInteres" />
+              [value]="tasa_interes" />
           </p-inputGroup>
           <p-inputGroup [style]="{ width: '99%' }">
             <p-inputGroupAddon>
@@ -112,7 +114,7 @@
               id="cantidadTotal"
               placeholder="Cantidad total a pagar"
               style="color: green; font-weight: bold"
-              [value]="totalAPagar" />
+              [value]="cantidad_pagar" />
           </p-inputGroup>
           <p-inputGroup [style]="{ width: '99%' }">
             <p-inputGroupAddon>
@@ -122,9 +124,9 @@
             <input
               pInputText
               disabled="true"
-              id="diaDeLaSemana"
+              id="dia_semana"
               placeholder="Dia de la semana que se abona"
-              [value]="diaDeLaSemana" />
+              [value]="dia_semana" />
           </p-inputGroup>
           <p-inputGroup [style]="{ width: '99%' }">
             <p-inputGroupAddon>
@@ -134,10 +136,10 @@
             <input
               type="text"
               pInputText
-              id="fechaFinal"
+              id="fecha_final_estimada"
               placeholder="Fecha final estimada"
               disabled="true"
-              [value]="fechaFinal" />
+              [value]="fecha_final_estimada" />
           </p-inputGroup>
           <!-- final de valores calculados -->
         </div>
@@ -161,53 +163,52 @@
         let-index="index">
         <div formGroupName="formCliente" class="grid py-3 pr-3">
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="nombreCliente">Nombre cliente</label>
+            <label for="nombre_cliente">Nombre cliente</label>
             <input
-              formControlName="nombreCliente"
+              formControlName="nombre_cliente"
               pInputText
-              id="nombreCliente"
-              aria-describedby="nombreCliente-help" />
+              id="nombre_cliente"
+              aria-describedby="nombre_cliente-help" />
             <small
               class="mb-2 text-red-500"
-              id="nombreCliente-help"
-              [hidden]="esCampoOculto('formCliente.nombreCliente')"
+              id="nombre_cliente-help"
+              [hidden]="esCampoOculto('formCliente.nombre_cliente')"
               >Nombre de cliente requerido</small
             >
           </div>
-
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="apellidoPaternoCliente">Apellido paterno</label>
+            <label for="apellido_paterno_cliente">Apellido paterno</label>
             <input
-              formControlName="apellidoPaternoCliente"
+              formControlName="apellido_paterno_cliente"
               pInputText
-              id="apellidoPaternoCliente"
-              aria-describedby="apellidoPaternoCliente-help" />
+              id="apellido_paterno_cliente"
+              aria-describedby="apellido_paterno_cliente-help" />
             <small
               class="mb-2 text-red-500"
-              id="apellidoPaternoCliente-help"
-              [hidden]="esCampoOculto('formCliente.apellidoPaternoCliente')"
+              id="apellido_paterno_cliente-help"
+              [hidden]="esCampoOculto('formCliente.apellido_paterno_cliente')"
               >Apellido paterno requerido</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="apellidoMaternoCliente">Apellido materno</label>
+            <label for="apellido_materno_cliente">Apellido materno</label>
             <input
-              formControlName="apellidoMaternoCliente"
+              formControlName="apellido_materno_cliente"
               pInputText
-              id="apellidoMaternoCliente"
-              aria-describedby="apellidoMaternoCliente-help" />
+              id="apellido_materno_cliente"
+              aria-describedby="apellido_materno_cliente-help" />
             <small
-              id="apellidoMaternoCliente-help"
+              id="apellido_materno_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.apellidoMaternoCliente')"
+              [hidden]="esCampoOculto('formCliente.apellido_materno_cliente')"
               >Apellido materno requerido</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="telefonoFijoCliente">Telefono fijo</label>
+            <label for="telefono_fijo_cliente">Telefono fijo</label>
             <p-inputMask
-              formControlName="telefonoFijoCliente"
-              inputId="telefonoFijoCliente"
+              formControlName="telefono_fijo_cliente"
+              inputId="telefono_fijo_cliente"
               mask="999-999-9999"
               unmask="true"
               showClear="true"
@@ -215,17 +216,17 @@
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
             <small
-              id="telefonoFijoCliente-help"
+              id="telefono_fijo_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.telefonoFijoCliente')"
+              [hidden]="esCampoOculto('formCliente.telefono_fijo_cliente')"
               >Telefono fijo requerido</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="telefonoMovilCliente">Telefono movil</label>
+            <label for="telefono_movil_cliente">Telefono movil</label>
             <p-inputMask
-              formControlName="telefonoMovilCliente"
-              inputId="telefonoMovilCliente"
+              formControlName="telefono_movil_cliente"
+              inputId="telefono_movil_cliente"
               mask="999-999-9999"
               unmask="true"
               showClear="true"
@@ -233,9 +234,9 @@
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
             <small
-              id="telefonoMovilCliente-help"
+              id="telefono_movil_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.telefonoMovilCliente')"
+              [hidden]="esCampoOculto('formCliente.telefono_movil_cliente')"
               >Telefono movil Requerido</small
             >
           </div>
@@ -243,151 +244,156 @@
             <label for="emailCliente">Correo electronico</label>
             <input
               pInputText
-              formControlName="correoCliente"
+              formControlName="correo_electronico_cliente"
               id="emailCliente"
               aria-describedby="emailCliente-help" />
             <small
-              id="correoCliente-help"
+              id="correo_electronico_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.correoCliente')"
+              [hidden]="esCampoOculto('formCliente.correo_electronico_cliente')"
               ><ng-container
-                *ngIf="mainForm.get('correoCliente')?.errors?.['required']">
+                *ngIf="
+                  mainForm.get('correo_electronico_cliente')?.errors?.[
+                    'required'
+                  ]
+                ">
                 Correo electronico requerido</ng-container
               >
               <ng-container
-                *ngIf="mainForm.get('correoCliente')?.errors?.['invalidEmail']">
+                *ngIf="
+                  mainForm.get('correo_electronico_cliente')?.errors?.[
+                    'invalidEmail'
+                  ]
+                ">
                 Formato de correo invalido</ng-container
               ></small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="ocupacionCliente">Ocupacion</label>
+            <label for="ocupacion_cliente">Ocupacion</label>
             <input
               pInputText
-              formControlName="ocupacionCliente"
-              id="ocupacionCliente"
-              aria-describedby="ocupacionCliente-help" />
-            <small id="ocupacionCliente-help" [hidden]="true">ocupacion</small>
+              formControlName="ocupacion_cliente"
+              id="ocupacion_cliente"
+              aria-describedby="ocupacion_cliente-help" />
+            <small id="ocupacion_cliente-help" [hidden]="true">ocupacion</small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="curpCliente">CURP</label>
+            <label for="curp_cliente">CURP</label>
             <p-inputMask
               mask="aaaa-999999-aaaaaa-99"
-              inputId="curpCliente"
+              inputId="curp_cliente"
               unmask="true"
               showClear="true"
-              formControlName="curpCliente"
+              formControlName="curp_cliente"
               placeholder="0000-000000-000000-00"
               [style]="{ width: '100%' }" />
             <small
-              id="curpCliente-help"
+              id="curp_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.curpCliente')"
+              [hidden]="esCampoOculto('formCliente.curp_cliente')"
               ><ng-container
-                *ngIf="mainForm.get('curpCliente')?.errors?.['required']">
+                *ngIf="mainForm.get('curp_cliente')?.errors?.['required']">
                 CURP requerido</ng-container
               >
               <ng-container
-                *ngIf="mainForm.get('curpCliente')?.errors?.['invalidCurp']">
+                *ngIf="mainForm.get('curp_cliente')?.errors?.['invalidCurp']">
                 Formato de CURP invalido</ng-container
               >
             </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="tipoCalle">Tipo de calle</label>
+            <label for="tipo_calle_cliente">Tipo de calle</label>
             <p-dropdown
-              inputId="tipoCalle"
-              id="tipoCalle"
-              formControlName="tipoCalleCliente"
+              inputId="tipo_calle_cliente"
+              id="tipo_calle_cliente"
+              formControlName="tipo_calle_cliente"
               [options]="tiposCalle"
               optionLabel="name"
               [showClear]="true"
               placeholder="Selecciona el tipo de calle"
               [style]="{ width: '100%' }" />
             <small
-              id="tipoCalle-help"
+              id="tipo_calle_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.tipoCalleCliente')"
+              [hidden]="esCampoOculto('formCliente.tipo_calle_cliente')"
               >Selecciona un tipo de calle</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="nombreCalleCliente">Nombre de la calle</label>
+            <label for="nombre_calle_cliente">Nombre de la calle</label>
             <input
               pInputText
-              formControlName="nombreCalleCliente"
-              id="nombreCalleCliente"
-              aria-describedby="nombreCalleCliente-help" />
+              formControlName="nombre_calle_cliente"
+              id="nombre_calle_cliente"
+              aria-describedby="nombre_calle_cliente-help" />
             <small
-              id="nombreCalleCliente-help"
+              id="nombre_calle_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.nombreCalleCliente')"
+              [hidden]="esCampoOculto('formCliente.nombre_calle_cliente')"
               >Nombre de calle es requerido</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="numeroExteriorCliente">Número Exterior</label>
-            <p-inputNumber
-              formControlName="numeroExteriorCliente"
-              showClear="true"
-              [style]="{ width: '100%' }"
-              [inputStyle]="{ width: '100%' }"
-              inputId="numeroExteriorCliente"
-              aria-describedby="numeroExteriorCliente-help" />
+            <label for="numero_exterior_cliente">Número Exterior</label>
+            <input
+              pInputText
+              formControlName="numero_exterior_cliente"
+              id="numero_exterior_cliente"
+              pKeyFilter="int"
+              aria-describedby="numero_exterior_cliente-help" />
             <small
-              id="numeroExteriorCliente-help"
+              id="numero_exterior_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.numeroExteriorCliente')"
+              [hidden]="esCampoOculto('formCliente.numero_exterior_cliente')"
               >El numero de exterior es requerido</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="numeroInterior">Número Interior</label>
-            <p-inputNumber
-              inputId="numeroInteriorCliente"
-              formControlName="numeroInteriorCliente"
-              showClear="true"
-              [style]="{ width: '100%' }"
-              [inputStyle]="{ width: '100%' }"
-              aria-describedby="numeroInterior-help" />
-            <small id="numeroInterior-help" [hidden]="true">placeholder</small>
-          </div>
-          <div class="col-12 sm:col-6 flex flex-column">
-            <label for="coloniaCliente">Colonia</label>
+            <label for="numero_interior_cliente">Número Interior</label>
             <input
               pInputText
-              id="coloniaCliente"
-              aria-describedby="coloniaCliente-help"
-              formControlName="coloniaCliente" />
+              formControlName="numero_interior_cliente"
+              id="numero_interior_cliente"
+              pKeyFilter="int"
+              aria-describedby="numero_interior_cliente-help" />
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="colonia_cliente">Colonia</label>
+            <input
+              pInputText
+              id="colonia_cliente"
+              aria-describedby="colonia_cliente-help"
+              formControlName="colonia_cliente" />
             <small
-              id="coloniaCliente-help"
+              id="colonia_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.coloniaCliente')"
+              [hidden]="esCampoOculto('formCliente.colonia_cliente')"
               >La colonia es requerida</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="municipioCliente">Municipio</label>
+            <label for="municipio_cliente">Municipio</label>
             <input
               pInputText
-              formControlName="municipioCliente"
-              id="municipioCliente"
-              aria-describedby="municipioCliente-help" />
+              formControlName="municipio_cliente"
+              id="municipio_cliente"
+              aria-describedby="municipio_cliente-help" />
             <small
-              id="municipioCliente-help"
+              id="municipio_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.municipioCliente')"
+              [hidden]="esCampoOculto('formCliente.municipio_cliente')"
               >Municipio Requerido</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="estadoCliente">Entidad Federativa</label>
+            <label for="estado_cliente">Entidad Federativa</label>
             <p-dropdown
               [options]="estadosDeLaRepublica"
-              inputId="estadoCliente"
-              id="estadoCliente"
+              inputId="estado_cliente"
+              id="estado_cliente"
               emptyFilterMessage="Sin resultados"
-              formControlName="estadoCliente"
+              formControlName="estado_cliente"
               optionLabel="name"
               [filter]="true"
               filterBy="name"
@@ -395,52 +401,43 @@
               placeholder="Selecciona un estado"
               [style]="{ width: '100%' }" />
             <small
-              id="estadoCliente-help"
+              id="estado_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.estadoCliente')"
+              [hidden]="esCampoOculto('formCliente.estado_cliente')"
               >El estado es requerido</small
             >
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="codigoPostalCliente">Código postal</label>
-            <p-inputNumber
-              inputId="codigoPostalCliente"
-              formControlName="codigoPostalCliente"
-              autoClear="false"
-              showClear="true"
-              useGrouping="false"
-              placeholder="99999"
-              [maxlength]="5"
-              [style]="{ width: '100%' }" />
+            <label for="cp_cliente">Código postal</label>
+            <input
+              pInputText
+              formControlName="cp_cliente"
+              id="cp_cliente"
+              pKeyFilter="int"
+              aria-describedby="cp_cliente-help" />
             <small
-              id="codigoPostalCliente-help"
+              id="cp_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.codigoPostalCliente')"
+              [hidden]="esCampoOculto('formCliente.cp_cliente')"
               ><ng-container
-                *ngIf="
-                  mainForm.get('codigoPostalCliente')?.errors?.['required']
-                ">
+                *ngIf="mainForm.get('cp_cliente')?.errors?.['required']">
                 Código postal requerido</ng-container
               >
               <ng-container
-                *ngIf="
-                  mainForm.get('codigoPostalCliente')?.errors?.[
-                    'lenghtNotMatch'
-                  ]
-                ">
+                *ngIf="mainForm.get('cp_cliente')?.errors?.['lenghtNotMatch']">
                 El número debe de tener 5 digitos</ng-container
               ></small
             >
           </div>
           <div class="col-12 flex flex-column gap-2">
-            <label for="observacionesCliente">Observaciones adicionales</label>
+            <label for="observaciones_cliente">Observaciones adicionales</label>
             <textarea
-              formControlName="observacionesCliente"
+              formControlName="observaciones_cliente"
               rows="5"
               cols="30"
               autoResize="true"
               pInputTextarea
-              id="observacionesCliente">
+              id="observaciones_cliente">
             </textarea>
           </div>
         </div>
@@ -789,6 +786,7 @@
     </p-stepperPanel>
     <!-- fin de camposAval -->
 
+    <!-- inicio Documentación -->
     <p-stepperPanel header="Documentación">
       <ng-template
         pTemplate="content"
@@ -827,6 +825,7 @@
         </div>
       </ng-template>
     </p-stepperPanel>
+    <!-- fin Documentación -->
   </p-stepper>
 
   <p-toast
@@ -836,3 +835,4 @@
     [position]="position"
     rejectButtonStyleClass="p-button-outlined" />
 </form>
+<pre>{{ mainForm.value | json }}</pre>

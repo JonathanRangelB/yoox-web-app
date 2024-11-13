@@ -1,11 +1,6 @@
 /* eslint-disable no-useless-escape */
 import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import {
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
@@ -24,6 +19,7 @@ import { S3BucketService } from '../../services/s3-bucket.service';
 import { BehaviorSubject, skip, Subject, takeUntil } from 'rxjs';
 import { FileUpload } from 'primeng/fileupload';
 import { InputSwitchChangeEvent } from 'primeng/inputswitch';
+import { LoanRequestService } from '../../services/loan-request.service';
 
 interface dropDownCollection {
   name: string;
@@ -42,47 +38,52 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
   s3 = inject(S3BucketService);
+  loanRequestService = inject(LoanRequestService);
   destroy$ = new Subject();
   position: string = 'bottom';
   mainForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
-  plazos: dropDownCollection[] = plazos;
+  plazo: dropDownCollection[] = plazos;
   semanasDePlazo: number | undefined;
-  fechaInicial: Date | undefined;
-  fechaFinal: string | null = null;
+  id_plazo: number | undefined;
+  fecha_inicial: Date | undefined;
+  fecha_final_estimada: string | null = null;
   fechaMinima: Date = new Date();
-  diaDeLaSemana: string | null = null;
+  dia_semana: string | null = null;
   days: string[] = days;
   cantidadIngresada: number = 0;
-  tasaDeInteres: number = 0;
-  totalAPagar: number = 0;
+  tasa_interes: number = 0;
+  cantidad_pagar: number = 0;
   pagoSemanal: number | null = null;
   camposAval$ = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.mainForm = this.fb.group({
-      cantidad: ['', [Validators.required, Validators.min(1000)]],
+      cantidad_prestada: ['', [Validators.required, Validators.min(1000)]],
       plazos: ['', Validators.required],
-      fechaInicial: ['', Validators.required],
+      fecha_inicial: ['', Validators.required],
       formCliente: this.fb.group({
-        nombreCliente: ['', Validators.required],
-        apellidoPaternoCliente: ['', Validators.required],
-        apellidoMaternoCliente: ['', Validators.required],
-        telefonoFijoCliente: ['', [Validators.required]],
-        telefonoMovilCliente: ['', [Validators.required]],
-        correoCliente: ['', [Validators.required, emailValidator()]],
-        ocupacionCliente: [''],
-        curpCliente: ['', [Validators.required, curpValidator()]],
-        tipoCalleCliente: [null, Validators.required],
-        nombreCalleCliente: ['', Validators.required],
-        numeroExteriorCliente: [null, Validators.required],
-        numeroInteriorCliente: [null],
-        coloniaCliente: ['', Validators.required],
-        municipioCliente: ['', Validators.required],
-        estadoCliente: ['', Validators.required],
-        codigoPostalCliente: [null, [Validators.required, lengthValidator(5)]],
-        observacionesCliente: [''],
+        nombre_cliente: ['', Validators.required],
+        apellido_paterno_cliente: ['', Validators.required],
+        apellido_materno_cliente: ['', Validators.required],
+        telefono_fijo_cliente: ['', [Validators.required]],
+        telefono_movil_cliente: ['', [Validators.required]],
+        correo_electronico_cliente: [
+          '',
+          [Validators.required, emailValidator()],
+        ],
+        ocupacion_cliente: [''],
+        curp_cliente: ['', [Validators.required, curpValidator()]],
+        tipo_calle_cliente: ['', Validators.required],
+        nombre_calle_cliente: ['', Validators.required],
+        numero_exterior_cliente: [null, Validators.required],
+        numero_interior_cliente: [''],
+        colonia_cliente: ['', Validators.required],
+        municipio_cliente: ['', Validators.required],
+        estado_cliente: ['', Validators.required],
+        cp_cliente: ['', [Validators.required, lengthValidator(5)]],
+        observaciones_cliente: [''],
       }),
       formAval: this.fb.group({
         nombreAval: [''],
@@ -192,7 +193,8 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
     this.semanasDePlazo = value.name;
-    this.tasaDeInteres = value.value;
+    this.tasa_interes = value.value;
+    this.id_plazo = value.id;
     this.calculaPrestamo();
     this.calculaFechaFinal();
   }
@@ -214,12 +216,12 @@ export class NewLoanComponent implements OnInit, OnDestroy {
    *
    */
   calculaPrestamo() {
-    if (!this.cantidadIngresada || !this.tasaDeInteres) return;
-    this.totalAPagar = +(
+    if (!this.cantidadIngresada || !this.tasa_interes) return;
+    this.cantidad_pagar = +(
       this.cantidadIngresada *
-      (1 + this.tasaDeInteres / 100)
+      (1 + this.tasa_interes / 100)
     ).toFixed(2);
-    const rawValue = this.totalAPagar / this.semanasDePlazo!;
+    const rawValue = this.cantidad_pagar / this.semanasDePlazo!;
     this.pagoSemanal = +rawValue.toFixed(2);
   }
 
@@ -229,9 +231,9 @@ export class NewLoanComponent implements OnInit, OnDestroy {
    * @param {Date} date - La fecha  de la cual se quiere saber el nombre de la semana que le corresponde.
    */
   calculaDiaDeLaSemana(date: Date) {
-    this.fechaInicial = date;
-    const dayIndex = this.fechaInicial.getDay();
-    this.diaDeLaSemana = this.days[dayIndex];
+    this.fecha_inicial = date;
+    const dayIndex = this.fecha_inicial.getDay();
+    this.dia_semana = this.days[dayIndex];
     this.calculaFechaFinal();
   }
 
@@ -240,10 +242,10 @@ export class NewLoanComponent implements OnInit, OnDestroy {
    *
    */
   calculaFechaFinal() {
-    if (!this.fechaInicial || !this.semanasDePlazo) return;
-    const result = new Date(this.fechaInicial);
+    if (!this.fecha_inicial || !this.semanasDePlazo) return;
+    const result = new Date(this.fecha_inicial);
     result.setDate(result.getDate() + this.semanasDePlazo! * 7);
-    this.fechaFinal = result.toLocaleDateString('es-MX', {
+    this.fecha_final_estimada = result.toLocaleDateString('es-MX', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -343,6 +345,23 @@ export class NewLoanComponent implements OnInit, OnDestroy {
     // TODO: esperar a que el backend inserte la informacion,
     // si fue correcto entonces subir documentacion,
     // caso contrario no hacer nada pero informar al usuario con un toast
+    this.loanRequestService
+      .registerNewLoan(this.mainForm.value)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+        },
+        error: (error: any) => {
+          console.log(error);
+          this.ms.add({
+            severity: 'error',
+            summary: `${error.name}`,
+            detail: `${error.error.error || error.message}`,
+            life: 5000,
+          });
+        },
+      });
     this.triggerUpload();
   }
 
@@ -352,7 +371,6 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   triggerUpload() {
     if (this.fileUpload.hasFiles()) this.fileUpload.upload();
     else console.warn('no habia archivos por subir');
-    console.log('triggerUpload');
   }
 
   /**
