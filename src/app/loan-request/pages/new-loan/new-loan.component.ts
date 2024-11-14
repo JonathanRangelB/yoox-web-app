@@ -20,6 +20,7 @@ import { BehaviorSubject, skip, Subject, takeUntil } from 'rxjs';
 import { FileUpload } from 'primeng/fileupload';
 import { InputSwitchChangeEvent } from 'primeng/inputswitch';
 import { LoanRequestService } from '../../services/loan-request.service';
+import { AuthService } from 'src/app/login/services/AuthService';
 
 interface dropDownCollection {
   name: string;
@@ -38,8 +39,11 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
   s3 = inject(S3BucketService);
-  loanRequestService = inject(LoanRequestService);
   destroy$ = new Subject();
+  camposAval$ = new BehaviorSubject<boolean>(false);
+  customerFolderName?: string;
+  authService = inject(AuthService);
+  loanRequestService = inject(LoanRequestService);
   position: string = 'bottom';
   mainForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
@@ -48,7 +52,8 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   semanasDePlazo: number | undefined;
   id_plazo: number | undefined;
   fecha_inicial: Date | undefined;
-  fecha_final_estimada: string | null = null;
+  fecha_final_estimada: Date | undefined;
+  fecha_final_estimada_string: string | null = null;
   fechaMinima: Date = new Date();
   dia_semana: string | null = null;
   days: string[] = days;
@@ -56,12 +61,11 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   tasa_interes: number = 0;
   cantidad_pagar: number = 0;
   pagoSemanal: number | null = null;
-  camposAval$ = new BehaviorSubject<boolean>(false);
 
   constructor() {
     this.mainForm = this.fb.group({
       cantidad_prestada: ['', [Validators.required, Validators.min(1000)]],
-      plazos: ['', Validators.required],
+      plazo: ['', Validators.required],
       fecha_inicial: ['', Validators.required],
       formCliente: this.fb.group({
         nombre_cliente: ['', Validators.required],
@@ -245,7 +249,8 @@ export class NewLoanComponent implements OnInit, OnDestroy {
     if (!this.fecha_inicial || !this.semanasDePlazo) return;
     const result = new Date(this.fecha_inicial);
     result.setDate(result.getDate() + this.semanasDePlazo! * 7);
-    this.fecha_final_estimada = result.toLocaleDateString('es-MX', {
+    this.fecha_final_estimada = result;
+    this.fecha_final_estimada_string = result.toLocaleDateString('es-MX', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -270,9 +275,12 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   onUpload(event: any) {
     const files = event.files;
     // TODO: generar el nombre del folder para el usuario
-    const customerFolderName = 'jonathan';
+    if (!this.customerFolderName)
+      throw new Error(
+        'No se pudo obtener el nombre del directorio para el cliente'
+      );
 
-    this.s3.uploadFiles(files, customerFolderName).subscribe({
+    this.s3.uploadFiles(files, this.customerFolderName).subscribe({
       next: () => {
         this.ms.add({
           severity: 'info',
@@ -345,12 +353,15 @@ export class NewLoanComponent implements OnInit, OnDestroy {
     // TODO: esperar a que el backend inserte la informacion,
     // si fue correcto entonces subir documentacion,
     // caso contrario no hacer nada pero informar al usuario con un toast
+    const requestData = this.buildRequestData();
     this.loanRequestService
-      .registerNewLoan(this.mainForm.value)
+      .registerNewLoan(requestData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: (data) => {
+        next: (data: { customerFolderName: string }) => {
+          this.customerFolderName = data.customerFolderName;
           console.log(data);
+          this.triggerUpload();
         },
         error: (error: any) => {
           console.log(error);
@@ -362,7 +373,30 @@ export class NewLoanComponent implements OnInit, OnDestroy {
           });
         },
       });
-    this.triggerUpload();
+  }
+
+  /**
+   * Crea el objeto para hacer la peticion al backend.
+   *
+   * @returns {any} - El objeto final a enviar al endpoint de creaciond de nuevas solicitudes.
+   */
+  buildRequestData(): any {
+    let requestData = {};
+    const user = this.authService.currentUser;
+    console.log('usuario encontrado: ' + user);
+    if (user) {
+      requestData = {
+        ...this.mainForm.value,
+        id_agente: user.ID,
+        created_by: user.ID,
+        id_grupo_original: +user.ID_GRUPO!,
+        fecha_final_estimada: this.fecha_final_estimada,
+        dia_semana: this.dia_semana,
+        cantidad_pagar: this.cantidad_pagar,
+      };
+    }
+    console.log({ requestData });
+    return requestData;
   }
 
   /**

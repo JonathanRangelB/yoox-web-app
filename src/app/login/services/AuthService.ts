@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { tap } from 'rxjs';
-import { UserData } from '../../shared/interfaces/userData.interface';
+import { User, UserData } from '../../shared/interfaces/userData.interface';
 import { TokenValidationResponse } from '../interfaces/tokenValidationResponse';
 import { environment } from 'src/environments/environment';
 import { UserCredentials } from 'src/app/shared/interfaces/user.interface';
@@ -14,12 +14,17 @@ export class AuthService {
   private router = inject(Router);
   private http = inject(HttpClient);
   private readonly baseUrl = environment.API_URL;
-  private userData?: UserData;
+  private user?: User;
 
   login({ userId, password }: UserCredentials) {
     return this.http
       .post<UserData>(`${this.baseUrl}login`, { userId, password })
-      .pipe(tap((response) => (this.userData = response)));
+      .pipe(
+        tap((response) => {
+          console.log({ response });
+          this.user = response.user;
+        })
+      );
   }
 
   tokenValidation(token: string) {
@@ -33,12 +38,12 @@ export class AuthService {
   }
 
   logout(): void {
-    this.userData = undefined;
+    this.user = undefined;
     localStorage.clear();
     this.router.navigate(['/login']);
   }
 
   get currentUser() {
-    return this.userData;
+    return this.user;
   }
 }

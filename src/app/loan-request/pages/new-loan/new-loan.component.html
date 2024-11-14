@@ -38,20 +38,20 @@
             </small>
           </div>
           <div class="col-12 sm:col-4 flex flex-column">
-            <label for="plazos">Plazo</label>
+            <label for="plazo">Plazo</label>
             <p-dropdown
-              inputId="plazos"
-              id="plazos"
-              formControlName="plazos"
+              inputId="plazo"
+              id="plazo"
+              formControlName="plazo"
               [options]="plazo"
               optionLabel="name"
               (onChange)="onPlazoChanged($event)"
               placeholder="Plazo de semanas"
               [style]="{ width: '100%' }" />
             <small
-              id="plazos-help"
+              id="plazo-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('plazos')"
+              [hidden]="esCampoOculto('plazo')"
               >Selecciona un plazo</small
             >
           </div>
@@ -139,7 +139,7 @@
               id="fecha_final_estimada"
               placeholder="Fecha final estimada"
               disabled="true"
-              [value]="fecha_final_estimada" />
+              [value]="fecha_final_estimada_string" />
           </p-inputGroup>
           <!-- final de valores calculados -->
         </div>
