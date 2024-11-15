@@ -21,7 +21,6 @@ export class AuthService {
       .post<UserData>(`${this.baseUrl}login`, { userId, password })
       .pipe(
         tap((response) => {
-          console.log({ response });
           this.user = response.user;
         })
       );

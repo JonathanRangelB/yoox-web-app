@@ -17,15 +17,14 @@ import {
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
 import { BehaviorSubject, skip, Subject, takeUntil } from 'rxjs';
-import { FileUpload } from 'primeng/fileupload';
+import { FileUpload, FileUploadEvent } from 'primeng/fileupload';
 import { InputSwitchChangeEvent } from 'primeng/inputswitch';
 import { LoanRequestService } from '../../services/loan-request.service';
 import { AuthService } from 'src/app/login/services/AuthService';
-
-interface dropDownCollection {
-  name: string;
-  value: string;
-}
+import {
+  CurrentUser,
+  dropDownCollection,
+} from '../../types/loan-request.interface';
 
 @Component({
   selector: 'app-new-loan',
@@ -272,9 +271,17 @@ export class NewLoanComponent implements OnInit, OnDestroy {
     return control.valid || (!control.dirty && !control.touched);
   }
 
-  onUpload(event: any) {
+  /**
+   * Metodo personalizado a usar por el componente fileUpload de PrimeNg.
+   * este metodo de dispara cuando dicho componente dispara la funcionalidad de subir los archivos.
+   * Necesita ser disparado manualmente mandando llamar la funcion `fileUpload.hasFiles()`,
+   * solo hasta ese momento esta funcion debera de ser llamada por ese otro componente.
+   *
+   * @param {FileUploadEvent} event - Evento del componente fileUpload de PrimeNg
+   * @throws {Error} - Arroja un error al no poder obtener el nombre del folder para ser creado en S3.
+   */
+  onUpload(event: FileUploadEvent) {
     const files = event.files;
-    // TODO: generar el nombre del folder para el usuario
     if (!this.customerFolderName)
       throw new Error(
         'No se pudo obtener el nombre del directorio para el cliente'
@@ -290,7 +297,6 @@ export class NewLoanComponent implements OnInit, OnDestroy {
         });
       },
       error: (err) => {
-        console.log('ocurrio un error al subir archivos', err);
         this.ms.add({
           severity: 'error',
           summary: 'Rechazado',
@@ -304,6 +310,11 @@ export class NewLoanComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Metodo que verifica la validez de todos los campos dentro del formulario.
+   * No deja avanzar al usuario en dado caso que tenga algun dato incorrecto o faltante.
+   *
+   */
   onSubmit() {
     if (!this.mainForm.valid) {
       this.ms.add({
@@ -349,10 +360,14 @@ export class NewLoanComponent implements OnInit, OnDestroy {
     });
   }
 
+  /**
+   * Encardada de hacer formalmente la peticion al backend.
+   * llama internamente a la creacion del objeto final a enviar.
+   * muestra un mensaje toast tipo success al hacer todo el proceso correctamente.
+   * muestra un mensaje toast tipo error cuando algun proceso del front o del backend falla.
+   *
+   */
   onFormAccept() {
-    // TODO: esperar a que el backend inserte la informacion,
-    // si fue correcto entonces subir documentacion,
-    // caso contrario no hacer nada pero informar al usuario con un toast
     const requestData = this.buildRequestData();
     this.loanRequestService
       .registerNewLoan(requestData)
@@ -360,11 +375,15 @@ export class NewLoanComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: { customerFolderName: string }) => {
           this.customerFolderName = data.customerFolderName;
-          console.log(data);
           this.triggerUpload();
+          this.ms.add({
+            severity: 'success',
+            summary: 'La solicitud fue creada',
+            detail: 'La solicitud esta en espera a ser aprobada',
+            life: 5000,
+          });
         },
         error: (error: any) => {
-          console.log(error);
           this.ms.add({
             severity: 'error',
             summary: `${error.name}`,
@@ -377,26 +396,45 @@ export class NewLoanComponent implements OnInit, OnDestroy {
 
   /**
    * Crea el objeto para hacer la peticion al backend.
+   * combina el contenido del formulario con valores calculados y del usuario actualmente autenticado.
    *
    * @returns {any} - El objeto final a enviar al endpoint de creaciond de nuevas solicitudes.
    */
   buildRequestData(): any {
     let requestData = {};
-    const user = this.authService.currentUser;
-    console.log('usuario encontrado: ' + user);
-    if (user) {
+    const additionalData = this.generateAdditionalData();
+    if (additionalData) {
       requestData = {
         ...this.mainForm.value,
-        id_agente: user.ID,
-        created_by: user.ID,
-        id_grupo_original: +user.ID_GRUPO!,
-        fecha_final_estimada: this.fecha_final_estimada,
-        dia_semana: this.dia_semana,
-        cantidad_pagar: this.cantidad_pagar,
+        ...additionalData,
       };
     }
-    console.log({ requestData });
     return requestData;
+  }
+
+  /**
+   * Encardada de construir la informacion adicional para ser inyectada a los datos del formulario.
+   * Necesario dado a que el formulario solo tiene acceso a sus inputs en el template,
+   * el resto de la información es calculada en diferentes partes del componente.
+   *
+   * @throws {Error} - Arroja un error si no encuentra la informacion en localStorage, la cual fue generada en el componente `login`
+   * @returns {any} - El objeto con la informacion adicional para ser enviado al backend junto con los datos del formulario.
+   */
+  generateAdditionalData(): any {
+    const user = localStorage.getItem('user');
+    if (!user)
+      throw new Error(
+        'No se encontraron los datos del usuario en localStorage'
+      );
+    const { ID, ID_GRUPO } = JSON.parse(user) as CurrentUser;
+    return {
+      id_agente: ID,
+      created_by: ID,
+      id_grupo_original: ID_GRUPO,
+      fecha_final_estimada: this.fecha_final_estimada,
+      dia_semana: this.dia_semana,
+      cantidad_pagar: this.cantidad_pagar,
+    };
   }
 
   /**
