@@ -104,7 +104,7 @@ export class NewLoanComponent implements OnInit, OnDestroy {
         coloniaAval: [''],
         municipioAval: [''],
         estadoAval: [''],
-        codigoPostalAval: [''],
+        cp_aval: [''],
         observacionesAval: [''],
       }),
     });
@@ -128,7 +128,7 @@ export class NewLoanComponent implements OnInit, OnDestroy {
         const coloniaAval = formAval.get('coloniaAval')!;
         const municipioAval = formAval.get('municipioAval')!;
         const estadoAval = formAval.get('estadoAval');
-        const codigoPostalAval = formAval.get('codigoPostalAval')!;
+        const cp_aval = formAval.get('cp_aval')!;
 
         if (mostrarCamposAval) {
           nombreAval?.setValidators([Validators.required]);
@@ -144,10 +144,7 @@ export class NewLoanComponent implements OnInit, OnDestroy {
           coloniaAval?.setValidators([Validators.required]);
           municipioAval?.setValidators([Validators.required]);
           estadoAval?.setValidators([Validators.required]);
-          codigoPostalAval?.setValidators([
-            Validators.required,
-            lengthValidator(5),
-          ]);
+          cp_aval?.setValidators([Validators.required, lengthValidator(5)]);
         } else {
           nombreAval?.clearValidators();
           apellidoPaternoAval?.clearValidators();
@@ -162,7 +159,7 @@ export class NewLoanComponent implements OnInit, OnDestroy {
           coloniaAval?.clearValidators();
           municipioAval?.clearValidators();
           estadoAval?.clearValidators();
-          codigoPostalAval?.clearValidators();
+          cp_aval?.clearValidators();
         }
 
         nombreAval?.updateValueAndValidity();
@@ -178,7 +175,7 @@ export class NewLoanComponent implements OnInit, OnDestroy {
         coloniaAval?.updateValueAndValidity();
         municipioAval?.updateValueAndValidity();
         estadoAval?.updateValueAndValidity();
-        codigoPostalAval?.updateValueAndValidity();
+        cp_aval?.updateValueAndValidity();
       });
   }
 

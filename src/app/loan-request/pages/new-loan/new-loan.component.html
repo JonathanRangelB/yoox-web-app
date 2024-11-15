@@ -253,17 +253,15 @@
               [hidden]="esCampoOculto('formCliente.correo_electronico_cliente')"
               ><ng-container
                 *ngIf="
-                  mainForm.get('correo_electronico_cliente')?.errors?.[
-                    'required'
-                  ]
+                  mainForm.get('formCliente.correo_electronico_cliente')
+                    ?.errors?.['required']
                 ">
                 Correo electronico requerido</ng-container
               >
               <ng-container
                 *ngIf="
-                  mainForm.get('correo_electronico_cliente')?.errors?.[
-                    'invalidEmail'
-                  ]
+                  mainForm.get('formCliente.correo_electronico_cliente')
+                    ?.errors?.['invalidEmail']
                 ">
                 Formato de correo invalido</ng-container
               ></small
@@ -420,11 +418,17 @@
               class="mb-2 text-red-500"
               [hidden]="esCampoOculto('formCliente.cp_cliente')"
               ><ng-container
-                *ngIf="mainForm.get('cp_cliente')?.errors?.['required']">
+                *ngIf="
+                  mainForm.get('formCliente.cp_cliente')?.errors?.['required']
+                ">
                 Código postal requerido</ng-container
               >
               <ng-container
-                *ngIf="mainForm.get('cp_cliente')?.errors?.['lenghtNotMatch']">
+                *ngIf="
+                  mainForm.get('formCliente.cp_cliente')?.errors?.[
+                    'lenghtNotMatch'
+                  ]
+                ">
                 El número debe de tener 5 digitos</ng-container
               ></small
             >
@@ -725,10 +729,10 @@
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="codigoPostalAval">Código postal</label>
+              <label for="cp_aval">Código postal</label>
               <p-inputNumber
-                inputId="codigoPostalAval"
-                formControlName="codigoPostalAval"
+                inputId="cp_aval"
+                formControlName="cp_aval"
                 autoClear="false"
                 showClear="true"
                 useGrouping="false"
@@ -736,14 +740,12 @@
                 [maxlength]="5"
                 [style]="{ width: '100%' }" />
               <small
-                id="codigoPostalAval-help"
+                id="cp_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.codigoPostalAval')"
+                [hidden]="esCampoOculto('formAval.cp_aval')"
                 ><ng-container
                   *ngIf="
-                    mainForm.get('formAval.codigoPostalAval')?.errors?.[
-                      'required'
-                    ]
+                    mainForm.get('formAval.cp_aval')?.errors?.['required']
                   ">
                   Código postal requerido</ng-container
                 >
