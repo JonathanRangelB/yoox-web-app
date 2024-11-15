@@ -17,7 +17,7 @@ import {
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
 import { BehaviorSubject, skip, Subject, takeUntil } from 'rxjs';
-import { FileUpload, FileUploadEvent } from 'primeng/fileupload';
+import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { InputSwitchChangeEvent } from 'primeng/inputswitch';
 import { LoanRequestService } from '../../services/loan-request.service';
 import { AuthService } from 'src/app/login/services/AuthService';
@@ -280,7 +280,7 @@ export class NewLoanComponent implements OnInit, OnDestroy {
    * @param {FileUploadEvent} event - Evento del componente fileUpload de PrimeNg
    * @throws {Error} - Arroja un error al no poder obtener el nombre del folder para ser creado en S3.
    */
-  onUpload(event: FileUploadEvent) {
+  onUpload(event: FileUploadHandlerEvent) {
     const files = event.files;
     if (!this.customerFolderName)
       throw new Error(
