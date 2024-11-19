@@ -11,3 +11,11 @@ export interface CurrentUser {
   ID_GRUPO: number;
   ID_ROL: number;
 }
+
+export interface ClientesEncontrados {
+  id: number;
+  curp: string;
+  nombre: string;
+  ocupacion: string;
+  correo_electronico: string;
+}

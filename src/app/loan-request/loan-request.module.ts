@@ -15,6 +15,8 @@ import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { FileUploadModule } from 'primeng/fileupload';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { KeyFilterModule } from 'primeng/keyfilter';
+import { TooltipModule } from 'primeng/tooltip';
+import { TableModule } from 'primeng/table';
 
 import { LoanRequestRoutingModule } from './loan-request-routing.module';
 import { NewLoanComponent } from './pages/new-loan/new-loan.component';
@@ -46,6 +48,8 @@ import { ToastModule } from 'primeng/toast';
     FileUploadModule,
     InputSwitchModule,
     KeyFilterModule,
+    TooltipModule,
+    TableModule,
   ],
   providers: [ConfirmationService, MessageService],
 })

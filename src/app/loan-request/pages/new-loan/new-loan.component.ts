@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-import { Component, inject, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
@@ -16,12 +16,13 @@ import {
   lengthValidator,
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
-import { BehaviorSubject, skip, Subject, takeUntil } from 'rxjs';
+import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { InputSwitchChangeEvent } from 'primeng/inputswitch';
 import { LoanRequestService } from '../../services/loan-request.service';
 import { AuthService } from 'src/app/login/services/AuthService';
 import {
+  ClientesEncontrados,
   CurrentUser,
   dropDownCollection,
 } from '../../types/loan-request.interface';
@@ -31,7 +32,7 @@ import {
   templateUrl: './new-loan.component.html',
   styleUrls: ['./new-loan.component.css'],
 })
-export class NewLoanComponent implements OnInit, OnDestroy {
+export class NewLoanComponent implements OnDestroy {
   @ViewChild('fileUpload') fileUpload!: FileUpload;
 
   fb = inject(FormBuilder);
@@ -39,12 +40,14 @@ export class NewLoanComponent implements OnInit, OnDestroy {
   ms = inject(MessageService);
   s3 = inject(S3BucketService);
   destroy$ = new Subject();
-  camposAval$ = new BehaviorSubject<boolean>(false);
+  customerSearch$ = new BehaviorSubject<boolean>(false);
   customerFolderName?: string;
   authService = inject(AuthService);
   loanRequestService = inject(LoanRequestService);
   position: string = 'bottom';
   mainForm: FormGroup;
+  customerSearchForm: FormGroup;
+  clientesEncontrados: ClientesEncontrados[] = [];
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
   plazo: dropDownCollection[] = plazos;
@@ -89,100 +92,61 @@ export class NewLoanComponent implements OnInit, OnDestroy {
         observaciones_cliente: [''],
       }),
       formAval: this.fb.group({
-        nombreAval: [''],
-        apellidoPaternoAval: [''],
-        apellidoMaternoAval: [''],
-        telefonoFijoAval: [''],
-        telefonoMovilAval: [''],
-        emailAval: [''],
+        nombreAval: ['', Validators.required],
+        apellidoPaternoAval: ['', Validators.required],
+        apellidoMaternoAval: ['', Validators.required],
+        telefonoFijoAval: ['', Validators.required],
+        telefonoMovilAval: ['', Validators.required],
+        emailAval: ['', [Validators.required, emailValidator()]],
         ocupacionAval: [''],
-        curpAval: [''],
-        tipoCalleAval: [''],
-        nombreCalleAval: [''],
-        numeroExteriorAval: [''],
+        curpAval: ['', [Validators.required, curpValidator()]],
+        tipoCalleAval: ['', Validators.required],
+        nombreCalleAval: ['', Validators.required],
+        numeroExteriorAval: ['', Validators.required],
         numeroInteriorAval: [''],
-        coloniaAval: [''],
-        municipioAval: [''],
-        estadoAval: [''],
-        cp_aval: [''],
+        coloniaAval: ['', Validators.required],
+        municipioAval: ['', Validators.required],
+        estadoAval: ['', Validators.required],
+        cp_aval: ['', [Validators.required, lengthValidator(5)]],
         observacionesAval: [''],
       }),
     });
-  }
 
-  ngOnInit(): void {
-    this.camposAval$
-      .pipe(skip(1), takeUntil(this.destroy$))
-      .subscribe((mostrarCamposAval) => {
-        const formAval = this.mainForm.get('formAval')! as FormGroup;
-        const nombreAval = formAval.get('nombreAval')!;
-        const apellidoPaternoAval = formAval.get('apellidoPaternoAval')!;
-        const apellidoMaternoAval = formAval.get('apellidoMaternoAval')!;
-        const telefonoFijoAval = formAval.get('telefonoFijoAval')!;
-        const telefonoMovilAval = formAval.get('telefonoMovilAval')!;
-        const emailAval = formAval.get('emailAval')!;
-        const curpAval = formAval.get('curpAval')!;
-        const tipoCalleAval = formAval.get('tipoCalleAval')!;
-        const nombreCalleAval = formAval.get('nombreCalleAval')!;
-        const numeroExteriorAval = formAval.get('numeroExteriorAval')!;
-        const coloniaAval = formAval.get('coloniaAval')!;
-        const municipioAval = formAval.get('municipioAval')!;
-        const estadoAval = formAval.get('estadoAval');
-        const cp_aval = formAval.get('cp_aval')!;
+    this.customerSearchForm = this.fb.group({
+      id: [''],
+      curp: ['', curpValidator()],
+      nombre: [''],
+    });
 
-        if (mostrarCamposAval) {
-          nombreAval?.setValidators([Validators.required]);
-          apellidoPaternoAval?.setValidators([Validators.required]);
-          apellidoMaternoAval?.setValidators([Validators.required]);
-          telefonoFijoAval?.setValidators([Validators.required]);
-          telefonoMovilAval?.setValidators([Validators.required]);
-          emailAval?.setValidators([Validators.required, emailValidator()]);
-          curpAval?.setValidators([Validators.required, curpValidator()]);
-          tipoCalleAval?.setValidators([Validators.required]);
-          nombreCalleAval?.setValidators([Validators.required]);
-          numeroExteriorAval?.setValidators([Validators.required]);
-          coloniaAval?.setValidators([Validators.required]);
-          municipioAval?.setValidators([Validators.required]);
-          estadoAval?.setValidators([Validators.required]);
-          cp_aval?.setValidators([Validators.required, lengthValidator(5)]);
-        } else {
-          nombreAval?.clearValidators();
-          apellidoPaternoAval?.clearValidators();
-          apellidoMaternoAval?.clearValidators();
-          telefonoFijoAval?.clearValidators();
-          telefonoMovilAval?.clearValidators();
-          emailAval?.clearValidators();
-          curpAval?.clearValidators();
-          tipoCalleAval?.clearValidators();
-          nombreCalleAval?.clearValidators();
-          numeroExteriorAval?.clearValidators();
-          coloniaAval?.clearValidators();
-          municipioAval?.clearValidators();
-          estadoAval?.clearValidators();
-          cp_aval?.clearValidators();
-        }
-
-        nombreAval?.updateValueAndValidity();
-        apellidoPaternoAval?.updateValueAndValidity();
-        apellidoMaternoAval?.updateValueAndValidity();
-        telefonoFijoAval?.updateValueAndValidity();
-        telefonoMovilAval?.updateValueAndValidity();
-        emailAval?.updateValueAndValidity();
-        curpAval?.updateValueAndValidity();
-        tipoCalleAval?.updateValueAndValidity();
-        nombreCalleAval?.updateValueAndValidity();
-        numeroExteriorAval?.updateValueAndValidity();
-        coloniaAval?.updateValueAndValidity();
-        municipioAval?.updateValueAndValidity();
-        estadoAval?.updateValueAndValidity();
-        cp_aval?.updateValueAndValidity();
-      });
+    this.clientesEncontrados = [
+      {
+        id: 1,
+        curp: 'RABJ881221HJCNRN09',
+        nombre: 'Jonathan Rangel Bernal',
+        ocupacion: 'developer',
+        correo_electronico: 'jona@gmail.dev',
+      },
+      {
+        id: 2,
+        curp: 'RABJ881221HJCNRN09',
+        nombre: 'Jonathan Rangel Bernal',
+        ocupacion: 'chofer',
+        correo_electronico: 'jona@trabajo.com',
+      },
+      {
+        id: 3,
+        curp: 'RABJ881221HJCNRN09',
+        nombre: 'Jonathan Rangel Bernal',
+        ocupacion: 'mesero',
+        correo_electronico: 'jona@outlook.com',
+      },
+    ];
   }
 
   ngOnDestroy(): void {
     this.destroy$.next(null);
     this.destroy$.complete();
-    this.camposAval$.complete();
+    this.customerSearch$.complete();
   }
 
   /**
@@ -447,7 +411,11 @@ export class NewLoanComponent implements OnInit, OnDestroy {
    *
    * @param {InputSwitchChangeEvent} event - Evento propio del componente de primeNg p-inputSwitch
    */
-  toggleFormAval(event: InputSwitchChangeEvent) {
-    this.camposAval$.next(event.checked);
+  toggleCustomerSearch(event: InputSwitchChangeEvent) {
+    this.customerSearch$.next(event.checked);
+  }
+
+  llenaCampos(event: any) {
+    console.log(event);
   }
 }
