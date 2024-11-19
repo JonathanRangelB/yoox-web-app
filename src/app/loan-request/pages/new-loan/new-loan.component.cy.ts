@@ -1,7 +1,7 @@
-import { NewLoanComponent } from './new-loan.component'
+import { NewLoanComponent } from './new-loan.component';
 
 describe('NewLoanComponent', () => {
   it('should mount', () => {
-    cy.mount(NewLoanComponent)
-  })
-})
+    cy.mount(NewLoanComponent);
+  });
+});
