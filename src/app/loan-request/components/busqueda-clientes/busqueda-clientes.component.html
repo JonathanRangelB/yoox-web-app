@@ -1,0 +1,66 @@
+<section class="grid py-3 pr-3 mr-0" [formGroup]="customerSearchForm">
+  <input
+    pKeyFilter="int"
+    pInputText
+    placeholder="ID"
+    id="ID"
+    class="col-12 sm:col-6"
+    formControlName="id" />
+  <input
+    pInputText
+    placeholder="CURP"
+    id="CURP"
+    class="col-12 sm:col-6"
+    formControlName="curp" />
+  <input
+    pInputText
+    placeholder="Nombre"
+    id="Nombre"
+    class="col-12"
+    formControlName="nombre" />
+  <div style="margin: 0 auto; margin-top: 10px">
+    <button
+      pButton
+      label="Buscar"
+      icon="pi pi-search"
+      type="button"
+      (click)="customerSearch()"></button>
+    <i
+      class="pi pi-info-circle"
+      style="font-size: 2rem; margin: auto 1rem"
+      pTooltip="La jerarquia de busqueda tiene el siguiente orden: ID > CURP > Nombre, por ejemplo se si proporciona el ID y el Nombre se buscara por ID y se descarta buscar por Nombre, si se elimina el ID entonces la busqueda sera por Nombre"
+      tooltipPosition="bottom"></i>
+  </div>
+  <div class="card col-12">
+    @if (!clientesEncontrados.length) {
+      <div style="text-align: center">No hay registros.</div>
+    } @else {
+      <p-table
+        selectionMode="single"
+        dataKey="id"
+        (onRowSelect)="llenaCampos($event)"
+        [value]="clientesEncontrados"
+        styleClass="p-datatable-striped"
+        [tableStyle]="{ 'min-width': '40rem' }">
+        <ng-template pTemplate="header">
+          <tr>
+            <th style="width: 20%">ID</th>
+            <th style="width: 20%">Nombre</th>
+            <th style="width: 20%">CURP</th>
+            <th style="width: 20%">Ocupacion</th>
+            <th style="width: 20%">Email</th>
+          </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-cliente>
+          <tr [pSelectableRow]="cliente">
+            <td>{{ cliente.id }}</td>
+            <td>{{ cliente.curp }}</td>
+            <td>{{ cliente.nombre }}</td>
+            <td>{{ cliente.ocupacion }}</td>
+            <td>{{ cliente.correo_electronico }}</td>
+          </tr>
+        </ng-template>
+      </p-table>
+    }
+  </div>
+</section>

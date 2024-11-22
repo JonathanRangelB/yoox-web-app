@@ -25,6 +25,7 @@ import { ViewLoanComponent } from './pages/view-loan/view-loan.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
+import { BusquedaClientesComponent } from './components/busqueda-clientes/busqueda-clientes.component';
 
 @NgModule({
   declarations: [NewLoanComponent, UpdateLoanComponent, ViewLoanComponent],
@@ -50,6 +51,7 @@ import { ToastModule } from 'primeng/toast';
     KeyFilterModule,
     TooltipModule,
     TableModule,
+    BusquedaClientesComponent,
   ],
   providers: [ConfirmationService, MessageService],
 })

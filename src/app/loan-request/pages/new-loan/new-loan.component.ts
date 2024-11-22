@@ -16,9 +16,8 @@ import {
   lengthValidator,
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
-import { BehaviorSubject, Subject, takeUntil } from 'rxjs';
+import { Subject, takeUntil } from 'rxjs';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
-import { InputSwitchChangeEvent } from 'primeng/inputswitch';
 import { LoanRequestService } from '../../services/loan-request.service';
 import { AuthService } from 'src/app/login/services/AuthService';
 import {
@@ -34,13 +33,12 @@ import {
 })
 export class NewLoanComponent implements OnDestroy {
   @ViewChild('fileUpload') fileUpload!: FileUpload;
-
   fb = inject(FormBuilder);
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
   s3 = inject(S3BucketService);
   destroy$ = new Subject();
-  customerSearch$ = new BehaviorSubject<boolean>(false);
+  customerSearchVisible = false;
   customerFolderName?: string;
   authService = inject(AuthService);
   loanRequestService = inject(LoanRequestService);
@@ -69,6 +67,7 @@ export class NewLoanComponent implements OnDestroy {
       cantidad_prestada: ['', [Validators.required, Validators.min(1000)]],
       plazo: ['', Validators.required],
       fecha_inicial: ['', Validators.required],
+      observaciones: [''],
       formCliente: this.fb.group({
         nombre_cliente: ['', Validators.required],
         apellido_paterno_cliente: ['', Validators.required],
@@ -89,7 +88,6 @@ export class NewLoanComponent implements OnDestroy {
         municipio_cliente: ['', Validators.required],
         estado_cliente: ['', Validators.required],
         cp_cliente: ['', [Validators.required, lengthValidator(5)]],
-        observaciones_cliente: [''],
       }),
       formAval: this.fb.group({
         nombreAval: ['', Validators.required],
@@ -108,7 +106,6 @@ export class NewLoanComponent implements OnDestroy {
         municipioAval: ['', Validators.required],
         estadoAval: ['', Validators.required],
         cp_aval: ['', [Validators.required, lengthValidator(5)]],
-        observacionesAval: [''],
       }),
     });
 
@@ -117,36 +114,11 @@ export class NewLoanComponent implements OnDestroy {
       curp: ['', curpValidator()],
       nombre: [''],
     });
-
-    this.clientesEncontrados = [
-      {
-        id: 1,
-        curp: 'RABJ881221HJCNRN09',
-        nombre: 'Jonathan Rangel Bernal',
-        ocupacion: 'developer',
-        correo_electronico: 'jona@gmail.dev',
-      },
-      {
-        id: 2,
-        curp: 'RABJ881221HJCNRN09',
-        nombre: 'Jonathan Rangel Bernal',
-        ocupacion: 'chofer',
-        correo_electronico: 'jona@trabajo.com',
-      },
-      {
-        id: 3,
-        curp: 'RABJ881221HJCNRN09',
-        nombre: 'Jonathan Rangel Bernal',
-        ocupacion: 'mesero',
-        correo_electronico: 'jona@outlook.com',
-      },
-    ];
   }
 
   ngOnDestroy(): void {
     this.destroy$.next(null);
     this.destroy$.complete();
-    this.customerSearch$.complete();
   }
 
   /**
@@ -406,13 +378,8 @@ export class NewLoanComponent implements OnDestroy {
     else console.warn('no habia archivos por subir');
   }
 
-  /**
-   * Activa o desactiva el formulario de Aval
-   *
-   * @param {InputSwitchChangeEvent} event - Evento propio del componente de primeNg p-inputSwitch
-   */
-  toggleCustomerSearch(event: InputSwitchChangeEvent) {
-    this.customerSearch$.next(event.checked);
+  toggleCustomerSearch() {
+    this.customerSearchVisible = !this.customerSearchVisible;
   }
 
   llenaCampos(event: any) {

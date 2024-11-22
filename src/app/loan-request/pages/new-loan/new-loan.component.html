@@ -166,73 +166,12 @@
           <p-inputSwitch
             inputId="habilitarCamposAval"
             class="ml-3"
-            (onChange)="toggleCustomerSearch($event)" />
+            (onChange)="toggleCustomerSearch()" />
         </div>
-        <section
-          *ngIf="customerSearch$ | async"
-          class="grid py-3 pr-3"
-          [formGroup]="customerSearchForm">
-          <input
-            pKeyFilter="int"
-            pInputText
-            placeholder="ID"
-            id="ID"
-            class="col-12 sm:col-6"
-            formControlName="id" />
-          <input
-            pInputText
-            placeholder="CURP"
-            id="CURP"
-            class="col-12 sm:col-6"
-            formControlName="curp" />
-          <input
-            pInputText
-            placeholder="Nombre"
-            id="Nombre"
-            class="col-12"
-            formControlName="nombre" />
-          <div style="margin: 0 auto; margin-top: 10px">
-            <button
-              pButton
-              label="Buscar"
-              icon="pi pi-search"
-              type="button"></button>
-            <i
-              class="pi pi-info-circle"
-              style="font-size: 2rem; margin: auto 1rem"
-              pTooltip="La jerarquia de busqueda tiene el siguiente orden: ID > CURP > Nombre, por ejemplo se si proporciona el ID y el Nombre se buscara por ID y se descarta buscar por Nombre, si se elimina el ID entonces la busqueda sera por Nombre"
-              tooltipPosition="bottom"></i>
-          </div>
-          <div class="card col-12">
-            <p-table
-              selectionMode="single"
-              dataKey="id"
-              (onRowSelect)="llenaCampos($event)"
-              [value]="clientesEncontrados"
-              styleClass="p-datatable-striped"
-              [tableStyle]="{ 'min-width': '20rem', 'max-width': '100%' }">
-              <ng-template pTemplate="header">
-                <tr>
-                  <th style="width: 20%">ID</th>
-                  <th style="width: 20%">Nombre</th>
-                  <th style="width: 20%">CURP</th>
-                  <th style="width: 20%">Ocupacion</th>
-                  <th style="width: 20%">Email</th>
-                </tr>
-              </ng-template>
-              <ng-template pTemplate="body" let-cliente>
-                <tr [pSelectableRow]="cliente">
-                  <td>{{ cliente.id }}</td>
-                  <td>{{ cliente.curp }}</td>
-                  <td>{{ cliente.nombre }}</td>
-                  <td>{{ cliente.ocupacion }}</td>
-                  <td>{{ cliente.correo_electronico }}</td>
-                </tr>
-              </ng-template>
-            </p-table>
-          </div>
-        </section>
-        <div formGroupName="formCliente" class="grid py-3 pr-3">
+        @if (customerSearchVisible) {
+          <app-busqueda-clientes />
+        }
+        <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="nombre_cliente">Nombre cliente</label>
             <input
@@ -504,17 +443,6 @@
               ></small
             >
           </div>
-          <div class="col-12 flex flex-column gap-2">
-            <label for="observaciones_cliente">Observaciones adicionales</label>
-            <textarea
-              formControlName="observaciones_cliente"
-              rows="5"
-              cols="30"
-              autoResize="true"
-              pInputTextarea
-              id="observaciones_cliente">
-            </textarea>
-          </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
           <p-button
@@ -540,7 +468,7 @@
         let-nextCallback="nextCallback"
         let-index="index">
         <div class="flex flex-column">
-          <div formGroupName="formAval" class="grid py-3 pr-3">
+          <div formGroupName="formAval" class="grid py-3 pr-3 mr-0">
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="nombreAval">Nombre aval</label>
               <input
@@ -823,17 +751,6 @@
                 ></small
               >
             </div>
-            <div class="col-12 flex flex-column gap-2">
-              <label for="observacionesAval">Observaciones adicionales</label>
-              <textarea
-                formControlName="observacionesAval"
-                rows="5"
-                cols="30"
-                autoResize="true"
-                pInputTextarea
-                id="observacionesAval">
-              </textarea>
-            </div>
           </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
@@ -877,6 +794,17 @@
             fileLimit="5"
             multiple="true" />
         </div>
+        <div class="flex flex-column gap-2 mt-3 mr-3">
+          <label for="observaciones">Observaciones adicionales</label>
+          <textarea
+            formControlName="observaciones"
+            rows="5"
+            cols="30"
+            autoResize="true"
+            pInputTextarea
+            id="observaciones">
+          </textarea>
+        </div>
         <div class="flex justify-content-between py-4 gap-2 pr-3">
           <p-button
             label="Paso anterior"
@@ -891,6 +819,7 @@
         </div>
       </ng-template>
     </p-stepperPanel>
+
     <!-- fin Documentación -->
   </p-stepper>
 
