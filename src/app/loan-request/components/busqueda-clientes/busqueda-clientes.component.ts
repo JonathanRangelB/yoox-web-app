@@ -16,6 +16,7 @@ import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { Customer } from '../../types/searchCustomers.interface';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-busqueda-clientes',
@@ -29,6 +30,7 @@ import { InputNumberModule } from 'primeng/inputnumber';
     ButtonModule,
     TableModule,
     ToastModule,
+    TooltipModule,
   ],
   providers: [MessageService],
   templateUrl: './busqueda-clientes.component.html',
@@ -45,6 +47,7 @@ export class BusquedaClientesComponent {
   ms = inject(MessageService);
   clientesEncontrados: Customer[] = [];
   customerSearchForm: FormGroup;
+  loading = false;
 
   constructor() {
     this.customerSearchForm = this.fb.group({
@@ -59,9 +62,10 @@ export class BusquedaClientesComponent {
   }
 
   customerSearch() {
-    // TODO: placeholder de datos de clientesEncontrados
+    this.loading = true;
     const formData = this.generatePayload();
     if (Object.keys(formData).length === 0) {
+      this.loading = false;
       this.ms.add({
         severity: 'error',
         summary: 'Error',
@@ -71,6 +75,7 @@ export class BusquedaClientesComponent {
     }
     const currentUser = localStorage.getItem('user');
     if (!currentUser) {
+      this.loading = false;
       this.ms.add({
         severity: 'error',
         summary: 'Error',
@@ -81,9 +86,12 @@ export class BusquedaClientesComponent {
     const id_agente = JSON.parse(currentUser!).ID;
     const payload = { ...formData, id_agente };
     this.searchCustomerService.searchCustomers(payload).subscribe({
-      next: (result: any) =>
-        (this.clientesEncontrados = result?.registrosEncontrados),
+      next: (result: any) => {
+        this.loading = false;
+        this.clientesEncontrados = result?.registrosEncontrados;
+      },
       error: ({ error }) => {
+        this.loading = false;
         this.ms.add({
           severity: 'error',
           summary: error.message,

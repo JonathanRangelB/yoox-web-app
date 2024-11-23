@@ -1,7 +1,7 @@
 <section class="grid py-3 pr-3 mr-0 row-gap-3" [formGroup]="customerSearchForm">
   <p-inputNumber
     placeholder="ID"
-    id="ID"
+    inputId="ID"
     useGrouping="false"
     min="0"
     class="col-12 sm:col-6 p-0"
@@ -25,6 +25,8 @@
       label="Buscar"
       icon="pi pi-search"
       type="button"
+      [loading]="loading"
+      [disabled]="loading"
       (click)="customerSearch()"></button>
     <i
       class="pi pi-info-circle"

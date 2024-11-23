@@ -18,7 +18,7 @@ export class SearchCustomersService {
   searchCustomers(payload: SearchCustomerData) {
     const token = localStorage.getItem('token');
     return this.http
-      .post<SearchCustomerData>(`${this.baseUrl}getCustomer`, payload, {
+      .post<SearchCustomerData>(`${this.baseUrl}get-customer`, payload, {
         headers: { authorization: `${token}` },
       })
       .pipe(
