@@ -21,7 +21,6 @@ import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { LoanRequestService } from '../../services/loan-request.service';
 import { AuthService } from 'src/app/login/services/AuthService';
 import {
-  ClientesEncontrados,
   CurrentUser,
   dropDownCollection,
 } from '../../types/loan-request.interface';
@@ -45,7 +44,6 @@ export class NewLoanComponent implements OnDestroy {
   position: string = 'bottom';
   mainForm: FormGroup;
   customerSearchForm: FormGroup;
-  clientesEncontrados: ClientesEncontrados[] = [];
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
   plazo: dropDownCollection[] = plazos;

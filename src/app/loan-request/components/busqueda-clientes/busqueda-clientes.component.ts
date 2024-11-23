@@ -10,8 +10,12 @@ import { TableModule, TableRowSelectEvent } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 
-import { ClientesEncontrados } from '../../types/loan-request.interface';
 import { curpValidator } from '../../utils/customValidators';
+import { SearchCustomersService } from '../../services/search-customers.service';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { Customer } from '../../types/searchCustomers.interface';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @Component({
   selector: 'app-busqueda-clientes',
@@ -21,21 +25,32 @@ import { curpValidator } from '../../utils/customValidators';
     FormsModule,
     ReactiveFormsModule,
     InputTextModule,
+    InputNumberModule,
     ButtonModule,
     TableModule,
+    ToastModule,
   ],
+  providers: [MessageService],
   templateUrl: './busqueda-clientes.component.html',
+  styles: `
+    table tr td {
+      display: inline-block;
+      width: 100px; /* adjust to desired width */
+    }
+  `,
 })
 export class BusquedaClientesComponent {
   fb = inject(FormBuilder);
-  clientesEncontrados: ClientesEncontrados[] = [];
+  searchCustomerService = inject(SearchCustomersService);
+  ms = inject(MessageService);
+  clientesEncontrados: Customer[] = [];
   customerSearchForm: FormGroup;
 
   constructor() {
     this.customerSearchForm = this.fb.group({
-      id: [''],
-      curp: ['', curpValidator()],
-      nombre: [''],
+      id: [null],
+      curp: [null, curpValidator()],
+      nombre: [null],
     });
   }
 
@@ -45,28 +60,44 @@ export class BusquedaClientesComponent {
 
   customerSearch() {
     // TODO: placeholder de datos de clientesEncontrados
-    this.clientesEncontrados = [
-      {
-        id: 1,
-        curp: 'RABJ881221HJCNRN09',
-        nombre: 'Jonathan Rangel Bernal',
-        ocupacion: 'developer',
-        correo_electronico: 'jona@gmail.dev',
+    const formData = this.generatePayload();
+    if (Object.keys(formData).length === 0) {
+      this.ms.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se proporciono ningun dato de busqueda',
+      });
+      return;
+    }
+    const currentUser = localStorage.getItem('user');
+    if (!currentUser) {
+      this.ms.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Ocurrio un error al obtener el usuario',
+      });
+      return;
+    }
+    const id_agente = JSON.parse(currentUser!).ID;
+    const payload = { ...formData, id_agente };
+    this.searchCustomerService.searchCustomers(payload).subscribe({
+      next: (result: any) =>
+        (this.clientesEncontrados = result?.registrosEncontrados),
+      error: ({ error }) => {
+        this.ms.add({
+          severity: 'error',
+          summary: error.message,
+          detail: error.error,
+        });
       },
-      {
-        id: 2,
-        curp: 'RABJ881221HJCNRN09',
-        nombre: 'Jonathan Rangel Bernal',
-        ocupacion: 'chofer',
-        correo_electronico: 'jona@trabajo.com',
-      },
-      {
-        id: 3,
-        curp: 'RABJ881221HJCNRN09',
-        nombre: 'Jonathan Rangel Bernal',
-        ocupacion: 'mesero',
-        correo_electronico: 'jona@outlook.com',
-      },
-    ];
+    });
+  }
+
+  generatePayload() {
+    return Object.fromEntries(
+      Object.entries(this.customerSearchForm.value).filter(
+        ([, value]) => value !== null && value !== undefined && value !== ''
+      )
+    );
   }
 }
