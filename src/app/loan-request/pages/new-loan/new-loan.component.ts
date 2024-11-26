@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import { Component, inject, OnDestroy, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
@@ -32,18 +32,17 @@ import { InputSwitch } from 'primeng/inputswitch';
   styleUrls: ['./new-loan.component.css'],
 })
 export class NewLoanComponent implements OnDestroy {
-  @ViewChild('fileUpload') fileUpload!: FileUpload;
-  @ViewChild('switchBusqueda') switchBusqueda!: InputSwitch;
-
+  fileUpload = viewChild<FileUpload>('fileUpload');
+  switchBusqueda = viewChild<InputSwitch>('switchBusqueda');
   fb = inject(FormBuilder);
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
   s3 = inject(S3BucketService);
+  authService = inject(AuthService);
+  loanRequestService = inject(LoanRequestService);
   destroy$ = new Subject();
   customerSearchVisible = false;
   customerFolderName?: string;
-  authService = inject(AuthService);
-  loanRequestService = inject(LoanRequestService);
   position: string = 'bottom';
   mainForm: FormGroup;
   customerSearchForm: FormGroup;
@@ -375,13 +374,13 @@ export class NewLoanComponent implements OnDestroy {
    *   Comprueba si hay archivos por subir, si los hay dispara el evento de subida a S3
    */
   triggerUpload() {
-    if (this.fileUpload.hasFiles()) this.fileUpload.upload();
+    if (this.fileUpload()?.hasFiles()) this.fileUpload()?.upload();
     else console.warn('no habia archivos por subir');
   }
 
   toggleCustomerSearch() {
     this.customerSearchVisible = !this.customerSearchVisible;
-    this.switchBusqueda.writeValue(this.customerSearchVisible);
+    this.switchBusqueda()?.writeValue(this.customerSearchVisible);
   }
 
   llenaCampos(event: any) {
