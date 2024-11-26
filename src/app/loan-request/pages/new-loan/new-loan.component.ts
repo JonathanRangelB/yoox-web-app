@@ -1,11 +1,5 @@
 /* eslint-disable no-useless-escape */
-import {
-  Component,
-  ElementRef,
-  inject,
-  OnDestroy,
-  ViewChild,
-} from '@angular/core';
+import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
