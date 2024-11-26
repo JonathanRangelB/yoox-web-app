@@ -166,10 +166,14 @@
           <p-inputSwitch
             inputId="habilitarCamposAval"
             class="ml-3"
+            #switchBusqueda
+            [ngSwitch]="customerSearchVisible"
             (onChange)="toggleCustomerSearch()" />
         </div>
         @if (customerSearchVisible) {
-          <app-busqueda-clientes />
+          <app-busqueda-clientes
+            [parentForm]="mainForm"
+            (visible)="toggleCustomerSearch()" />
         }
         <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">
           <div class="col-12 sm:col-6 flex flex-column">
@@ -284,7 +288,6 @@
               formControlName="ocupacion_cliente"
               id="ocupacion_cliente"
               aria-describedby="ocupacion_cliente-help" />
-            <small id="ocupacion_cliente-help" [hidden]="true">ocupacion</small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="curp_cliente">CURP</label>
@@ -470,52 +473,52 @@
         <div class="flex flex-column">
           <div formGroupName="formAval" class="grid py-3 pr-3 mr-0">
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="nombreAval">Nombre aval</label>
+              <label for="nombre_aval">Nombre aval</label>
               <input
-                formControlName="nombreAval"
+                formControlName="nombre_aval"
                 pInputText
-                id="nombreAval"
-                aria-describedby="nombreAval-help" />
+                id="nombre_aval"
+                aria-describedby="nombre_aval-help" />
               <small
                 class="mb-2 text-red-500"
-                id="nombreAval-help"
-                [hidden]="esCampoOculto('formAval.nombreAval')"
+                id="nombre_aval-help"
+                [hidden]="esCampoOculto('formAval.nombre_aval')"
                 >Nombre de aval requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="apellidoPaternoAval">Apellido paterno aval</label>
+              <label for="apellido_paterno_aval">Apellido paterno aval</label>
               <input
-                formControlName="apellidoPaternoAval"
+                formControlName="apellido_paterno_aval"
                 pInputText
-                id="apellidoPaternoAval"
-                aria-describedby="apellidoPaternoAval-help" />
+                id="apellido_paterno_aval"
+                aria-describedby="apellido_paterno_aval-help" />
               <small
                 class="mb-2 text-red-500"
-                id="apellidoPaternoAval-help"
-                [hidden]="esCampoOculto('formAval.apellidoPaternoAval')"
+                id="apellido_paterno_aval-help"
+                [hidden]="esCampoOculto('formAval.apellido_paterno_aval')"
                 >Apellido paterno del aval requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="apellidoMaternoAval">Apellido materno aval</label>
+              <label for="apellido_materno_aval">Apellido materno aval</label>
               <input
-                formControlName="apellidoMaternoAval"
+                formControlName="apellido_materno_aval"
                 pInputText
-                id="apellidoMaternoAval"
-                aria-describedby="apellidoMaternoAval-help" />
+                id="apellido_materno_aval"
+                aria-describedby="apellido_materno_aval-help" />
               <small
-                id="apellidoMaternoAval-help"
+                id="apellido_materno_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.apellidoMaternoAval')"
+                [hidden]="esCampoOculto('formAval.apellido_materno_aval')"
                 >Apellido materno del aval requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="telefonoFijoAval">Telefono fijo</label>
+              <label for="telefono_fijo_aval">Telefono fijo</label>
               <p-inputMask
-                formControlName="telefonoFijoAval"
-                inputId="telefonoFijoAval"
+                formControlName="telefono_fijo_aval"
+                inputId="telefono_fijo_aval"
                 mask="999-999-9999"
                 unmask="true"
                 showClear="true"
@@ -523,17 +526,17 @@
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
               <small
-                id="telefonoFijoAval-help"
+                id="telefono_fijo_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.telefonoFijoAval')"
+                [hidden]="esCampoOculto('formAval.telefono_fijo_aval')"
                 >Telefono fijo de aval requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="telefonoMovilAval">Telefono movil</label>
+              <label for="telefono_movil_aval">Telefono movil</label>
               <p-inputMask
-                formControlName="telefonoMovilAval"
-                inputId="telefonoMovilAval"
+                formControlName="telefono_movil_aval"
+                inputId="telefono_movil_aval"
                 mask="999-999-9999"
                 minlength="10"
                 unmask="true"
@@ -542,80 +545,83 @@
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
               <small
-                id="telefonoMovilAval-help"
+                id="telefono_movil_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.telefonoMovilAval')"
+                [hidden]="esCampoOculto('formAval.telefono_movil_aval')"
                 >Telefono movil de aval requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="emailAval">Correo electronico</label>
+              <label for="correo_electronico_aval">Correo electronico</label>
               <input
                 pInputText
-                formControlName="emailAval"
-                id="emailAval"
-                aria-describedby="emailAval-help" />
+                formControlName="correo_electronico_aval"
+                id="correo_electronico_aval"
+                aria-describedby="correo_electronico_aval-help" />
               <small
-                id="emailAval-help"
+                id="correo_electronico_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.emailAval')"
+                [hidden]="esCampoOculto('formAval.correo_electronico_aval')"
                 ><ng-container
                   *ngIf="
-                    mainForm.get('formAval.emailAval')?.errors?.['required']
+                    mainForm.get('formAval.correo_electronico_aval')?.errors?.[
+                      'required'
+                    ]
                   ">
                   Correo electronico requerido</ng-container
                 >
                 <ng-container
                   *ngIf="
-                    mainForm.get('formAval.emailAval')?.errors?.['invalidEmail']
+                    mainForm.get('formAval.correo_electronico_aval')?.errors?.[
+                      'invalidEmail'
+                    ]
                   ">
                   Formato de correo invalido</ng-container
                 ></small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="ocupacionAval">Ocupacion</label>
+              <label for="ocupacion_aval">Ocupacion</label>
               <input
                 pInputText
-                formControlName="ocupacionAval"
-                id="ocupacionAval"
-                aria-describedby="ocupacionAval-help" />
-              <small id="ocupacionAval-help" [hidden]="true">ocupacion</small>
+                formControlName="ocupacion_aval"
+                id="ocupacion_aval"
+                aria-describedby="ocupacion_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="curpAval">CURP</label>
+              <label for="curp_aval">CURP</label>
               <p-inputMask
                 mask="aaaa-999999-aaaaaa-99"
-                inputId="curpAval"
+                inputId="curp_aval"
                 unmask="true"
                 showClear="true"
-                formControlName="curpAval"
+                formControlName="curp_aval"
                 placeholder="0000-000000-000000-00"
                 [style]="{ width: '100%' }" />
               <small
-                id="curpAval-help"
+                id="curp_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.curpAval')"
+                [hidden]="esCampoOculto('formAval.curp_aval')"
                 ><ng-container
                   *ngIf="
-                    mainForm.get('formAval.curpAval')?.errors?.['required']
+                    mainForm.get('formAval.curp_aval')?.errors?.['required']
                   ">
                   CURP de aval requerido</ng-container
                 >
                 <ng-container
                   *ngIf="
-                    mainForm.get('formAval.curpAval')?.errors?.['invalidCurp']
+                    mainForm.get('formAval.curp_aval')?.errors?.['invalidCurp']
                   ">
                   Formato de CURP invalido</ng-container
                 >
               </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="tipoCalleAval">Tipo de calle</label>
+              <label for="tipo_calle_aval">Tipo de calle</label>
               <p-dropdown
-                inputId="tipoCalleAval"
-                id="tipoCalleAval"
-                formControlName="tipoCalleAval"
+                inputId="tipo_calle_aval"
+                id="tipo_calle_aval"
+                formControlName="tipo_calle_aval"
                 [options]="tiposCalle"
                 optionLabel="name"
                 [showClear]="true"
@@ -624,89 +630,86 @@
               <small
                 id="tipoAval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.tipoCalleAval')"
+                [hidden]="esCampoOculto('formAval.tipo_calle_aval')"
                 >Selecciona un tipo de calle</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="nombreCalleAval">Nombre de la calle</label>
+              <label for="nombre_calle_aval">Nombre de la calle</label>
               <input
                 pInputText
-                formControlName="nombreCalleAval"
-                id="nombreCalleAval"
-                aria-describedby="nombreCalleAval-help" />
+                formControlName="nombre_calle_aval"
+                id="nombre_calle_aval"
+                aria-describedby="nombre_calle_aval-help" />
               <small
-                id="nombreCalleAval-help"
+                id="nombre_calle_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.nombreCalleAval')"
+                [hidden]="esCampoOculto('formAval.nombre_calle_aval')"
                 >Nombre de calle es requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="numeroExteriorAval">Número Exterior</label>
+              <label for="numero_exterior_aval">Número Exterior</label>
               <p-inputNumber
-                formControlName="numeroExteriorAval"
+                formControlName="numero_exterior_aval"
                 showClear="true"
                 [style]="{ width: '100%' }"
                 [inputStyle]="{ width: '100%' }"
-                inputId="numeroExteriorAval"
-                aria-describedby="numeroExteriorAval-help" />
+                inputId="numero_exterior_aval"
+                aria-describedby="numero_exterior_aval-help" />
               <small
-                id="numeroExteriorAval-help"
+                id="numero_exterior_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.numeroExteriorAval')"
+                [hidden]="esCampoOculto('formAval.numero_exterior_aval')"
                 >El numero de exterior es requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="numeroInterior">Número Interior</label>
               <p-inputNumber
-                inputId="numeroInteriorAval"
-                formControlName="numeroInteriorAval"
+                inputId="numero_interior_aval"
+                formControlName="numero_interior_aval"
                 showClear="true"
                 [style]="{ width: '100%' }"
                 [inputStyle]="{ width: '100%' }"
-                aria-describedby="numeroInterior-help" />
-              <small id="numeroInterior-help" [hidden]="true"
-                >placeholder</small
-              >
+                aria-describedby="numero_interior_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="coloniaAval">Colonia</label>
+              <label for="colonia_aval">Colonia</label>
               <input
                 pInputText
-                id="coloniaAval"
-                aria-describedby="coloniaAval-help"
-                formControlName="coloniaAval" />
+                id="colonia_aval"
+                aria-describedby="colonia_aval-help"
+                formControlName="colonia_aval" />
               <small
-                id="coloniaAval-help"
+                id="colonia_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.coloniaAval')"
+                [hidden]="esCampoOculto('formAval.colonia_aval')"
                 >La colonia es requerida</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="municipioAval">Municipio</label>
+              <label for="municipio_aval">Municipio</label>
               <input
                 pInputText
-                formControlName="municipioAval"
-                id="municipioAval"
-                aria-describedby="municipioAval-help" />
+                formControlName="municipio_aval"
+                id="municipio_aval"
+                aria-describedby="municipio_aval-help" />
               <small
-                id="municipioAval-help"
+                id="municipio_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.municipioAval')"
+                [hidden]="esCampoOculto('formAval.municipio_aval')"
                 >Municipio Requerido</small
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="estadoAval">Entidad Federativa</label>
+              <label for="estado_aval">Entidad Federativa</label>
               <p-dropdown
                 [options]="estadosDeLaRepublica"
-                inputId="estadoAval"
-                id="estadoAval"
+                inputId="estado_aval"
+                id="estado_aval"
                 emptyFilterMessage="Sin resultados"
-                formControlName="estadoAval"
+                formControlName="estado_aval"
                 optionLabel="name"
                 [filter]="true"
                 filterBy="name"
@@ -714,9 +717,9 @@
                 placeholder="Selecciona un estado"
                 [style]="{ width: '100%' }" />
               <small
-                id="estadoAval-help"
+                id="estado_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.estadoAval')"
+                [hidden]="esCampoOculto('formAval.estado_aval')"
                 >El estado es requerido</small
               >
             </div>

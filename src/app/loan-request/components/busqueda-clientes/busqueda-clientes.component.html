@@ -1,6 +1,9 @@
-<section class="grid py-3 pr-3 mr-0 row-gap-3" [formGroup]="customerSearchForm">
+<section
+  class="grid py-3 pr-3 mr-0 row-gap-3"
+  [formGroup]="customerSearchForm"
+  (ngSubmit)="onSubmit($event)">
   <p-inputNumber
-    placeholder="ID"
+    placeholder="Código"
     inputId="ID"
     useGrouping="false"
     min="0"
@@ -24,7 +27,7 @@
       pButton
       label="Buscar"
       icon="pi pi-search"
-      type="button"
+      type="submit"
       [loading]="loading"
       [disabled]="loading"
       (click)="customerSearch()"></button>
@@ -48,7 +51,6 @@
         [tableStyle]="{
           'min-width': '40rem',
           'table-layout': 'fixed',
-          width: '100%',
         }">
         <ng-template pTemplate="header">
           <tr>

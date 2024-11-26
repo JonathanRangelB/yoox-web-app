@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, input, output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -42,6 +42,8 @@ import { TooltipModule } from 'primeng/tooltip';
   `,
 })
 export class BusquedaClientesComponent {
+  parentForm = input.required<FormGroup>();
+  visible = output<void>();
   fb = inject(FormBuilder);
   searchCustomerService = inject(SearchCustomersService);
   ms = inject(MessageService);
@@ -58,7 +60,139 @@ export class BusquedaClientesComponent {
   }
 
   llenaCampos(event: TableRowSelectEvent) {
-    console.log(event.data);
+    const {
+      id_cliente,
+      nombre_cliente,
+      telefono_fijo_cliente,
+      telefono_movil_cliente,
+      correo_electronico_cliente,
+      id_agente,
+      nombre_agente,
+      ocupacion_cliente,
+      curp_cliente,
+      id_domicilio_cliente,
+      tipo_calle_cliente,
+      nombre_calle_cliente,
+      numero_exterior_cliente,
+      numero_interior_cliente,
+      colonia_cliente,
+      municipio_cliente,
+      estado_cliente,
+      cp_cliente,
+      referencias_dom_cliente,
+      id_aval,
+      nombre_aval,
+      telefono_fijo_aval,
+      telefono_movil_aval,
+      correo_electronico_aval,
+      curp_aval,
+      id_domicilio_aval,
+      tipo_calle_aval,
+      nombre_calle_aval,
+      numero_exterior_aval,
+      numero_interior_aval,
+      colonia_aval,
+      municipio_aval,
+      estado_aval,
+      cp_aval,
+      referencias_dom_aval,
+    } = event.data as Customer;
+
+    this.parentForm()
+      .get('formCliente.nombre_cliente')
+      ?.setValue(nombre_cliente);
+
+    this.parentForm()
+      .get('formCliente.telefono_fijo_cliente')
+      ?.setValue(telefono_fijo_cliente);
+
+    this.parentForm()
+      .get('formCliente.telefono_movil_cliente')
+      ?.setValue(telefono_movil_cliente);
+
+    this.parentForm()
+      .get('formCliente.correo_electronico_cliente')
+      ?.setValue(correo_electronico_cliente);
+
+    this.parentForm()
+      .get('formCliente.ocupacion_cliente')
+      ?.setValue(ocupacion_cliente);
+
+    this.parentForm().get('formCliente.curp_cliente')?.setValue(curp_cliente);
+
+    this.parentForm()
+      .get('formCliente.nombre_calle_cliente')
+      ?.setValue(nombre_calle_cliente);
+
+    this.parentForm()
+      .get('formCliente.numero_exterior_cliente')
+      ?.setValue(numero_exterior_cliente);
+
+    this.parentForm()
+      .get('formCliente.numero_interior_cliente')
+      ?.setValue(numero_interior_cliente);
+
+    this.parentForm()
+      .get('formCliente.colonia_cliente')
+      ?.setValue(colonia_cliente);
+
+    this.parentForm()
+      .get('formCliente.municipio_cliente')
+      ?.setValue(municipio_cliente);
+
+    this.parentForm()
+      .get('formCliente.estado_cliente')
+      ?.setValue(estado_cliente);
+
+    this.parentForm().get('formCliente.cp_cliente')?.setValue(cp_cliente);
+
+    // WARN:comienza aval
+    this.parentForm().get('formAval.nombreAval')?.setValue(nombre_aval);
+
+    this.parentForm()
+      .get('formAval.telefono_fijo_aval')
+      ?.setValue(telefono_fijo_aval);
+
+    this.parentForm()
+      .get('formAval.telefono_movil_aval')
+      ?.setValue(telefono_movil_aval);
+
+    this.parentForm()
+      .get('formAval.correo_electronico_aval')
+      ?.setValue(correo_electronico_aval);
+
+    // TODO: falta agregar este campo para que lo regrese el backend
+    // this.parentForm()
+    //   .get('formAval.ocupacion_aval')
+    //   ?.setValue(ocupacion_aval);
+
+    this.parentForm().get('formAval.curp_aval')?.setValue(curp_aval);
+
+    this.parentForm()
+      .get('formAval.nombre_calle_aval')
+      ?.setValue(nombre_calle_aval);
+
+    this.parentForm()
+      .get('formAval.numero_exterior_aval')
+      ?.setValue(numero_exterior_aval);
+
+    this.parentForm()
+      .get('formAval.numero_interior_aval')
+      ?.setValue(numero_interior_aval);
+
+    this.parentForm().get('formAval.colonia_aval')?.setValue(colonia_aval);
+
+    this.parentForm().get('formAval.municipio_aval')?.setValue(municipio_aval);
+
+    this.parentForm().get('formAval.estado_aval')?.setValue(estado_aval);
+
+    this.parentForm().get('formAval.cp_aval')?.setValue(cp_aval);
+
+    this.hideSelfComponent();
+  }
+
+  hideSelfComponent() {
+    this.visible.emit();
   }
 
   customerSearch() {
@@ -99,6 +233,11 @@ export class BusquedaClientesComponent {
         });
       },
     });
+  }
+
+  onSubmit(event: any) {
+    event.preventDefault();
+    this.customerSearch();
   }
 
   generatePayload() {

@@ -1,5 +1,11 @@
 /* eslint-disable no-useless-escape */
-import { Component, inject, OnDestroy, ViewChild } from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
@@ -24,6 +30,7 @@ import {
   CurrentUser,
   dropDownCollection,
 } from '../../types/loan-request.interface';
+import { InputSwitch } from 'primeng/inputswitch';
 
 @Component({
   selector: 'app-new-loan',
@@ -32,6 +39,8 @@ import {
 })
 export class NewLoanComponent implements OnDestroy {
   @ViewChild('fileUpload') fileUpload!: FileUpload;
+  @ViewChild('switchBusqueda') switchBusqueda!: InputSwitch;
+
   fb = inject(FormBuilder);
   cs = inject(ConfirmationService);
   ms = inject(MessageService);
@@ -88,21 +97,21 @@ export class NewLoanComponent implements OnDestroy {
         cp_cliente: ['', [Validators.required, lengthValidator(5)]],
       }),
       formAval: this.fb.group({
-        nombreAval: ['', Validators.required],
-        apellidoPaternoAval: ['', Validators.required],
-        apellidoMaternoAval: ['', Validators.required],
-        telefonoFijoAval: ['', Validators.required],
-        telefonoMovilAval: ['', Validators.required],
-        emailAval: ['', [Validators.required, emailValidator()]],
-        ocupacionAval: [''],
-        curpAval: ['', [Validators.required, curpValidator()]],
-        tipoCalleAval: ['', Validators.required],
-        nombreCalleAval: ['', Validators.required],
-        numeroExteriorAval: ['', Validators.required],
-        numeroInteriorAval: [''],
-        coloniaAval: ['', Validators.required],
-        municipioAval: ['', Validators.required],
-        estadoAval: ['', Validators.required],
+        nombre_aval: ['', Validators.required],
+        apellido_paterno_aval: ['', Validators.required],
+        apellido_materno_aval: ['', Validators.required],
+        telefono_fijo_aval: ['', Validators.required],
+        telefono_movil_aval: ['', Validators.required],
+        correo_electronico_aval: ['', [Validators.required, emailValidator()]],
+        ocupacion_aval: [''],
+        curp_aval: ['', [Validators.required, curpValidator()]],
+        tipo_calle_aval: ['', Validators.required],
+        nombre_calle_aval: ['', Validators.required],
+        numero_exterior_aval: ['', Validators.required],
+        numero_interior_aval: [''],
+        colonia_aval: ['', Validators.required],
+        municipio_aval: ['', Validators.required],
+        estado_aval: ['', Validators.required],
         cp_aval: ['', [Validators.required, lengthValidator(5)]],
       }),
     });
@@ -378,6 +387,7 @@ export class NewLoanComponent implements OnDestroy {
 
   toggleCustomerSearch() {
     this.customerSearchVisible = !this.customerSearchVisible;
+    this.switchBusqueda.writeValue(this.customerSearchVisible);
   }
 
   llenaCampos(event: any) {
