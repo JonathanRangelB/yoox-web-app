@@ -1,4 +1,11 @@
-import { Component, inject, input, output } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
@@ -9,19 +16,20 @@ import {
 import { TableModule, TableRowSelectEvent } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { TooltipModule } from 'primeng/tooltip';
 
 import { curpValidator } from '../../utils/customValidators';
 import { SearchCustomersService } from '../../services/search-customers.service';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
 import { Customer } from '../../types/searchCustomers.interface';
-import { InputNumberModule } from 'primeng/inputnumber';
-import { TooltipModule } from 'primeng/tooltip';
 import { estadosDeLaRepublica, tiposCalle } from '../../utils/consts';
 
 @Component({
   selector: 'app-busqueda-clientes',
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
     FormsModule,
@@ -43,22 +51,18 @@ import { estadosDeLaRepublica, tiposCalle } from '../../utils/consts';
   `,
 })
 export class BusquedaClientesComponent {
-  parentForm = input.required<FormGroup>();
-  visible = output<void>();
-  fb = inject(FormBuilder);
-  searchCustomerService = inject(SearchCustomersService);
-  ms = inject(MessageService);
-  clientesEncontrados: Customer[] = [];
-  customerSearchForm: FormGroup;
-  loading = false;
-
-  constructor() {
-    this.customerSearchForm = this.fb.group({
-      id: [null],
-      curp: [null, curpValidator()],
-      nombre: [null],
-    });
-  }
+  readonly parentForm = input.required<FormGroup>();
+  readonly visible = output<void>();
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #searchCustomerService = inject(SearchCustomersService);
+  readonly #messageService = inject(MessageService);
+  clientesEncontrados = signal<Customer[]>([]);
+  loading = signal(false);
+  customerSearchForm = this.#formBuilder.group({
+    id: [null],
+    curp: [null, curpValidator()],
+    nombre: [null],
+  });
 
   llenaCampos(event: TableRowSelectEvent) {
     const {
@@ -174,19 +178,23 @@ export class BusquedaClientesComponent {
         estadosDeLaRepublica.find((data) => data.value === estado_aval)
       );
     this.parentForm().get('formAval.cp_aval')?.setValue(cp_aval);
-    this.hideSelfComponent();
+    this.#hideSelfComponent();
   }
 
-  hideSelfComponent() {
+  /** Le indica al componente padre que la visibilidad de esta componente cambio */
+  #hideSelfComponent() {
     this.visible.emit();
   }
 
-  customerSearch() {
-    this.loading = true;
-    const formData = this.generatePayload();
+  /** Metodo principal encargado de buscar los registros de clientes */
+  customerSearch(event: SubmitEvent | MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.loading.set(true);
+    const formData = this.#generatePayload();
     if (Object.keys(formData).length === 0) {
-      this.loading = false;
-      this.ms.add({
+      this.loading.set(false);
+      this.#messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'No se proporciono ningun dato de busqueda',
@@ -195,8 +203,8 @@ export class BusquedaClientesComponent {
     }
     const currentUser = localStorage.getItem('user');
     if (!currentUser) {
-      this.loading = false;
-      this.ms.add({
+      this.loading.set(false);
+      this.#messageService.add({
         severity: 'error',
         summary: 'Error',
         detail: 'Ocurrio un error al obtener el usuario',
@@ -205,28 +213,26 @@ export class BusquedaClientesComponent {
     }
     const id_agente = JSON.parse(currentUser!).ID;
     const payload = { ...formData, id_agente };
-    this.searchCustomerService.searchCustomers(payload).subscribe({
+    this.#searchCustomerService.searchCustomers(payload).subscribe({
       next: (result: any) => {
-        this.loading = false;
-        this.clientesEncontrados = result?.registrosEncontrados;
+        this.loading.set(false);
+        this.clientesEncontrados.set(result?.registrosEncontrados);
       },
-      error: ({ error }) => {
-        this.loading = false;
-        this.ms.add({
+      error: ({ error, errorMessage, errorType }) => {
+        this.loading.set(false);
+        this.#messageService.add({
           severity: 'error',
-          summary: error.message,
-          detail: error.error,
+          summary: error?.message || errorMessage,
+          detail: error?.error || errorType,
         });
       },
     });
   }
 
-  onSubmit(event: any) {
-    event.preventDefault();
-    this.customerSearch();
-  }
-
-  generatePayload() {
+  /**
+   * @returns  Objeto que incluye todos los elementos del objeto de busqueda de clientes para que no esten vacios o sean invalidos
+   */
+  #generatePayload() {
     return Object.fromEntries(
       Object.entries(this.customerSearchForm.value).filter(
         ([, value]) => value !== null && value !== undefined && value !== ''

@@ -1,7 +1,4 @@
-<section
-  class="grid py-3 pr-3 mr-0 row-gap-3"
-  [formGroup]="customerSearchForm"
-  (ngSubmit)="onSubmit($event)">
+<section class="grid py-3 pr-3 mr-0 row-gap-3" [formGroup]="customerSearchForm">
   <p-inputNumber
     placeholder="Código"
     inputId="ID"
@@ -28,9 +25,9 @@
       label="Buscar"
       icon="pi pi-search"
       type="submit"
-      [loading]="loading"
-      [disabled]="loading"
-      (click)="customerSearch()"></button>
+      [loading]="loading()"
+      [disabled]="loading()"
+      (click)="customerSearch($event)"></button>
     <i
       class="pi pi-info-circle"
       style="font-size: 2rem; margin: auto 1rem"
@@ -38,14 +35,14 @@
       tooltipPosition="bottom"></i>
   </div>
   <div class="card col-12">
-    @if (!clientesEncontrados.length) {
+    @if (!clientesEncontrados().length) {
       <div style="text-align: center">No hay registros.</div>
     } @else {
       <p-table
         selectionMode="single"
         dataKey="id"
         (onRowSelect)="llenaCampos($event)"
-        [value]="clientesEncontrados"
+        [value]="clientesEncontrados()"
         styleClass="p-datatable-striped"
         scrollHeight="flex"
         [tableStyle]="{

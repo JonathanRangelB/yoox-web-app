@@ -370,20 +370,15 @@ export class NewLoanComponent implements OnDestroy {
     };
   }
 
-  /**
-   *   Comprueba si hay archivos por subir, si los hay dispara el evento de subida a S3
-   */
+  /** Comprueba si hay archivos por subir, si los hay dispara el evento de subida a S3 */
   triggerUpload() {
     if (this.fileUpload()?.hasFiles()) this.fileUpload()?.upload();
     else console.warn('no habia archivos por subir');
   }
 
+  /** Activa y desactiva el componente de busqueda de clientes y actualiza el estado del inputswitch  */
   toggleCustomerSearch() {
     this.customerSearchVisible = !this.customerSearchVisible;
     this.switchBusqueda()?.writeValue(this.customerSearchVisible);
-  }
-
-  llenaCampos(event: any) {
-    console.log(event);
   }
 }
