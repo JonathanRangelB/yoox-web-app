@@ -169,7 +169,7 @@ export class BusquedaClientesComponent {
       ?.setValue(numero_exterior_aval);
     this.parentForm()
       .get('formAval.numero_interior_aval')
-      ?.setValue(numero_interior_aval);
+      ?.setValue(numero_interior_aval ?? '');
     this.parentForm().get('formAval.colonia_aval')?.setValue(colonia_aval);
     this.parentForm().get('formAval.municipio_aval')?.setValue(municipio_aval);
     this.parentForm()

@@ -290,10 +290,11 @@
               aria-describedby="ocupacion_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="curp_cliente">CURP</label>
+            <label for="curp_cliente">CURP (Sólo Mayusculas y numeros)</label>
             <p-inputMask
               mask="aaaa-999999-aaaaaa-99"
               inputId="curp_cliente"
+              characterPattern="[A-Z]"
               unmask="true"
               showClear="true"
               formControlName="curp_cliente"
@@ -304,11 +305,17 @@
               class="mb-2 text-red-500"
               [hidden]="esCampoOculto('formCliente.curp_cliente')"
               ><ng-container
-                *ngIf="mainForm.get('curp_cliente')?.errors?.['required']">
+                *ngIf="
+                  mainForm.get('formCliente.curp_cliente')?.errors?.['required']
+                ">
                 CURP requerido</ng-container
               >
               <ng-container
-                *ngIf="mainForm.get('curp_cliente')?.errors?.['invalidCurp']">
+                *ngIf="
+                  mainForm.get('formCliente.curp_cliente')?.errors?.[
+                    'invalidCurp'
+                  ]
+                ">
                 Formato de CURP invalido</ng-container
               >
             </small>
@@ -366,7 +373,8 @@
               pInputText
               formControlName="numero_interior_cliente"
               id="numero_interior_cliente"
-              pKeyFilter="int"
+              inputId="numero_interior_cliente"
+              showClear="true"
               aria-describedby="numero_interior_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -424,7 +432,12 @@
               pInputText
               formControlName="cp_cliente"
               id="cp_cliente"
+              inputId="cp_cliente"
+              autoClear="false"
+              showClear="true"
               pKeyFilter="int"
+              placeholder="99999"
+              [maxlength]="5"
               aria-describedby="cp_cliente-help" />
             <small
               id="cp_cliente-help"
@@ -589,10 +602,11 @@
                 aria-describedby="ocupacion_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="curp_aval">CURP</label>
+              <label for="curp_aval">CURP (Sólo Mayusculas y numeros)</label>
               <p-inputMask
                 mask="aaaa-999999-aaaaaa-99"
                 inputId="curp_aval"
+                characterPattern="[A-Z]"
                 unmask="true"
                 showClear="true"
                 formControlName="curp_aval"
@@ -665,13 +679,13 @@
               >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
-              <label for="numeroInterior">Número Interior</label>
-              <p-inputNumber
-                inputId="numero_interior_aval"
+              <label for="numero_interior_aval">Número Interior</label>
+              <input
+                pInputText
                 formControlName="numero_interior_aval"
+                id="numero_interior_aval"
+                inputId="numero_interior_aval"
                 showClear="true"
-                [style]="{ width: '100%' }"
-                [inputStyle]="{ width: '100%' }"
                 aria-describedby="numero_interior_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -725,20 +739,22 @@
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="cp_aval">Código postal</label>
-              <p-inputNumber
-                inputId="cp_aval"
+              <input
+                pInputText
                 formControlName="cp_aval"
+                id="cp_aval"
+                inputId="cp_aval"
                 autoClear="false"
                 showClear="true"
-                useGrouping="false"
+                pKeyFilter="int"
                 placeholder="99999"
                 [maxlength]="5"
-                [style]="{ width: '100%' }" />
+                aria-describedby="cp_aval-help" />
               <small
                 id="cp_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.cp_aval')"
-                ><ng-container
+                [hidden]="esCampoOculto('formAval.cp_aval')">
+                <ng-container
                   *ngIf="
                     mainForm.get('formAval.cp_aval')?.errors?.['required']
                   ">
@@ -746,13 +762,11 @@
                 >
                 <ng-container
                   *ngIf="
-                    mainForm.get('formAval.codigoPostalAval')?.errors?.[
-                      'lenghtNotMatch'
-                    ]
+                    mainForm.get('formAval.cp_aval')?.errors?.['lenghtNotMatch']
                   ">
                   El número debe de tener 5 digitos</ng-container
-                ></small
-              >
+                >
+              </small>
             </div>
           </div>
         </div>

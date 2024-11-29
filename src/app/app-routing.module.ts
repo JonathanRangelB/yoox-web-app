@@ -5,9 +5,8 @@ import { authGuardGuard } from './shared/guards/auth.guard';
 const routes: Routes = [
   {
     path: '',
-    loadChildren() {
-      return import('./landing/landing.module').then((m) => m.LandingModule);
-    },
+    loadChildren: () =>
+      import('./landing/landing.module').then((m) => m.LandingModule),
   },
   {
     path: 'dashboard',
