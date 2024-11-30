@@ -264,14 +264,9 @@
             <small
               id="correo_electronico_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.correo_electronico_cliente')"
-              ><ng-container
-                *ngIf="
-                  mainForm.get('formCliente.correo_electronico_cliente')
-                    ?.errors?.['required']
-                ">
-                Correo electronico requerido</ng-container
-              >
+              [hidden]="
+                esCampoOculto('formCliente.correo_electronico_cliente')
+              ">
               <ng-container
                 *ngIf="
                   mainForm.get('formCliente.correo_electronico_cliente')
@@ -297,27 +292,26 @@
               characterPattern="[A-Z]"
               unmask="true"
               showClear="true"
+              autoClear="false"
               formControlName="curp_cliente"
               placeholder="0000-000000-000000-00"
               [style]="{ width: '100%' }" />
             <small
               id="curp_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.curp_cliente')"
-              ><ng-container
-                *ngIf="
-                  mainForm.get('formCliente.curp_cliente')?.errors?.['required']
-                ">
-                CURP requerido</ng-container
-              >
-              <ng-container
-                *ngIf="
-                  mainForm.get('formCliente.curp_cliente')?.errors?.[
-                    'invalidCurp'
-                  ]
-                ">
-                Formato de CURP invalido</ng-container
-              >
+              [hidden]="esCampoOculto('formCliente.curp_cliente')">
+              @if (
+                mainForm.get('formCliente.curp_cliente')?.errors?.['required']
+              ) {
+                <ng-container> CURP requerido</ng-container>
+              }
+              @if (
+                mainForm.get('formCliente.curp_cliente')?.errors?.[
+                  'invalidCurp'
+                ]
+              ) {
+                <ng-container> Formato de CURP invalido</ng-container>
+              }
             </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -459,6 +453,16 @@
               ></small
             >
           </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="referencias_dom_cliente"
+              >Referencias del domicilio</label
+            >
+            <input
+              pInputText
+              formControlName="referencias_dom_cliente"
+              id="referencias_dom_cliente"
+              aria-describedby="referencias_dom_cliente-help" />
+          </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
           <p-button
@@ -574,15 +578,7 @@
               <small
                 id="correo_electronico_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.correo_electronico_aval')"
-                ><ng-container
-                  *ngIf="
-                    mainForm.get('formAval.correo_electronico_aval')?.errors?.[
-                      'required'
-                    ]
-                  ">
-                  Correo electronico requerido</ng-container
-                >
+                [hidden]="esCampoOculto('formAval.correo_electronico_aval')">
                 <ng-container
                   *ngIf="
                     mainForm.get('formAval.correo_electronico_aval')?.errors?.[
@@ -608,6 +604,7 @@
                 inputId="curp_aval"
                 characterPattern="[A-Z]"
                 unmask="true"
+                autoClear="false"
                 showClear="true"
                 formControlName="curp_aval"
                 placeholder="0000-000000-000000-00"
@@ -664,11 +661,10 @@
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="numero_exterior_aval">Número Exterior</label>
-              <p-inputNumber
+              <input
+                pInputText
                 formControlName="numero_exterior_aval"
                 showClear="true"
-                [style]="{ width: '100%' }"
-                [inputStyle]="{ width: '100%' }"
                 inputId="numero_exterior_aval"
                 aria-describedby="numero_exterior_aval-help" />
               <small
@@ -768,6 +764,16 @@
                 >
               </small>
             </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="referencias_dom_aval"
+                >Referencias del domicilio</label
+              >
+              <input
+                pInputText
+                formControlName="referencias_dom_aval"
+                id="referencias_dom_aval"
+                aria-describedby="referencias_dom_aval-help" />
+            </div>
           </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
@@ -831,6 +837,8 @@
           <p-button
             type="submit"
             label="Enviar"
+            [loading]="uploading"
+            [disabled]="uploadSuccessfull"
             icon="pi pi-cloud-upload"
             iconPos="right" />
         </div>

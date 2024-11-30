@@ -19,7 +19,6 @@ import { S3BucketService } from '../../services/s3-bucket.service';
 import { Subject, takeUntil } from 'rxjs';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { LoanRequestService } from '../../services/loan-request.service';
-import { AuthService } from 'src/app/login/services/AuthService';
 import {
   CurrentUser,
   dropDownCollection,
@@ -34,12 +33,11 @@ import { InputSwitch } from 'primeng/inputswitch';
 export class NewLoanComponent implements OnDestroy {
   fileUpload = viewChild<FileUpload>('fileUpload');
   switchBusqueda = viewChild<InputSwitch>('switchBusqueda');
-  fb = inject(FormBuilder);
-  cs = inject(ConfirmationService);
-  ms = inject(MessageService);
-  s3 = inject(S3BucketService);
-  authService = inject(AuthService);
-  loanRequestService = inject(LoanRequestService);
+  readonly #formBuilder = inject(FormBuilder);
+  readonly #confirmationService = inject(ConfirmationService);
+  readonly #messageService = inject(MessageService);
+  readonly #s3BucketService = inject(S3BucketService);
+  readonly #loanRequestService = inject(LoanRequestService);
   destroy$ = new Subject();
   customerSearchVisible = false;
   customerFolderName?: string;
@@ -61,23 +59,22 @@ export class NewLoanComponent implements OnDestroy {
   tasa_interes: number = 0;
   cantidad_pagar: number = 0;
   pagoSemanal: number | null = null;
+  uploading = false;
+  uploadSuccessfull = false;
 
   constructor() {
-    this.mainForm = this.fb.group({
+    this.mainForm = this.#formBuilder.group({
       cantidad_prestada: ['', [Validators.required, Validators.min(1000)]],
       plazo: ['', Validators.required],
       fecha_inicial: ['', Validators.required],
       observaciones: [''],
-      formCliente: this.fb.group({
+      formCliente: this.#formBuilder.group({
         nombre_cliente: ['', Validators.required],
         apellido_paterno_cliente: ['', Validators.required],
         apellido_materno_cliente: ['', Validators.required],
         telefono_fijo_cliente: ['', [Validators.required]],
         telefono_movil_cliente: ['', [Validators.required]],
-        correo_electronico_cliente: [
-          '',
-          [Validators.required, emailValidator()],
-        ],
+        correo_electronico_cliente: ['', emailValidator()],
         ocupacion_cliente: [''],
         curp_cliente: ['', [Validators.required, curpValidator()]],
         tipo_calle_cliente: ['', Validators.required],
@@ -88,14 +85,15 @@ export class NewLoanComponent implements OnDestroy {
         municipio_cliente: ['', Validators.required],
         estado_cliente: ['', Validators.required],
         cp_cliente: ['', [Validators.required, lengthValidator(5)]],
+        referencias_dom_cliente: [''],
       }),
-      formAval: this.fb.group({
+      formAval: this.#formBuilder.group({
         nombre_aval: ['', Validators.required],
         apellido_paterno_aval: ['', Validators.required],
         apellido_materno_aval: ['', Validators.required],
         telefono_fijo_aval: ['', Validators.required],
         telefono_movil_aval: ['', Validators.required],
-        correo_electronico_aval: ['', [Validators.required, emailValidator()]],
+        correo_electronico_aval: ['', emailValidator()],
         ocupacion_aval: [''],
         curp_aval: ['', [Validators.required, curpValidator()]],
         tipo_calle_aval: ['', Validators.required],
@@ -106,10 +104,11 @@ export class NewLoanComponent implements OnDestroy {
         municipio_aval: ['', Validators.required],
         estado_aval: ['', Validators.required],
         cp_aval: ['', [Validators.required, lengthValidator(5)]],
+        referencias_dom_aval: [''],
       }),
     });
 
-    this.customerSearchForm = this.fb.group({
+    this.customerSearchForm = this.#formBuilder.group({
       id: [''],
       curp: ['', curpValidator()],
       nombre: [''],
@@ -220,27 +219,29 @@ export class NewLoanComponent implements OnDestroy {
         'No se pudo obtener el nombre del directorio para el cliente'
       );
 
-    this.s3.uploadFiles(files, this.customerFolderName).subscribe({
-      next: () => {
-        this.ms.add({
-          severity: 'info',
-          summary: 'Confirmado',
-          detail: 'Subida de archivos completada!',
-          life: 3000,
-        });
-      },
-      error: (err) => {
-        this.ms.add({
-          severity: 'error',
-          summary: 'Rechazado',
-          detail: `Ocurrio un problema al intentar subir los archivos: ${err?.status} ${err?.error.message}`,
-          life: 3000,
-        });
-      },
-      complete: () => {
-        console.log('subida de archivos completada con exito');
-      },
-    });
+    this.#s3BucketService
+      .uploadFiles(files, this.customerFolderName)
+      .subscribe({
+        next: () => {
+          this.#messageService.add({
+            severity: 'info',
+            summary: 'Confirmado',
+            detail: 'Subida de archivos completada!',
+            life: 3000,
+          });
+        },
+        error: (err) => {
+          this.#messageService.add({
+            severity: 'error',
+            summary: 'Rechazado',
+            detail: `Ocurrio un problema al intentar subir los archivos: ${err?.status} ${err?.error.message}`,
+            life: 3000,
+          });
+        },
+        complete: () => {
+          console.log('subida de archivos completada con exito');
+        },
+      });
   }
 
   /**
@@ -250,7 +251,7 @@ export class NewLoanComponent implements OnDestroy {
    */
   onSubmit() {
     if (!this.mainForm.valid) {
-      this.ms.add({
+      this.#messageService.add({
         severity: 'error',
         summary: 'Rechazado',
         detail:
@@ -261,7 +262,7 @@ export class NewLoanComponent implements OnDestroy {
       this.markFormGroupTouched(this.mainForm);
       return;
     }
-    this.cs.confirm({
+    this.#confirmationService.confirm({
       message:
         'Valida que la información de este formulario es correcta y verídica. Estas seguro que deseas continuar con la solicitud?',
       header: 'Confirmación',
@@ -272,9 +273,6 @@ export class NewLoanComponent implements OnDestroy {
       rejectIcon: 'none',
       rejectButtonStyleClass: 'p-button-text',
       accept: () => this.onFormAccept(),
-      reject: () => {
-        console.error('error en construccion');
-      },
       key: 'positionDialog',
     });
   }
@@ -301,23 +299,27 @@ export class NewLoanComponent implements OnDestroy {
    *
    */
   onFormAccept() {
+    this.uploading = true;
     const requestData = this.buildRequestData();
-    this.loanRequestService
+    this.#loanRequestService
       .registerNewLoan(requestData)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: { customerFolderName: string }) => {
           this.customerFolderName = data.customerFolderName;
           this.triggerUpload();
-          this.ms.add({
+          this.#messageService.add({
             severity: 'success',
             summary: 'La solicitud fue creada',
             detail: 'La solicitud esta en espera a ser aprobada',
             life: 5000,
           });
+          this.uploadSuccessfull = true;
+          this.uploading = false;
         },
         error: (error: any) => {
-          this.ms.add({
+          this.uploading = false;
+          this.#messageService.add({
             severity: 'error',
             summary: `${error.name}`,
             detail: `${error.error.error || error.message}`,

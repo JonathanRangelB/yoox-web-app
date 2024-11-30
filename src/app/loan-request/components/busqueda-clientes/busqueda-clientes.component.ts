@@ -114,7 +114,7 @@ export class BusquedaClientesComponent {
       ?.setValue(telefono_movil_cliente);
     this.parentForm()
       .get('formCliente.correo_electronico_cliente')
-      ?.setValue(correo_electronico_cliente);
+      ?.setValue(correo_electronico_cliente ?? '');
     this.parentForm()
       .get('formCliente.ocupacion_cliente')
       ?.setValue(ocupacion_cliente);
@@ -154,7 +154,7 @@ export class BusquedaClientesComponent {
       ?.setValue(telefono_movil_aval);
     this.parentForm()
       .get('formAval.correo_electronico_aval')
-      ?.setValue(correo_electronico_aval);
+      ?.setValue(correo_electronico_aval ?? '');
     // TODO: agregar o borrar, hay que analizarlo
     // this.parentForm().get('formAval.ocupacion_aval')?.setValue(ocupacion_aval);
     this.parentForm().get('formAval.curp_aval')?.setValue(curp_aval);
