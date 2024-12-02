@@ -5,7 +5,8 @@ import {
   ValidationErrors,
   ValidatorFn,
 } from '@angular/forms';
-import { map, Observable, of, switchMap, timer } from 'rxjs';
+import { catchError, map, Observable, of } from 'rxjs';
+import { ExistingCurpValidationService } from '../services/validacion-curp.service';
 
 export function lengthValidator(desiredLength: number): ValidatorFn {
   return ({ value }: AbstractControl): ValidationErrors | null => {
@@ -35,17 +36,48 @@ export function emailValidator(): ValidatorFn {
   };
 }
 
-// TODO: este validador debe de usar un service, queda pendiente su implementacion
-// tambien faltaria la implementacion de un servicio para este modulo
-export function genericAsyncValidator(): AsyncValidatorFn {
-  return ({ value }: AbstractControl): Observable<ValidationErrors | null> => {
-    if (!value) return of(null);
-    return timer(2000).pipe(
-      switchMap(() => of(true)),
-      map((cambioCorrectoEnBD) => {
-        console.log({ cambioCorrectoEnBD });
-        return cambioCorrectoEnBD ? null : { cambioCorrectoEnBD };
+export function atLeastOneValidator(controlNames: string[]): ValidatorFn {
+  return (formGroup: AbstractControl): ValidationErrors | null => {
+    // if (!formGroup || !formGroup.get) {
+    //   return null;
+    // }
+
+    const isValid = controlNames.some((controlName) => {
+      const control = formGroup.get(controlName);
+      return (
+        control &&
+        control.value &&
+        control.value.length === 10 &&
+        !control.errors
+      );
+    });
+
+    return isValid ? null : { atLeastOneRequired: true };
+  };
+}
+
+export function existingCurpAsyncValidator(
+  existingCurpValidationService: ExistingCurpValidationService,
+  table: string
+): AsyncValidatorFn {
+  return ({
+    value: curp,
+  }: AbstractControl): Observable<null | ValidationErrors> => {
+    if (!curp) return of(null);
+    return existingCurpValidationService
+      .validate({
+        curp,
+        table,
       })
-    );
+      .pipe(
+        map(() => {
+          return {
+            curpExistente: 'La curp ya existe',
+          };
+        }),
+        catchError(() => {
+          return of(null);
+        })
+      );
   };
 }

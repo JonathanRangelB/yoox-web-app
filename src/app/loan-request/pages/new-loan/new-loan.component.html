@@ -26,7 +26,7 @@
             <small
               id="cantidad-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('cantidad_prestada')">
+              [hidden]="hideField('cantidad_prestada')">
               <ng-container
                 *ngIf="mainForm.get('cantidad_prestada')?.errors?.['required']">
                 Cantidad requerida</ng-container
@@ -51,7 +51,7 @@
             <small
               id="plazo-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('plazo')"
+              [hidden]="hideField('plazo')"
               >Selecciona un plazo</small
             >
           </div>
@@ -72,7 +72,7 @@
             <small
               id="fecha_inicial-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('fecha_inicial')"
+              [hidden]="hideField('fecha_inicial')"
               >Fecha Inicial requerida</small
             >
           </div>
@@ -186,7 +186,7 @@
             <small
               class="mb-2 text-red-500"
               id="nombre_cliente-help"
-              [hidden]="esCampoOculto('formCliente.nombre_cliente')"
+              [hidden]="hideField('formCliente.nombre_cliente')"
               >Nombre de cliente requerido</small
             >
           </div>
@@ -200,7 +200,7 @@
             <small
               class="mb-2 text-red-500"
               id="apellido_paterno_cliente-help"
-              [hidden]="esCampoOculto('formCliente.apellido_paterno_cliente')"
+              [hidden]="hideField('formCliente.apellido_paterno_cliente')"
               >Apellido paterno requerido</small
             >
           </div>
@@ -214,7 +214,7 @@
             <small
               id="apellido_materno_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.apellido_materno_cliente')"
+              [hidden]="hideField('formCliente.apellido_materno_cliente')"
               >Apellido materno requerido</small
             >
           </div>
@@ -229,12 +229,13 @@
               [autoClear]="false"
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
-            <small
-              id="telefono_fijo_cliente-help"
-              class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.telefono_fijo_cliente')"
-              >Telefono fijo requerido</small
-            >
+            <small id="telefono_fijo_cliente-help" class="mb-2 text-red-500">
+              @if (
+                mainForm.get('formCliente')?.errors?.['atLeastOneRequired']
+              ) {
+                <ng-container>Algun numero telefonico necesario</ng-container>
+              }
+            </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="telefono_movil_cliente">Telefono movil</label>
@@ -247,34 +248,27 @@
               [autoClear]="false"
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
-            <small
-              id="telefono_movil_cliente-help"
-              class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.telefono_movil_cliente')"
-              >Telefono movil Requerido</small
-            >
+            <small id="telefono_movil_cliente-help" class="mb-2 text-red-500">
+              @if (
+                mainForm.get('formCliente')?.errors?.['atLeastOneRequired']
+              ) {
+                <ng-container>Algun numero telefonico necesario</ng-container>
+              }
+            </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="emailCliente">Correo electronico</label>
+            <label for="correo_electronico_cliente">Correo electronico</label>
             <input
               pInputText
               formControlName="correo_electronico_cliente"
-              id="emailCliente"
-              aria-describedby="emailCliente-help" />
+              id="correo_electronico_cliente"
+              aria-describedby="correo_electronico_cliente-help" />
             <small
               id="correo_electronico_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="
-                esCampoOculto('formCliente.correo_electronico_cliente')
-              ">
-              <ng-container
-                *ngIf="
-                  mainForm.get('formCliente.correo_electronico_cliente')
-                    ?.errors?.['invalidEmail']
-                ">
-                Formato de correo invalido</ng-container
-              ></small
-            >
+              [hidden]="hideField('formCliente.correo_electronico_cliente')">
+              Formato de correo invalido
+            </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="ocupacion_cliente">Ocupacion</label>
@@ -299,7 +293,7 @@
             <small
               id="curp_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.curp_cliente')">
+              [hidden]="hideField('formCliente.curp_cliente')">
               @if (
                 mainForm.get('formCliente.curp_cliente')?.errors?.['required']
               ) {
@@ -311,6 +305,13 @@
                 ]
               ) {
                 <ng-container> Formato de CURP invalido</ng-container>
+              }
+              @if (
+                mainForm.get('formCliente.curp_cliente')?.errors?.[
+                  'curpExistente'
+                ]
+              ) {
+                <ng-container>CURP existente</ng-container>
               }
             </small>
           </div>
@@ -328,7 +329,7 @@
             <small
               id="tipo_calle_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.tipo_calle_cliente')"
+              [hidden]="hideField('formCliente.tipo_calle_cliente')"
               >Selecciona un tipo de calle</small
             >
           </div>
@@ -342,7 +343,7 @@
             <small
               id="nombre_calle_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.nombre_calle_cliente')"
+              [hidden]="hideField('formCliente.nombre_calle_cliente')"
               >Nombre de calle es requerido</small
             >
           </div>
@@ -357,7 +358,7 @@
             <small
               id="numero_exterior_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.numero_exterior_cliente')"
+              [hidden]="hideField('formCliente.numero_exterior_cliente')"
               >El numero de exterior es requerido</small
             >
           </div>
@@ -381,7 +382,7 @@
             <small
               id="colonia_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.colonia_cliente')"
+              [hidden]="hideField('formCliente.colonia_cliente')"
               >La colonia es requerida</small
             >
           </div>
@@ -395,7 +396,7 @@
             <small
               id="municipio_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.municipio_cliente')"
+              [hidden]="hideField('formCliente.municipio_cliente')"
               >Municipio Requerido</small
             >
           </div>
@@ -416,7 +417,7 @@
             <small
               id="estado_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.estado_cliente')"
+              [hidden]="hideField('formCliente.estado_cliente')"
               >El estado es requerido</small
             >
           </div>
@@ -436,7 +437,7 @@
             <small
               id="cp_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="esCampoOculto('formCliente.cp_cliente')"
+              [hidden]="hideField('formCliente.cp_cliente')"
               ><ng-container
                 *ngIf="
                   mainForm.get('formCliente.cp_cliente')?.errors?.['required']
@@ -499,7 +500,7 @@
               <small
                 class="mb-2 text-red-500"
                 id="nombre_aval-help"
-                [hidden]="esCampoOculto('formAval.nombre_aval')"
+                [hidden]="hideField('formAval.nombre_aval')"
                 >Nombre de aval requerido</small
               >
             </div>
@@ -513,7 +514,7 @@
               <small
                 class="mb-2 text-red-500"
                 id="apellido_paterno_aval-help"
-                [hidden]="esCampoOculto('formAval.apellido_paterno_aval')"
+                [hidden]="hideField('formAval.apellido_paterno_aval')"
                 >Apellido paterno del aval requerido</small
               >
             </div>
@@ -527,7 +528,7 @@
               <small
                 id="apellido_materno_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.apellido_materno_aval')"
+                [hidden]="hideField('formAval.apellido_materno_aval')"
                 >Apellido materno del aval requerido</small
               >
             </div>
@@ -542,12 +543,11 @@
                 [autoClear]="false"
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
-              <small
-                id="telefono_fijo_aval-help"
-                class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.telefono_fijo_aval')"
-                >Telefono fijo de aval requerido</small
-              >
+              <small id="telefono_fijo_aval-help" class="mb-2 text-red-500">
+                @if (mainForm.get('formAval')?.errors?.['atLeastOneRequired']) {
+                  <ng-container>Algun numero telefonico necesario</ng-container>
+                }
+              </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="telefono_movil_aval">Telefono movil</label>
@@ -561,12 +561,11 @@
                 [autoClear]="false"
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
-              <small
-                id="telefono_movil_aval-help"
-                class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.telefono_movil_aval')"
-                >Telefono movil de aval requerido</small
-              >
+              <small id="telefono_movil_aval-help" class="mb-2 text-red-500">
+                @if (mainForm.get('formAval')?.errors?.['atLeastOneRequired']) {
+                  <ng-container>Algun numero telefonico necesario</ng-container>
+                }
+              </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="correo_electronico_aval">Correo electronico</label>
@@ -578,16 +577,9 @@
               <small
                 id="correo_electronico_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.correo_electronico_aval')">
-                <ng-container
-                  *ngIf="
-                    mainForm.get('formAval.correo_electronico_aval')?.errors?.[
-                      'invalidEmail'
-                    ]
-                  ">
-                  Formato de correo invalido</ng-container
-                ></small
-              >
+                [hidden]="hideField('formAval.correo_electronico_aval')">
+                Formato de correo invalido
+              </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="ocupacion_aval">Ocupacion</label>
@@ -610,21 +602,22 @@
                 placeholder="0000-000000-000000-00"
                 [style]="{ width: '100%' }" />
               <small
-                id="curp_aval-help"
+                id="curp_cliente-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.curp_aval')"
-                ><ng-container
-                  *ngIf="
-                    mainForm.get('formAval.curp_aval')?.errors?.['required']
-                  ">
-                  CURP de aval requerido</ng-container
-                >
-                <ng-container
-                  *ngIf="
-                    mainForm.get('formAval.curp_aval')?.errors?.['invalidCurp']
-                  ">
-                  Formato de CURP invalido</ng-container
-                >
+                [hidden]="hideField('formCliente.curp_cliente')">
+                @if (mainForm.get('formAval.curp_aval')?.errors?.['required']) {
+                  <ng-container> CURP requerido</ng-container>
+                }
+                @if (
+                  mainForm.get('formAval.curp_aval')?.errors?.['invalidCurp']
+                ) {
+                  <ng-container> Formato de CURP invalido</ng-container>
+                }
+                @if (
+                  mainForm.get('formAval.curp_aval')?.errors?.['curpExistente']
+                ) {
+                  <ng-container>CURP existente</ng-container>
+                }
               </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -641,7 +634,7 @@
               <small
                 id="tipoAval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.tipo_calle_aval')"
+                [hidden]="hideField('formAval.tipo_calle_aval')"
                 >Selecciona un tipo de calle</small
               >
             </div>
@@ -655,7 +648,7 @@
               <small
                 id="nombre_calle_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.nombre_calle_aval')"
+                [hidden]="hideField('formAval.nombre_calle_aval')"
                 >Nombre de calle es requerido</small
               >
             </div>
@@ -670,7 +663,7 @@
               <small
                 id="numero_exterior_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.numero_exterior_aval')"
+                [hidden]="hideField('formAval.numero_exterior_aval')"
                 >El numero de exterior es requerido</small
               >
             </div>
@@ -694,7 +687,7 @@
               <small
                 id="colonia_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.colonia_aval')"
+                [hidden]="hideField('formAval.colonia_aval')"
                 >La colonia es requerida</small
               >
             </div>
@@ -708,7 +701,7 @@
               <small
                 id="municipio_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.municipio_aval')"
+                [hidden]="hideField('formAval.municipio_aval')"
                 >Municipio Requerido</small
               >
             </div>
@@ -729,7 +722,7 @@
               <small
                 id="estado_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.estado_aval')"
+                [hidden]="hideField('formAval.estado_aval')"
                 >El estado es requerido</small
               >
             </div>
@@ -749,7 +742,7 @@
               <small
                 id="cp_aval-help"
                 class="mb-2 text-red-500"
-                [hidden]="esCampoOculto('formAval.cp_aval')">
+                [hidden]="hideField('formAval.cp_aval')">
                 <ng-container
                   *ngIf="
                     mainForm.get('formAval.cp_aval')?.errors?.['required']
@@ -856,3 +849,5 @@
     rejectButtonStyleClass="p-button-outlined" />
 </form>
 <pre>{{ mainForm.value | json }}</pre>
+<pre>{{ mainForm.get('formCliente')?.errors | json }}</pre>
+<pre>{{ mainForm.get('formAval')?.errors | json }}</pre>

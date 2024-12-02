@@ -11,8 +11,10 @@ import {
   tiposCalle,
 } from '../../utils/consts';
 import {
+  atLeastOneValidator,
   curpValidator,
   emailValidator,
+  existingCurpAsyncValidator,
   lengthValidator,
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
@@ -24,6 +26,7 @@ import {
   dropDownCollection,
 } from '../../types/loan-request.interface';
 import { InputSwitch } from 'primeng/inputswitch';
+import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
 
 @Component({
   selector: 'app-new-loan',
@@ -38,6 +41,7 @@ export class NewLoanComponent implements OnDestroy {
   readonly #messageService = inject(MessageService);
   readonly #s3BucketService = inject(S3BucketService);
   readonly #loanRequestService = inject(LoanRequestService);
+  readonly #validatorCurpService = inject(ExistingCurpValidationService);
   destroy$ = new Subject();
   customerSearchVisible = false;
   customerFolderName?: string;
@@ -68,44 +72,69 @@ export class NewLoanComponent implements OnDestroy {
       plazo: ['', Validators.required],
       fecha_inicial: ['', Validators.required],
       observaciones: [''],
-      formCliente: this.#formBuilder.group({
-        nombre_cliente: ['', Validators.required],
-        apellido_paterno_cliente: ['', Validators.required],
-        apellido_materno_cliente: ['', Validators.required],
-        telefono_fijo_cliente: ['', [Validators.required]],
-        telefono_movil_cliente: ['', [Validators.required]],
-        correo_electronico_cliente: ['', emailValidator()],
-        ocupacion_cliente: [''],
-        curp_cliente: ['', [Validators.required, curpValidator()]],
-        tipo_calle_cliente: ['', Validators.required],
-        nombre_calle_cliente: ['', Validators.required],
-        numero_exterior_cliente: [null, Validators.required],
-        numero_interior_cliente: [''],
-        colonia_cliente: ['', Validators.required],
-        municipio_cliente: ['', Validators.required],
-        estado_cliente: ['', Validators.required],
-        cp_cliente: ['', [Validators.required, lengthValidator(5)]],
-        referencias_dom_cliente: [''],
-      }),
-      formAval: this.#formBuilder.group({
-        nombre_aval: ['', Validators.required],
-        apellido_paterno_aval: ['', Validators.required],
-        apellido_materno_aval: ['', Validators.required],
-        telefono_fijo_aval: ['', Validators.required],
-        telefono_movil_aval: ['', Validators.required],
-        correo_electronico_aval: ['', emailValidator()],
-        ocupacion_aval: [''],
-        curp_aval: ['', [Validators.required, curpValidator()]],
-        tipo_calle_aval: ['', Validators.required],
-        nombre_calle_aval: ['', Validators.required],
-        numero_exterior_aval: ['', Validators.required],
-        numero_interior_aval: [''],
-        colonia_aval: ['', Validators.required],
-        municipio_aval: ['', Validators.required],
-        estado_aval: ['', Validators.required],
-        cp_aval: ['', [Validators.required, lengthValidator(5)]],
-        referencias_dom_aval: [''],
-      }),
+      formCliente: this.#formBuilder.group(
+        {
+          nombre_cliente: ['', Validators.required],
+          apellido_paterno_cliente: ['', Validators.required],
+          apellido_materno_cliente: ['', Validators.required],
+          telefono_fijo_cliente: [''],
+          telefono_movil_cliente: [''],
+          correo_electronico_cliente: ['', emailValidator()],
+          ocupacion_cliente: [''],
+          curp_cliente: [
+            '',
+            [Validators.required, curpValidator()],
+            existingCurpAsyncValidator(this.#validatorCurpService, 'CLIENTES'),
+          ],
+          tipo_calle_cliente: ['', Validators.required],
+          nombre_calle_cliente: ['', Validators.required],
+          numero_exterior_cliente: [null, Validators.required],
+          numero_interior_cliente: [''],
+          colonia_cliente: ['', Validators.required],
+          municipio_cliente: ['', Validators.required],
+          estado_cliente: ['', Validators.required],
+          cp_cliente: ['', [Validators.required, lengthValidator(5)]],
+          referencias_dom_cliente: [''],
+        },
+        {
+          validators: [
+            atLeastOneValidator([
+              'telefono_fijo_cliente',
+              'telefono_movil_cliente',
+            ]),
+          ],
+        }
+      ),
+      formAval: this.#formBuilder.group(
+        {
+          nombre_aval: ['', Validators.required],
+          apellido_paterno_aval: ['', Validators.required],
+          apellido_materno_aval: ['', Validators.required],
+          telefono_fijo_aval: [''],
+          telefono_movil_aval: [''],
+          correo_electronico_aval: ['', emailValidator()],
+          ocupacion_aval: [''],
+          curp_aval: [
+            '',
+            [Validators.required, curpValidator()],
+            existingCurpAsyncValidator(this.#validatorCurpService, 'AVALES'),
+          ],
+          tipo_calle_aval: ['', Validators.required],
+          nombre_calle_aval: ['', Validators.required],
+          numero_exterior_aval: ['', Validators.required],
+          numero_interior_aval: [''],
+          colonia_aval: ['', Validators.required],
+          municipio_aval: ['', Validators.required],
+          estado_aval: ['', Validators.required],
+          cp_aval: ['', [Validators.required, lengthValidator(5)]],
+          referencias_dom_aval: [''],
+        },
+        {
+          validators: [
+            atLeastOneValidator(['telefono_fijo_aval', 'telefono_movil_aval']),
+          ],
+        }
+      ),
     });
 
     this.customerSearchForm = this.#formBuilder.group({
@@ -192,12 +221,12 @@ export class NewLoanComponent implements OnDestroy {
   /**
    * Determina si el elemento de HTML dentro de un FormControl debe ser mostrado o no para el atributo hidden del elemento.
    *
-   * @param {string} nombreDelCampo - Nombre que tiene el campo dentro del formulario.
+   * @param {string} fieldName - Nombre que tiene el campo dentro del formulario.
    */
-  esCampoOculto(nombreDelCampo: string) {
-    const control = this.mainForm.get(nombreDelCampo);
+  hideField(fieldName: string) {
+    const control = this.mainForm.get(fieldName);
     if (!control) {
-      console.warn(`Control ${control} no encontrado`);
+      console.warn(`Control ${control} not found`);
       return false;
     }
     return control.valid || (!control.dirty && !control.touched);
@@ -237,9 +266,6 @@ export class NewLoanComponent implements OnDestroy {
             detail: `Ocurrio un problema al intentar subir los archivos: ${err?.status} ${err?.error.message}`,
             life: 3000,
           });
-        },
-        complete: () => {
-          console.log('subida de archivos completada con exito');
         },
       });
   }
@@ -375,7 +401,7 @@ export class NewLoanComponent implements OnDestroy {
   /** Comprueba si hay archivos por subir, si los hay dispara el evento de subida a S3 */
   triggerUpload() {
     if (this.fileUpload()?.hasFiles()) this.fileUpload()?.upload();
-    else console.warn('no habia archivos por subir');
+    else console.log('no habia archivos por subir');
   }
 
   /** Activa y desactiva el componente de busqueda de clientes y actualiza el estado del inputswitch  */

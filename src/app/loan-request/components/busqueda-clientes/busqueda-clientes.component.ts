@@ -155,8 +155,6 @@ export class BusquedaClientesComponent {
     this.parentForm()
       .get('formAval.correo_electronico_aval')
       ?.setValue(correo_electronico_aval ?? '');
-    // TODO: agregar o borrar, hay que analizarlo
-    // this.parentForm().get('formAval.ocupacion_aval')?.setValue(ocupacion_aval);
     this.parentForm().get('formAval.curp_aval')?.setValue(curp_aval);
     this.parentForm()
       .get('formAval.tipo_calle_aval')
