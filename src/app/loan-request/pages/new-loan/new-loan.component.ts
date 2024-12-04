@@ -24,6 +24,7 @@ import { LoanRequestService } from '../../services/loan-request.service';
 import {
   CurrentUser,
   dropDownCollection,
+  IdsRecuperados,
 } from '../../types/loan-request.interface';
 import { InputSwitch } from 'primeng/inputswitch';
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
@@ -65,6 +66,8 @@ export class NewLoanComponent implements OnDestroy {
   pagoSemanal: number | null = null;
   uploading = false;
   uploadSuccessfull = false;
+  id_cliente_recuperado = 0;
+  id_aval_recuperado = 0;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -83,8 +86,14 @@ export class NewLoanComponent implements OnDestroy {
           ocupacion_cliente: [''],
           curp_cliente: [
             '',
-            [Validators.required, curpValidator()],
-            existingCurpAsyncValidator(this.#validatorCurpService, 'CLIENTES'),
+            {
+              validators: [Validators.required, curpValidator()],
+              asyncValidators: existingCurpAsyncValidator(
+                this.#validatorCurpService,
+                'CLIENTES'
+              ),
+              updateOn: 'blur',
+            },
           ],
           tipo_calle_cliente: ['', Validators.required],
           nombre_calle_cliente: ['', Validators.required],
@@ -116,8 +125,14 @@ export class NewLoanComponent implements OnDestroy {
           ocupacion_aval: [''],
           curp_aval: [
             '',
-            [Validators.required, curpValidator()],
-            existingCurpAsyncValidator(this.#validatorCurpService, 'AVALES'),
+            {
+              validators: [Validators.required, curpValidator()],
+              asyncValidators: existingCurpAsyncValidator(
+                this.#validatorCurpService,
+                'AVALES'
+              ),
+              updateOn: 'blur',
+            },
           ],
           tipo_calle_aval: ['', Validators.required],
           nombre_calle_aval: ['', Validators.required],
@@ -367,6 +382,14 @@ export class NewLoanComponent implements OnDestroy {
     if (additionalData) {
       requestData = {
         ...this.mainForm.value,
+        formCliente: {
+          ...this.mainForm.value.formCliente,
+          id_cliente: this.id_cliente_recuperado || null,
+        },
+        formAval: {
+          ...this.mainForm.value.formAval,
+          id_aval: this.id_aval_recuperado || null,
+        },
         ...additionalData,
       };
     }
@@ -408,5 +431,31 @@ export class NewLoanComponent implements OnDestroy {
   toggleCustomerSearch() {
     this.customerSearchVisible = !this.customerSearchVisible;
     this.switchBusqueda()?.writeValue(this.customerSearchVisible);
+    if (this.id_cliente_recuperado) {
+      const form_curp_cliente = this.mainForm.get('formCliente.curp_cliente');
+      const form_curp_aval = this.mainForm.get('formAval.curp_aval');
+      form_curp_cliente?.clearAsyncValidators();
+      form_curp_cliente?.updateValueAndValidity();
+      form_curp_aval?.clearAsyncValidators();
+      form_curp_aval?.updateValueAndValidity();
+    } else {
+      this.mainForm
+        .get('formCliente.curp_cliente')
+        ?.setAsyncValidators(
+          existingCurpAsyncValidator(this.#validatorCurpService, 'CLIENTES')
+        );
+      this.mainForm
+        .get('formAval.curp_aval')
+        ?.setAsyncValidators(
+          existingCurpAsyncValidator(this.#validatorCurpService, 'AVALES')
+        );
+
+      this.mainForm.updateValueAndValidity();
+    }
+  }
+
+  updateCustomerFoundId(idsRecuperados: IdsRecuperados) {
+    this.id_cliente_recuperado = idsRecuperados.id_cliente;
+    this.id_aval_recuperado = idsRecuperados.id_aval;
   }
 }

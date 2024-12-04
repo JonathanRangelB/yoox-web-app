@@ -25,6 +25,7 @@ import { curpValidator } from '../../utils/customValidators';
 import { SearchCustomersService } from '../../services/search-customers.service';
 import { Customer } from '../../types/searchCustomers.interface';
 import { estadosDeLaRepublica, tiposCalle } from '../../utils/consts';
+import { IdsRecuperados } from '../../types/loan-request.interface';
 
 @Component({
   selector: 'app-busqueda-clientes',
@@ -53,6 +54,7 @@ import { estadosDeLaRepublica, tiposCalle } from '../../utils/consts';
 export class BusquedaClientesComponent {
   readonly parentForm = input.required<FormGroup>();
   readonly visible = output<void>();
+  readonly idsRecuperados = output<IdsRecuperados>();
   readonly #formBuilder = inject(FormBuilder);
   readonly #searchCustomerService = inject(SearchCustomersService);
   readonly #messageService = inject(MessageService);
@@ -66,14 +68,8 @@ export class BusquedaClientesComponent {
 
   llenaCampos(event: TableRowSelectEvent) {
     const {
-      // id_cliente,
-      // id_agente,
-      // nombre_agente,
-      // id_domicilio_cliente,
-      // referencias_dom_cliente,
-      // id_aval,
-      // id_domicilio_aval,
-      // referencias_dom_aval,
+      id_cliente,
+      id_aval,
       nombre_cliente,
       telefono_fijo_cliente,
       telefono_movil_cliente,
@@ -103,15 +99,20 @@ export class BusquedaClientesComponent {
       cp_aval,
     } = event.data as Customer;
 
+    this.idsRecuperados.emit({
+      id_aval,
+      id_cliente,
+    });
+
     this.parentForm()
       .get('formCliente.nombre_cliente')
       ?.setValue(nombre_cliente);
     this.parentForm()
       .get('formCliente.telefono_fijo_cliente')
-      ?.setValue(telefono_fijo_cliente);
+      ?.setValue(telefono_fijo_cliente ?? '');
     this.parentForm()
       .get('formCliente.telefono_movil_cliente')
-      ?.setValue(telefono_movil_cliente);
+      ?.setValue(telefono_movil_cliente ?? '');
     this.parentForm()
       .get('formCliente.correo_electronico_cliente')
       ?.setValue(correo_electronico_cliente ?? '');
@@ -148,10 +149,10 @@ export class BusquedaClientesComponent {
     this.parentForm().get('formAval.nombre_aval')?.setValue(nombre_aval);
     this.parentForm()
       .get('formAval.telefono_fijo_aval')
-      ?.setValue(telefono_fijo_aval);
+      ?.setValue(telefono_fijo_aval ?? '');
     this.parentForm()
       .get('formAval.telefono_movil_aval')
-      ?.setValue(telefono_movil_aval);
+      ?.setValue(telefono_movil_aval ?? '');
     this.parentForm()
       .get('formAval.correo_electronico_aval')
       ?.setValue(correo_electronico_aval ?? '');
@@ -181,6 +182,7 @@ export class BusquedaClientesComponent {
 
   /** Le indica al componente padre que la visibilidad de esta componente cambio */
   #hideSelfComponent() {
+    // this.customerFoundId.emit(this.idsRecuperados);
     this.visible.emit();
   }
 

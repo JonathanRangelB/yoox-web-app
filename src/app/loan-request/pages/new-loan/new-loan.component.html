@@ -173,7 +173,13 @@
         @if (customerSearchVisible) {
           <app-busqueda-clientes
             [parentForm]="mainForm"
+            (idsRecuperados)="updateCustomerFoundId($event)"
             (visible)="toggleCustomerSearch()" />
+        }
+        @if (id_cliente_recuperado) {
+          <p style="text-align: center; font-size: 1.4rem">
+            ID de cliente seleccionado: {{ id_cliente_recuperado }}
+          </p>
         }
         <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">
           <div class="col-12 sm:col-6 flex flex-column">
@@ -288,7 +294,7 @@
               showClear="true"
               autoClear="false"
               formControlName="curp_cliente"
-              placeholder="0000-000000-000000-00"
+              placeholder="AAAA-000000-AAAAAA-00"
               [style]="{ width: '100%' }" />
             <small
               id="curp_cliente-help"
@@ -353,6 +359,7 @@
               pInputText
               formControlName="numero_exterior_cliente"
               id="numero_exterior_cliente"
+              showClear="true"
               pKeyFilter="int"
               aria-describedby="numero_exterior_cliente-help" />
             <small
@@ -599,7 +606,7 @@
                 autoClear="false"
                 showClear="true"
                 formControlName="curp_aval"
-                placeholder="0000-000000-000000-00"
+                placeholder="AAAA-000000-AAAAAA-00"
                 [style]="{ width: '100%' }" />
               <small
                 id="curp_cliente-help"
@@ -658,6 +665,7 @@
                 pInputText
                 formControlName="numero_exterior_aval"
                 showClear="true"
+                pKeyFilter="int"
                 inputId="numero_exterior_aval"
                 aria-describedby="numero_exterior_aval-help" />
               <small
@@ -848,6 +856,6 @@
     [position]="position"
     rejectButtonStyleClass="p-button-outlined" />
 </form>
-<pre>{{ mainForm.value | json }}</pre>
-<pre>{{ mainForm.get('formCliente')?.errors | json }}</pre>
-<pre>{{ mainForm.get('formAval')?.errors | json }}</pre>
+<!-- <pre>{{ mainForm.value | json }}</pre> -->
+<!-- <pre>{{ mainForm.get('formCliente')?.errors | json }}</pre> -->
+<!-- <pre>{{ mainForm.get('formAval')?.errors | json }}</pre> -->

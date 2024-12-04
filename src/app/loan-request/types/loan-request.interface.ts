@@ -11,3 +11,8 @@ export interface CurrentUser {
   ID_GRUPO: number;
   ID_ROL: number;
 }
+
+export interface IdsRecuperados {
+  id_cliente: number;
+  id_aval: number;
+}
