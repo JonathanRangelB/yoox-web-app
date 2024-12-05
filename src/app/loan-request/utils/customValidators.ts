@@ -7,6 +7,8 @@ import {
 } from '@angular/forms';
 import { catchError, map, Observable, of } from 'rxjs';
 import { ExistingCurpValidationService } from '../services/validacion-curp.service';
+import { ValidatorExistingPhoneService } from '../services/validacion-telefonos.service';
+import { phoneType, tableType } from '../types/services.type';
 
 export function lengthValidator(desiredLength: number): ValidatorFn {
   return ({ value }: AbstractControl): ValidationErrors | null => {
@@ -79,5 +81,30 @@ export function existingCurpAsyncValidator(
           return of(null);
         })
       );
+  };
+}
+
+export function existingPhonesAsyncValidator(
+  validatorExistingPhoneService: ValidatorExistingPhoneService,
+  table: tableType,
+  type: phoneType
+): AsyncValidatorFn {
+  return ({
+    value: phone,
+  }: AbstractControl): Observable<null | ValidationErrors> => {
+    if (!phone || phone.length !== 10) return of(null);
+    const payload = {
+      [type]: phone,
+      table,
+    };
+    console.log(payload);
+    return validatorExistingPhoneService.validate(payload).pipe(
+      map(() => {
+        return { telefonoExistente: 'el telefono ya existe' };
+      }),
+      catchError(() => {
+        return of(null);
+      })
+    );
   };
 }

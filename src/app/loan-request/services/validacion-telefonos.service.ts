@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from 'src/environments/environment';
 
 @Injectable({ providedIn: 'root' })
-export class ValidacionTelefonosService {
+export class ValidatorExistingPhoneService {
   readonly #http = inject(HttpClient);
   readonly #baseUrl = environment.API_URL;
 

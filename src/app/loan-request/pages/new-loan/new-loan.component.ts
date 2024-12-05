@@ -15,6 +15,7 @@ import {
   curpValidator,
   emailValidator,
   existingCurpAsyncValidator,
+  existingPhonesAsyncValidator,
   lengthValidator,
 } from '../../utils/customValidators';
 import { S3BucketService } from '../../services/s3-bucket.service';
@@ -28,6 +29,7 @@ import {
 } from '../../types/loan-request.interface';
 import { InputSwitch } from 'primeng/inputswitch';
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
+import { ValidatorExistingPhoneService } from '../../services/validacion-telefonos.service';
 
 @Component({
   selector: 'app-new-loan',
@@ -43,6 +45,7 @@ export class NewLoanComponent implements OnDestroy {
   readonly #s3BucketService = inject(S3BucketService);
   readonly #loanRequestService = inject(LoanRequestService);
   readonly #validatorCurpService = inject(ExistingCurpValidationService);
+  readonly #validatorPhonesService = inject(ValidatorExistingPhoneService);
   destroy$ = new Subject();
   customerSearchVisible = false;
   customerFolderName?: string;
@@ -80,8 +83,28 @@ export class NewLoanComponent implements OnDestroy {
           nombre_cliente: ['', Validators.required],
           apellido_paterno_cliente: ['', Validators.required],
           apellido_materno_cliente: ['', Validators.required],
-          telefono_fijo_cliente: [''],
-          telefono_movil_cliente: [''],
+          telefono_fijo_cliente: [
+            '',
+            {
+              asyncValidators: existingPhonesAsyncValidator(
+                this.#validatorPhonesService,
+                'CLIENTES',
+                'telefono_fijo'
+              ),
+              updateOn: 'blur',
+            },
+          ],
+          telefono_movil_cliente: [
+            '',
+            {
+              asyncValidators: existingPhonesAsyncValidator(
+                this.#validatorPhonesService,
+                'CLIENTES',
+                'telefono_movil'
+              ),
+              updateOn: 'blur',
+            },
+          ],
           correo_electronico_cliente: ['', emailValidator()],
           ocupacion_cliente: [''],
           curp_cliente: [
@@ -119,8 +142,28 @@ export class NewLoanComponent implements OnDestroy {
           nombre_aval: ['', Validators.required],
           apellido_paterno_aval: ['', Validators.required],
           apellido_materno_aval: ['', Validators.required],
-          telefono_fijo_aval: [''],
-          telefono_movil_aval: [''],
+          telefono_fijo_aval: [
+            '',
+            {
+              asyncValidators: existingPhonesAsyncValidator(
+                this.#validatorPhonesService,
+                'AVALES',
+                'telefono_fijo'
+              ),
+              updateOn: 'blur',
+            },
+          ],
+          telefono_movil_aval: [
+            '',
+            {
+              asyncValidators: existingPhonesAsyncValidator(
+                this.#validatorPhonesService,
+                'AVALES',
+                'telefono_movil'
+              ),
+              updateOn: 'blur',
+            },
+          ],
           correo_electronico_aval: ['', emailValidator()],
           ocupacion_aval: [''],
           curp_aval: [
@@ -434,10 +477,30 @@ export class NewLoanComponent implements OnDestroy {
     if (this.id_cliente_recuperado) {
       const form_curp_cliente = this.mainForm.get('formCliente.curp_cliente');
       const form_curp_aval = this.mainForm.get('formAval.curp_aval');
+      const form_telefono_movil_cliente = this.mainForm.get(
+        'formCliente.telefono_movil_cliente'
+      );
+      const form_telefono_fijo_cliente = this.mainForm.get(
+        'formCliente.telefono_fijo_cliente'
+      );
+      const form_telefono_movil_aval = this.mainForm.get(
+        'formAval.telefono_movil_aval'
+      );
+      const form_telefono_fijo_aval = this.mainForm.get(
+        'formAval.telefono_fijo_aval'
+      );
       form_curp_cliente?.clearAsyncValidators();
       form_curp_cliente?.updateValueAndValidity();
       form_curp_aval?.clearAsyncValidators();
       form_curp_aval?.updateValueAndValidity();
+      form_telefono_movil_cliente?.clearAsyncValidators();
+      form_telefono_movil_cliente?.updateValueAndValidity();
+      form_telefono_fijo_cliente?.clearAsyncValidators();
+      form_telefono_fijo_cliente?.updateValueAndValidity();
+      form_telefono_movil_aval?.clearAsyncValidators();
+      form_telefono_movil_aval?.updateValueAndValidity();
+      form_telefono_fijo_aval?.clearAsyncValidators();
+      form_telefono_fijo_aval?.updateValueAndValidity();
     } else {
       this.mainForm
         .get('formCliente.curp_cliente')

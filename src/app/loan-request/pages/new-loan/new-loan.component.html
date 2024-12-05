@@ -241,6 +241,15 @@
               ) {
                 <ng-container>Algun numero telefonico necesario</ng-container>
               }
+              @if (
+                mainForm.get('formCliente.telefono_fijo_cliente')?.errors?.[
+                  'telefonoExistente'
+                ]
+              ) {
+                <ng-container
+                  >Numero telefonico fijo de cliente existente</ng-container
+                >
+              }
             </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -259,6 +268,15 @@
                 mainForm.get('formCliente')?.errors?.['atLeastOneRequired']
               ) {
                 <ng-container>Algun numero telefonico necesario</ng-container>
+              }
+              @if (
+                mainForm.get('formCliente.telefono_movil_cliente')?.errors?.[
+                  'telefonoExistente'
+                ]
+              ) {
+                <ng-container
+                  >Numero telefonico movil de cliente existente</ng-container
+                >
               }
             </small>
           </div>
@@ -496,6 +514,11 @@
         let-nextCallback="nextCallback"
         let-index="index">
         <div class="flex flex-column">
+          @if (id_aval_recuperado) {
+            <p style="text-align: center; font-size: 1.4rem">
+              ID de aval seleccionado: {{ id_aval_recuperado }}
+            </p>
+          }
           <div formGroupName="formAval" class="grid py-3 pr-3 mr-0">
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="nombre_aval">Nombre aval</label>
@@ -554,6 +577,15 @@
                 @if (mainForm.get('formAval')?.errors?.['atLeastOneRequired']) {
                   <ng-container>Algun numero telefonico necesario</ng-container>
                 }
+                @if (
+                  mainForm.get('formAval.telefono_fijo_aval')?.errors?.[
+                    'telefonoExistente'
+                  ]
+                ) {
+                  <ng-container
+                    >Numero telefónico fijo de aval existente</ng-container
+                  >
+                }
               </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -571,6 +603,15 @@
               <small id="telefono_movil_aval-help" class="mb-2 text-red-500">
                 @if (mainForm.get('formAval')?.errors?.['atLeastOneRequired']) {
                   <ng-container>Algun numero telefonico necesario</ng-container>
+                }
+                @if (
+                  mainForm.get('formAval.telefono_movil_aval')?.errors?.[
+                    'telefonoExistente'
+                  ]
+                ) {
+                  <ng-container
+                    >Numero telefónico movil de aval existente</ng-container
+                  >
                 }
               </small>
             </div>
