@@ -421,21 +421,25 @@ export class NewLoanComponent implements OnDestroy {
    */
   buildRequestData(): any {
     let requestData = {};
-    const additionalData = this.generateAdditionalData();
-    if (additionalData) {
-      requestData = {
-        ...this.mainForm.value,
-        formCliente: {
-          ...this.mainForm.value.formCliente,
-          id_cliente: this.id_cliente_recuperado || null,
-        },
-        formAval: {
-          ...this.mainForm.value.formAval,
-          id_aval: this.id_aval_recuperado || null,
-        },
-        ...additionalData,
-      };
-    }
+    const additionalData = this.generateAdditionalDataObject();
+    // la siguiente variable es la que relamente se manda al backend
+    // incluye toda la informacion del formulario, datos calculados y datos de sesion
+    requestData = {
+      ...this.mainForm.value,
+      formCliente: {
+        ...this.mainForm.value.formCliente,
+        ...(this.id_cliente_recuperado
+          ? { id_cliente: this.id_cliente_recuperado }
+          : {}),
+      },
+      formAval: {
+        ...this.mainForm.value.formAval,
+        ...(this.id_aval_recuperado
+          ? { id_aval: this.id_aval_recuperado }
+          : {}),
+      },
+      ...additionalData,
+    };
     return requestData;
   }
 
@@ -447,7 +451,7 @@ export class NewLoanComponent implements OnDestroy {
    * @throws {Error} - Arroja un error si no encuentra la informacion en localStorage, la cual fue generada en el componente `login`
    * @returns {any} - El objeto con la informacion adicional para ser enviado al backend junto con los datos del formulario.
    */
-  generateAdditionalData(): any {
+  generateAdditionalDataObject(): any {
     const user = localStorage.getItem('user');
     if (!user)
       throw new Error(
