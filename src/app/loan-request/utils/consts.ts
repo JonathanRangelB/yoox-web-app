@@ -43,14 +43,14 @@ export const estadosDeLaRepublica = [
 ];
 
 export const plazos = [
-  { name: '11', value: '10', id: 1 },
-  { name: '12', value: '20', id: 2 },
-  { name: '13', value: '30', id: 3 },
-  { name: '14', value: '40', id: 4 },
-  { name: '24', value: '56', id: 5 },
-  { name: '26', value: '80', id: 6 },
-  { name: '28', value: '82', id: 7 },
-  { name: '35', value: '110', id: 8 },
+  { name: '14', value: '40', id: 1 },
+  { name: '28', value: '82', id: 2 },
+  { name: '12', value: '20', id: 3 },
+  { name: '13', value: '30', id: 4 },
+  { name: '11', value: '10', id: 5 },
+  { name: '35', value: '110', id: 6 },
+  { name: '26', value: '80', id: 7 },
+  { name: '24', value: '56', id: 8 },
 ];
 
 export const days = [

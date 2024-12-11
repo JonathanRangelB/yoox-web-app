@@ -26,6 +26,7 @@ import {
   CurrentUser,
   dropDownCollection,
   IdsRecuperados,
+  LoanRequest,
 } from '../../types/loan-request.interface';
 import { InputSwitch } from 'primeng/inputswitch';
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
@@ -78,6 +79,7 @@ export class NewLoanComponent implements OnDestroy, OnInit {
   id_cliente_recuperado = 0;
   id_aval_recuperado = 0;
   showLoadingModal = false;
+  viewLoan: any;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -210,18 +212,88 @@ export class NewLoanComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit(): void {
-    this.route.url.subscribe((url) => {
+    this.route.url.pipe(takeUntil(this.destroy$)).subscribe((url) => {
       this.windowMode = url[0].path;
       if (this.windowMode === 'view') {
         this.showLoadingModal = true;
-        setTimeout(() => (this.showLoadingModal = false), 3000);
       }
     });
-    this.route.params.subscribe((params) => (this.windowModeParams = params));
-    console.table({
-      mode: this.windowMode,
-      params: this.windowModeParams['loanId'],
-    });
+
+    this.route.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => (this.windowModeParams = params));
+    // console.table({
+    //   mode: this.windowMode,
+    //   params: this.windowModeParams['loanId'],
+    // });
+
+    if (this.windowMode === 'view')
+      this.viewLoan = this.#loanRequestService
+        .viewLoan({ request_number: this.windowModeParams['loanId'] })
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((data: LoanRequest) => {
+          this.showLoadingModal = false;
+          this.cantidad_pagar = +(
+            data.cantidad_prestada *
+            (1 + data.tasa_interes / 100)
+          ).toFixed(2);
+          this.tasa_interes = data.tasa_interes;
+          this.pagoSemanal =
+            this.cantidad_pagar /
+            Number(plazos.find((plazo) => plazo.id === data.id_plazo)!.name);
+
+          this.dia_semana = data.dia_semana;
+          this.mainForm.patchValue({
+            cantidad_prestada: data.cantidad_prestada,
+            plazo: plazos.find((plazo) => plazo.id === data.id_plazo),
+            fecha_inicial: new Date(data.fecha_inicial),
+            observaciones: data.observaciones,
+            formCliente: {
+              nombre_cliente: data.nombre_cliente,
+              apellido_paterno_cliente: data.apellido_paterno_cliente,
+              apellido_materno_cliente: data.apellido_materno_cliente,
+              telefono_fijo_cliente: data.telefono_fijo_cliente,
+              telefono_movil_cliente: data.telefono_movil_cliente,
+              correo_electronico_cliente: data.correo_electronico_cliente,
+              ocupacion_cliente: data.ocupacion_cliente,
+              curp_cliente: data.curp_cliente,
+              tipo_calle_cliente: data.tipo_calle_cliente,
+              nombre_calle_cliente: data.nombre_calle_cliente,
+              numero_exterior_cliente: data.numero_exterior_cliente,
+              numero_interior_cliente: data.numero_interior_cliente,
+              colonia_cliente: data.colonia_cliente,
+              municipio_cliente: data.municipio_cliente,
+              estado_cliente: estadosDeLaRepublica.find(
+                (estado) => estado.value === data.estado_cliente
+              ),
+              cp_cliente: data.cp_cliente,
+              referencias_dom_cliente: data.referencias_dom_cliente,
+            },
+            formAval: {
+              nombre_aval: data.nombre_aval,
+              apellido_paterno_aval: data.apellido_paterno_aval,
+              apellido_materno_aval: data.apellido_materno_aval,
+              telefono_fijo_aval: data.telefono_fijo_aval,
+              telefono_movil_aval: data.telefono_movil_aval,
+              correo_electronico_aval: data.correo_electronico_aval,
+              ocupacion_aval: '',
+              curp_aval: data.curp_aval,
+              tipo_calle_aval: data.tipo_calle_aval,
+              nombre_calle_aval: data.nombre_calle_aval,
+              numero_exterior_aval: data.numero_exterior_aval,
+              numero_interior_aval: data.numero_interior_aval,
+              colonia_aval: data.colonia_aval,
+              municipio_aval: data.municipio_aval,
+              estado_aval: estadosDeLaRepublica.find(
+                (estado) => estado.value === data.estado_cliente
+              ),
+              cp_aval: data.cp_aval,
+              referencias_dom_aval: data.referencias_dom_aval,
+            },
+          });
+          this.mainForm.updateValueAndValidity();
+          console.log(data);
+        });
   }
 
   ngOnDestroy(): void {

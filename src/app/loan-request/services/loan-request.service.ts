@@ -27,4 +27,21 @@ export class LoanRequestService {
         })
       );
   }
+
+  viewLoan(payload: any) {
+    const token = localStorage.getItem('token');
+    return this.http
+      .post(`${this.baseUrl}loan-request/view`, payload, {
+        headers: { authorization: `${token}` },
+      })
+      .pipe(
+        map((response: any) => {
+          if (response.error) {
+            throw new HttpErrorResponse(response.error);
+          }
+          if (response.errorType) throw new Error(response.errorType);
+          return response;
+        })
+      );
+  }
 }

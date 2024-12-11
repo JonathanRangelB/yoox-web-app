@@ -214,9 +214,9 @@ export class BusquedaClientesComponent {
     const id_agente = JSON.parse(currentUser!).ID;
     const payload = { ...formData, id_agente };
     this.#searchCustomerService.searchCustomers(payload).subscribe({
-      next: (result: any) => {
+      next: (foundCustomers: Customer[]) => {
         this.loading.set(false);
-        this.clientesEncontrados.set(result?.registrosEncontrados);
+        this.clientesEncontrados.set(foundCustomers);
       },
       error: ({ error, errorMessage, errorType }) => {
         this.loading.set(false);

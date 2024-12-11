@@ -97,7 +97,6 @@ export function existingPhonesAsyncValidator(
       [type]: phone,
       table,
     };
-    console.log(payload);
     return validatorExistingPhoneService.validate(payload).pipe(
       map(() => {
         return { telefonoExistente: 'el telefono ya existe' };
