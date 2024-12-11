@@ -1,5 +1,5 @@
 /* eslint-disable no-useless-escape */
-import { Component, inject, OnDestroy, viewChild } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { DropdownChangeEvent } from 'primeng/dropdown';
@@ -30,15 +30,18 @@ import {
 import { InputSwitch } from 'primeng/inputswitch';
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
 import { ValidatorExistingPhoneService } from '../../services/validacion-telefonos.service';
+import { ActivatedRoute, Params } from '@angular/router';
+import { Dialog } from 'primeng/dialog';
 
 @Component({
   selector: 'app-new-loan',
   templateUrl: './new-loan.component.html',
   styleUrls: ['./new-loan.component.css'],
 })
-export class NewLoanComponent implements OnDestroy {
+export class NewLoanComponent implements OnDestroy, OnInit {
   fileUpload = viewChild<FileUpload>('fileUpload');
   switchBusqueda = viewChild<InputSwitch>('switchBusqueda');
+  dialogMessage = viewChild<Dialog>('dialogMessage');
   readonly #formBuilder = inject(FormBuilder);
   readonly #confirmationService = inject(ConfirmationService);
   readonly #messageService = inject(MessageService);
@@ -46,6 +49,9 @@ export class NewLoanComponent implements OnDestroy {
   readonly #loanRequestService = inject(LoanRequestService);
   readonly #validatorCurpService = inject(ExistingCurpValidationService);
   readonly #validatorPhonesService = inject(ValidatorExistingPhoneService);
+  readonly route = inject(ActivatedRoute);
+  windowMode: string = 'new';
+  windowModeParams!: Params;
   destroy$ = new Subject();
   customerSearchVisible = false;
   customerFolderName?: string;
@@ -71,6 +77,7 @@ export class NewLoanComponent implements OnDestroy {
   uploadSuccessfull = false;
   id_cliente_recuperado = 0;
   id_aval_recuperado = 0;
+  showLoadingModal = false;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -199,6 +206,21 @@ export class NewLoanComponent implements OnDestroy {
       id: [''],
       curp: ['', curpValidator()],
       nombre: [''],
+    });
+  }
+
+  ngOnInit(): void {
+    this.route.url.subscribe((url) => {
+      this.windowMode = url[0].path;
+      if (this.windowMode === 'view') {
+        this.showLoadingModal = true;
+        setTimeout(() => (this.showLoadingModal = false), 3000);
+      }
+    });
+    this.route.params.subscribe((params) => (this.windowModeParams = params));
+    console.table({
+      mode: this.windowMode,
+      params: this.windowModeParams['loanId'],
     });
   }
 

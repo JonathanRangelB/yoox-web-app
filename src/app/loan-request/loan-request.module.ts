@@ -23,6 +23,8 @@ import { NewLoanComponent } from './pages/new-loan/new-loan.component';
 import { UpdateLoanComponent } from './pages/update-loan/update-loan.component';
 import { ViewLoanComponent } from './pages/view-loan/view-loan.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { BusquedaClientesComponent } from './components/busqueda-clientes/busqueda-clientes.component';
@@ -52,6 +54,8 @@ import { BusquedaClientesComponent } from './components/busqueda-clientes/busque
     TooltipModule,
     TableModule,
     BusquedaClientesComponent,
+    DialogModule,
+    ProgressSpinnerModule,
   ],
   providers: [ConfirmationService, MessageService],
 })

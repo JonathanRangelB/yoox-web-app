@@ -897,6 +897,19 @@
     [position]="position"
     rejectButtonStyleClass="p-button-outlined" />
 </form>
+<p-dialog
+  #dialogMessage
+  header="Cargando información"
+  [modal]="true"
+  [(visible)]="showLoadingModal"
+  closable="false"
+  [style]="{ width: '16.46rem' }"
+  class="text-center">
+  @if (showLoadingModal) {
+    <p-progressSpinner />
+    <!-- <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i> -->
+  }
+</p-dialog>
 <!-- <pre>{{ mainForm.value | json }}</pre> -->
 <!-- <pre>{{ mainForm.get('formCliente')?.errors | json }}</pre> -->
 <!-- <pre>{{ mainForm.get('formAval')?.errors | json }}</pre> -->

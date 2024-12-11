@@ -37,7 +37,7 @@ export class DashboardComponent {
         {
           label: 'Solicitud de prestamo',
           icon: 'pi pi-fw pi-file',
-          routerLink: '/dashboard/loan-request/view',
+          routerLink: '/dashboard/loan-request/view/2',
           command: () => this.toggleSidebar(),
         },
       ],
