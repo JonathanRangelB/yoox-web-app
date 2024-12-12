@@ -174,7 +174,6 @@ export class NewLoanComponent implements OnDestroy, OnInit {
             },
           ],
           correo_electronico_aval: ['', emailValidator()],
-          ocupacion_aval: [''],
           curp_aval: [
             '',
             {
@@ -216,6 +215,7 @@ export class NewLoanComponent implements OnDestroy, OnInit {
       this.windowMode = url[0].path;
       if (this.windowMode === 'view') {
         this.showLoadingModal = true;
+        this.clearAsyncValidators();
       }
     });
 
@@ -233,11 +233,15 @@ export class NewLoanComponent implements OnDestroy, OnInit {
         .pipe(takeUntil(this.destroy$))
         .subscribe((data: LoanRequest) => {
           this.showLoadingModal = false;
-          this.cantidad_pagar = +(
-            data.cantidad_prestada *
-            (1 + data.tasa_interes / 100)
-          ).toFixed(2);
           this.tasa_interes = data.tasa_interes;
+          this.cantidadIngresada = data.cantidad_prestada;
+          this.semanasDePlazo = +plazos.find(
+            (plazo) => plazo.id === data.id_plazo
+          )!.name;
+          this.cantidad_pagar = +(
+            this.cantidadIngresada *
+            (1 + this.tasa_interes / 100)
+          ).toFixed(2);
           this.pagoSemanal =
             this.cantidad_pagar /
             Number(plazos.find((plazo) => plazo.id === data.id_plazo)!.name);
@@ -257,7 +261,9 @@ export class NewLoanComponent implements OnDestroy, OnInit {
               correo_electronico_cliente: data.correo_electronico_cliente,
               ocupacion_cliente: data.ocupacion_cliente,
               curp_cliente: data.curp_cliente,
-              tipo_calle_cliente: data.tipo_calle_cliente,
+              tipo_calle_cliente: tiposCalle.find(
+                (tipo) => tipo.value === data.tipo_calle_cliente
+              ),
               nombre_calle_cliente: data.nombre_calle_cliente,
               numero_exterior_cliente: data.numero_exterior_cliente,
               numero_interior_cliente: data.numero_interior_cliente,
@@ -276,9 +282,10 @@ export class NewLoanComponent implements OnDestroy, OnInit {
               telefono_fijo_aval: data.telefono_fijo_aval,
               telefono_movil_aval: data.telefono_movil_aval,
               correo_electronico_aval: data.correo_electronico_aval,
-              ocupacion_aval: '',
               curp_aval: data.curp_aval,
-              tipo_calle_aval: data.tipo_calle_aval,
+              tipo_calle_aval: tiposCalle.find(
+                (tipo) => tipo.value === data.tipo_calle_aval
+              ),
               nombre_calle_aval: data.nombre_calle_aval,
               numero_exterior_aval: data.numero_exterior_aval,
               numero_interior_aval: data.numero_interior_aval,
@@ -573,32 +580,7 @@ export class NewLoanComponent implements OnDestroy, OnInit {
     this.customerSearchVisible = !this.customerSearchVisible;
     this.switchBusqueda()?.writeValue(this.customerSearchVisible);
     if (this.id_cliente_recuperado) {
-      const form_curp_cliente = this.mainForm.get('formCliente.curp_cliente');
-      const form_curp_aval = this.mainForm.get('formAval.curp_aval');
-      const form_telefono_movil_cliente = this.mainForm.get(
-        'formCliente.telefono_movil_cliente'
-      );
-      const form_telefono_fijo_cliente = this.mainForm.get(
-        'formCliente.telefono_fijo_cliente'
-      );
-      const form_telefono_movil_aval = this.mainForm.get(
-        'formAval.telefono_movil_aval'
-      );
-      const form_telefono_fijo_aval = this.mainForm.get(
-        'formAval.telefono_fijo_aval'
-      );
-      form_curp_cliente?.clearAsyncValidators();
-      form_curp_cliente?.updateValueAndValidity();
-      form_curp_aval?.clearAsyncValidators();
-      form_curp_aval?.updateValueAndValidity();
-      form_telefono_movil_cliente?.clearAsyncValidators();
-      form_telefono_movil_cliente?.updateValueAndValidity();
-      form_telefono_fijo_cliente?.clearAsyncValidators();
-      form_telefono_fijo_cliente?.updateValueAndValidity();
-      form_telefono_movil_aval?.clearAsyncValidators();
-      form_telefono_movil_aval?.updateValueAndValidity();
-      form_telefono_fijo_aval?.clearAsyncValidators();
-      form_telefono_fijo_aval?.updateValueAndValidity();
+      this.clearAsyncValidators();
     } else {
       this.mainForm
         .get('formCliente.curp_cliente')
@@ -618,5 +600,34 @@ export class NewLoanComponent implements OnDestroy, OnInit {
   updateCustomerFoundId(idsRecuperados: IdsRecuperados) {
     this.id_cliente_recuperado = idsRecuperados.id_cliente;
     this.id_aval_recuperado = idsRecuperados.id_aval;
+  }
+
+  clearAsyncValidators() {
+    const form_curp_cliente = this.mainForm.get('formCliente.curp_cliente');
+    const form_curp_aval = this.mainForm.get('formAval.curp_aval');
+    const form_telefono_movil_cliente = this.mainForm.get(
+      'formCliente.telefono_movil_cliente'
+    );
+    const form_telefono_fijo_cliente = this.mainForm.get(
+      'formCliente.telefono_fijo_cliente'
+    );
+    const form_telefono_movil_aval = this.mainForm.get(
+      'formAval.telefono_movil_aval'
+    );
+    const form_telefono_fijo_aval = this.mainForm.get(
+      'formAval.telefono_fijo_aval'
+    );
+    form_curp_cliente?.clearAsyncValidators();
+    form_curp_cliente?.updateValueAndValidity();
+    form_curp_aval?.clearAsyncValidators();
+    form_curp_aval?.updateValueAndValidity();
+    form_telefono_movil_cliente?.clearAsyncValidators();
+    form_telefono_movil_cliente?.updateValueAndValidity();
+    form_telefono_fijo_cliente?.clearAsyncValidators();
+    form_telefono_fijo_cliente?.updateValueAndValidity();
+    form_telefono_movil_aval?.clearAsyncValidators();
+    form_telefono_movil_aval?.updateValueAndValidity();
+    form_telefono_fijo_aval?.clearAsyncValidators();
+    form_telefono_fijo_aval?.updateValueAndValidity();
   }
 }
