@@ -44,7 +44,7 @@
               id="plazo"
               formControlName="plazo"
               [options]="plazo"
-              optionLabel="name"
+              optionLabel="semanas_plazo"
               (onChange)="onPlazoChanged($event)"
               placeholder="Plazo de semanas"
               [style]="{ width: '100%' }" />
@@ -67,7 +67,6 @@
               (onSelect)="calculaDiaDeLaSemana($event)"
               dateFormat="dd/mm/yy"
               readonlyInput="true"
-              [minDate]="fechaMinima"
               [style]="{ width: '100%' }" />
             <small
               id="fecha_inicial-help"
@@ -115,6 +114,19 @@
               placeholder="Cantidad total a pagar"
               style="color: green; font-weight: bold"
               [value]="cantidad_pagar" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-calendar-clock"></i>
+              <span> Semana de refinanciamiento:</span>
+            </p-inputGroupAddon>
+            <input
+              pInputText
+              disabled="true"
+              id="semana_refinanciamiento"
+              placeholder="Semana"
+              style="color: green; font-weight: bold"
+              [value]="semana_refinanciamiento" />
           </p-inputGroup>
           <!-- <p-inputGroup [style]="{ width: '99%' }"> -->
           <!--   <p-inputGroupAddon> -->
@@ -902,6 +914,6 @@
     <!-- <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i> -->
   }
 </p-dialog>
-<!-- <pre>{{ mainForm.value | json }}</pre> -->
+<pre>{{ mainForm.value | json }}</pre>
 <!-- <pre>{{ mainForm.get('formCliente')?.errors | json }}</pre> -->
 <!-- <pre>{{ mainForm.get('formAval')?.errors | json }}</pre> -->

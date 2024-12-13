@@ -61,7 +61,7 @@ export interface LoanRequest {
   id_plazo: number;
   cantidad_prestada: number;
   dia_semana: string;
-  fecha_inicial: Date;
+  fecha_inicial: string;
   fecha_final_estimada: Date;
   cantidad_pagar: number;
   tasa_interes: number;
@@ -73,4 +73,11 @@ export interface LoanRequest {
   closed_by: null;
   closed_date: null;
   status_code: null;
+}
+
+export interface Plazo {
+  semanas_plazo: string;
+  tasa_de_interes: number;
+  id: number;
+  semanas_refinancia: string;
 }

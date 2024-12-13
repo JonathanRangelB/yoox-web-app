@@ -27,6 +27,7 @@ import {
   dropDownCollection,
   IdsRecuperados,
   LoanRequest,
+  Plazo,
 } from '../../types/loan-request.interface';
 import { InputSwitch } from 'primeng/inputswitch';
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
@@ -61,9 +62,10 @@ export class NewLoanComponent implements OnDestroy, OnInit {
   customerSearchForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
-  plazo: dropDownCollection[] = plazos;
+  plazo: Plazo[] = plazos;
   semanasDePlazo: number | undefined;
   id_plazo: number | undefined;
+  semana_refinanciamiento: string | undefined = '';
   fecha_inicial: Date | undefined;
   fecha_final_estimada: Date | undefined;
   fecha_final_estimada_string: string | null = null;
@@ -235,22 +237,28 @@ export class NewLoanComponent implements OnDestroy, OnInit {
           this.showLoadingModal = false;
           this.tasa_interes = data.tasa_interes;
           this.cantidadIngresada = data.cantidad_prestada;
+          this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
+          this.fechaMinima = this.fecha_inicial;
           this.semanasDePlazo = +plazos.find(
             (plazo) => plazo.id === data.id_plazo
-          )!.name;
+          )!.semanas_plazo;
           this.cantidad_pagar = +(
             this.cantidadIngresada *
             (1 + this.tasa_interes / 100)
           ).toFixed(2);
           this.pagoSemanal =
             this.cantidad_pagar /
-            Number(plazos.find((plazo) => plazo.id === data.id_plazo)!.name);
+            Number(
+              plazos.find((plazo) => plazo.id === data.id_plazo)!.semanas_plazo
+            );
+          this.semana_refinanciamiento = plazos.find(
+            (plazo) => plazo.id === data.id_plazo
+          )?.semanas_refinancia;
 
-          this.dia_semana = data.dia_semana;
           this.mainForm.patchValue({
             cantidad_prestada: data.cantidad_prestada,
             plazo: plazos.find((plazo) => plazo.id === data.id_plazo),
-            fecha_inicial: new Date(data.fecha_inicial),
+            fecha_inicial: this.fecha_inicial, // la fecha debe ser string mm-dd-yyyy
             observaciones: data.observaciones,
             formCliente: {
               nombre_cliente: data.nombre_cliente,
@@ -298,8 +306,8 @@ export class NewLoanComponent implements OnDestroy, OnInit {
               referencias_dom_aval: data.referencias_dom_aval,
             },
           });
+          this.calculaFechaFinal();
           this.mainForm.updateValueAndValidity();
-          console.log(data);
         });
   }
 
@@ -315,9 +323,10 @@ export class NewLoanComponent implements OnDestroy, OnInit {
    */
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
-    this.semanasDePlazo = value.name;
-    this.tasa_interes = value.value;
+    this.semanasDePlazo = +value.semanas_plazo;
+    this.tasa_interes = value.tasa_de_interes;
     this.id_plazo = value.id;
+    this.semana_refinanciamiento = value.semanas_refinancia;
     this.calculaPrestamo();
     this.calculaFechaFinal();
   }

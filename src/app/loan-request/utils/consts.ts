@@ -1,3 +1,5 @@
+import { Plazo } from '../types/loan-request.interface';
+
 export const tiposCalle = [
   { name: 'CARRETERA', value: 'CARRETERA' },
   { name: 'PRIVADA', value: 'PRIVADA' },
@@ -42,15 +44,20 @@ export const estadosDeLaRepublica = [
   { name: 'Zacatecas', value: 'ZACATECAS' },
 ];
 
-export const plazos = [
-  { name: '14', value: '40', id: 1 },
-  { name: '28', value: '82', id: 2 },
-  { name: '12', value: '20', id: 3 },
-  { name: '13', value: '30', id: 4 },
-  { name: '11', value: '10', id: 5 },
-  { name: '35', value: '110', id: 6 },
-  { name: '26', value: '80', id: 7 },
-  { name: '24', value: '56', id: 8 },
+export const plazos: Plazo[] = [
+  { semanas_plazo: '14', tasa_de_interes: 40, id: 1, semanas_refinancia: '10' },
+  { semanas_plazo: '28', tasa_de_interes: 82, id: 2, semanas_refinancia: '24' },
+  { semanas_plazo: '12', tasa_de_interes: 20, id: 3, semanas_refinancia: '10' },
+  { semanas_plazo: '13', tasa_de_interes: 30, id: 4, semanas_refinancia: '10' },
+  { semanas_plazo: '11', tasa_de_interes: 10, id: 5, semanas_refinancia: '10' },
+  {
+    semanas_plazo: '35',
+    tasa_de_interes: 110,
+    id: 6,
+    semanas_refinancia: '32',
+  },
+  { semanas_plazo: '26', tasa_de_interes: 80, id: 7, semanas_refinancia: '24' },
+  { semanas_plazo: '24', tasa_de_interes: 56, id: 8, semanas_refinancia: '20' },
 ];
 
 export const days = [
