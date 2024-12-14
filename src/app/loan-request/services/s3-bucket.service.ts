@@ -62,4 +62,14 @@ export class S3BucketService {
       }
     );
   }
+
+  downloadSingleFile(path: string, filename: string) {
+    return this.http.post<{ signedUrl: string }>(
+      `${this.baseUrl}file`,
+      { path: `${path}/`, filename },
+      {
+        headers: { authorization: `${this.token}` },
+      }
+    );
+  }
 }

@@ -3,6 +3,7 @@
   <section class="grid">
     @for (file of filesRecovered(); track file) {
       <p-button
+        (onClick)="downloadFile(file)"
         type="button"
         label="{{ file }}"
         text="true"
@@ -11,5 +12,5 @@
     }
   </section>
 } @else {
-  <p>No se encontraron archivos asociados a la solicitud</p>
+  <h3>No se encontraron archivos asociados a la solicitud</h3>
 }
