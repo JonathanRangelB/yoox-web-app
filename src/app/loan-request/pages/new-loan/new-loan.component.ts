@@ -54,6 +54,7 @@ export class NewLoanComponent implements OnDestroy, OnInit {
   readonly route = inject(ActivatedRoute);
   windowMode: string = 'new';
   windowModeParams!: Params;
+  loanId?: string;
   destroy$ = new Subject();
   customerSearchVisible = false;
   customerFolderName?: string;
@@ -221,9 +222,10 @@ export class NewLoanComponent implements OnDestroy, OnInit {
       }
     });
 
-    this.route.params
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((params) => (this.windowModeParams = params));
+    this.route.params.pipe(takeUntil(this.destroy$)).subscribe((params) => {
+      this.windowModeParams = params;
+      this.loanId = this.windowModeParams['loanId'];
+    });
     // console.table({
     //   mode: this.windowMode,
     //   params: this.windowModeParams['loanId'],
@@ -239,6 +241,7 @@ export class NewLoanComponent implements OnDestroy, OnInit {
           this.cantidadIngresada = data.cantidad_prestada;
           this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
           this.fechaMinima = this.fecha_inicial;
+          this.customerFolderName = `${this.loanId}-${data.apellido_paterno_cliente.toUpperCase()}`;
           this.semanasDePlazo = +plazos.find(
             (plazo) => plazo.id === data.id_plazo
           )!.semanas_plazo;
@@ -307,6 +310,9 @@ export class NewLoanComponent implements OnDestroy, OnInit {
             },
           });
           this.calculaFechaFinal();
+          this.calculaDiaDeLaSemana(
+            new Date(data.fecha_inicial.replace(/Z$/, ''))
+          );
           this.mainForm.updateValueAndValidity();
         });
   }
@@ -500,7 +506,7 @@ export class NewLoanComponent implements OnDestroy, OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: { customerFolderName: string }) => {
-          this.customerFolderName = data.customerFolderName;
+          this.customerFolderName = data.customerFolderName.toUpperCase();
           this.triggerUpload();
           this.#messageService.add({
             severity: 'success',

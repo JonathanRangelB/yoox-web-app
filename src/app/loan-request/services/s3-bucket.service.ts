@@ -19,13 +19,13 @@ interface UploadURL {
 export class S3BucketService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.API_URL;
+  private readonly token = localStorage.getItem('token');
 
   getSignedUrls(filesToUpload: { filenames: string[] }) {
-    const token = localStorage.getItem('token');
-    if (!token) throw new Error('Token not found');
+    if (!this.token) throw new Error('Token not found');
 
     return this.http.post<SignedUrls>(`${this.baseUrl}upload`, filesToUpload, {
-      headers: { authorization: `${token}` },
+      headers: { authorization: `${this.token}` },
     });
   }
 
@@ -51,6 +51,15 @@ export class S3BucketService {
         });
         return forkJoin(uploadTasks);
       })
+    );
+  }
+
+  listRequestFiles(requestNumber: string) {
+    return this.http.get<{ files: string[] }>(
+      `${this.baseUrl}list-files/${requestNumber}`,
+      {
+        headers: { authorization: `${this.token}` },
+      }
     );
   }
 }

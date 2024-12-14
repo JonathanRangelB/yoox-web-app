@@ -1,0 +1,15 @@
+@if (filesRecovered().length > 0) {
+  <h3>Archivos encontrados:</h3>
+  <section class="grid">
+    @for (file of filesRecovered(); track file) {
+      <p-button
+        type="button"
+        label="{{ file }}"
+        text="true"
+        raised="true"
+        severity="info" />
+    }
+  </section>
+} @else {
+  <p>No se encontraron archivos asociados a la solicitud</p>
+}

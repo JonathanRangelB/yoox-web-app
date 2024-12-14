@@ -845,6 +845,16 @@
         let-prevCallback="prevCallback"
         let-class="pl-0"
         let-index="index">
+        @if (windowMode === 'view') {
+          @defer (on viewport) {
+            <div class="flex flex-column mr-3 pt-3">
+              <app-list-s3-files
+                [customerFolder]="customerFolderName!"></app-list-s3-files>
+            </div>
+          } @placeholder {
+            <p>Sin archivos</p>
+          }
+        }
         <div class="flex flex-column mr-3 pt-3">
           <p-fileUpload
             #fileUpload
