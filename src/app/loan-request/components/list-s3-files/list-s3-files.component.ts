@@ -30,7 +30,7 @@ export class ListS3FilesComponent implements OnInit, OnDestroy {
       .listRequestFiles(this.customerFolder())
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        next: ({ files }) => {
+        next: (files) => {
           this.filesRecovered.set(files);
         },
       });
@@ -41,7 +41,7 @@ export class ListS3FilesComponent implements OnInit, OnDestroy {
     this.#s3BucketService
       .downloadSingleFile(path, filename)
       .pipe(takeUntil(this.destroy$))
-      .subscribe(({ signedUrl }) => {
+      .subscribe((signedUrl) => {
         const anchor = document.createElement('a');
         anchor.href = signedUrl;
         anchor.download = filename; // Nombre del archivo a guardar

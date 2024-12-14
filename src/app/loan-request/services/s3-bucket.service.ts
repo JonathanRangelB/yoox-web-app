@@ -55,7 +55,7 @@ export class S3BucketService {
   }
 
   listRequestFiles(requestNumber: string) {
-    return this.http.get<{ files: string[] }>(
+    return this.http.get<string[]>(
       `${this.baseUrl}list-files/${requestNumber}`,
       {
         headers: { authorization: `${this.token}` },
@@ -64,7 +64,7 @@ export class S3BucketService {
   }
 
   downloadSingleFile(path: string, filename: string) {
-    return this.http.post<{ signedUrl: string }>(
+    return this.http.post<string>(
       `${this.baseUrl}file`,
       { path: `${path}/`, filename },
       {
