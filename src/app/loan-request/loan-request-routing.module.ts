@@ -1,20 +1,20 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { NewLoanComponent } from './pages/new-loan/new-loan.component';
+import { LoanComponent } from './pages/loan/new-loan.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'new', pathMatch: 'full' },
   {
     path: 'new',
-    component: NewLoanComponent,
+    component: LoanComponent,
   },
   {
     path: 'update/:loanId',
-    component: NewLoanComponent,
+    component: LoanComponent,
   },
   {
     path: 'view/:loanId',
-    component: NewLoanComponent,
+    component: LoanComponent,
   },
 ];
 

@@ -19,9 +19,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { TableModule } from 'primeng/table';
 
 import { LoanRequestRoutingModule } from './loan-request-routing.module';
-import { NewLoanComponent } from './pages/new-loan/new-loan.component';
-import { UpdateLoanComponent } from './pages/update-loan/update-loan.component';
-import { ViewLoanComponent } from './pages/view-loan/view-loan.component';
+import { LoanComponent } from './pages/loan/new-loan.component';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { DialogModule } from 'primeng/dialog';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -31,7 +29,7 @@ import { BusquedaClientesComponent } from './components/busqueda-clientes/busque
 import { ListS3FilesComponent } from './components/list-s3-files/list-s3-files.component';
 
 @NgModule({
-  declarations: [NewLoanComponent, UpdateLoanComponent, ViewLoanComponent],
+  declarations: [LoanComponent],
   imports: [
     CommonModule,
     LoanRequestRoutingModule,

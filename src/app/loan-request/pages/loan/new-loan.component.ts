@@ -36,11 +36,11 @@ import { ActivatedRoute, Params } from '@angular/router';
 import { Dialog } from 'primeng/dialog';
 
 @Component({
-  selector: 'app-new-loan',
+  selector: 'app-loan',
   templateUrl: './new-loan.component.html',
   styleUrls: ['./new-loan.component.css'],
 })
-export class NewLoanComponent implements OnDestroy, OnInit {
+export class LoanComponent implements OnDestroy, OnInit {
   fileUpload = viewChild<FileUpload>('fileUpload');
   switchBusqueda = viewChild<InputSwitch>('switchBusqueda');
   dialogMessage = viewChild<Dialog>('dialogMessage');
@@ -424,6 +424,7 @@ export class NewLoanComponent implements OnDestroy, OnInit {
 
     this.#s3BucketService
       .uploadFiles(files, this.customerFolderName)
+      .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
           this.#messageService.add({
