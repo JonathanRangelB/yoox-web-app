@@ -3,3 +3,7 @@
   top: 4rem;
   right: 5rem;
 }
+
+.tarjeta {
+  cursor: pointer;
+}

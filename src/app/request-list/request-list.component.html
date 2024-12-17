@@ -1,22 +1,27 @@
-<h2>Esta es tu lista de pendientes:</h2>
-<section class="grid">
-  @for (solicitud of solicitudes(); track solicitud) {
-    <p-card
-      header="{{ solicitud.requestNumber }}"
-      class="col-12 md:col-4 lg:col-3 tarjeta">
-      <p>
-        Nombre solicitante: {{ solicitud.customerName }}
-        {{ solicitud.customerLastName }}
-      </p>
-      <p>Cantidad solicitada: {{ solicitud.amount | number }}</p>
-      <p>Fecha de creación: {{ solicitud.creationDate }}</p>
-      <p>Status: {{ solicitud.status }}</p>
-    </p-card>
-  }
-</section>
-<p-speedDial
-  [model]="dialItems()"
-  showIcon="pi pi-filter"
-  hideIcon="pi pi-times"
-  class="filtro"
-  direction="down" />
+<div class="p-2">
+  <h2>Esta es tu lista de pendientes:</h2>
+  <section class="grid">
+    @for (solicitud of solicitudes(); track solicitud) {
+      <p-card
+        (click)="handleClick(solicitud)"
+        header="{{ solicitud.requestNumber }}-{{
+          solicitud.customerLastName | uppercase
+        }}"
+        class="col-12 md:col-4 lg:col-3 tarjeta">
+        <p>
+          Nombre solicitante: {{ solicitud.customerName }}
+          {{ solicitud.customerLastName }}
+        </p>
+        <p>Cantidad solicitada: {{ solicitud.amount | number }}</p>
+        <p>Fecha de creación: {{ solicitud.creationDate | date }}</p>
+        <p>Status: {{ solicitud.status }}</p>
+      </p-card>
+    }
+  </section>
+  <p-speedDial
+    [model]="dialItems()"
+    showIcon="pi pi-filter"
+    hideIcon="pi pi-times"
+    class="filtro"
+    direction="down" />
+</div>

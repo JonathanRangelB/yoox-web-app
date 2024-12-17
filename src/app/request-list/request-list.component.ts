@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CardModule } from 'primeng/card';
@@ -6,6 +6,7 @@ import { SpeedDialModule } from 'primeng/speeddial';
 
 import { Requests } from './types/requests';
 import { MenuItem } from 'primeng/api';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-request-list',
@@ -17,11 +18,12 @@ import { MenuItem } from 'primeng/api';
 export class RequestListComponent implements OnInit {
   solicitudes = signal<Requests[]>([]);
   dialItems = signal<MenuItem[]>([]);
+  readonly router = inject(Router);
 
   ngOnInit(): void {
     this.solicitudes.set([
       {
-        requestNumber: '000001-RANGEL',
+        requestNumber: '000018',
         amount: 5000,
         customerName: 'Jonathan',
         customerLastName: 'Rangel',
@@ -30,7 +32,7 @@ export class RequestListComponent implements OnInit {
         status: 'APROVADO',
       },
       {
-        requestNumber: '000001-GARCIA',
+        requestNumber: '000099',
         amount: 5000,
         customerName: 'Armando',
         customerLastName: 'Garcia',
@@ -39,7 +41,7 @@ export class RequestListComponent implements OnInit {
         status: 'RECHAZADO',
       },
       {
-        requestNumber: '000001-ANAYA',
+        requestNumber: '000033',
         amount: 5000,
         customerName: 'Pedro',
         customerLastName: 'Anaya',
@@ -48,7 +50,7 @@ export class RequestListComponent implements OnInit {
         status: 'REVISION',
       },
       {
-        requestNumber: '000001-PEREZ',
+        requestNumber: '000017',
         amount: 5000,
         customerName: 'Jose Hernesto',
         customerLastName: 'Perez',
@@ -57,7 +59,7 @@ export class RequestListComponent implements OnInit {
         status: 'REVISION',
       },
       {
-        requestNumber: '000001-PEREZ',
+        requestNumber: '000001',
         amount: 5000,
         customerName: 'Patricia',
         customerLastName: 'Perez',
@@ -66,7 +68,7 @@ export class RequestListComponent implements OnInit {
         status: 'CANCELADO',
       },
       {
-        requestNumber: '000001-RANGEL',
+        requestNumber: '000001',
         amount: 5000,
         customerName: 'Jonathan',
         customerLastName: 'Rangel',
@@ -75,7 +77,7 @@ export class RequestListComponent implements OnInit {
         status: 'APROVADO',
       },
       {
-        requestNumber: '000001-GARCIA',
+        requestNumber: '000001',
         amount: 5000,
         customerName: 'Armando',
         customerLastName: 'Garcia',
@@ -84,7 +86,7 @@ export class RequestListComponent implements OnInit {
         status: 'RECHAZADO',
       },
       {
-        requestNumber: '000001-ANAYA',
+        requestNumber: '000001',
         amount: 5000,
         customerName: 'Pedro',
         customerLastName: 'Anaya',
@@ -93,7 +95,7 @@ export class RequestListComponent implements OnInit {
         status: 'REVISION',
       },
       {
-        requestNumber: '000001-PEREZ',
+        requestNumber: '000001',
         amount: 5000,
         customerName: 'Jose Hernesto',
         customerLastName: 'Perez',
@@ -199,5 +201,11 @@ export class RequestListComponent implements OnInit {
         url: 'http://angular.io',
       },
     ]);
+  }
+
+  handleClick(solicitud: Requests) {
+    console.log(solicitud);
+    const loan_request = solicitud.requestNumber;
+    this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
   }
 }
