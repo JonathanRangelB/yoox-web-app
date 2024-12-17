@@ -24,6 +24,13 @@ const routes: Routes = [
             (m) => m.LoanRequestModule
           ),
       },
+      {
+        path: 'request-list',
+        loadComponent: () =>
+          import('../request-list/request-list.component').then(
+            (c) => c.RequestListComponent
+          ),
+      },
       { path: '**', redirectTo: 'not-found' },
     ],
   },

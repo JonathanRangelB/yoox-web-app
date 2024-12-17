@@ -613,11 +613,17 @@ export class LoanComponent implements OnDestroy, OnInit {
     }
   }
 
+  /**
+   * guarda los valores de id_cliente e id_aval los cuales son recuperados/emitidos del componente de busqueda
+   *
+   * @param idsRecuperados - Los Id's recuperados de emitidos por el componente de busqueda
+   */
   updateCustomerFoundId(idsRecuperados: IdsRecuperados) {
     this.id_cliente_recuperado = idsRecuperados.id_cliente;
     this.id_aval_recuperado = idsRecuperados.id_aval;
   }
 
+  /** Encargada de eliminar los validadores asincronos cuando no se necesitan, solo son requedidos en modo new, en los demas modos no se necesitan */
   clearAsyncValidators() {
     const form_curp_cliente = this.mainForm.get('formCliente.curp_cliente');
     const form_curp_aval = this.mainForm.get('formAval.curp_aval');
