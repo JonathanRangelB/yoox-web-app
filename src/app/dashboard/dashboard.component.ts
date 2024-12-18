@@ -35,7 +35,7 @@ export class DashboardComponent {
       label: 'Consultas',
       items: [
         {
-          label: 'Solicitud de prestamo',
+          label: 'Listado de solicitudes',
           icon: 'pi pi-fw pi-file',
           routerLink: '/dashboard/request-list',
           command: () => this.toggleSidebar(),

@@ -81,3 +81,5 @@ export interface Plazo {
   id: number;
   semanas_refinancia: string;
 }
+
+export type WindowMode = 'view' | 'new';

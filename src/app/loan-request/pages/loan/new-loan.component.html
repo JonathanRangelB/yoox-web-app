@@ -874,7 +874,18 @@
             multiple="true" />
         </div>
         <div class="flex flex-column gap-2 mt-3 mr-3">
-          <label for="observaciones">Observaciones adicionales</label>
+          <label for="observaciones">Historial de observaciones</label>
+          <textarea
+            rows="5"
+            cols="30"
+            pInputTextarea
+            [value]="observationsHistory"
+            id="observaciones"
+            [disabled]="true">
+          </textarea>
+        </div>
+        <div class="flex flex-column gap-2 mt-3 mr-3">
+          <label for="observaciones">Añadir observaciones</label>
           <textarea
             formControlName="observaciones"
             rows="5"
