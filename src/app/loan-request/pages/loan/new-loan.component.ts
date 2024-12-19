@@ -238,6 +238,18 @@ export class LoanComponent implements OnDestroy, OnInit {
     //   params: this.windowModeParams['loanId'],
     // });
 
+    this.#installmentsService
+      .getInstallments()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.plazo = data;
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+
     if (this.windowMode === 'view') {
       this.showLoadingModal = true;
       this.clearAsyncValidators();
@@ -606,17 +618,6 @@ export class LoanComponent implements OnDestroy, OnInit {
 
   /** Encargada se setear todo lo necesario para que el modo "view" funcione correctamente */
   fillFormForViewMode() {
-    this.#installmentsService
-      .getInstallments()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.plazo = data;
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
     this.viewLoan = this.#loanRequestService
       .viewLoan({ request_number: this.windowModeParams['loanId'] })
       .pipe(takeUntil(this.destroy$))
