@@ -7,9 +7,10 @@ import { AuthService } from 'src/app/login/services/AuthService';
 import { environment } from 'src/environments/environment';
 
 @Component({
-  selector: 'app-login-page',
-  templateUrl: './login-page.component.html',
-  styleUrl: './login-page.component.scss',
+    selector: 'app-login-page',
+    templateUrl: './login-page.component.html',
+    styleUrl: './login-page.component.scss',
+    standalone: false
 })
 export class LoginPageComponent implements OnInit {
   authService = inject(AuthService);

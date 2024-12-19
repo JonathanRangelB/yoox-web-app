@@ -23,9 +23,10 @@ type severity =
   | undefined;
 
 @Component({
-  selector: 'app-pagos',
-  templateUrl: './pagos.component.html',
-  styleUrl: './pagos.component.scss',
+    selector: 'app-pagos',
+    templateUrl: './pagos.component.html',
+    styleUrl: './pagos.component.scss',
+    standalone: false
 })
 export class PagosComponent implements OnInit {
   public cargandoDatosDePrestamo = false;

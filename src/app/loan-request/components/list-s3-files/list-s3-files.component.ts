@@ -15,10 +15,9 @@ import { Subject, takeUntil } from 'rxjs';
 import { RemovePathPipe } from '../../pipes/remove-path.pipe';
 
 @Component({
-  selector: 'app-list-s3-files',
-  standalone: true,
-  imports: [CommonModule, CardModule, ButtonModule, RemovePathPipe],
-  templateUrl: './list-s3-files.component.html',
+    selector: 'app-list-s3-files',
+    imports: [CommonModule, CardModule, ButtonModule, RemovePathPipe],
+    templateUrl: './list-s3-files.component.html'
 })
 export class ListS3FilesComponent implements OnInit, OnDestroy {
   readonly customerFolder = input.required<string>();
