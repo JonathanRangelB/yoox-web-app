@@ -1,14 +1,14 @@
-import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from 'src/environments/environment';
 import { Plazo } from '../types/loan-request.interface';
+import { environment } from 'src/environments/environment';
+import { inject, Injectable } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class InstallmentsService {
-  readonly #http = inject(HttpClient);
   readonly #baseUrl = environment.API_URL;
+  readonly #http = inject(HttpClient);
   readonly #token = localStorage.getItem('token');
 
   getInstallments() {
