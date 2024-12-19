@@ -38,6 +38,7 @@ import {
 } from '../../types/loan-request.interface';
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
 import { ValidatorExistingPhoneService } from '../../services/validacion-telefonos.service';
+import { InstallmentsService } from '../../services/installments.service';
 
 @Component({
   selector: 'app-loan',
@@ -55,6 +56,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #loanRequestService = inject(LoanRequestService);
   readonly #validatorCurpService = inject(ExistingCurpValidationService);
   readonly #validatorPhonesService = inject(ValidatorExistingPhoneService);
+  readonly #installmentsService = inject(InstallmentsService);
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
   windowMode: WindowMode = 'new';
@@ -68,7 +70,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   customerSearchForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
-  plazo: Plazo[] = plazos;
+  plazo?: Plazo[];
   semanasDePlazo: number | undefined;
   id_plazo: number | undefined;
   semana_refinanciamiento: string | undefined = '';
@@ -255,10 +257,10 @@ export class LoanComponent implements OnDestroy, OnInit {
    */
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
-    this.semanasDePlazo = +value.semanas_plazo;
-    this.tasa_interes = value.tasa_de_interes;
-    this.id_plazo = value.id;
-    this.semana_refinanciamiento = value.semanas_refinancia;
+    this.semanasDePlazo = +value.SEMANAS_PLAZO;
+    this.tasa_interes = value.TASA_DE_INTERES;
+    this.id_plazo = value.ID;
+    this.semana_refinanciamiento = value.SEMANAS_REFINANCIA;
     this.calculaPrestamo();
     this.calculaFechaFinal();
   }
@@ -604,6 +606,17 @@ export class LoanComponent implements OnDestroy, OnInit {
 
   /** Encargada se setear todo lo necesario para que el modo "view" funcione correctamente */
   fillFormForViewMode() {
+    this.#installmentsService
+      .getInstallments()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.plazo = data;
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
     this.viewLoan = this.#loanRequestService
       .viewLoan({ request_number: this.windowModeParams['loanId'] })
       .pipe(takeUntil(this.destroy$))
