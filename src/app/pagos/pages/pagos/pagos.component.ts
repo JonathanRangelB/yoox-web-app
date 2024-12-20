@@ -1,5 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
 
@@ -12,6 +17,14 @@ import {
 import { Prestamos } from 'src/app/pagos/interfaces/prestamos.interface';
 import { PrestamosDetalle } from '../../interfaces/prestamos_detalle.interface';
 import { SPAltaPago } from 'src/app/pagos/interfaces/SPAltaPago.interface';
+import { CommonModule } from '@angular/common';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DataViewModule } from 'primeng/dataview';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { FieldsetModule } from 'primeng/fieldset';
 
 type severity =
   | 'success'
@@ -23,10 +36,21 @@ type severity =
   | undefined;
 
 @Component({
-    selector: 'app-pagos',
-    templateUrl: './pagos.component.html',
-    styleUrl: './pagos.component.scss',
-    standalone: false
+  selector: 'app-pagos',
+  templateUrl: './pagos.component.html',
+  styleUrl: './pagos.component.scss',
+  imports: [
+    CommonModule,
+    InputNumberModule,
+    DataViewModule,
+    TagModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    ToastModule,
+    ReactiveFormsModule,
+    FieldsetModule,
+  ],
+  providers: [ConfirmationService, MessageService],
 })
 export class PagosComponent implements OnInit {
   public cargandoDatosDePrestamo = false;

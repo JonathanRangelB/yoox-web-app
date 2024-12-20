@@ -14,8 +14,10 @@ const routes: Routes = [
       },
       {
         path: 'pagos',
-        loadChildren: () =>
-          import('../pagos/pagos.module').then((m) => m.PagosModule),
+        loadComponent: () =>
+          import('../pagos/pages/pagos/pagos.component').then(
+            (c) => c.PagosComponent
+          ),
       },
       {
         path: 'loan-request',

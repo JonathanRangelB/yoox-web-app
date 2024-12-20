@@ -28,27 +28,27 @@ import { estadosDeLaRepublica, tiposCalle } from '../../utils/consts';
 import { IdsRecuperados } from '../../types/loan-request.interface';
 
 @Component({
-    selector: 'app-busqueda-clientes',
-    changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [
-        CommonModule,
-        FormsModule,
-        ReactiveFormsModule,
-        InputTextModule,
-        InputNumberModule,
-        ButtonModule,
-        TableModule,
-        ToastModule,
-        TooltipModule,
-    ],
-    providers: [MessageService],
-    templateUrl: './busqueda-clientes.component.html',
-    styles: `
+  selector: 'app-busqueda-clientes',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    InputTextModule,
+    InputNumberModule,
+    ButtonModule,
+    TableModule,
+    ToastModule,
+    TooltipModule,
+  ],
+  providers: [MessageService],
+  templateUrl: './busqueda-clientes.component.html',
+  styles: `
     table tr td {
       display: inline-block;
       width: 100px; /* adjust to desired width */
     }
-  `
+  `,
 })
 export class BusquedaClientesComponent {
   readonly parentForm = input.required<FormGroup>();

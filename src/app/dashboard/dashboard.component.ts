@@ -3,10 +3,10 @@ import { MenuItem } from 'primeng/api';
 import { AuthService } from 'src/app/login/services/AuthService';
 
 @Component({
-    selector: 'app-dashboard',
-    templateUrl: './dashboard.component.html',
-    styleUrls: ['./dashboard.component.css'],
-    standalone: false
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css'],
+  standalone: false,
 })
 export class DashboardComponent {
   private authService = inject(AuthService);

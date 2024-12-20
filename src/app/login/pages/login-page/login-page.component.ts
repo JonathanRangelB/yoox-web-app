@@ -1,16 +1,31 @@
 import { HttpErrorResponse } from '@angular/common/http';
 import { Component, OnInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { Router } from '@angular/router';
 import { UserData } from 'src/app/shared/interfaces/userData.interface';
 import { AuthService } from 'src/app/login/services/AuthService';
 import { environment } from 'src/environments/environment';
+import { ButtonModule } from 'primeng/button';
+import { PanelModule } from 'primeng/panel';
+import { CommonModule } from '@angular/common';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
-    selector: 'app-login-page',
-    templateUrl: './login-page.component.html',
-    styleUrl: './login-page.component.scss',
-    standalone: false
+  selector: 'app-login-page',
+  templateUrl: './login-page.component.html',
+  styleUrl: './login-page.component.scss',
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    ButtonModule,
+    PanelModule,
+    InputTextModule,
+  ],
 })
 export class LoginPageComponent implements OnInit {
   authService = inject(AuthService);

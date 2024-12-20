@@ -12,13 +12,10 @@ import { ToastModule } from 'primeng/toast';
 import { FieldsetModule } from 'primeng/fieldset';
 
 import { PagosComponent } from './pages/pagos/pagos.component';
-import { PagosRoutingModule } from './pagos-routing.module';
 
 @NgModule({
-  declarations: [PagosComponent],
   imports: [
     CommonModule,
-    PagosRoutingModule,
     InputNumberModule,
     DataViewModule,
     TagModule,
@@ -27,6 +24,7 @@ import { PagosRoutingModule } from './pagos-routing.module';
     ToastModule,
     ReactiveFormsModule,
     FieldsetModule,
+    PagosComponent,
   ],
   exports: [PagosComponent],
   providers: [ConfirmationService, MessageService],

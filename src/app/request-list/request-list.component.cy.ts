@@ -1,7 +1,7 @@
-import { RequestListComponent } from './request-list.component'
+import { RequestListComponent } from './request-list.component';
 
 describe('RequestListComponent', () => {
   it('should mount', () => {
-    cy.mount(RequestListComponent)
-  })
-})
+    cy.mount(RequestListComponent);
+  });
+});

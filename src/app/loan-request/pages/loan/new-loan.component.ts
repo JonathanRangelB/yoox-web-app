@@ -41,10 +41,10 @@ import { ValidatorExistingPhoneService } from '../../services/validacion-telefon
 import { InstallmentsService } from '../../services/installments.service';
 
 @Component({
-    selector: 'app-loan',
-    templateUrl: './new-loan.component.html',
-    styleUrls: ['./new-loan.component.css'],
-    standalone: false
+  selector: 'app-loan',
+  templateUrl: './new-loan.component.html',
+  styleUrls: ['./new-loan.component.css'],
+  standalone: false,
 })
 export class LoanComponent implements OnDestroy, OnInit {
   fileUpload = viewChild<FileUpload>('fileUpload');

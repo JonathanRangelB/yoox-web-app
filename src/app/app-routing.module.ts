@@ -16,8 +16,10 @@ const routes: Routes = [
   },
   {
     path: 'login',
-    loadChildren: () =>
-      import('./login/login.module').then((m) => m.LoginModule),
+    loadComponent: () =>
+      import('./login/pages/login-page/login-page.component').then(
+        (c) => c.LoginPageComponent
+      ),
   },
   {
     path: 'not-found',
