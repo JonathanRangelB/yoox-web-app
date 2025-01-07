@@ -2,209 +2,117 @@ import { Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 import { CardModule } from 'primeng/card';
-import { SpeedDialModule } from 'primeng/speeddial';
 
 import { Requests } from './types/requests';
 import { MenuItem } from 'primeng/api';
 import { Router } from '@angular/router';
+import { RequestList } from './services/request-list.service';
+import { DialogModule } from 'primeng/dialog';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TagModule } from 'primeng/tag';
+import { DataViewModule } from 'primeng/dataview';
+import { ButtonModule } from 'primeng/button';
+import { MenubarModule } from 'primeng/menubar';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-request-list',
-  imports: [CommonModule, CardModule, SpeedDialModule],
+  imports: [
+    CommonModule,
+    CardModule,
+    DialogModule,
+    ProgressSpinnerModule,
+    TagModule,
+    DataViewModule,
+    ButtonModule,
+    MenubarModule,
+    InputTextModule,
+  ],
   templateUrl: './request-list.component.html',
   styleUrls: ['./request-list.component.css'],
 })
 export class RequestListComponent implements OnInit {
-  solicitudes = signal<Requests[]>([]);
-  dialItems = signal<MenuItem[]>([]);
+  requests = signal<Requests[]>([]);
+  menuItems = signal<MenuItem[]>([]);
+  private requestList = inject(RequestList);
   readonly router = inject(Router);
+  showLoadingModal = false;
+  sortOptions!: { label: string; value: string }[];
+  sortOrder!: number;
+  sortField!: string;
 
   ngOnInit(): void {
-    this.solicitudes.set([
+    this.menuItems.set([
       {
-        requestNumber: '000018',
-        amount: 5000,
-        customerName: 'Jonathan',
-        customerLastName: 'Rangel',
-        customerSurName: 'Bernal',
-        creationDate: new Date(),
-        status: 'APROVADO',
+        label: 'Status',
+        icon: 'pi pi-chart-bar',
+        items: [
+          {
+            label: 'Revision',
+          },
+          {
+            label: 'Aprobado',
+          },
+          {
+            label: 'Rechazado',
+          },
+          {
+            label: 'Actualización',
+          },
+        ],
       },
       {
-        requestNumber: '000099',
-        amount: 5000,
-        customerName: 'Armando',
-        customerLastName: 'Garcia',
-        customerSurName: 'Hernandez',
-        creationDate: new Date(),
-        status: 'RECHAZADO',
+        label: 'Fecha',
+        icon: 'pi pi-calendar',
+        items: [
+          {
+            label: 'Nuevos',
+          },
+          {
+            label: 'Viejos',
+          },
+        ],
       },
       {
-        requestNumber: '000033',
-        amount: 5000,
-        customerName: 'Pedro',
-        customerLastName: 'Anaya',
-        customerSurName: 'Contreras',
-        creationDate: new Date(),
-        status: 'REVISION',
-      },
-      {
-        requestNumber: '000017',
-        amount: 5000,
-        customerName: 'Jose Hernesto',
-        customerLastName: 'Perez',
-        customerSurName: 'Perez',
-        creationDate: new Date(),
-        status: 'REVISION',
-      },
-      {
-        requestNumber: '000001',
-        amount: 5000,
-        customerName: 'Patricia',
-        customerLastName: 'Perez',
-        customerSurName: 'Flores',
-        creationDate: new Date(),
-        status: 'CANCELADO',
-      },
-      {
-        requestNumber: '000001',
-        amount: 5000,
-        customerName: 'Jonathan',
-        customerLastName: 'Rangel',
-        customerSurName: 'Bernal',
-        creationDate: new Date(),
-        status: 'APROVADO',
-      },
-      {
-        requestNumber: '000001',
-        amount: 5000,
-        customerName: 'Armando',
-        customerLastName: 'Garcia',
-        customerSurName: 'Hernandez',
-        creationDate: new Date(),
-        status: 'RECHAZADO',
-      },
-      {
-        requestNumber: '000001',
-        amount: 5000,
-        customerName: 'Pedro',
-        customerLastName: 'Anaya',
-        customerSurName: 'Contreras',
-        creationDate: new Date(),
-        status: 'REVISION',
-      },
-      {
-        requestNumber: '000001',
-        amount: 5000,
-        customerName: 'Jose Hernesto',
-        customerLastName: 'Perez',
-        customerSurName: 'Perez',
-        creationDate: new Date(),
-        status: 'REVISION',
-      },
-      {
-        requestNumber: '000001-PEREZ',
-        amount: 5000,
-        customerName: 'Patricia',
-        customerLastName: 'Perez',
-        customerSurName: 'Flores',
-        creationDate: new Date(),
-        status: 'CANCELADO',
-      },
-      {
-        requestNumber: '000001-RANGEL',
-        amount: 5000,
-        customerName: 'Jonathan',
-        customerLastName: 'Rangel',
-        customerSurName: 'Bernal',
-        creationDate: new Date(),
-        status: 'APROVADO',
-      },
-      {
-        requestNumber: '000001-GARCIA',
-        amount: 5000,
-        customerName: 'Armando',
-        customerLastName: 'Garcia',
-        customerSurName: 'Hernandez',
-        creationDate: new Date(),
-        status: 'RECHAZADO',
-      },
-      {
-        requestNumber: '000001-ANAYA',
-        amount: 5000,
-        customerName: 'Pedro',
-        customerLastName: 'Anaya',
-        customerSurName: 'Contreras',
-        creationDate: new Date(),
-        status: 'REVISION',
-      },
-      {
-        requestNumber: '000001-PEREZ',
-        amount: 5000,
-        customerName: 'Jose Hernesto',
-        customerLastName: 'Perez',
-        customerSurName: 'Perez',
-        creationDate: new Date(),
-        status: 'REVISION',
-      },
-      {
-        requestNumber: '000001-PEREZ',
-        amount: 5000,
-        customerName: 'Patricia',
-        customerLastName: 'Perez',
-        customerSurName: 'Flores',
-        creationDate: new Date(),
-        status: 'CANCELADO',
+        label: 'Cantidad',
+        icon: 'pi pi-dollar',
+        items: [
+          {
+            label: 'Mayor',
+          },
+          {
+            label: 'Menor',
+          },
+        ],
       },
     ]);
-
-    this.dialItems.set([
-      {
-        tooltipOptions: {
-          tooltipLabel: 'Add',
-        },
-        icon: 'pi pi-pencil',
-        command: () => {
-          alert('hola');
-        },
+    this.showLoadingModal = true;
+    this.requestList.getRequestsList().subscribe({
+      next: (data) => {
+        this.requests.set(data);
+        this.showLoadingModal = false;
       },
-      {
-        tooltipOptions: {
-          tooltipLabel: 'Update',
-        },
-        icon: 'pi pi-refresh',
-        command: () => {
-          alert('hola');
-        },
+      error: () => {
+        this.requests.set([]);
+        this.showLoadingModal = false;
       },
-      {
-        tooltipOptions: {
-          tooltipLabel: 'Delete',
-        },
-        icon: 'pi pi-trash',
-        command: () => {
-          alert('hola');
-        },
-      },
-      {
-        tooltipOptions: {
-          tooltipLabel: 'Upload',
-        },
-        icon: 'pi pi-upload',
-      },
-      {
-        tooltipOptions: {
-          tooltipLabel: 'Angular Website',
-        },
-        icon: 'pi pi-external-link',
-        url: 'http://angular.io',
-      },
-    ]);
+    });
   }
 
   handleClick(solicitud: Requests) {
     console.log(solicitud);
-    const loan_request = solicitud.requestNumber;
+    const loan_request = solicitud.request_number;
     this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
+  }
+
+  getSeverity(request: Requests) {
+    switch (request.loan_request_status) {
+      case 'APROBADO':
+        return 'success';
+      case 'EN REVISION':
+        return 'warning';
+      default:
+        return 'danger';
+    }
   }
 }

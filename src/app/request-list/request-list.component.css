@@ -1,9 +1,18 @@
 .filtro {
-  position: fixed;
-  top: 4rem;
-  right: 5rem;
+  position: absolute;
+  top: 5rem;
+  right: 1.5rem;
+}
+
+.width-maximo {
+  max-width: 780px;
+  margin: 0 auto;
 }
 
 .tarjeta {
   cursor: pointer;
+}
+
+.center {
+  margin: 2rem auto;
 }

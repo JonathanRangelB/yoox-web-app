@@ -1,9 +1,9 @@
 export interface Requests {
-  requestNumber: string;
-  amount: number;
-  customerName: string;
-  customerLastName: string;
-  customerSurName: string;
-  creationDate: Date;
-  status: string;
+  request_number: string;
+  nombre_cliente: string;
+  cantidad_prestada: number;
+  created_date: Date;
+  loan_request_status: string;
+  ID_AGENTE: number;
+  nombre_agente: string;
 }

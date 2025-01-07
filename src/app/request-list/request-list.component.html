@@ -1,27 +1,95 @@
-<div class="p-2">
-  <h2>Esta es tu lista de pendientes:</h2>
+<div class="p-2 width-maximo">
+  <!-- <h2>Este es tu listado de solicitudes:</h2> -->
+  <p-menubar [model]="menuItems()">
+    <ng-template pTemplate="end">
+      <div class="flex align-items-center gap-2">
+        <input
+          type="text"
+          pInputText
+          placeholder="Nombre cliente"
+          class="w-auto" />
+        <p-button icon="pi pi-search"></p-button>
+      </div>
+    </ng-template>
+  </p-menubar>
   <section class="grid">
-    @for (solicitud of solicitudes(); track solicitud) {
-      <p-card
-        (click)="handleClick(solicitud)"
-        header="{{ solicitud.requestNumber }}-{{
-          solicitud.customerLastName | uppercase
-        }}"
-        class="col-12 md:col-4 lg:col-3 tarjeta">
-        <p>
-          Nombre solicitante: {{ solicitud.customerName }}
-          {{ solicitud.customerLastName }}
-        </p>
-        <p>Cantidad solicitada: {{ solicitud.amount | number }}</p>
-        <p>Fecha de creación: {{ solicitud.creationDate | date }}</p>
-        <p>Status: {{ solicitud.status }}</p>
-      </p-card>
+    @if (requests().length === 0) {
+      <p class="center">No hay solicitudes pendientes</p>
+    } @else {
+      <p-dataView
+        #dv
+        class="m-2"
+        [value]="requests()"
+        [sortField]="sortField"
+        [sortOrder]="sortOrder">
+        <ng-template pTemplate="list" let-requests>
+          <div class="grid grid-nogutter">
+            <div
+              class="col-12"
+              *ngFor="let item of requests; let first = first"
+              class="col-12">
+              <div
+                class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3"
+                [ngClass]="{ 'border-top-1 surface-border': !first }">
+                <div class="md:w-10rem relative">
+                  <p-tag
+                    [value]="item.loan_request_status"
+                    [severity]="getSeverity(item)"
+                    [style.left.px]="4"
+                    [style.top.px]="4" />
+                </div>
+                <div
+                  class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4">
+                  <div
+                    class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
+                    <div>
+                      <span class="font-medium text-secondary text-sm">{{
+                        item.nombre_cliente | uppercase
+                      }}</span>
+                      <div class="text-lg font-medium text-900 mt-2">
+                        {{ item.request_number }}
+                      </div>
+                    </div>
+                    <div>
+                      <span>Creado el: {{ item.created_date | date }}</span>
+                    </div>
+                  </div>
+                  <div class="flex flex-column md:align-items-end gap-5">
+                    <span class="text-xl font-semibold text-900">
+                      Cantidad ${{ item.cantidad_prestada | number }}
+                    </span>
+                    <div class="flex flex-row-reverse md:flex-row gap-2">
+                      <p-button
+                        icon="pi pi-search"
+                        class="flex-auto md:flex-initial white-space-nowrap"
+                        label="Revisar"
+                        (click)="handleClick(item)"
+                        [disabled]="
+                          !(
+                            item.loan_request_status === 'APROBADO' ||
+                            'RECHAZADO'
+                          )
+                        " />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
     }
   </section>
-  <p-speedDial
-    [model]="dialItems()"
-    showIcon="pi pi-filter"
-    hideIcon="pi pi-times"
-    class="filtro"
-    direction="down" />
+  <p-dialog
+    #dialogMessage
+    header="Cargando información"
+    [modal]="true"
+    [(visible)]="showLoadingModal"
+    closable="false"
+    [style]="{ width: '16.46rem' }"
+    class="text-center">
+    @if (showLoadingModal) {
+      <p-progressSpinner />
+    }
+  </p-dialog>
 </div>

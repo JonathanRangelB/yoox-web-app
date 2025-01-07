@@ -41,18 +41,7 @@ export class DashboardComponent {
           routerLink: '/dashboard/request-list',
           command: () => this.toggleSidebar(),
         },
-        {
-          label: 'VIEW REQUEST TESTING',
-          icon: 'pi pi-fw pi-file',
-          routerLink: '/dashboard/loan-request/view/000018',
-          command: () => this.toggleSidebar(),
-        },
       ],
-    },
-    {
-      label: 'Cerrar sesión',
-      icon: 'pi pi-fw pi-power-off',
-      command: () => this.logout(),
     },
   ];
 
