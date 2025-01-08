@@ -3,12 +3,17 @@
   <p-menubar [model]="menuItems()">
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2">
+        <p-button
+          [icon]="searchTermIcon"
+          (onClick)="changeSearchTerm()"></p-button>
         <input
           type="text"
+          id="search"
           pInputText
-          placeholder="Nombre cliente"
+          [(ngModel)]="searchInputValue"
+          [placeholder]="searchTerm"
           class="w-auto" />
-        <p-button icon="pi pi-search"></p-button>
+        <p-button icon="pi pi-search" (onClick)="search()"></p-button>
       </div>
     </ng-template>
   </p-menubar>
@@ -33,9 +38,9 @@
                 [ngClass]="{ 'border-top-1 surface-border': !first }">
                 <div class="md:w-10rem relative">
                   <p-tag
-                    [value]="item.loan_request_status"
                     [severity]="getSeverity(item)"
                     [style.left.px]="4"
+                    [value]="item.loan_request_status"
                     [style.top.px]="4" />
                 </div>
                 <div
@@ -43,33 +48,31 @@
                   <div
                     class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
                     <div>
-                      <span class="font-medium text-secondary text-sm">{{
-                        item.nombre_cliente | uppercase
-                      }}</span>
+                      <span class="font-medium text-secondary text-sm">
+                        <span class="pi pi-user"></span>
+                        {{ item.nombre_cliente | uppercase }}</span
+                      >
                       <div class="text-lg font-medium text-900 mt-2">
+                        <span class="pi pi-file"></span>
                         {{ item.request_number }}
                       </div>
                     </div>
                     <div>
-                      <span>Creado el: {{ item.created_date | date }}</span>
+                      <span
+                        ><span class="pi pi-calendar-plus"></span>
+                        {{ item.created_date | date }}</span
+                      >
                     </div>
                   </div>
                   <div class="flex flex-column md:align-items-end gap-5">
                     <span class="text-xl font-semibold text-900">
-                      Cantidad ${{ item.cantidad_prestada | number }}
+                      ${{ item.cantidad_prestada | number }}
                     </span>
                     <div class="flex flex-row-reverse md:flex-row gap-2">
                       <p-button
-                        icon="pi pi-search"
-                        class="flex-auto md:flex-initial white-space-nowrap"
+                        icon="pi pi-file-edit"
                         label="Revisar"
-                        (click)="handleClick(item)"
-                        [disabled]="
-                          !(
-                            item.loan_request_status === 'APROBADO' ||
-                            'RECHAZADO'
-                          )
-                        " />
+                        (click)="handleClick(item)" />
                     </div>
                   </div>
                 </div>
@@ -78,6 +81,13 @@
           </div>
         </ng-template>
       </p-dataView>
+      <p-paginator
+        class="paginator"
+        (onPageChange)="onPageChange($event)"
+        [first]="first"
+        [rows]="rows"
+        [totalRecords]="120"
+        [rowsPerPageOptions]="[5, 20, 50]" />
     }
   </section>
   <p-dialog
@@ -92,4 +102,6 @@
       <p-progressSpinner />
     }
   </p-dialog>
+  <p-toast
+    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />
 </div>
