@@ -13,12 +13,12 @@
           pInputText
           [(ngModel)]="searchInputValue"
           [placeholder]="searchTerm"
-          (keypress)="$event.keyCode === 13 ? search() : null"
+          (keypress)="$event.keyCode === 13 ? inputSearch() : null"
           class="w-11rem md:w-auto" />
         <p-button
           size="small"
           icon="pi pi-search"
-          (onClick)="search()"></p-button>
+          (onClick)="inputSearch()"></p-button>
       </div>
     </ng-template>
   </p-menubar>
@@ -101,7 +101,7 @@
         [first]="first"
         [rows]="rows"
         [totalRecords]="totalRecords"
-        [rowsPerPageOptions]="[5, 20, 50]" />
+        [rowsPerPageOptions]="[5, 10, 20, 50]" />
     }
   </section>
   <p-dialog

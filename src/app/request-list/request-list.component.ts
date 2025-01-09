@@ -22,16 +22,16 @@ import { RequestListService } from './services/request-list.service';
 @Component({
   selector: 'app-request-list',
   imports: [
-    CommonModule,
+    ButtonModule,
     CardModule,
+    CommonModule,
+    DataViewModule,
     DialogModule,
+    InputTextModule,
+    MenubarModule,
+    PaginatorModule,
     ProgressSpinnerModule,
     TagModule,
-    DataViewModule,
-    ButtonModule,
-    MenubarModule,
-    InputTextModule,
-    PaginatorModule,
     ToastModule,
   ],
   templateUrl: './request-list.component.html',
@@ -39,23 +39,23 @@ import { RequestListService } from './services/request-list.service';
   providers: [MessageService],
 })
 export class RequestListComponent implements OnInit {
-  requests = signal<Requests[]>([]);
   menuItems = signal<MenuItem[]>([]);
+  requests = signal<Requests[]>([]);
+  readonly #destroyRef$ = inject(DestroyRef);
+  readonly #messageService = inject(MessageService);
+  readonly #requestListService = inject(RequestListService);
+  readonly router = inject(Router);
   first: number = 0;
   rows: number = 5;
-  destroyRef$ = inject(DestroyRef);
-  #requestListService = inject(RequestListService);
-  readonly router = inject(Router);
-  readonly #messageService = inject(MessageService);
-  showLoadingModal = false;
-  sortOptions!: { label: string; value: string }[];
-  sortOrder!: number;
-  sortField!: string;
-  searchTerm: 'cliente' | 'folio' = 'cliente';
-  searchTermIcon: string = 'pi pi-user';
-  totalRecords: number = 0;
   searchInputValue = '';
   searchStatus = '';
+  searchTerm: 'cliente' | 'folio' = 'cliente';
+  searchTermIcon: string = 'pi pi-user';
+  showLoadingModal = false;
+  sortField!: string;
+  sortOptions!: { label: string; value: string }[];
+  sortOrder!: number;
+  totalRecords: number = 0;
 
   ngOnInit(): void {
     this.generateMenu();
@@ -148,7 +148,7 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  search() {
+  inputSearch() {
     if (this.searchInputValue.length < 1) return;
     this.showLoadingModal = true;
     this.searchStatus = '';
@@ -175,20 +175,19 @@ export class RequestListComponent implements OnInit {
     }
     this.#requestListService
       .getRequestsList(options)
-      .pipe(takeUntilDestroyed(this.destroyRef$))
+      .pipe(takeUntilDestroyed(this.#destroyRef$))
       .subscribe({
         next: (data) => {
           this.showLoadingModal = false;
           this.requests.update(() => data);
           this.totalRecords = data[0].CNT;
         },
-        error: (httpErrorResponse: HttpErrorResponse) => {
+        error: (errorRes: HttpErrorResponse) => {
           this.showLoadingModal = false;
           this.#messageService.add({
             severity: 'error',
-            summary: httpErrorResponse.error?.message || httpErrorResponse.name,
-            detail:
-              httpErrorResponse.error?.error || httpErrorResponse.statusText,
+            summary: errorRes.error?.message || errorRes.name,
+            detail: errorRes.error?.error || errorRes.statusText,
             life: 3000,
           });
         },
