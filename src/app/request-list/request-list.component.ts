@@ -138,6 +138,10 @@ export class RequestListComponent implements OnInit {
   ) {
     this.showLoadingModal = true;
     this.searchStatus = status === 'TODOS' ? '' : status;
+    // necesitamos resetear el paginador colocando en 0 el offset/first
+    // para los casos que se estaba en una pagina muy arriba para
+    // asegurar obtener un resultado desde el inicio de la paginacion
+    this.first = 0;
     this.getRequestListItems({
       offSetRows: this.first,
       fetchRowsNumber: this.rows,

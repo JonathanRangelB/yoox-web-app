@@ -1,6 +1,8 @@
 export interface Requests {
   request_number: string;
   nombre_cliente: string;
+  apellido_paterno_cliente: string;
+  apellido_materno_cliente: string;
   cantidad_prestada: number;
   created_date: Date;
   loan_request_status: string;
