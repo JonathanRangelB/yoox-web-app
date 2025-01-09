@@ -6,4 +6,13 @@ export interface Requests {
   loan_request_status: string;
   ID_AGENTE: number;
   nombre_agente: string;
+  CNT: number;
+}
+
+export interface RequestListOptions {
+  offSetRows: number;
+  fetchRowsNumber: number;
+  status?: string;
+  nombreCliente?: string;
+  folio?: string;
 }

@@ -23,7 +23,7 @@
     } @else {
       <p-dataView
         #dv
-        class="m-2"
+        class="m-2 w-full dataview"
         [value]="requests()"
         [sortField]="sortField"
         [sortOrder]="sortOrder">
@@ -86,7 +86,7 @@
         (onPageChange)="onPageChange($event)"
         [first]="first"
         [rows]="rows"
-        [totalRecords]="120"
+        [totalRecords]="totalRecords"
         [rowsPerPageOptions]="[5, 20, 50]" />
     }
   </section>

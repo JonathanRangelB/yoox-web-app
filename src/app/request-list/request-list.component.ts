@@ -1,22 +1,23 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
-import { CardModule } from 'primeng/card';
-
-import { Requests } from './types/requests';
-import { MenuItem, MessageService } from 'primeng/api';
-import { Router } from '@angular/router';
-import { RequestList } from './services/request-list.service';
-import { DialogModule } from 'primeng/dialog';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
-import { TagModule } from 'primeng/tag';
-import { DataViewModule } from 'primeng/dataview';
 import { ButtonModule } from 'primeng/button';
-import { MenubarModule } from 'primeng/menubar';
+import { CardModule } from 'primeng/card';
+import { DataViewModule } from 'primeng/dataview';
+import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { PaginatorModule } from 'primeng/paginator';
+import { MenuItem, MessageService } from 'primeng/api';
+import { MenubarModule } from 'primeng/menubar';
+import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { Router } from '@angular/router';
+import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
+
+import { RequestListOptions, Requests } from './types/requests';
+import { RequestListService } from './services/request-list.service';
 
 @Component({
   selector: 'app-request-list',
@@ -43,7 +44,7 @@ export class RequestListComponent implements OnInit {
   first: number = 0;
   rows: number = 5;
   destroyRef$ = inject(DestroyRef);
-  #requestList = inject(RequestList);
+  #requestListService = inject(RequestListService);
   readonly router = inject(Router);
   readonly #messageService = inject(MessageService);
   showLoadingModal = false;
@@ -54,80 +55,15 @@ export class RequestListComponent implements OnInit {
   searchTermIcon: string = 'pi pi-user';
   totalRecords: number = 0;
   searchInputValue = '';
+  searchStatus = '';
 
   ngOnInit(): void {
-    this.menuItems.set([
-      {
-        label: 'Status',
-        icon: 'pi pi-chart-bar',
-        items: [
-          {
-            label: 'Revision',
-            command: () => this.searchbyStatus('EN REVISION'),
-          },
-          {
-            label: 'Aprobado',
-            command: () => this.searchbyStatus('APROBADO'),
-          },
-          {
-            label: 'Rechazado',
-            command: () => this.searchbyStatus('RECHAZADO'),
-          },
-          {
-            label: 'Actualización',
-            command: () => this.searchbyStatus('ACTUALIZAR'),
-          },
-        ],
-      },
-      {
-        label: 'Ordenar por...',
-        icon: 'pi pi-sort',
-        items: [
-          {
-            label: 'Fecha',
-            icon: 'pi pi-calendar',
-            items: [
-              {
-                label: 'Recientes',
-                command: () => this.orderbyDate('desc'),
-              },
-              {
-                label: 'Antiguos',
-                command: () => this.orderbyDate('asc'),
-              },
-            ],
-          },
-          {
-            label: 'Cantidad',
-            icon: 'pi pi-dollar',
-            items: [
-              {
-                label: 'Mayor',
-                command: () => this.orderbyAmount('desc'),
-              },
-              {
-                label: 'Menor',
-                command: () => this.orderbyAmount('asc'),
-              },
-            ],
-          },
-        ],
-      },
-    ]);
+    this.generateMenu();
     this.showLoadingModal = true;
-    this.#requestList
-      .getRequestsList(this.first, this.rows)
-      .pipe(takeUntilDestroyed(this.destroyRef$))
-      .subscribe({
-        next: (data) => {
-          this.requests.set(data);
-          this.showLoadingModal = false;
-        },
-        error: () => {
-          this.requests.set([]);
-          this.showLoadingModal = false;
-        },
-      });
+    this.getRequestListItems({
+      offSetRows: this.first,
+      fetchRowsNumber: this.rows,
+    });
   }
 
   handleClick(solicitud: Requests) {
@@ -179,70 +115,147 @@ export class RequestListComponent implements OnInit {
     this.searchTerm = this.searchTerm === 'cliente' ? 'folio' : 'cliente';
     this.searchTermIcon =
       this.searchTerm === 'cliente' ? 'pi pi-user' : 'pi pi-hashtag';
+    this.#messageService.add({
+      severity: 'info',
+      summary: 'Cambiado',
+      detail: `Busqueda por ${this.searchTerm}`,
+      life: 3000,
+    });
   }
 
-  onPageChange(event: any) {
-    this.first = event.first;
-    this.rows = event.rows;
+  onPageChange(event: PaginatorState) {
+    this.showLoadingModal = true;
+    this.rows = event.rows!;
+    this.first = event.first!;
+    this.getRequestListItems({
+      offSetRows: this.first,
+      fetchRowsNumber: this.rows,
+    });
   }
 
   searchbyStatus(
-    status: 'ACTUALIZAR' | 'APROBADO' | 'EN REVISION' | 'RECHAZADO'
+    status: 'ACTUALIZAR' | 'APROBADO' | 'EN REVISION' | 'RECHAZADO' | 'TODOS'
   ) {
     this.showLoadingModal = true;
-    this.#requestList
-      .getRequestsList(this.first, this.rows, status)
+    this.searchStatus = status === 'TODOS' ? '' : status;
+    this.getRequestListItems({
+      offSetRows: this.first,
+      fetchRowsNumber: this.rows,
+    });
+  }
+
+  search() {
+    if (this.searchInputValue.length < 1) return;
+    this.showLoadingModal = true;
+    this.searchStatus = '';
+    if (this.searchTerm === 'cliente') {
+      const nombreCliente = this.searchInputValue;
+      this.getRequestListItems({
+        offSetRows: this.first,
+        fetchRowsNumber: this.rows,
+        nombreCliente,
+      });
+    } else {
+      const folio = this.searchInputValue;
+      this.getRequestListItems({
+        offSetRows: this.first,
+        fetchRowsNumber: this.rows,
+        folio,
+      });
+    }
+  }
+
+  getRequestListItems(options: RequestListOptions) {
+    if (this.searchStatus) {
+      options.status = this.searchStatus;
+    }
+    this.#requestListService
+      .getRequestsList(options)
       .pipe(takeUntilDestroyed(this.destroyRef$))
       .subscribe({
-        next: () => {},
-        error: () => {
+        next: (data) => {
+          this.showLoadingModal = false;
+          this.requests.update(() => data);
+          this.totalRecords = data[0].CNT;
+        },
+        error: (httpErrorResponse: HttpErrorResponse) => {
           this.showLoadingModal = false;
           this.#messageService.add({
             severity: 'error',
-            summary: 'Error',
-            detail: 'Ocurrio un error',
+            summary: httpErrorResponse.error?.message || httpErrorResponse.name,
+            detail:
+              httpErrorResponse.error?.error || httpErrorResponse.statusText,
             life: 3000,
           });
         },
       });
   }
 
-  search() {
-    if (this.searchInputValue.length < 1) return;
-    if (this.searchTerm === 'cliente') {
-      const nombreCliente = this.searchInputValue;
-      this.#requestList
-        .getRequestsList(this.first, this.rows, undefined, nombreCliente)
-        .pipe(takeUntilDestroyed(this.destroyRef$))
-        .subscribe({
-          next: () => {},
-          error: () => {
-            this.showLoadingModal = false;
-            this.#messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Ocurrio un error',
-              life: 3000,
-            });
+  generateMenu() {
+    this.menuItems.set([
+      {
+        label: 'Status',
+        icon: 'pi pi-chart-bar',
+        items: [
+          {
+            label: 'Revision',
+            command: () => this.searchbyStatus('EN REVISION'),
           },
-        });
-    } else {
-      const folio = this.searchInputValue;
-      this.#requestList
-        .getRequestsList(this.first, this.rows, undefined, undefined, folio)
-        .pipe(takeUntilDestroyed(this.destroyRef$))
-        .subscribe({
-          next: () => {},
-          error: () => {
-            this.showLoadingModal = false;
-            this.#messageService.add({
-              severity: 'error',
-              summary: 'Error',
-              detail: 'Ocurrio un error',
-              life: 3000,
-            });
+          {
+            label: 'Aprobado',
+            command: () => this.searchbyStatus('APROBADO'),
           },
-        });
-    }
+          {
+            label: 'Rechazado',
+            command: () => this.searchbyStatus('RECHAZADO'),
+          },
+          {
+            label: 'Actualización',
+            command: () => this.searchbyStatus('ACTUALIZAR'),
+          },
+          {
+            separator: true,
+          },
+          {
+            label: 'Mostrar todos',
+            command: () => this.searchbyStatus('TODOS'),
+          },
+        ],
+      },
+      {
+        label: 'Ordenar por...',
+        icon: 'pi pi-sort',
+        items: [
+          {
+            label: 'Fecha',
+            icon: 'pi pi-calendar',
+            items: [
+              {
+                label: 'Recientes',
+                command: () => this.orderbyDate('desc'),
+              },
+              {
+                label: 'Antiguos',
+                command: () => this.orderbyDate('asc'),
+              },
+            ],
+          },
+          {
+            label: 'Cantidad',
+            icon: 'pi pi-dollar',
+            items: [
+              {
+                label: 'Mayor',
+                command: () => this.orderbyAmount('desc'),
+              },
+              {
+                label: 'Menor',
+                command: () => this.orderbyAmount('asc'),
+              },
+            ],
+          },
+        ],
+      },
+    ]);
   }
 }
