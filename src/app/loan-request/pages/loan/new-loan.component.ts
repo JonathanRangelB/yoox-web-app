@@ -39,6 +39,11 @@ import {
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
 import { ValidatorExistingPhoneService } from '../../services/validacion-telefonos.service';
 import { InstallmentsService } from '../../services/installments.service';
+import {
+  getUserFromLocalStorage,
+  removeEmptyValues,
+} from 'src/app/shared/utils/functions.utils';
+import { User } from 'src/app/shared/interfaces/userData.interface';
 
 @Component({
   selector: 'app-loan',
@@ -68,7 +73,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   customerFolderName?: string;
   position: string = 'bottom';
   mainForm: FormGroup;
-  customerSearchForm: FormGroup;
+  // customerSearchForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
   plazo?: Plazo[];
@@ -92,6 +97,14 @@ export class LoanComponent implements OnDestroy, OnInit {
   showLoadingModal = false;
   viewLoan: any;
   observationsHistory = '';
+  status = '';
+  rolUsuario = 'Cobrador';
+  statusProvisional = '';
+  createdBy?: number;
+  createdDate?: Date;
+  closedBy?: number;
+  closedDate?: Date;
+  currentUser!: User | null;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -216,14 +229,16 @@ export class LoanComponent implements OnDestroy, OnInit {
     });
 
     // TODO: Revisar, porque parece que no lo necesito dado que el componente de busqueda de clientes tiene el propio y este no hace nada
-    this.customerSearchForm = this.#formBuilder.group({
-      id: [''],
-      curp: ['', curpValidator()],
-      nombre: [''],
-    });
+
+    // this.customerSearchForm = this.#formBuilder.group({
+    //   id: [''],
+    //   curp: ['', curpValidator()],
+    //   nombre: [''],
+    // });
   }
 
   ngOnInit(): void {
+    this.currentUser = getUserFromLocalStorage();
     this.#activatedRoute.url.pipe(takeUntil(this.destroy$)).subscribe((url) => {
       this.windowMode = url[0].path as WindowMode;
     });
@@ -234,10 +249,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         this.windowModeParams = params;
         this.loanId = this.windowModeParams['loanId'];
       });
-    // console.table({
-    //   mode: this.windowMode,
-    //   params: this.windowModeParams['loanId'],
-    // });
 
     this.#installmentsService
       .getInstallments()
@@ -444,7 +455,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.uploading = true;
     const requestData = this.buildRequestData();
     this.#loanRequestService
-      .registerNewLoan(requestData)
+      .registerLoan(requestData, this.windowMode) // NOTE: para testing, cambiar this.windowMode por 'new'
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: { customerFolderName: string }) => {
@@ -498,13 +509,15 @@ export class LoanComponent implements OnDestroy, OnInit {
       },
       ...additionalData,
     };
+    // TODO: validar todos los campos que se necesitan para el modo view/update
     if (this.windowMode === 'view') {
       requestData = {
         ...requestData,
         observaciones: this.generateHistoricObservationField(),
       };
     }
-    return requestData;
+    return removeEmptyValues(requestData);
+    // return requestData;
   }
 
   /**
@@ -625,6 +638,11 @@ export class LoanComponent implements OnDestroy, OnInit {
       .subscribe({
         next: (data: LoanRequest) => {
           this.showLoadingModal = false;
+          this.status = data.loan_request_status;
+          this.createdBy = data.created_by;
+          this.createdDate = data.created_date;
+          this.closedBy = data.closed_by!;
+          this.closedDate = data.closed_date!;
           this.tasa_interes = data.tasa_interes;
           this.cantidadIngresada = data.cantidad_prestada;
           this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
@@ -722,5 +740,11 @@ export class LoanComponent implements OnDestroy, OnInit {
           }, 5000);
         },
       });
+  }
+
+  updateProvitionalStatus(
+    newStatus: 'ACTUALIZAR' | 'APROBADO' | 'EN REVISION' | 'RECHAZADO'
+  ) {
+    this.statusProvisional = newStatus;
   }
 }

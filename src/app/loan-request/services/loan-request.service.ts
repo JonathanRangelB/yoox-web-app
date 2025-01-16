@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { map } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
+import { WindowMode } from '../types/loan-request.interface';
 
 @Injectable({
   providedIn: 'root',
@@ -11,10 +12,10 @@ export class LoanRequestService {
   private http = inject(HttpClient);
   private readonly baseUrl = environment.API_URL;
 
-  registerNewLoan(payload: any) {
+  registerLoan(payload: any, windowMode: WindowMode) {
     const token = localStorage.getItem('token');
     return this.http
-      .post(`${this.baseUrl}loan-request/new`, payload, {
+      .post(`${this.baseUrl}loan-request/${windowMode}`, payload, {
         headers: { authorization: `${token}` },
       })
       .pipe(

@@ -1,4 +1,22 @@
+@if (windowMode !== 'new') {
+  <p-card
+    header="Información de la solicitud"
+    class="mx-3"
+    [style]="{ maxWidth: '720px', margin: '0 auto' }">
+    <h3>Status: {{ status }}</h3>
+    <p>Folio: {{ loanId }}</p>
+    <p>Carpeta de documentación: {{ customerFolderName }}</p>
+    <p>Creado por (id): {{ createdBy }}</p>
+    <p>Fecha de creación: {{ createdDate | date }}</p>
+    @if (closedBy) {
+      <p>Cerrado por (id): {{ closedBy }}</p>
+      <p>Cerrado en: {{ closedDate | date }}</p>
+    }
+  </p-card>
+}
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
+  <!-- inicio de Card -->
+  <!-- fin de Card -->
   <p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
     <!-- inicio de Cantidades y plazos -->
     <p-stepperPanel header="Cantidades y plazos">
@@ -895,19 +913,69 @@
             id="observaciones">
           </textarea>
         </div>
+        @if (windowMode === 'view') {
+          <section class="mt-3">
+            <span>Acciones administrativas </span>
+            <i
+              class="pi pi-info-circle"
+              pTooltip="Los siguientes botones no actualizan el status de la solicitud actual al ser presionados, el status se actualiza al usar el botón 'Enviar'."></i>
+            <div class="mt-3 ml-0 grid gap-2">
+              <p-button
+                pTooltip="Rechazar la solicitud actual, esta acción no se puede deshacer."
+                tooltipPosition="bottom"
+                label="Rechazar"
+                (onClick)="updateProvitionalStatus('RECHAZADO')"
+                severity="danger"></p-button>
+              <p-button
+                pTooltip="Solicita una actualización de información al agente."
+                tooltipPosition="bottom"
+                label="Solicitar actualización"
+                (onClick)="updateProvitionalStatus('ACTUALIZAR')"
+                severity="warning"></p-button>
+              <p-button
+                pTooltip="Se acepta la solicitud y se genera el prestamo de manera automatica."
+                tooltipPosition="bottom"
+                label="Aprobar"
+                (onClick)="updateProvitionalStatus('APROBADO')"
+                severity="success"></p-button>
+            </div>
+            @if (statusProvisional) {
+              <p>
+                El status nuevo será:
+                <strong>
+                  {{ statusProvisional }}
+                </strong>
+              </p>
+              @if (statusProvisional === status) {
+                <i class="pi pi-exclamation-triangle" style="color: yellow"></i>
+                <span>
+                  El status seleccionado es el mismo al actual, no habra cambio
+                  alguno.
+                </span>
+              }
+            }
+          </section>
+        }
         <div class="flex justify-content-between py-4 gap-2 pr-3">
           <p-button
             label="Anterior"
             icon="pi pi-angle-double-left"
             severity="secondary"
             (onClick)="prevCallback.emit()" />
-          <p-button
-            type="submit"
-            label="Enviar"
-            [loading]="uploading"
-            [disabled]="uploadSuccessfull"
-            icon="pi pi-cloud-upload"
-            iconPos="right" />
+          @if (status !== 'APROBADO' && status !== 'RECHAZADO') {
+            <p-button
+              type="submit"
+              label="Enviar"
+              [loading]="uploading"
+              [disabled]="uploadSuccessfull"
+              icon="pi pi-cloud-upload"
+              iconPos="right" />
+          } @else {
+            <span>
+              <i class="pi pi-exclamation-triangle" style="color: red"></i>
+              Solicitud no modificable</span
+            >
+          }
         </div>
       </ng-template>
     </p-stepperPanel>

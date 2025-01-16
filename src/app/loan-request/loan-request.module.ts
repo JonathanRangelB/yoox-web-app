@@ -27,6 +27,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import { BusquedaClientesComponent } from './components/busqueda-clientes/busqueda-clientes.component';
 import { ListS3FilesComponent } from './components/list-s3-files/list-s3-files.component';
+import { CardModule } from 'primeng/card';
 
 @NgModule({
   declarations: [LoanComponent],
@@ -56,6 +57,7 @@ import { ListS3FilesComponent } from './components/list-s3-files/list-s3-files.c
     DialogModule,
     ProgressSpinnerModule,
     ListS3FilesComponent,
+    CardModule,
   ],
   providers: [ConfirmationService, MessageService],
 })
