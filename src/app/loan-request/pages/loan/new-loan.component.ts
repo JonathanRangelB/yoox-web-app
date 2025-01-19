@@ -68,6 +68,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
   loanId?: string;
+  id?: number;
   destroy$ = new Subject();
   customerSearchVisible = false;
   customerFolderName?: string;
@@ -227,14 +228,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         }
       ),
     });
-
-    // TODO: Revisar, porque parece que no lo necesito dado que el componente de busqueda de clientes tiene el propio y este no hace nada
-
-    // this.customerSearchForm = this.#formBuilder.group({
-    //   id: [''],
-    //   curp: ['', curpValidator()],
-    //   nombre: [''],
-    // });
   }
 
   ngOnInit(): void {
@@ -454,8 +447,9 @@ export class LoanComponent implements OnDestroy, OnInit {
   onFormAccept() {
     this.uploading = true;
     const requestData = this.buildRequestData();
+    const loanMode = this.windowMode === 'new' ? 'new' : 'update';
     this.#loanRequestService
-      .registerLoan(requestData, this.windowMode) // NOTE: para testing, cambiar this.windowMode por 'new'
+      .registerLoan(requestData, loanMode)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: { customerFolderName: string }) => {
@@ -513,11 +507,17 @@ export class LoanComponent implements OnDestroy, OnInit {
     if (this.windowMode === 'view') {
       requestData = {
         ...requestData,
+        id: this.id,
+        request_number: this.loanId,
+        loan_request_status: this.statusProvisional
+          ? this.statusProvisional
+          : this.status,
+        modified_by: this.currentUser?.ID,
+        user_role: this.currentUser?.ROL,
         observaciones: this.generateHistoricObservationField(),
       };
     }
     return removeEmptyValues(requestData);
-    // return requestData;
   }
 
   /**
@@ -639,6 +639,7 @@ export class LoanComponent implements OnDestroy, OnInit {
         next: (data: LoanRequest) => {
           this.showLoadingModal = false;
           this.status = data.loan_request_status;
+          this.id = data.id;
           this.createdBy = data.created_by;
           this.createdDate = data.created_date;
           this.closedBy = data.closed_by!;

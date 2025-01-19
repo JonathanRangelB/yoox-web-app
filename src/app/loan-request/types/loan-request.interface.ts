@@ -83,3 +83,4 @@ export interface Plazo {
 }
 
 export type WindowMode = 'view' | 'new';
+export type LoanMode = 'new' | 'update';
