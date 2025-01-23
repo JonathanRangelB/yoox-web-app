@@ -67,7 +67,6 @@ export class RequestListComponent implements OnInit {
   }
 
   handleClick(solicitud: Requests) {
-    console.log(solicitud);
     const loan_request = solicitud.request_number;
     this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
   }

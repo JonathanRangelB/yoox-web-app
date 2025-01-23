@@ -68,10 +68,10 @@ export interface LoanRequest {
   observaciones: string;
   created_by: number;
   created_date: Date;
-  modified_by: null;
-  modified_date: null;
-  closed_by: null;
-  closed_date: null;
+  modified_by: number;
+  modified_date: Date;
+  closed_by: number;
+  closed_date: Date;
   status_code: null;
 }
 

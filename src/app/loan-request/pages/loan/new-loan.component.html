@@ -8,10 +8,10 @@
     <p>Carpeta de documentación: {{ customerFolderName }}</p>
     <p>Creado por (id): {{ createdBy }}</p>
     <p>Fecha de creación: {{ createdDate | date }}</p>
-    @if (closedBy) {
-      <p>Cerrado por (id): {{ closedBy }}</p>
-      <p>Cerrado en: {{ closedDate | date }}</p>
-    }
+    <p *ngIf="modifiedBy">Modificado por (id): {{ modifiedBy }}</p>
+    <p *ngIf="modifiedDate">Fecha de creación: {{ modifiedDate | date }}</p>
+    <p *ngIf="closedBy">Cerrado por (id): {{ closedBy }}</p>
+    <p *ngIf="closedDate">Cerrado en: {{ closedDate | date }}</p>
   </p-card>
 }
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
@@ -913,7 +913,12 @@
             id="observaciones">
           </textarea>
         </div>
-        @if (windowMode === 'view') {
+        @if (
+          windowMode === 'view' &&
+          currentUser?.ROL !== 'Cobrador' &&
+          status !== 'RECHAZADO' &&
+          status !== 'APROBADO'
+        ) {
           <section class="mt-3">
             <span>Acciones administrativas </span>
             <i
@@ -930,6 +935,7 @@
                 pTooltip="Solicita una actualización de información al agente."
                 tooltipPosition="bottom"
                 label="Solicitar actualización"
+                [hidden]="status === 'ACTUALIZAR'"
                 (onClick)="updateProvitionalStatus('ACTUALIZAR')"
                 severity="warning"></p-button>
               <p-button
@@ -962,7 +968,12 @@
             icon="pi pi-angle-double-left"
             severity="secondary"
             (onClick)="prevCallback.emit()" />
-          @if (status !== 'APROBADO' && status !== 'RECHAZADO') {
+          @if (shouldHideSendButton()) {
+            <span>
+              <i class="pi pi-exclamation-triangle" style="color: red"></i>
+              Solicitud no modificable</span
+            >
+          } @else {
             <p-button
               type="submit"
               label="Enviar"
@@ -970,11 +981,6 @@
               [disabled]="uploadSuccessfull"
               icon="pi pi-cloud-upload"
               iconPos="right" />
-          } @else {
-            <span>
-              <i class="pi pi-exclamation-triangle" style="color: red"></i>
-              Solicitud no modificable</span
-            >
           }
         </div>
       </ng-template>

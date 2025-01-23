@@ -6,7 +6,12 @@ import { User } from '../interfaces/userData.interface';
 export function removeEmptyValues(obj: any): any {
   return Object.entries(obj)
     .filter(
-      ([, value]) => value !== null && value !== undefined && value !== ''
+      ([, value]) =>
+        value !== null &&
+        value !== undefined &&
+        value !== '' &&
+        value !== 'undefined' &&
+        value !== 'null'
     )
     .reduce((acc, [key, value]) => {
       acc[key] =

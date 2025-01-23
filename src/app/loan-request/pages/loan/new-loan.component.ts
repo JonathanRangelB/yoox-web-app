@@ -29,7 +29,6 @@ import {
 import { S3BucketService } from '../../services/s3-bucket.service';
 import { LoanRequestService } from '../../services/loan-request.service';
 import {
-  CurrentUser,
   dropDownCollection,
   IdsRecuperados,
   LoanRequest,
@@ -104,8 +103,11 @@ export class LoanComponent implements OnDestroy, OnInit {
   createdBy?: number;
   createdDate?: Date;
   closedBy?: number;
+  modifiedDate?: Date;
+  modifiedBy?: number;
   closedDate?: Date;
   currentUser!: User | null;
+  timeoutRef?: NodeJS.Timeout;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -263,6 +265,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   }
 
   ngOnDestroy(): void {
+    window.clearTimeout(this.timeoutRef);
     this.destroy$.next(null);
     this.destroy$.complete();
   }
@@ -274,10 +277,10 @@ export class LoanComponent implements OnDestroy, OnInit {
    */
   onPlazoChanged({ value }: DropdownChangeEvent) {
     if (!value) return;
-    this.semanasDePlazo = +value.SEMANAS_PLAZO;
-    this.tasa_interes = value.TASA_DE_INTERES;
-    this.id_plazo = value.ID;
-    this.semana_refinanciamiento = value.SEMANAS_REFINANCIA;
+    this.semanasDePlazo = +value.semanas_plazo;
+    this.tasa_interes = value.tasa_de_interes;
+    this.id_plazo = value.id;
+    this.semana_refinanciamiento = value.semanas_refinancia;
     this.calculaPrestamo();
     this.calculaFechaFinal();
   }
@@ -314,6 +317,7 @@ export class LoanComponent implements OnDestroy, OnInit {
    * @param {Date} date - La fecha  de la cual se quiere saber el nombre de la semana que le corresponde.
    */
   calculaDiaDeLaSemana(date: Date) {
+    console.log(date);
     this.fecha_inicial = date;
     const dayIndex = this.fecha_inicial.getDay();
     this.dia_semana = this.days[dayIndex];
@@ -453,16 +457,28 @@ export class LoanComponent implements OnDestroy, OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (data: { customerFolderName: string }) => {
-          this.customerFolderName = data.customerFolderName.toUpperCase();
+          this.customerFolderName = data.customerFolderName
+            ? data.customerFolderName.toUpperCase()
+            : this.customerFolderName;
           this.triggerUpload();
           this.#messageService.add({
             severity: 'success',
-            summary: 'La solicitud fue creada',
-            detail: 'La solicitud esta en espera a ser aprobada',
+            summary:
+              this.windowMode === 'new'
+                ? 'Cambios realizados'
+                : 'La solicitud fue creada.\n\nRedirigiendo a listado',
+            detail:
+              this.windowMode === 'view'
+                ? `Los datos han sido actualizados correctamente con status ${this.statusProvisional || this.status}`
+                : 'La solicitud esta en espera a ser aprobada.\n\nRedirigiendo a listado.',
             life: 5000,
           });
           this.uploadSuccessfull = true;
           this.uploading = false;
+          this.timeoutRef = setTimeout(
+            () => this.#router.navigate(['/dashboard/request-list']),
+            5000
+          );
         },
         error: (error: any) => {
           this.uploading = false;
@@ -503,15 +519,20 @@ export class LoanComponent implements OnDestroy, OnInit {
       },
       ...additionalData,
     };
-    // TODO: validar todos los campos que se necesitan para el modo view/update
     if (this.windowMode === 'view') {
+      let newStatus = this.statusProvisional
+        ? this.statusProvisional
+        : this.status;
+      if (this.currentUser?.ROL === 'Cobrador')
+        newStatus = newStatus === 'ACTUALIZAR' ? 'EN REVISION' : newStatus;
+      else {
+        newStatus = newStatus === 'EN REVISION' ? 'ACTUALIZAR' : newStatus;
+      }
       requestData = {
         ...requestData,
         id: this.id,
         request_number: this.loanId,
-        loan_request_status: this.statusProvisional
-          ? this.statusProvisional
-          : this.status,
+        loan_request_status: newStatus,
         modified_by: this.currentUser?.ID,
         user_role: this.currentUser?.ROL,
         observaciones: this.generateHistoricObservationField(),
@@ -529,16 +550,15 @@ export class LoanComponent implements OnDestroy, OnInit {
    * @returns {any} - El objeto con la informacion adicional para ser enviado al backend junto con los datos del formulario.
    */
   generateAdditionalDataObject(): any {
-    const user = localStorage.getItem('user');
-    if (!user)
+    if (!this.currentUser)
       throw new Error(
         'No se encontraron los datos del usuario en localStorage'
       );
-    const { ID, ID_GRUPO } = JSON.parse(user) as CurrentUser;
     return {
-      id_agente: ID,
-      created_by: ID,
-      id_grupo_original: ID_GRUPO,
+      id_agente: this.currentUser.ID,
+      created_by: this.currentUser.ID,
+      user_role: this.currentUser.ROL,
+      id_grupo_original: this.currentUser.ID_GRUPO,
       fecha_final_estimada: this.fecha_final_estimada,
       dia_semana: this.dia_semana,
       cantidad_pagar: this.cantidad_pagar,
@@ -642,6 +662,8 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.id = data.id;
           this.createdBy = data.created_by;
           this.createdDate = data.created_date;
+          this.modifiedBy = data.modified_by;
+          this.modifiedDate = data.modified_date;
           this.closedBy = data.closed_by!;
           this.closedDate = data.closed_date!;
           this.tasa_interes = data.tasa_interes;
@@ -747,5 +769,15 @@ export class LoanComponent implements OnDestroy, OnInit {
     newStatus: 'ACTUALIZAR' | 'APROBADO' | 'EN REVISION' | 'RECHAZADO'
   ) {
     this.statusProvisional = newStatus;
+  }
+
+  shouldHideSendButton() {
+    if (this.windowMode === 'view') {
+      if (this.status === 'APROBADO' || this.status === 'RECHAZADO')
+        return true;
+      if (this.currentUser?.ROL === 'Cobrador')
+        if (this.status !== 'ACTUALIZAR') return true;
+    }
+    return false; // windowMode !== 'new'
   }
 }
