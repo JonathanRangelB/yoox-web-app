@@ -83,6 +83,7 @@ export class BusquedaClientesComponent {
       municipio_cliente,
       estado_cliente,
       cp_cliente,
+      id_domicilio_cliente,
       nombre_aval,
       telefono_fijo_aval,
       telefono_movil_aval,
@@ -96,11 +97,14 @@ export class BusquedaClientesComponent {
       municipio_aval,
       estado_aval,
       cp_aval,
+      id_domicilio_aval,
     } = event.data as Customer;
 
     this.idsRecuperados.emit({
       id_aval,
       id_cliente,
+      id_domicilio_cliente,
+      id_domicilio_aval,
     });
 
     this.parentForm()

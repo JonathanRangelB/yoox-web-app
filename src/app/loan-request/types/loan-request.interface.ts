@@ -15,10 +15,13 @@ export interface CurrentUser {
 export interface IdsRecuperados {
   id_cliente: number;
   id_aval: number;
+  id_domicilio_cliente: number;
+  id_domicilio_aval: number;
 }
 
 export interface LoanRequest {
   id: number;
+  id_loan: number;
   request_number: string;
   loan_request_status: string;
   id_agente: number;
@@ -40,6 +43,7 @@ export interface LoanRequest {
   municipio_cliente: string;
   estado_cliente: string;
   cp_cliente: string;
+  id_domicilio_cliente: number;
   referencias_dom_cliente: string;
   id_aval: null;
   nombre_aval: string;
@@ -57,6 +61,7 @@ export interface LoanRequest {
   municipio_aval: string;
   estado_aval: string;
   cp_aval: string;
+  id_domicilio_aval: number;
   referencias_dom_aval: string;
   id_plazo: number;
   cantidad_prestada: number;
@@ -64,7 +69,7 @@ export interface LoanRequest {
   fecha_inicial: string;
   fecha_final_estimada: Date;
   cantidad_pagar: number;
-  tasa_interes: number;
+  tasa_de_interes: number;
   observaciones: string;
   created_by: number;
   created_date: Date;

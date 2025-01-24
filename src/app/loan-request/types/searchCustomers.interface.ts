@@ -31,7 +31,7 @@ export interface Customer {
   telefono_movil_aval: string;
   correo_electronico_aval: string;
   curp_aval: string;
-  id_domicilio_aval: null;
+  id_domicilio_aval: number;
   tipo_calle_aval: null;
   nombre_calle_aval: string;
   numero_exterior_aval: string;

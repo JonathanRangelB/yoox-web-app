@@ -880,6 +880,7 @@
             (uploadHandler)="onUpload($event)"
             showUploadButton="false"
             chooseLabel="Agregar"
+            [disabled]="status === 'RECHAZADO' || status === 'APROBADO'"
             uploadLabel="Subir"
             mode="advanced"
             cancelLabel="Limpiar"

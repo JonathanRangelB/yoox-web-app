@@ -108,6 +108,8 @@ export class LoanComponent implements OnDestroy, OnInit {
   closedDate?: Date;
   currentUser!: User | null;
   timeoutRef?: NodeJS.Timeout;
+  id_domicilio_cliente?: number;
+  id_domicilio_aval?: number;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -500,7 +502,7 @@ export class LoanComponent implements OnDestroy, OnInit {
    */
   buildRequestData(): any {
     let requestData = {};
-    const additionalData = this.generateAdditionalDataObject();
+    const additionalData = this.injectCommonData();
     // la siguiente variable es la que relamente se manda al backend
     // incluye toda la informacion del formulario, datos calculados y datos de sesion
     requestData = {
@@ -510,34 +512,41 @@ export class LoanComponent implements OnDestroy, OnInit {
         ...(this.id_cliente_recuperado
           ? { id_cliente: this.id_cliente_recuperado }
           : {}),
+        ...(this.id_domicilio_cliente
+          ? { id_domicilio_cliente: this.id_domicilio_cliente }
+          : {}),
       },
       formAval: {
         ...this.mainForm.value.formAval,
         ...(this.id_aval_recuperado
           ? { id_aval: this.id_aval_recuperado }
           : {}),
+        ...(this.id_domicilio_aval
+          ? { id_domicilio_aval: this.id_domicilio_aval }
+          : {}),
       },
       ...additionalData,
     };
+    this.observationsHistory = this.generateHistoricObservationField();
+    let newStatus = this.statusProvisional
+      ? this.statusProvisional
+      : this.status;
     if (this.windowMode === 'view') {
-      let newStatus = this.statusProvisional
-        ? this.statusProvisional
-        : this.status;
       if (this.currentUser?.ROL === 'Cobrador')
         newStatus = newStatus === 'ACTUALIZAR' ? 'EN REVISION' : newStatus;
       else {
         newStatus = newStatus === 'EN REVISION' ? 'ACTUALIZAR' : newStatus;
       }
-      requestData = {
-        ...requestData,
-        id: this.id,
-        request_number: this.loanId,
-        loan_request_status: newStatus,
-        modified_by: this.currentUser?.ID,
-        user_role: this.currentUser?.ROL,
-        observaciones: this.generateHistoricObservationField(),
-      };
     }
+    requestData = {
+      ...requestData,
+      loan_request_status: newStatus,
+      id: this.id,
+      request_number: this.loanId,
+      modified_by: this.currentUser?.ID,
+      user_role: this.currentUser?.ROL,
+      observaciones: this.observationsHistory.trim(),
+    };
     return removeEmptyValues(requestData);
   }
 
@@ -549,7 +558,7 @@ export class LoanComponent implements OnDestroy, OnInit {
    * @throws {Error} - Arroja un error si no encuentra la informacion en localStorage, la cual fue generada en el componente `login`
    * @returns {any} - El objeto con la informacion adicional para ser enviado al backend junto con los datos del formulario.
    */
-  generateAdditionalDataObject(): any {
+  injectCommonData(): any {
     if (!this.currentUser)
       throw new Error(
         'No se encontraron los datos del usuario en localStorage'
@@ -601,6 +610,8 @@ export class LoanComponent implements OnDestroy, OnInit {
   updateCustomerFoundId(idsRecuperados: IdsRecuperados) {
     this.id_cliente_recuperado = idsRecuperados.id_cliente;
     this.id_aval_recuperado = idsRecuperados.id_aval;
+    this.id_domicilio_cliente = idsRecuperados.id_domicilio_cliente;
+    this.id_domicilio_aval = idsRecuperados.id_domicilio_aval;
   }
 
   /** Encargada de eliminar los validadores asincronos cuando no se necesitan, solo son requedidos en modo new, en los demas modos no se necesitan */
@@ -660,13 +671,15 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.showLoadingModal = false;
           this.status = data.loan_request_status;
           this.id = data.id;
+          this.id_domicilio_cliente = data.id_domicilio_cliente;
+          this.id_domicilio_aval = data.id_domicilio_aval;
           this.createdBy = data.created_by;
           this.createdDate = data.created_date;
           this.modifiedBy = data.modified_by;
           this.modifiedDate = data.modified_date;
           this.closedBy = data.closed_by!;
           this.closedDate = data.closed_date!;
-          this.tasa_interes = data.tasa_interes;
+          this.tasa_interes = data.tasa_de_interes;
           this.cantidadIngresada = data.cantidad_prestada;
           this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
           this.fechaMinima = this.fecha_inicial;
