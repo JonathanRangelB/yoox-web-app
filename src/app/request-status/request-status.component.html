@@ -84,22 +84,84 @@
   </pre
     >
   </form>
-  @if (loanRequestInfo().informacion) {
-    <p-dialog
-      header="Información de la solicitud"
-      [modal]="true"
-      [(visible)]="visible"
-      [style]="{ width: '50rem' }"
-      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
-      <span>
-        <p>Informacion: {{ loanRequestInfo().informacion }}</p>
-      </span>
+  <p-dialog
+    header="Información de la solicitud"
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
+    @if (loanRequestInfo()) {
+      <!-- inicio de informacion -->
+      <p-card>
+        <ng-template pTemplate="title">
+          <strong>Estado: </strong>
+          <span
+            [ngClass]="{
+              'status-aprobado':
+                loanRequestInfo()?.loan_request_status === 'APROBADO',
+              'status-revision':
+                loanRequestInfo()?.loan_request_status === 'EN REVISION',
+              'status-actualizar':
+                loanRequestInfo()?.loan_request_status === 'ACTUALIZAR',
+              'status-rechazado':
+                loanRequestInfo()?.loan_request_status === 'RECHAZADO',
+            }"
+            >{{ loanRequestInfo()?.loan_request_status }}</span
+          >
+        </ng-template>
+
+        <ng-template pTemplate="content">
+          <div class="p-grid p-fluid">
+            <div class="p-col-12">
+              <strong>Número de solicitud:</strong>
+              {{ loanRequestInfo()?.request_number }}
+            </div>
+
+            <div class="p-col-12">
+              <strong>Agente asignado:</strong>
+              {{ loanRequestInfo()?.nombre_agente }}
+            </div>
+
+            <div class="p-col-12">
+              <strong>Cliente:</strong>
+              {{ loanRequestInfo()?.nombre_cliente }}
+              {{ loanRequestInfo()?.apellido_paterno_cliente }}
+              {{ loanRequestInfo()?.apellido_materno_cliente }}
+            </div>
+
+            @if (loanRequestInfo()?.nombre_aval) {
+              <div class="p-col-12">
+                <strong>Aval:</strong>
+                {{ loanRequestInfo()?.nombre_aval }}
+                {{ loanRequestInfo()?.apellido_paterno_aval }}
+                {{ loanRequestInfo()?.apellido_materno_aval }}
+              </div>
+            }
+
+            <div class="p-col-12">
+              <strong>Cantidad solicitada:</strong> ${{
+                loanRequestInfo()?.cantidad_prestada | number: '1.2-2'
+              }}
+            </div>
+
+            <div class="p-col-12">
+              <strong>Fecha Inicial:</strong>
+              {{ loanRequestInfo()?.fecha_inicial | date: 'longDate' }}
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+      <!-- final de informacion -->
       <button
-        class="w-full md:w-auto"
+        class="w-full md:w-auto mt-3"
         pButton
         type="button"
         (click)="visible.set(false)"
         label="Cerrar"></button>
-    </p-dialog>
-  }
+    } @else {
+      <p-card>
+        <h2 class="text-center">No se encontró información</h2>
+      </p-card>
+    }
+  </p-dialog>
 </div>

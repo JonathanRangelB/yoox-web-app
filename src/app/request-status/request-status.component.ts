@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PanelModule } from 'primeng/panel';
 import {
@@ -12,10 +12,10 @@ import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { DialogModule } from 'primeng/dialog';
-
-interface LoanRequestInfo {
-  informacion: string;
-}
+import { CustomerLoanStatusService } from './services/customerLoanStatus.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CustomerLoanStatus } from './types/customerLoanStatus.type';
+import { CardModule } from 'primeng/card';
 
 @Component({
   selector: 'app-request-status',
@@ -28,6 +28,7 @@ interface LoanRequestInfo {
     FloatLabelModule,
     InputTextModule,
     DialogModule,
+    CardModule,
   ],
 
   templateUrl: './request-status.component.html',
@@ -40,7 +41,9 @@ export class RequestStatusComponent {
   loading = signal<boolean>(false);
   visible = signal<boolean>(false);
   error = signal<string>('');
-  loanRequestInfo = signal<LoanRequestInfo>({ informacion: '' });
+  loanRequestInfo = signal<CustomerLoanStatus | null>(null);
+  customerLoanStatusService = inject(CustomerLoanStatusService);
+  readonly #destroyRef$ = inject(DestroyRef);
 
   constructor() {
     this.requestForm = new FormGroup({
@@ -57,12 +60,22 @@ export class RequestStatusComponent {
 
   requestStatus() {
     this.loading.set(true);
-    setTimeout(() => {
-      this.loanRequestInfo.set({
-        informacion: 'la solicitud fue encontrada en nuestros registros',
+    const loanId = this.requestForm.get('loanrequestid')?.value;
+    const customerLastName = this.requestForm.get('customerlastname')?.value;
+
+    this.customerLoanStatusService
+      .getCustomerLoanStatus(loanId, customerLastName)
+      .pipe(takeUntilDestroyed(this.#destroyRef$))
+      .subscribe({
+        next: (responseData) => {
+          this.loanRequestInfo.set(responseData);
+          this.visible.set(true);
+          this.loading.set(false);
+        },
+        error: () => {
+          this.visible.set(true);
+          this.loading.set(false);
+        },
       });
-      this.visible.set(true);
-      this.loading.set(false);
-    }, 1000);
   }
 }
