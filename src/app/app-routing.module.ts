@@ -22,6 +22,13 @@ const routes: Routes = [
       ),
   },
   {
+    path: 'requeststatus',
+    loadComponent: () =>
+      import('./request-status/request-status.component').then(
+        (c) => c.RequestStatusComponent
+      ),
+  },
+  {
     path: 'not-found',
     // component: NotFoundComponent,
     loadChildren: () =>

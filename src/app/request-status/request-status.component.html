@@ -1,0 +1,105 @@
+<div class="grid justify-content-center h-full mx-1">
+  <form
+    (ngSubmit)="requestStatus()"
+    [formGroup]="requestForm"
+    class="col-12 md:col-6 lg:col-4 mx-2 my-auto max-w-full">
+    <div
+      class="flex flex-row justify-content-center align-items-center mb-2 gap-2">
+      <img
+        src="./assets/yoox.svg"
+        height="40"
+        class=""
+        alt="logo"
+        style="view-transition-name: banner" />
+      <span>Grupo financiero YOOX</span>
+    </div>
+    <p-panel header="Ingresa los datos de tu solicitud">
+      <span class="p-float-label mt-3">
+        <input
+          pInputText
+          data-cy="loanrequestid-input"
+          id="loanrequestid"
+          type="text"
+          formControlName="loanrequestid"
+          placeholder="A1BB2C"
+          maxlength="6"
+          required
+          oninput="this.value = this.value.toUpperCase()"
+          class="w-full" />
+        <label for="loanrequestid">Número de solicitud:</label>
+      </span>
+      <small
+        id="username-help"
+        class="text-red-500"
+        [hidden]="
+          requestForm.controls['loanrequestid'].valid ||
+          !requestForm.controls['loanrequestid'].dirty
+        ">
+        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['required']">
+          El número de solicitud es requerido
+        </p>
+        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['pattern']">
+          Debe tener 6 caracteres. Sólo se admiten letras y numeros.
+        </p>
+      </small>
+      <span class="p-float-label mt-5">
+        <input
+          pInputText
+          data-cy="password-input"
+          formControlName="customerlastname"
+          id="customerlastname"
+          type="text"
+          maxlength="50"
+          class="w-full"
+          oninput="this.value = this.value.toUpperCase()"
+          placeholder="Ramirez"
+          aria-errormessage="customerlastname" />
+        <label for="customerlastname">Apellido paterno:</label>
+      </span>
+      <small
+        id="user-error"
+        class="text-red-500"
+        [hidden]="
+          requestForm.controls['customerlastname'].valid ||
+          !requestForm.controls['customerlastname'].dirty
+        "
+        >El apellido paterno es requerido</small
+      >
+      <button
+        pButton
+        data-cy="login-button"
+        class="mt-5 w-full"
+        type="submit"
+        label="Buscar"
+        [loading]="loading()"
+        [disabled]="!requestForm.valid"></button>
+      @if (error()) {
+        <p class="text-red-500 text-center mb-0" id="error-message">
+          {{ error() }}.
+        </p>
+      }
+    </p-panel>
+    <pre *ngIf="isProdEnv !== 'true'">
+  Entorno actual: {{ environmentName }}
+  </pre
+    >
+  </form>
+  @if (loanRequestInfo().informacion) {
+    <p-dialog
+      header="Información de la solicitud"
+      [modal]="true"
+      [(visible)]="visible"
+      [style]="{ width: '50rem' }"
+      [breakpoints]="{ '1199px': '75vw', '575px': '90vw' }">
+      <span>
+        <p>Informacion: {{ loanRequestInfo().informacion }}</p>
+      </span>
+      <button
+        class="w-full md:w-auto"
+        pButton
+        type="button"
+        (click)="visible.set(false)"
+        label="Cerrar"></button>
+    </p-dialog>
+  }
+</div>

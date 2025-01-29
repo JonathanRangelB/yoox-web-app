@@ -10,7 +10,7 @@ export class LandingComponent {
   title = 'YOOX web app';
   constructor(private router: Router) {}
 
-  navigatetoLogin() {
-    this.router.navigate(['/login']);
+  navigateTo(path: string) {
+    this.router.navigate([path]);
   }
 }
