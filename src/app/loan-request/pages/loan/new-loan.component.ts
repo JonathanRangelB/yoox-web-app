@@ -110,6 +110,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   timeoutRef?: NodeJS.Timeout;
   id_domicilio_cliente?: number;
   id_domicilio_aval?: number;
+  id_agente?: number;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -319,7 +320,6 @@ export class LoanComponent implements OnDestroy, OnInit {
    * @param {Date} date - La fecha  de la cual se quiere saber el nombre de la semana que le corresponde.
    */
   calculaDiaDeLaSemana(date: Date) {
-    console.log(date);
     this.fecha_inicial = date;
     const dayIndex = this.fecha_inicial.getDay();
     this.dia_semana = this.days[dayIndex];
@@ -414,6 +414,19 @@ export class LoanComponent implements OnDestroy, OnInit {
       this.markFormGroupTouched(this.mainForm);
       return;
     }
+
+    if (!this.statusProvisional && this.currentUser?.ROL !== 'Cobrador') {
+      this.#messageService.add({
+        severity: 'error',
+        summary: 'Sin status',
+        detail:
+          'Aun no se ha seleccionado un status nuevo para la solicitud, por favor selecciona uno antes de continuar.',
+        life: 5000,
+      });
+      this.markFormGroupTouched(this.mainForm);
+      return;
+    }
+
     this.#confirmationService.confirm({
       message:
         'Valida que la información de este formulario es correcta y verídica. Estas seguro que deseas continuar con la solicitud?',
@@ -564,13 +577,16 @@ export class LoanComponent implements OnDestroy, OnInit {
         'No se encontraron los datos del usuario en localStorage'
       );
     return {
-      id_agente: this.currentUser.ID,
+      // TODO: revisar la inyeccion de id_usuario
+      id_agente: this.currentUser || this.id_agente,
+      // id_usuario: this.currentUser.ID,
       created_by: this.currentUser.ID,
       user_role: this.currentUser.ROL,
       id_grupo_original: this.currentUser.ID_GRUPO,
       fecha_final_estimada: this.fecha_final_estimada,
       dia_semana: this.dia_semana,
       cantidad_pagar: this.cantidad_pagar,
+      // tasa_de_interes: this.tasa_interes,
     };
   }
 
@@ -671,6 +687,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.showLoadingModal = false;
           this.status = data.loan_request_status;
           this.id = data.id;
+          this.id_agente = data.id_agente;
           this.id_domicilio_cliente = data.id_domicilio_cliente;
           this.id_domicilio_aval = data.id_domicilio_aval;
           this.createdBy = data.created_by;

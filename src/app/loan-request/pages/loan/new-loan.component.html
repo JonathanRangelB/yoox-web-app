@@ -9,7 +9,7 @@
     <p>Creado por (id): {{ createdBy }}</p>
     <p>Fecha de creación: {{ createdDate | date }}</p>
     <p *ngIf="modifiedBy">Modificado por (id): {{ modifiedBy }}</p>
-    <p *ngIf="modifiedDate">Fecha de creación: {{ modifiedDate | date }}</p>
+    <p *ngIf="modifiedDate">Fecha de modificación: {{ modifiedDate | date }}</p>
     <p *ngIf="closedBy">Cerrado por (id): {{ closedBy }}</p>
     <p *ngIf="closedDate">Cerrado en: {{ closedDate | date }}</p>
   </p-card>
@@ -98,7 +98,7 @@
           <p-inputGroup [style]="{ width: '99%' }">
             <p-inputGroupAddon>
               <i class="pi pi-money-bill"></i>
-              <span> Cada semana se pagarian:</span>
+              <span> Pago semanal:</span>
             </p-inputGroupAddon>
             <input
               pInputText
@@ -106,7 +106,7 @@
               id="cantidadSemanal"
               placeholder="Cantidad semanal"
               style="color: green; font-weight: bold"
-              [value]="pagoSemanal" />
+              [value]="pagoSemanal | number: '1.0-2'" />
           </p-inputGroup>
           <p-inputGroup [style]="{ width: '99%' }">
             <p-inputGroupAddon>
@@ -131,7 +131,7 @@
               id="cantidadTotal"
               placeholder="Cantidad total a pagar"
               style="color: green; font-weight: bold"
-              [value]="cantidad_pagar" />
+              [value]="cantidad_pagar | number: '1.0-2'" />
           </p-inputGroup>
           <p-inputGroup [style]="{ width: '99%' }">
             <p-inputGroupAddon>
@@ -942,6 +942,7 @@
               <p-button
                 pTooltip="Se acepta la solicitud y se genera el prestamo de manera automatica."
                 tooltipPosition="bottom"
+                [hidden]="status === 'ACTUALIZAR'"
                 label="Aprobar"
                 (onClick)="updateProvitionalStatus('APROBADO')"
                 severity="success"></p-button>

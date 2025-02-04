@@ -86,4 +86,8 @@ export class LoginPageComponent implements OnInit {
       }
     }
   };
+
+  goToLanding() {
+    this.router.navigate(['/']);
+  }
 }

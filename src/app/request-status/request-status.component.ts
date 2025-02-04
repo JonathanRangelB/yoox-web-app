@@ -16,6 +16,7 @@ import { CustomerLoanStatusService } from './services/customerLoanStatus.service
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CustomerLoanStatus } from './types/customerLoanStatus.type';
 import { CardModule } from 'primeng/card';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-request-status',
@@ -35,6 +36,7 @@ import { CardModule } from 'primeng/card';
   styleUrls: ['./request-status.component.css'],
 })
 export class RequestStatusComponent {
+  router = inject(Router);
   requestForm!: FormGroup;
   isProdEnv = environment.PRODUCTION;
   environmentName = environment.ENV_NAME;
@@ -77,5 +79,9 @@ export class RequestStatusComponent {
           this.loading.set(false);
         },
       });
+  }
+
+  goToLanding() {
+    this.router.navigate(['/']);
   }
 }
