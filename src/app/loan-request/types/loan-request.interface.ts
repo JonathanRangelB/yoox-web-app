@@ -78,6 +78,7 @@ export interface LoanRequest {
   closed_by: number;
   closed_date: Date;
   status_code: null;
+  id_looan: number;
 }
 
 export interface Plazo {

@@ -66,7 +66,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #router = inject(Router);
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
-  loanId?: string;
+  loanRequestId?: string;
   id?: number;
   destroy$ = new Subject();
   customerSearchVisible = false;
@@ -111,6 +111,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   id_domicilio_cliente?: number;
   id_domicilio_aval?: number;
   id_agente?: number;
+  id_loan?: number;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -245,7 +246,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       .pipe(takeUntil(this.destroy$))
       .subscribe((params) => {
         this.windowModeParams = params;
-        this.loanId = this.windowModeParams['loanId'];
+        this.loanRequestId = this.windowModeParams['loanId'];
       });
 
     this.#installmentsService
@@ -559,7 +560,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       ...requestData,
       loan_request_status: newStatus,
       id: this.id,
-      request_number: this.loanId,
+      request_number: this.loanRequestId,
       modified_by: this.currentUser?.ID,
       user_role: this.currentUser?.ROL,
       observaciones: this.observationsHistory.trim(),
@@ -689,6 +690,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.showLoadingModal = false;
           this.status = data.loan_request_status;
           this.id = data.id;
+          this.id_loan = data.id_loan;
           this.id_agente = data.id_agente;
           this.id_domicilio_cliente = data.id_domicilio_cliente;
           this.id_domicilio_aval = data.id_domicilio_aval;
@@ -702,7 +704,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.cantidadIngresada = data.cantidad_prestada;
           this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
           this.fechaMinima = this.fecha_inicial;
-          this.customerFolderName = `${this.loanId}-${data.apellido_paterno_cliente.toUpperCase()}`;
+          this.customerFolderName = `${this.loanRequestId}-${data.apellido_paterno_cliente.toUpperCase()}`;
           this.semanasDePlazo = +plazos.find(
             (plazo) => plazo.id === data.id_plazo
           )!.semanas_plazo;

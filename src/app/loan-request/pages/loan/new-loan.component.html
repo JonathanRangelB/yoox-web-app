@@ -4,7 +4,8 @@
     class="mx-3"
     [style]="{ maxWidth: '720px', margin: '0 auto' }">
     <h3>Status: {{ status }}</h3>
-    <p>Folio: {{ loanId }}</p>
+    <h3 *ngIf="id_loan">Folio de prestamo: {{ id_loan }}</h3>
+    <p>Folio de solicitud: {{ loanRequestId }}</p>
     <p>Carpeta de documentación: {{ customerFolderName }}</p>
     <p>Creado por (id): {{ createdBy }}</p>
     <p>Fecha de creación: {{ createdDate | date: 'medium' }}</p>
