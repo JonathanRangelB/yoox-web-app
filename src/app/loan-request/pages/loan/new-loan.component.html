@@ -7,11 +7,13 @@
     <p>Folio: {{ loanId }}</p>
     <p>Carpeta de documentación: {{ customerFolderName }}</p>
     <p>Creado por (id): {{ createdBy }}</p>
-    <p>Fecha de creación: {{ createdDate | date }}</p>
+    <p>Fecha de creación: {{ createdDate | date: 'medium' }}</p>
     <p *ngIf="modifiedBy">Modificado por (id): {{ modifiedBy }}</p>
-    <p *ngIf="modifiedDate">Fecha de modificación: {{ modifiedDate | date }}</p>
+    <p *ngIf="modifiedDate">
+      Fecha de modificación: {{ modifiedDate | date: 'medium' }}
+    </p>
     <p *ngIf="closedBy">Cerrado por (id): {{ closedBy }}</p>
-    <p *ngIf="closedDate">Cerrado en: {{ closedDate | date }}</p>
+    <p *ngIf="closedDate">Cerrado en: {{ closedDate | date: 'medium' }}</p>
   </p-card>
 }
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">

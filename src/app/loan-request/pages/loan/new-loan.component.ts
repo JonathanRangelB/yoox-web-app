@@ -415,7 +415,11 @@ export class LoanComponent implements OnDestroy, OnInit {
       return;
     }
 
-    if (!this.statusProvisional && this.currentUser?.ROL !== 'Cobrador') {
+    if (
+      !this.statusProvisional &&
+      this.currentUser?.ROL !== 'Cobrador' &&
+      this.windowMode === 'view'
+    ) {
       this.#messageService.add({
         severity: 'error',
         summary: 'Sin status',
@@ -577,16 +581,14 @@ export class LoanComponent implements OnDestroy, OnInit {
         'No se encontraron los datos del usuario en localStorage'
       );
     return {
-      // TODO: revisar la inyeccion de id_usuario
-      id_agente: this.currentUser || this.id_agente,
-      // id_usuario: this.currentUser.ID,
-      created_by: this.currentUser.ID,
+      // NOTE: si existe el id_agente significa que se recupero el dato, osea que es un update, caso contrario es un newLoanRequest
+      id_agente: this.id_agente || this.currentUser.ID,
+      created_by: this.createdBy || this.currentUser.ID,
       user_role: this.currentUser.ROL,
       id_grupo_original: this.currentUser.ID_GRUPO,
       fecha_final_estimada: this.fecha_final_estimada,
       dia_semana: this.dia_semana,
       cantidad_pagar: this.cantidad_pagar,
-      // tasa_de_interes: this.tasa_interes,
     };
   }
 
