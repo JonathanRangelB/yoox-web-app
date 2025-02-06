@@ -112,6 +112,9 @@ export class LoanComponent implements OnDestroy, OnInit {
   id_domicilio_aval?: number;
   id_agente?: number;
   id_loan?: number;
+  nombre_agente?: string;
+  modified_by_name?: string;
+  closed_by_name?: string;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -705,6 +708,9 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
           this.fechaMinima = this.fecha_inicial;
           this.customerFolderName = `${this.loanRequestId}-${data.apellido_paterno_cliente.toUpperCase()}`;
+          this.nombre_agente = data.nombre_agente;
+          this.modified_by_name = data.modified_by_name;
+          this.closed_by_name = data.closed_by_name;
           this.semanasDePlazo = +plazos.find(
             (plazo) => plazo.id === data.id_plazo
           )!.semanas_plazo;

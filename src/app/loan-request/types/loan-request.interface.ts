@@ -25,6 +25,7 @@ export interface LoanRequest {
   request_number: string;
   loan_request_status: string;
   id_agente: number;
+  nombre_agente: string;
   id_grupo_original: number;
   id_cliente: null;
   nombre_cliente: string;
@@ -75,8 +76,10 @@ export interface LoanRequest {
   created_date: Date;
   modified_by: number;
   modified_date: Date;
+  modified_by_name: string;
   closed_by: number;
   closed_date: Date;
+  closed_by_name: string;
   status_code: null;
   id_looan: number;
 }
