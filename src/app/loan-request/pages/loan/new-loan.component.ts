@@ -115,6 +115,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   nombre_agente?: string;
   modified_by_name?: string;
   closed_by_name?: string;
+  id_grupo_original?: number;
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -589,7 +590,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       id_agente: this.id_agente || this.currentUser.ID,
       created_by: this.createdBy || this.currentUser.ID,
       user_role: this.currentUser.ROL,
-      id_grupo_original: this.currentUser.ID_GRUPO,
+      id_grupo_original: this.id_grupo_original || this.currentUser.ID_GRUPO,
       fecha_final_estimada: this.fecha_final_estimada,
       dia_semana: this.dia_semana,
       cantidad_pagar: this.cantidad_pagar,
@@ -711,6 +712,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.nombre_agente = data.nombre_agente;
           this.modified_by_name = data.modified_by_name;
           this.closed_by_name = data.closed_by_name;
+          this.id_grupo_original = data.id_grupo_original;
           this.semanasDePlazo = +plazos.find(
             (plazo) => plazo.id === data.id_plazo
           )!.semanas_plazo;
