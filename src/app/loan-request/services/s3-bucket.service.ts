@@ -55,20 +55,24 @@ export class S3BucketService {
   }
 
   listRequestFiles(requestNumber: string) {
+    const baseUrl = environment.API_URL;
+    const token = localStorage.getItem('token');
     return this.http.get<string[]>(
-      `${this.baseUrl}list-files/${requestNumber}`,
+      `${baseUrl}list-files/${requestNumber}`,
       {
-        headers: { authorization: `${this.token}` },
+        headers: { authorization: `${token}` },
       }
     );
   }
 
   downloadSingleFile(path: string, filename: string) {
+    const baseUrl = environment.API_URL;
+    const token = localStorage.getItem('token');
     return this.http.post<string>(
-      `${this.baseUrl}file`,
+      `${baseUrl}file`,
       { path: `${path}/`, filename },
       {
-        headers: { authorization: `${this.token}` },
+        headers: { authorization: `${token}` },
       }
     );
   }
