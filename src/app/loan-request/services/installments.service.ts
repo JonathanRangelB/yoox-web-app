@@ -9,11 +9,11 @@ import { inject, Injectable } from '@angular/core';
 export class InstallmentsService {
   readonly #baseUrl = environment.API_URL;
   readonly #http = inject(HttpClient);
-  readonly #token = localStorage.getItem('token');
 
   getInstallments() {
+    const token = localStorage.getItem('token');
     return this.#http.get<Plazo[]>(`${this.#baseUrl}installments`, {
-      headers: { authorization: `${this.#token}` },
+      headers: { authorization: `${token}` },
     });
   }
 }

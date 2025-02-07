@@ -6,22 +6,22 @@ import { User } from 'src/app/shared/interfaces/userData.interface';
 
 @Injectable({ providedIn: 'root' })
 export class RequestListService {
-  private http = inject(HttpClient);
-  private baseUrl = environment.API_URL;
-  private token = localStorage.getItem('token');
-  private user: User = JSON.parse(localStorage.getItem('user')!);
+  readonly #http = inject(HttpClient);
+  readonly #baseUrl = environment.API_URL;
 
   getRequestsList(options: RequestListOptions) {
-    return this.http.post<Requests[]>(
-      `${this.baseUrl}loan-request/list`,
+    const user: User = JSON.parse(localStorage.getItem('user')!);
+    const token = localStorage.getItem('token');
+    return this.#http.post<Requests[]>(
+      `${this.#baseUrl}loan-request/list`,
       {
-        id_usuario: this.user.ID,
-        rol_usuario: this.user.ROL,
+        id_usuario: user.ID,
+        rol_usuario: user.ROL,
         ...options,
       },
       {
         headers: {
-          authorization: `${this.token}`,
+          authorization: `${token}`,
         },
       }
     );

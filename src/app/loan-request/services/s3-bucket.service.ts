@@ -18,14 +18,14 @@ interface UploadURL {
 })
 export class S3BucketService {
   private http = inject(HttpClient);
-  private readonly baseUrl = environment.API_URL;
-  private readonly token = localStorage.getItem('token');
 
   getSignedUrls(filesToUpload: { filenames: string[] }) {
-    if (!this.token) throw new Error('Token not found');
+    const baseUrl = environment.API_URL;
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Token not found');
 
-    return this.http.post<SignedUrls>(`${this.baseUrl}upload`, filesToUpload, {
-      headers: { authorization: `${this.token}` },
+    return this.http.post<SignedUrls>(`${baseUrl}upload`, filesToUpload, {
+      headers: { authorization: `${token}` },
     });
   }
 
