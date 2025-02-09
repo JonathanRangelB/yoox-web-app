@@ -75,6 +75,7 @@ export class RequestStatusComponent {
           this.loading.set(false);
         },
         error: () => {
+          this.loanRequestInfo.set(null);
           this.visible.set(true);
           this.loading.set(false);
         },
