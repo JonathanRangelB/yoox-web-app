@@ -1,69 +1,82 @@
-<body>
-  <section class="menu">
-    <nav>
-      <picture>
-        <img
-          class="logo"
-          src="assets/YOOX_transparente_nav.webp"
-          alt="logo"
-          height="64"
-          width="96" />
-      </picture>
-      <section class="links">
-        <button
-          pButton
-          class="contacto"
-          label="Acceder"
-          (click)="navigateTo('login')"></button>
-        <button
-          pButton
-          class="contacto"
-          label="Verifica el estado de tu solicitud"
-          (click)="navigateTo('requeststatus')"></button>
-      </section>
-    </nav>
-  </section>
-  <main class="main">
-    <div class="main__carousel">
-      <picture>
-        <img
-          src="assets/sample1.webp"
-          alt="captura"
-          height="214"
-          width="360"
-          priority />
-      </picture>
-      <picture>
-        <img src="assets/sample2.webp" alt="captura" height="214" width="360" />
-      </picture>
-      <picture>
-        <img src="assets/sample3.webp" alt="captura" height="214" width="360" />
-      </picture>
-      <picture>
-        <img
-          src="assets/YOOX_transparente.webp"
-          alt="captura"
-          height="240"
-          width="360"
-          priority />
-      </picture>
+<div class="layout-wrapper">
+  <p-toolbar>
+    <div class="p-toolbar-group-left">
+      <img
+        src="../../../assets/yoox.svg"
+        width="40"
+        class="logo"
+        alt="logo"
+        style="view-transition-name: banner" />
     </div>
-    <section class="main__description">
-      <span>Descargar la última version de la aplicación</span>
-      <div class="link-wrapper" id="download-section">
-        <a
-          href="https://www.mediafire.com/file/vwgt6n7um6y3af7/InstaladorYOOX-Release_13-02-2024.msi/file"
-          class="contacto"
-          >Windows App</a
-        >
-        o
-        <a
-          href="https://www.mediafire.com/file/6ih17k6o5d9h9sp/yoox-app.apk/file"
-          class="contacto"
-          >Android APK</a
-        >
+    <div class="p-toolbar-group-right">
+      <p-button
+        label="Acceso agentes"
+        icon="pi pi-user"
+        styleClass="p-button-outlined"
+        (onClick)="navigateTo('login')"></p-button>
+    </div>
+  </p-toolbar>
+
+  <div class="content">
+    <div class="hero-section">
+      <h1>Grupo Financiero YOOX</h1>
+      <p>
+        Optimice sus finanzas con nuestra experiencia y tecnología de
+        vanguardia. Ofrecemos soluciones personalizadas para impulsar su
+        crecimiento financiero.
+      </p>
+      <p-button
+        label="Consulta tu solicitud"
+        icon="pi pi-file-check"
+        styleClass="p-button-lg"
+        (onClick)="navigateTo('requeststatus')"></p-button>
+    </div>
+
+    <div class="carousel-section">
+      <p-carousel
+        [value]="carouselItems"
+        [numVisible]="1"
+        [numScroll]="1"
+        [circular]="true"
+        [autoplayInterval]="5000">
+        <ng-template let-item pTemplate="item">
+          <div class="carousel-item">
+            <img [src]="item.imageUrl" [alt]="item.title" />
+            <h3>{{ item.title }}</h3>
+          </div>
+        </ng-template>
+      </p-carousel>
+    </div>
+  </div>
+
+  <p-footer>
+    <div class="footer-content">
+      <div class="footer-section">
+        <h3>Acerca de Nosotros</h3>
+        <p>
+          Somos una empresa financiera dedicada a proporcionar soluciones
+          innovadoras y personalizadas para nuestros clientes.
+        </p>
       </div>
-    </section>
-  </main>
-  <footer class="footer">Created with ❤ by Jonathan Rangel</footer>
-</body>
+      <div class="footer-section">
+        <h3>Contacto</h3>
+        <div>Email: solucionesfinancieras&commat;gmail.com</div>
+        <div>Teléfono: (123) 456-7890</div>
+      </div>
+      <div class="footer-section">
+        <h3>Enlaces Rápidos</h3>
+        <ul>
+          <li><a href="#">Servicios</a></li>
+          <li><a href="#">Productos</a></li>
+          <li><a href="#">FAQ</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; {{ currentYear }} Grupo financiero YOOX. Todos los derechos
+        reservados.
+      </p>
+    </div>
+  </p-footer>
+</div>
