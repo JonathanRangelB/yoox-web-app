@@ -1,4 +1,3 @@
-/* eslint-disable no-useless-escape */
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { Component, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';

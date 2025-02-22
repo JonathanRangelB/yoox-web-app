@@ -1,3 +1,8 @@
+export interface RequestList {
+  loanRequests: Requests[];
+  usersList: User[];
+}
+
 export interface Requests {
   request_number: string;
   nombre_cliente: string;
@@ -17,4 +22,30 @@ export interface RequestListOptions {
   status?: string;
   nombreCliente?: string;
   folio?: string;
+  userIdFilter?: number;
+}
+
+export type LoanStatus =
+  | 'ACTUALIZAR'
+  | 'APROBADO'
+  | 'EN REVISION'
+  | 'RECHAZADO'
+  | 'TODOS';
+
+export interface SearchOptions {
+  status: LoanStatus;
+  userIdFilter?: number;
+}
+
+export enum LoanStatusEnum {
+  revision = 'EN REVISION',
+  aprobado = 'APROBADO',
+  rechazado = 'RECHAZADO',
+  actualizar = 'ACTUALIZAR',
+  todos = 'TODOS',
+}
+
+export interface User {
+  NOMBRE: string;
+  ID: number;
 }

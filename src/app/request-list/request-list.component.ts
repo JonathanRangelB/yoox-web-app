@@ -1,5 +1,12 @@
 import { CommonModule } from '@angular/common';
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  OnInit,
+  signal,
+} from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
@@ -16,7 +23,13 @@ import { Router } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 
-import { RequestListOptions, Requests } from './types/requests';
+import {
+  LoanStatusEnum,
+  RequestListOptions,
+  Requests,
+  SearchOptions,
+  User,
+} from './types/requests';
 import { RequestListService } from './services/request-list.service';
 
 @Component({
@@ -39,8 +52,10 @@ import { RequestListService } from './services/request-list.service';
   providers: [MessageService],
 })
 export class RequestListComponent implements OnInit {
-  menuItems = signal<MenuItem[]>([]);
   requests = signal<Requests[]>([]);
+  usersList = signal<MenuItem[]>([]);
+  requestUserList = signal<User[]>([]);
+  selectedUser?: User;
   readonly #destroyRef$ = inject(DestroyRef);
   readonly #messageService = inject(MessageService);
   readonly #requestListService = inject(RequestListService);
@@ -56,9 +71,107 @@ export class RequestListComponent implements OnInit {
   sortOptions!: { label: string; value: string }[];
   sortOrder!: number;
   totalRecords: number = 0;
+  userIdFilter?: number;
+  menuItems = computed(() => {
+    return [
+      {
+        label: 'filtar por...',
+        icon: 'pi pi-filter',
+        items: [
+          {
+            label: 'Status',
+            icon: 'pi pi-chart-bar',
+            items: [
+              {
+                label: 'Revision',
+                command: () =>
+                  this.search({
+                    status: LoanStatusEnum.revision,
+                    userIdFilter: this.userIdFilter,
+                  }),
+              },
+              {
+                label: 'Aprobado',
+                command: () =>
+                  this.search({
+                    status: LoanStatusEnum.aprobado,
+                    userIdFilter: this.userIdFilter,
+                  }),
+              },
+              {
+                label: 'Rechazado',
+                command: () =>
+                  this.search({
+                    status: LoanStatusEnum.rechazado,
+                    userIdFilter: this.userIdFilter,
+                  }),
+              },
+              {
+                label: 'Actualización',
+                command: () =>
+                  this.search({
+                    status: LoanStatusEnum.actualizar,
+                    userIdFilter: this.userIdFilter,
+                  }),
+              },
+              {
+                separator: true,
+              },
+              {
+                label: 'Mostrar todos',
+                command: () =>
+                  this.search({
+                    status: LoanStatusEnum.todos,
+                    userIdFilter: this.userIdFilter,
+                  }),
+              },
+            ],
+          },
+          {
+            label: 'Agente',
+            icon: 'pi pi-user',
+            items: this.usersList(),
+          },
+        ],
+      },
+      {
+        label: 'Ordenar por...',
+        icon: 'pi pi-sort',
+        items: [
+          {
+            label: 'Fecha',
+            icon: 'pi pi-calendar',
+            items: [
+              {
+                label: 'Recientes',
+                command: () => this.orderbyDate('desc'),
+              },
+              {
+                label: 'Antiguos',
+                command: () => this.orderbyDate('asc'),
+              },
+            ],
+          },
+          {
+            label: 'Cantidad',
+            icon: 'pi pi-dollar',
+            items: [
+              {
+                label: 'Mayor',
+                command: () => this.orderbyAmount('desc'),
+              },
+              {
+                label: 'Menor',
+                command: () => this.orderbyAmount('asc'),
+              },
+            ],
+          },
+        ],
+      },
+    ];
+  });
 
   ngOnInit(): void {
-    this.generateMenu();
     this.showLoadingModal = true;
     this.getRequestListItems({
       offSetRows: this.first,
@@ -132,11 +245,9 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  searchbyStatus(
-    status: 'ACTUALIZAR' | 'APROBADO' | 'EN REVISION' | 'RECHAZADO' | 'TODOS'
-  ) {
+  search({ status, userIdFilter }: SearchOptions) {
     this.showLoadingModal = true;
-    this.searchStatus = status === 'TODOS' ? '' : status;
+    this.searchStatus = status === LoanStatusEnum.todos ? '' : status;
     // necesitamos resetear el paginador colocando en 0 el offset/first
     // para los casos que se estaba en una pagina muy arriba para
     // asegurar obtener un resultado desde el inicio de la paginacion
@@ -144,6 +255,8 @@ export class RequestListComponent implements OnInit {
     this.getRequestListItems({
       offSetRows: this.first,
       fetchRowsNumber: this.rows,
+      status: this.searchStatus,
+      ...(userIdFilter && { userIdFilter }),
     });
   }
 
@@ -172,14 +285,19 @@ export class RequestListComponent implements OnInit {
     if (this.searchStatus) {
       options.status = this.searchStatus;
     }
+    options.userIdFilter =
+      this.selectedUser?.ID || JSON.parse(localStorage.getItem('user')!).ID;
     this.#requestListService
       .getRequestsList(options)
       .pipe(takeUntilDestroyed(this.#destroyRef$))
       .subscribe({
         next: (data) => {
           this.showLoadingModal = false;
-          this.requests.update(() => data);
-          this.totalRecords = data[0].CNT;
+          this.requests.update(() => data.loanRequests);
+          this.requestUserList.update(() => data.usersList);
+          this.generateUsersList();
+          this.totalRecords = data.loanRequests[0].CNT;
+          console.log(data);
         },
         error: (errorRes: HttpErrorResponse) => {
           this.showLoadingModal = false;
@@ -193,71 +311,30 @@ export class RequestListComponent implements OnInit {
       });
   }
 
-  generateMenu() {
-    this.menuItems.set([
-      {
-        label: 'Status',
-        icon: 'pi pi-chart-bar',
-        items: [
-          {
-            label: 'Revision',
-            command: () => this.searchbyStatus('EN REVISION'),
+  // TODO: cambiar el 'command' para que cada item pueda mandar llamar la busqueda de solicitudes,
+  // creo que lo mejor seria guardar el nombre del agente por el cual se desea filtar y ya solo hacer
+  // la llamada a la ejecucion de la funcion de busqueda para no tener que mandarle parametros,
+  // pero bueno, es una opcion porque en si seria lo mismo que mancar llamar la funcion de busqueda con parametros,
+  // pero mas que nada es para hacer que la funcion sea lo mas generica posible asi para que sea mas mantenible
+  generateUsersList() {
+    this.usersList.update(() =>
+      this.requestUserList().map((user): MenuItem => {
+        return {
+          label: `${user.NOMBRE} - ${user.ID}`,
+          command: () => {
+            this.selectedUser = {
+              NOMBRE: user.NOMBRE,
+              ID: user.ID,
+            };
+            return this.getRequestListItems({
+              offSetRows: this.first,
+              fetchRowsNumber: this.rows,
+              userIdFilter: user.ID,
+              ...(this.searchStatus && { status: this.searchStatus }),
+            });
           },
-          {
-            label: 'Aprobado',
-            command: () => this.searchbyStatus('APROBADO'),
-          },
-          {
-            label: 'Rechazado',
-            command: () => this.searchbyStatus('RECHAZADO'),
-          },
-          {
-            label: 'Actualización',
-            command: () => this.searchbyStatus('ACTUALIZAR'),
-          },
-          {
-            separator: true,
-          },
-          {
-            label: 'Mostrar todos',
-            command: () => this.searchbyStatus('TODOS'),
-          },
-        ],
-      },
-      {
-        label: 'Ordenar por...',
-        icon: 'pi pi-sort',
-        items: [
-          {
-            label: 'Fecha',
-            icon: 'pi pi-calendar',
-            items: [
-              {
-                label: 'Recientes',
-                command: () => this.orderbyDate('desc'),
-              },
-              {
-                label: 'Antiguos',
-                command: () => this.orderbyDate('asc'),
-              },
-            ],
-          },
-          {
-            label: 'Cantidad',
-            icon: 'pi pi-dollar',
-            items: [
-              {
-                label: 'Mayor',
-                command: () => this.orderbyAmount('desc'),
-              },
-              {
-                label: 'Menor',
-                command: () => this.orderbyAmount('asc'),
-              },
-            ],
-          },
-        ],
-      },
-    ]);
+        };
+      })
+    );
   }
 }
