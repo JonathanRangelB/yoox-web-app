@@ -31,6 +31,7 @@ import {
   User,
 } from './types/requests';
 import { RequestListService } from './services/request-list.service';
+import { toTitleCaseAndSplit } from '../shared/utils/functions.utils';
 
 @Component({
   selector: 'app-request-list',
@@ -72,6 +73,8 @@ export class RequestListComponent implements OnInit {
   sortOrder!: number;
   totalRecords: number = 0;
   userIdFilter?: number;
+  loggedUser?: User;
+  selectedMenuItem: MenuItem | null = null;
   menuItems = computed(() => {
     return [
       {
@@ -83,9 +86,9 @@ export class RequestListComponent implements OnInit {
             icon: 'pi pi-chart-bar',
             items: [
               {
-                label: 'Revision',
+                label: 'En Revision',
                 command: () =>
-                  this.search({
+                  this.searchByStatus({
                     status: LoanStatusEnum.revision,
                     userIdFilter: this.userIdFilter,
                   }),
@@ -93,7 +96,7 @@ export class RequestListComponent implements OnInit {
               {
                 label: 'Aprobado',
                 command: () =>
-                  this.search({
+                  this.searchByStatus({
                     status: LoanStatusEnum.aprobado,
                     userIdFilter: this.userIdFilter,
                   }),
@@ -101,15 +104,15 @@ export class RequestListComponent implements OnInit {
               {
                 label: 'Rechazado',
                 command: () =>
-                  this.search({
+                  this.searchByStatus({
                     status: LoanStatusEnum.rechazado,
                     userIdFilter: this.userIdFilter,
                   }),
               },
               {
-                label: 'Actualización',
+                label: 'Actualizar',
                 command: () =>
-                  this.search({
+                  this.searchByStatus({
                     status: LoanStatusEnum.actualizar,
                     userIdFilter: this.userIdFilter,
                   }),
@@ -120,7 +123,7 @@ export class RequestListComponent implements OnInit {
               {
                 label: 'Mostrar todos',
                 command: () =>
-                  this.search({
+                  this.searchByStatus({
                     status: LoanStatusEnum.todos,
                     userIdFilter: this.userIdFilter,
                   }),
@@ -173,6 +176,7 @@ export class RequestListComponent implements OnInit {
 
   ngOnInit(): void {
     this.showLoadingModal = true;
+    this.loggedUser = JSON.parse(localStorage.getItem('user')!);
     this.getRequestListItems({
       offSetRows: this.first,
       fetchRowsNumber: this.rows,
@@ -245,7 +249,7 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  search({ status, userIdFilter }: SearchOptions) {
+  searchByStatus({ status, userIdFilter }: SearchOptions) {
     this.showLoadingModal = true;
     this.searchStatus = status === LoanStatusEnum.todos ? '' : status;
     // necesitamos resetear el paginador colocando en 0 el offset/first
@@ -255,7 +259,7 @@ export class RequestListComponent implements OnInit {
     this.getRequestListItems({
       offSetRows: this.first,
       fetchRowsNumber: this.rows,
-      status: this.searchStatus,
+      ...(status && { status: this.searchStatus }),
       ...(userIdFilter && { userIdFilter }),
     });
   }
@@ -285,8 +289,9 @@ export class RequestListComponent implements OnInit {
     if (this.searchStatus) {
       options.status = this.searchStatus;
     }
-    options.userIdFilter =
-      this.selectedUser?.ID || JSON.parse(localStorage.getItem('user')!).ID;
+    if (this.selectedUser?.ID) {
+      options.userIdFilter = this.selectedUser?.ID;
+    }
     this.#requestListService
       .getRequestsList(options)
       .pipe(takeUntilDestroyed(this.#destroyRef$))
@@ -295,9 +300,10 @@ export class RequestListComponent implements OnInit {
           this.showLoadingModal = false;
           this.requests.update(() => data.loanRequests);
           this.requestUserList.update(() => data.usersList);
+          // TODO: agregar un if para solo construir el menu de usuarios solo si el rol de usuario es diferente a 'Cobrador'
           this.generateUsersList();
           this.totalRecords = data.loanRequests[0].CNT;
-          console.log(data);
+          console.log(data.loanRequests[0].CNT);
         },
         error: (errorRes: HttpErrorResponse) => {
           this.showLoadingModal = false;
@@ -317,24 +323,52 @@ export class RequestListComponent implements OnInit {
   // pero bueno, es una opcion porque en si seria lo mismo que mancar llamar la funcion de busqueda con parametros,
   // pero mas que nada es para hacer que la funcion sea lo mas generica posible asi para que sea mas mantenible
   generateUsersList() {
-    this.usersList.update(() =>
-      this.requestUserList().map((user): MenuItem => {
+    this.usersList.update(() => [
+      ...this.requestUserList().map((user): MenuItem => {
         return {
-          label: `${user.NOMBRE} - ${user.ID}`,
+          label: toTitleCaseAndSplit(user.NOMBRE),
+          icon:
+            this.selectedMenuItem?.label === toTitleCaseAndSplit(user.NOMBRE)
+              ? 'pi pi-check'
+              : '',
           command: () => {
+            this.selectedMenuItem = {
+              label: toTitleCaseAndSplit(user.NOMBRE),
+              icon: 'pi pi-check',
+            };
             this.selectedUser = {
-              NOMBRE: user.NOMBRE,
+              NOMBRE: toTitleCaseAndSplit(user.NOMBRE),
               ID: user.ID,
             };
             return this.getRequestListItems({
-              offSetRows: this.first,
+              offSetRows: 0,
               fetchRowsNumber: this.rows,
               userIdFilter: user.ID,
               ...(this.searchStatus && { status: this.searchStatus }),
             });
           },
         };
-      })
-    );
+      }),
+      {
+        separator: true,
+      },
+      {
+        label: 'Mostrar todos',
+        icon:
+          this.selectedMenuItem?.label === 'Mostrar todos' ? 'pi pi-check' : '',
+        command: () => {
+          this.selectedMenuItem = {
+            label: 'Mostrar todos',
+            icon: 'pi pi-check',
+          };
+          this.selectedUser = undefined;
+          return this.getRequestListItems({
+            offSetRows: 0,
+            fetchRowsNumber: this.rows,
+            ...(this.searchStatus && { status: this.searchStatus }),
+          });
+        },
+      },
+    ]);
   }
 }

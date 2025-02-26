@@ -38,3 +38,23 @@ export function getUserFromLocalStorage(): User | null {
     return null;
   }
 }
+
+/**
+ * @param input - Nombre a convertir a titlecase
+ * @returns string - Nombre convertido a titlecase y separado por espacios
+ */
+export function toTitleCaseAndSplit(input: string): string {
+  if (!input) {
+    return input;
+  }
+
+  const words = input.split(' ').filter((word) => word.trim() !== '');
+  if (words.length === 0) {
+    return input;
+  }
+
+  const titleCasedWords = words.map(
+    (word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+  );
+  return titleCasedWords.slice(0, 2).join(' ');
+}
