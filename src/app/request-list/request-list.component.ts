@@ -75,6 +75,17 @@ export class RequestListComponent implements OnInit {
   userIdFilter?: number;
   loggedUser?: User;
   selectedMenuItem: MenuItem | null = null;
+  selectedStatusItem: string | null = null;
+
+  // TODO: agregar logica para cuando el backed arroje un error, ver que hacer:
+  // resetear el useridfilter y/o el status
+  // esto porque al ahora ser variables de claase/estado
+  // al intentar usar un segundo filtro de mantiene el dato anterior
+  // causando que los filtrados subsecuentes no funcionen correctamente
+  // asi que tengo que investigar para aplicar 1 de 2 cosas:
+  // 1. resetear el valor de la variable en caso de error
+  // 2. mantener un estado temporal para en caso de error setear el temporal retornar el valor original.
+
   menuItems = computed(() => {
     return [
       {
@@ -87,46 +98,46 @@ export class RequestListComponent implements OnInit {
             items: [
               {
                 label: 'En Revision',
-                command: () =>
-                  this.searchByStatus({
-                    status: LoanStatusEnum.revision,
-                    userIdFilter: this.userIdFilter,
-                  }),
+                command: () => this.selectStatusItem(LoanStatusEnum.revision),
+                icon:
+                  this.selectedStatusItem === LoanStatusEnum.revision
+                    ? 'pi pi-check'
+                    : '',
               },
               {
                 label: 'Aprobado',
-                command: () =>
-                  this.searchByStatus({
-                    status: LoanStatusEnum.aprobado,
-                    userIdFilter: this.userIdFilter,
-                  }),
+                command: () => this.selectStatusItem(LoanStatusEnum.aprobado),
+                icon:
+                  this.selectedStatusItem === LoanStatusEnum.aprobado
+                    ? 'pi pi-check'
+                    : '',
               },
               {
                 label: 'Rechazado',
-                command: () =>
-                  this.searchByStatus({
-                    status: LoanStatusEnum.rechazado,
-                    userIdFilter: this.userIdFilter,
-                  }),
+                command: () => this.selectStatusItem(LoanStatusEnum.rechazado),
+                icon:
+                  this.selectedStatusItem === LoanStatusEnum.rechazado
+                    ? 'pi pi-check'
+                    : '',
               },
               {
                 label: 'Actualizar',
-                command: () =>
-                  this.searchByStatus({
-                    status: LoanStatusEnum.actualizar,
-                    userIdFilter: this.userIdFilter,
-                  }),
+                command: () => this.selectStatusItem(LoanStatusEnum.actualizar),
+                icon:
+                  this.selectedStatusItem === LoanStatusEnum.actualizar
+                    ? 'pi pi-check'
+                    : '',
               },
               {
                 separator: true,
               },
               {
                 label: 'Mostrar todos',
-                command: () =>
-                  this.searchByStatus({
-                    status: LoanStatusEnum.todos,
-                    userIdFilter: this.userIdFilter,
-                  }),
+                command: () => this.selectStatusItem(LoanStatusEnum.todos),
+                icon:
+                  this.selectedStatusItem === LoanStatusEnum.todos
+                    ? 'pi pi-check'
+                    : '',
               },
             ],
           },
@@ -317,11 +328,6 @@ export class RequestListComponent implements OnInit {
       });
   }
 
-  // TODO: cambiar el 'command' para que cada item pueda mandar llamar la busqueda de solicitudes,
-  // creo que lo mejor seria guardar el nombre del agente por el cual se desea filtar y ya solo hacer
-  // la llamada a la ejecucion de la funcion de busqueda para no tener que mandarle parametros,
-  // pero bueno, es una opcion porque en si seria lo mismo que mancar llamar la funcion de busqueda con parametros,
-  // pero mas que nada es para hacer que la funcion sea lo mas generica posible asi para que sea mas mantenible
   generateUsersList() {
     this.usersList.update(() => [
       ...this.requestUserList().map((user): MenuItem => {
@@ -370,5 +376,10 @@ export class RequestListComponent implements OnInit {
         },
       },
     ]);
+  }
+
+  selectStatusItem(status: LoanStatusEnum) {
+    this.selectedStatusItem = status;
+    this.searchByStatus({ status, userIdFilter: this.userIdFilter });
   }
 }
