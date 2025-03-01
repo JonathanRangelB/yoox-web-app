@@ -17,7 +17,7 @@
       <span class="p-float-label mt-3">
         <input
           pInputText
-          data-cy="loanrequestid-input"
+          data-cy="loanrequestid"
           id="loanrequestid"
           type="text"
           formControlName="loanrequestid"
@@ -45,7 +45,7 @@
       <span class="p-float-label mt-5">
         <input
           pInputText
-          data-cy="password-input"
+          data-cy="customerlastname"
           formControlName="customerlastname"
           id="customerlastname"
           type="text"
@@ -67,7 +67,7 @@
       >
       <button
         pButton
-        data-cy="login-button"
+        data-cy="buscar"
         class="mt-5 w-full"
         type="submit"
         label="Buscar"
@@ -84,11 +84,13 @@
     </pre>
     <p-button
       class="mt-3"
+      data-cy="regresar"
       label="regresar"
       type="button"
       (onClick)="goToLanding()"></p-button>
   </form>
   <p-dialog
+    data-cy="dialog_result"
     header="Información de la solicitud"
     [modal]="true"
     [(visible)]="visible"
@@ -159,6 +161,7 @@
       <button
         class="w-full md:w-auto mt-3"
         pButton
+        data-cy="cerrar"
         type="button"
         (click)="visible.set(false)"
         label="Cerrar"></button>

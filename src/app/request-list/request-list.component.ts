@@ -77,15 +77,6 @@ export class RequestListComponent implements OnInit {
   selectedMenuItem: MenuItem | null = null;
   selectedStatusItem: string | null = null;
 
-  // TODO: agregar logica para cuando el backed arroje un error, ver que hacer:
-  // resetear el useridfilter y/o el status
-  // esto porque al ahora ser variables de claase/estado
-  // al intentar usar un segundo filtro de mantiene el dato anterior
-  // causando que los filtrados subsecuentes no funcionen correctamente
-  // asi que tengo que investigar para aplicar 1 de 2 cosas:
-  // 1. resetear el valor de la variable en caso de error
-  // 2. mantener un estado temporal para en caso de error setear el temporal retornar el valor original.
-
   menuItems = computed(() => {
     return [
       {
