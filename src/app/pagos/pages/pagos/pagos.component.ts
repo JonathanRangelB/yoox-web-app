@@ -41,7 +41,7 @@ export class PagosComponent implements OnInit {
     });
   }
 
-  getSeverity({ STATUS }: PrestamosDetalle): string {
+  getSeverity({ STATUS }: PrestamosDetalle) {
     if (STATUS === 'PAGADO') return 'success';
     else if (STATUS === 'NO PAGADO') return 'warning';
     else if (STATUS === 'CANCELADO') return 'warning';
