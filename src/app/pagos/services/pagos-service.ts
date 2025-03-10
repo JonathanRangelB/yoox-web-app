@@ -14,13 +14,17 @@ export class PagosService {
   getPaymentsById(folio: string) {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('idusuario');
+    console.log({ token, userId });
     return this.http
-      .get<PrestamoConDetallesCompletos>(`${this.API_URL}loan/${folio}`, {
-        headers: {
-          authorization: `${token}`,
-          idusuario: `${userId}`,
-        },
-      })
+      .post<PrestamoConDetallesCompletos>(
+        `${this.API_URL}loan/${folio}`,
+        { idusuario: userId },
+        {
+          headers: {
+            authorization: `${token}`,
+          },
+        }
+      )
       .pipe(shareReplay());
   }
 
