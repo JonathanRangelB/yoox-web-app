@@ -8,13 +8,13 @@
     <p>Folio de solicitud: {{ loanRequestId }}</p>
     <p>Carpeta de documentación: {{ customerFolderName }}</p>
     <p>Creado por: {{ nombre_agente }}</p>
-    <p>Fecha de creación: {{ createdDate | date: 'medium' }}</p>
+    <p>Fecha de creación: {{ createdDate | date: 'long' }}</p>
     <p *ngIf="modifiedBy">Modificado por: {{ modified_by_name }}</p>
     <p *ngIf="modifiedDate">
-      Fecha de modificación: {{ modifiedDate | date: 'medium' }}
+      Fecha de modificación: {{ modifiedDate | date: 'long' }}
     </p>
     <p *ngIf="closedBy">Cerrado por: {{ closed_by_name }}</p>
-    <p *ngIf="closedDate">Cerrado en: {{ closedDate | date: 'medium' }}</p>
+    <p *ngIf="closedDate">Cerrado en: {{ closedDate | date: 'long' }}</p>
   </p-card>
 }
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
