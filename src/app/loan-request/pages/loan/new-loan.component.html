@@ -943,6 +943,7 @@
                 (onClick)="updateProvitionalStatus('ACTUALIZAR')"
                 severity="warning"></p-button>
               <p-button
+                *ngIf="currentUser?.ROL !== 'Líder de grupo'"
                 pTooltip="Se acepta la solicitud y se genera el prestamo de manera automatica."
                 tooltipPosition="bottom"
                 [hidden]="status === 'ACTUALIZAR'"
