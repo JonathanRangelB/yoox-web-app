@@ -9,7 +9,14 @@ import { DropdownChangeEvent } from 'primeng/dropdown';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
 import { InputSwitch } from 'primeng/inputswitch';
-import { debounceTime, Subject, switchMap, takeUntil } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  EMPTY,
+  Subject,
+  switchMap,
+  takeUntil,
+} from 'rxjs';
 
 import {
   days,
@@ -119,7 +126,50 @@ export class LoanComponent implements OnDestroy, OnInit {
   idDomicilioSearch$: Subject<number> = new Subject();
 
   constructor() {
-    this.mainForm = this.#formBuilder.group({
+    this.mainForm = this.formInit();
+    this.addressSearchSubjectInit();
+  }
+
+  ngOnInit(): void {
+    this.currentUser = getUserFromLocalStorage();
+    this.#activatedRoute.url.pipe(takeUntil(this.destroy$)).subscribe((url) => {
+      this.windowMode = url[0].path as WindowMode;
+    });
+
+    this.#activatedRoute.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        this.windowModeParams = params;
+        this.loanRequestId = this.windowModeParams['loanId'];
+      });
+
+    this.#installmentsService
+      .getInstallments()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.plazo = data;
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+
+    if (this.windowMode === 'view') {
+      this.showLoadingModal = true;
+      this.clearAsyncValidators();
+      this.fillFormForViewMode();
+    }
+  }
+
+  ngOnDestroy(): void {
+    window.clearTimeout(this.timeoutRef);
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
+  formInit() {
+    return this.#formBuilder.group({
       cantidad_prestada: ['', [Validators.required, Validators.min(1000)]],
       plazo: ['', Validators.required],
       fecha_inicial: ['', Validators.required],
@@ -241,69 +291,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         }
       ),
     });
-
-    this.idDomicilioSearch$
-      .pipe(
-        debounceTime(1500),
-        switchMap((data) => this.#addressService.getAddress(data))
-      )
-      .subscribe({
-        next: (data) => {
-          console.log(data);
-          this.#messageService.add({
-            severity: 'success',
-            summary: 'Exito',
-            detail: 'Direccion encontrada',
-            life: 5000,
-          });
-        },
-        error: (data) => {
-          this.#messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: data.error,
-            life: 5000,
-          });
-        },
-      });
-  }
-
-  ngOnInit(): void {
-    this.currentUser = getUserFromLocalStorage();
-    this.#activatedRoute.url.pipe(takeUntil(this.destroy$)).subscribe((url) => {
-      this.windowMode = url[0].path as WindowMode;
-    });
-
-    this.#activatedRoute.params
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((params) => {
-        this.windowModeParams = params;
-        this.loanRequestId = this.windowModeParams['loanId'];
-      });
-
-    this.#installmentsService
-      .getInstallments()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.plazo = data;
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
-
-    if (this.windowMode === 'view') {
-      this.showLoadingModal = true;
-      this.clearAsyncValidators();
-      this.fillFormForViewMode();
-    }
-  }
-
-  ngOnDestroy(): void {
-    window.clearTimeout(this.timeoutRef);
-    this.destroy$.next(null);
-    this.destroy$.complete();
   }
 
   /**
@@ -852,8 +839,40 @@ export class LoanComponent implements OnDestroy, OnInit {
   }
 
   searchAddressByID(event: InputNumberInputEvent) {
-    const addressid = Number(event.value);
-    if (!addressid) return;
+    if (!event.value) return;
+    const addressid = event.value ? Number(event.value) : 0;
+    console.log({ addressid, event: event.value });
     this.idDomicilioSearch$.next(addressid);
+  }
+
+  addressSearchSubjectInit() {
+    this.idDomicilioSearch$
+      .pipe(
+        debounceTime(1500),
+        switchMap((data) =>
+          this.#addressService.getAddress(data).pipe(
+            catchError((error) => {
+              this.#messageService.add({
+                severity: 'error',
+                summary: error.error,
+                detail: 'domicilio inexistente',
+                life: 5000,
+              });
+              return EMPTY;
+            })
+          )
+        )
+      )
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          this.#messageService.add({
+            severity: 'success',
+            summary: 'Exito',
+            detail: 'Direccion encontrada',
+            life: 5000,
+          });
+        },
+      });
   }
 }
