@@ -840,9 +840,7 @@ export class LoanComponent implements OnDestroy, OnInit {
 
   searchAddressByID(event: InputNumberInputEvent) {
     if (!event.value) return;
-    const addressid = event.value ? Number(event.value) : 0;
-    console.log({ addressid, event: event.value });
-    this.idDomicilioSearch$.next(addressid);
+    this.idDomicilioSearch$.next(+event.value);
   }
 
   addressSearchSubjectInit() {
@@ -855,7 +853,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               this.#messageService.add({
                 severity: 'error',
                 summary: error.error,
-                detail: 'domicilio inexistente',
+                detail: `${error.error.error || error.message}`,
                 life: 5000,
               });
               return EMPTY;

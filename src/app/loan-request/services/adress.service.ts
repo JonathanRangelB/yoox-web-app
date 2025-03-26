@@ -11,7 +11,7 @@ export class AddressService {
     const params = new HttpParams().set('addressid', addressid);
     const token = localStorage.getItem('token');
 
-    return this.#http.get(`${this.#baseUrl}get-address`, {
+    return this.#http.get(`${this.#baseUrl}address`, {
       headers: { authorization: `${token}` },
       params,
     });
