@@ -9,7 +9,7 @@ import { DropdownChangeEvent } from 'primeng/dropdown';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
 import { InputSwitch } from 'primeng/inputswitch';
-import { debounceTime, Subject, takeUntil } from 'rxjs';
+import { debounceTime, Subject, switchMap, takeUntil } from 'rxjs';
 
 import {
   days,
@@ -65,7 +65,6 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
   readonly #addressService = inject(AddressService);
-  addressSubject: Subject<number> = new Subject();
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
   loanRequestId?: string;
@@ -75,7 +74,6 @@ export class LoanComponent implements OnDestroy, OnInit {
   customerFolderName?: string;
   position: string = 'bottom';
   mainForm: FormGroup;
-  // customerSearchForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
   plazo?: Plazo[];
@@ -118,6 +116,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   modified_by_name?: string;
   closed_by_name?: string;
   id_grupo_original?: number;
+  idDomicilioSearch$: Subject<number> = new Subject();
 
   constructor() {
     this.mainForm = this.#formBuilder.group({
@@ -242,6 +241,31 @@ export class LoanComponent implements OnDestroy, OnInit {
         }
       ),
     });
+
+    this.idDomicilioSearch$
+      .pipe(
+        debounceTime(1500),
+        switchMap((data) => this.#addressService.getAddress(data))
+      )
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          this.#messageService.add({
+            severity: 'success',
+            summary: 'Exito',
+            detail: 'Direccion encontrada',
+            life: 5000,
+          });
+        },
+        error: (data) => {
+          this.#messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: data.error,
+            life: 5000,
+          });
+        },
+      });
   }
 
   ngOnInit(): void {
@@ -830,27 +854,6 @@ export class LoanComponent implements OnDestroy, OnInit {
   searchAddressByID(event: InputNumberInputEvent) {
     const addressid = Number(event.value);
     if (!addressid) return;
-    this.#addressService
-      .getAddress(addressid)
-      .pipe(debounceTime(5000))
-      .subscribe({
-        next: (data) => {
-          console.log(data);
-          this.#messageService.add({
-            severity: 'success',
-            summary: 'Exito',
-            detail: 'Direccion encontrada',
-            life: 5000,
-          });
-        },
-        error: (data) => {
-          this.#messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: data.error,
-            life: 5000,
-          });
-        },
-      });
+    this.idDomicilioSearch$.next(addressid);
   }
 }
