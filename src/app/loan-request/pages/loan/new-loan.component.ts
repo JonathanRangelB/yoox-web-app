@@ -9,7 +9,7 @@ import { DropdownChangeEvent } from 'primeng/dropdown';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
 import { InputNumberInputEvent } from 'primeng/inputnumber';
 import { InputSwitch } from 'primeng/inputswitch';
-import { Subject, takeUntil } from 'rxjs';
+import { debounceTime, Subject, takeUntil } from 'rxjs';
 
 import {
   days,
@@ -42,6 +42,7 @@ import {
   removeEmptyValues,
 } from 'src/app/shared/utils/functions.utils';
 import { User } from 'src/app/shared/interfaces/userData.interface';
+import { AddressService } from '../../services/adress.service';
 
 @Component({
   selector: 'app-loan',
@@ -63,6 +64,8 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #installmentsService = inject(InstallmentsService);
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
+  readonly #addressService = inject(AddressService);
+  addressSubject: Subject<number> = new Subject();
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
   loanRequestId?: string;
@@ -162,6 +165,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               updateOn: 'blur',
             },
           ],
+          id_domicilio_cliente: [],
           tipo_calle_cliente: ['', Validators.required],
           nombre_calle_cliente: ['', Validators.required],
           numero_exterior_cliente: [null, Validators.required],
@@ -220,6 +224,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               updateOn: 'blur',
             },
           ],
+          id_domicilio_aval: [],
           tipo_calle_aval: ['', Validators.required],
           nombre_calle_aval: ['', Validators.required],
           numero_exterior_aval: ['', Validators.required],
@@ -820,5 +825,32 @@ export class LoanComponent implements OnDestroy, OnInit {
         if (this.status !== 'ACTUALIZAR') return true;
     }
     return false; // windowMode !== 'new'
+  }
+
+  searchAddressByID(event: InputNumberInputEvent) {
+    const addressid = Number(event.value);
+    if (!addressid) return;
+    this.#addressService
+      .getAddress(addressid)
+      .pipe(debounceTime(5000))
+      .subscribe({
+        next: (data) => {
+          console.log(data);
+          this.#messageService.add({
+            severity: 'success',
+            summary: 'Exito',
+            detail: 'Direccion encontrada',
+            life: 5000,
+          });
+        },
+        error: (data) => {
+          this.#messageService.add({
+            severity: 'error',
+            summary: 'Error',
+            detail: data.error,
+            life: 5000,
+          });
+        },
+      });
   }
 }

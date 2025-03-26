@@ -373,6 +373,24 @@
             </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
+            <label for="id_domicilio_cliente">ID Domicilio 🏡</label>
+            <p-inputNumber
+              inputId="id_domicilio_cliente"
+              id="id_domicilio_cliente"
+              formControlName="id_domicilio_cliente"
+              [showClear]="true"
+              (onInput)="searchAddressByID($event)"
+              min="1"
+              placeholder="Solo ID's registrados"
+              [style]="{ width: '100%' }" />
+            <small
+              id="id_domicilio_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.id_domicilio_cliente')"
+              >ID de domicilio inexistente</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
             <label for="tipo_calle_cliente">Tipo de calle</label>
             <p-dropdown
               inputId="tipo_calle_cliente"
@@ -692,6 +710,22 @@
                   <ng-container>CURP existente</ng-container>
                 }
               </small>
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="id_domicilio_aval">ID Domicilio 🏡</label>
+              <p-inputNumber
+                inputId="id_domicilio_aval"
+                id="id_domicilio_aval"
+                formControlName="id_domicilio_aval"
+                [showClear]="true"
+                placeholder="Solo ID's registrados"
+                [style]="{ width: '100%' }" />
+              <small
+                id="id_domicilio_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.id_domicilio_aval')"
+                >ID de domicilio inexistente</small
+              >
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="tipo_calle_aval">Tipo de calle</label>
