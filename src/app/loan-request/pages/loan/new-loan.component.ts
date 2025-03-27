@@ -882,5 +882,43 @@ export class LoanComponent implements OnDestroy, OnInit {
 
   fillAddressDataIntoForm(address: Address, formName: string) {
     console.log({ address, formName });
+    switch (formName) {
+      case 'formCliente':
+        console.log('formCliente');
+        this.mainForm.get(formName)?.patchValue({
+          tipo_calle_cliente: tiposCalle.find(
+            (tipo) => tipo.value === address.tipo_calle
+          ),
+          nombre_calle_cliente: address.nombre_calle,
+          numero_exterior_cliente: address.numero_exterior,
+          numero_interior_cliente: address.numero_interior,
+          colonia_cliente: address.colonia,
+          municipio_cliente: address.municipio,
+          estado_cliente: estadosDeLaRepublica.find(
+            (estado) => estado.value === address.estado
+          ),
+          cp_cliente: address.cp,
+          referencias_dom_cliente: address.referencias,
+        });
+        break;
+      case 'formAval':
+        console.log('formAval');
+        this.mainForm.get(formName)?.patchValue({
+          tipo_calle_aval: tiposCalle.find(
+            (tipo) => tipo.value === address.tipo_calle
+          ),
+          nombre_calle_aval: address.nombre_calle,
+          numero_exterior_aval: address.numero_exterior,
+          numero_interior_aval: address.numero_interior,
+          colonia_aval: address.colonia,
+          municipio_aval: address.municipio,
+          estado_aval: estadosDeLaRepublica.find(
+            (estado) => estado.value === address.estado
+          ),
+          cp_aval: address.cp,
+          referencias_dom_aval: address.referencias,
+        });
+        break;
+    }
   }
 }
