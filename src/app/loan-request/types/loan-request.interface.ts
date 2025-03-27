@@ -93,3 +93,20 @@ export interface Plazo {
 
 export type WindowMode = 'view' | 'new';
 export type LoanMode = 'new' | 'update';
+
+export interface Address {
+  id: number;
+  tipo_calle: string;
+  nombre_calle: string;
+  numero_exterior: string;
+  numero_interior: string;
+  colonia: string;
+  municipio: string;
+  estado: string;
+  cp: string;
+  referencias: string;
+  created_by_usr: number;
+  created_date: Date;
+  modified_by_usr: number;
+  modified_date: Date;
+}

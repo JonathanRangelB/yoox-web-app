@@ -13,6 +13,7 @@ import {
   catchError,
   debounceTime,
   EMPTY,
+  map,
   Subject,
   switchMap,
   takeUntil,
@@ -35,6 +36,7 @@ import {
 import { S3BucketService } from '../../services/s3-bucket.service';
 import { LoanRequestService } from '../../services/loan-request.service';
 import {
+  Address,
   dropDownCollection,
   IdsRecuperados,
   LoanRequest,
@@ -123,7 +125,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   modified_by_name?: string;
   closed_by_name?: string;
   id_grupo_original?: number;
-  idDomicilioSearch$: Subject<number> = new Subject();
+  idDomicilioSearch$: Subject<{ id: number; formName: string }> = new Subject();
 
   constructor() {
     this.mainForm = this.formInit();
@@ -838,17 +840,21 @@ export class LoanComponent implements OnDestroy, OnInit {
     return false; // windowMode !== 'new'
   }
 
-  searchAddressByID(event: InputNumberInputEvent) {
+  searchAddressByID(event: InputNumberInputEvent, formName: string) {
     if (!event.value) return;
-    this.idDomicilioSearch$.next(+event.value);
+    this.idDomicilioSearch$.next({ id: +event.value, formName });
   }
 
   addressSearchSubjectInit() {
     this.idDomicilioSearch$
       .pipe(
         debounceTime(1500),
-        switchMap((data) =>
-          this.#addressService.getAddress(data).pipe(
+        switchMap((addressRequestData) =>
+          this.#addressService.getAddress(addressRequestData.id).pipe(
+            map((foundAddressData) => ({
+              addressData: foundAddressData,
+              formName: addressRequestData.formName,
+            })),
             catchError((error) => {
               this.#messageService.add({
                 severity: 'error',
@@ -862,8 +868,8 @@ export class LoanComponent implements OnDestroy, OnInit {
         )
       )
       .subscribe({
-        next: (data) => {
-          console.log(data);
+        next: ({ addressData, formName }) => {
+          this.fillAddressDataIntoForm(addressData, formName);
           this.#messageService.add({
             severity: 'success',
             summary: 'Exito',
@@ -872,5 +878,9 @@ export class LoanComponent implements OnDestroy, OnInit {
           });
         },
       });
+  }
+
+  fillAddressDataIntoForm(address: Address, formName: string) {
+    console.log({ address, formName });
   }
 }

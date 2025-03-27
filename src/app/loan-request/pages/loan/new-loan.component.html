@@ -379,7 +379,7 @@
               id="id_domicilio_cliente"
               formControlName="id_domicilio_cliente"
               [showClear]="true"
-              (onInput)="searchAddressByID($event)"
+              (onInput)="searchAddressByID($event,'formCliente')"
               min="1"
               placeholder="Solo ID's registrados"
               [style]="{ width: '100%' }" />
@@ -716,6 +716,7 @@
               <p-inputNumber
                 inputId="id_domicilio_aval"
                 id="id_domicilio_aval"
+                (onInput)="searchAddressByID($event,'formAval')"
                 formControlName="id_domicilio_aval"
                 [showClear]="true"
                 placeholder="Solo ID's registrados"
