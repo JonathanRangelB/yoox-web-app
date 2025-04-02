@@ -378,6 +378,7 @@
               inputId="id_domicilio_cliente"
               id="id_domicilio_cliente"
               formControlName="id_domicilio_cliente"
+              [useGrouping]="false"
               [showClear]="true"
               (onInput)="searchAddressByID($event,'formCliente')"
               min="1"
@@ -718,6 +719,7 @@
                 id="id_domicilio_aval"
                 (onInput)="searchAddressByID($event,'formAval')"
                 formControlName="id_domicilio_aval"
+                [useGrouping]="false"
                 [showClear]="true"
                 placeholder="Solo ID's registrados"
                 [style]="{ width: '100%' }" />

@@ -117,8 +117,6 @@ export class LoanComponent implements OnDestroy, OnInit {
   closedDate?: Date;
   currentUser!: User | null;
   timeoutRef?: NodeJS.Timeout;
-  id_domicilio_cliente?: number;
-  id_domicilio_aval?: number;
   id_agente?: number;
   id_loan?: number;
   nombre_agente?: string;
@@ -551,17 +549,11 @@ export class LoanComponent implements OnDestroy, OnInit {
         ...(this.id_cliente_recuperado
           ? { id_cliente: this.id_cliente_recuperado }
           : {}),
-        ...(this.id_domicilio_cliente
-          ? { id_domicilio_cliente: this.id_domicilio_cliente }
-          : {}),
       },
       formAval: {
         ...this.mainForm.value.formAval,
         ...(this.id_aval_recuperado
           ? { id_aval: this.id_aval_recuperado }
-          : {}),
-        ...(this.id_domicilio_aval
-          ? { id_domicilio_aval: this.id_domicilio_aval }
           : {}),
       },
       ...additionalData,
@@ -650,8 +642,14 @@ export class LoanComponent implements OnDestroy, OnInit {
   updateCustomerFoundId(idsRecuperados: IdsRecuperados) {
     this.id_cliente_recuperado = idsRecuperados.id_cliente;
     this.id_aval_recuperado = idsRecuperados.id_aval;
-    this.id_domicilio_cliente = idsRecuperados.id_domicilio_cliente;
-    this.id_domicilio_aval = idsRecuperados.id_domicilio_aval;
+    this.mainForm.patchValue({
+      formCliente: {
+        id_domicilio_cliente: idsRecuperados.id_domicilio_cliente,
+      },
+      formAval: {
+        id_domicilio_aval: idsRecuperados.id_domicilio_aval,
+      },
+    });
   }
 
   /** Encargada de eliminar los validadores asincronos cuando no se necesitan, solo son requedidos en modo new, en los demas modos no se necesitan */
@@ -713,8 +711,6 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.id = data.id;
           this.id_loan = data.id_loan;
           this.id_agente = data.id_agente;
-          this.id_domicilio_cliente = data.id_domicilio_cliente;
-          this.id_domicilio_aval = data.id_domicilio_aval;
           this.createdBy = data.created_by;
           this.createdDate = data.created_date;
           this.modifiedBy = data.modified_by;
@@ -760,6 +756,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               correo_electronico_cliente: data.correo_electronico_cliente,
               ocupacion_cliente: data.ocupacion_cliente,
               curp_cliente: data.curp_cliente,
+              id_domicilio_cliente: data.id_domicilio_cliente,
               tipo_calle_cliente: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_cliente
               ),
@@ -782,6 +779,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               telefono_movil_aval: data.telefono_movil_aval,
               correo_electronico_aval: data.correo_electronico_aval,
               curp_aval: data.curp_aval,
+              id_domicilio_aval: data.id_domicilio_aval,
               tipo_calle_aval: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_aval
               ),
