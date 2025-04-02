@@ -375,12 +375,14 @@
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="id_domicilio_cliente">ID Domicilio 🏡</label>
             <p-inputNumber
+              #inputRef
               inputId="id_domicilio_cliente"
               id="id_domicilio_cliente"
               formControlName="id_domicilio_cliente"
               [useGrouping]="false"
               [showClear]="true"
-              (onInput)="searchAddressByID($event,'formCliente')"
+              [max]=2147483647
+              (onInput)="searchAddressByID($event,'formCliente', inputRef)"
               min="1"
               placeholder="Solo ID's registrados"
               [style]="{ width: '100%' }" />
@@ -715,9 +717,11 @@
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="id_domicilio_aval">ID Domicilio 🏡</label>
               <p-inputNumber
+                #inputRef
                 inputId="id_domicilio_aval"
                 id="id_domicilio_aval"
-                (onInput)="searchAddressByID($event,'formAval')"
+                max=2147483647
+                (onInput)="searchAddressByID($event,'formAval',inputRef)"
                 formControlName="id_domicilio_aval"
                 [useGrouping]="false"
                 [showClear]="true"

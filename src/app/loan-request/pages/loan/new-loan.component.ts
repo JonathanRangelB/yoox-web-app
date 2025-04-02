@@ -7,7 +7,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Dialog } from 'primeng/dialog';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
-import { InputNumberInputEvent } from 'primeng/inputnumber';
+import { InputNumber, InputNumberInputEvent } from 'primeng/inputnumber';
 import { InputSwitch } from 'primeng/inputswitch';
 import {
   catchError,
@@ -17,6 +17,7 @@ import {
   Subject,
   switchMap,
   takeUntil,
+  tap,
 } from 'rxjs';
 
 import {
@@ -123,7 +124,15 @@ export class LoanComponent implements OnDestroy, OnInit {
   modified_by_name?: string;
   closed_by_name?: string;
   id_grupo_original?: number;
-  idDomicilioSearch$: Subject<{ id: number; formName: string }> = new Subject();
+  idDomicilioSearch$: Subject<{
+    id: number;
+    formName: string;
+    inputRef: InputNumber;
+  }> = new Subject();
+  domiciliosInputRef?: {
+    formName: string;
+    inputRef: InputNumber;
+  };
 
   constructor() {
     this.mainForm = this.formInit();
@@ -838,23 +847,38 @@ export class LoanComponent implements OnDestroy, OnInit {
     return false; // windowMode !== 'new'
   }
 
-  searchAddressByID(event: InputNumberInputEvent, formName: string) {
+  searchAddressByID(
+    event: InputNumberInputEvent,
+    formName: string,
+    inputRef: InputNumber
+  ) {
     if (!event.value) return;
-    this.idDomicilioSearch$.next({ id: +event.value, formName });
+    this.idDomicilioSearch$.next({ id: +event.value, formName, inputRef });
   }
 
   addressSearchSubjectInit() {
     this.idDomicilioSearch$
       .pipe(
         debounceTime(1500),
+        tap((requestData) => {
+          this.domiciliosInputRef = {
+            formName: requestData.formName,
+            inputRef: requestData.inputRef,
+          };
+        }),
         switchMap((addressRequestData) =>
           this.#addressService.getAddress(addressRequestData.id).pipe(
             map((foundAddressData) => ({
               addressData: foundAddressData,
               formName: addressRequestData.formName,
+              inputRef: addressRequestData.inputRef,
             })),
             catchError((error) => {
-              console.log(error);
+              this.mainForm.patchValue({
+                [this.domiciliosInputRef?.formName as string]: {
+                  [this.domiciliosInputRef?.inputRef.inputId as string]: null,
+                },
+              });
               this.#messageService.add({
                 severity: 'error',
                 summary: 'Error',
@@ -880,10 +904,8 @@ export class LoanComponent implements OnDestroy, OnInit {
   }
 
   fillAddressDataIntoForm(address: Address, formName: string) {
-    console.log({ address, formName });
     switch (formName) {
       case 'formCliente':
-        console.log('formCliente');
         this.mainForm.get(formName)?.patchValue({
           tipo_calle_cliente: tiposCalle.find(
             (tipo) => tipo.value === address.tipo_calle
@@ -901,7 +923,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         });
         break;
       case 'formAval':
-        console.log('formAval');
         this.mainForm.get(formName)?.patchValue({
           tipo_calle_aval: tiposCalle.find(
             (tipo) => tipo.value === address.tipo_calle

@@ -305,7 +305,6 @@ export class RequestListComponent implements OnInit {
           // TODO: agregar un if para solo construir el menu de usuarios solo si el rol de usuario es diferente a 'Cobrador'
           this.generateUsersList();
           this.totalRecords = data.loanRequests[0].CNT;
-          console.log(data.loanRequests[0].CNT);
         },
         error: (errorRes: HttpErrorResponse) => {
           this.showLoadingModal = false;
