@@ -604,7 +604,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         'No se encontraron los datos del usuario en localStorage'
       );
     return {
-      // NOTE: si existe el id_agente significa que se recupero el dato, osea que es un update, caso contrario es un newLoanRequest
       id_agente: this.id_agente || this.currentUser.ID,
       created_by: this.createdBy || this.currentUser.ID,
       user_role: this.currentUser.ROL,
