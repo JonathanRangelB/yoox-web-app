@@ -854,10 +854,11 @@ export class LoanComponent implements OnDestroy, OnInit {
               formName: addressRequestData.formName,
             })),
             catchError((error) => {
+              console.log(error);
               this.#messageService.add({
                 severity: 'error',
-                summary: error.error,
-                detail: `${error.error.error || error.message}`,
+                summary: 'Error',
+                detail: `${error.error.error || error.error}`,
                 life: 5000,
               });
               return EMPTY;
