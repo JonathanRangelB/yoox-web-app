@@ -7,9 +7,18 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Dialog } from 'primeng/dialog';
 import { DropdownChangeEvent } from 'primeng/dropdown';
 import { FileUpload, FileUploadHandlerEvent } from 'primeng/fileupload';
-import { InputNumberInputEvent } from 'primeng/inputnumber';
+import { InputNumber, InputNumberInputEvent } from 'primeng/inputnumber';
 import { InputSwitch } from 'primeng/inputswitch';
-import { Subject, takeUntil } from 'rxjs';
+import {
+  catchError,
+  debounceTime,
+  EMPTY,
+  map,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
 
 import {
   days,
@@ -28,6 +37,7 @@ import {
 import { S3BucketService } from '../../services/s3-bucket.service';
 import { LoanRequestService } from '../../services/loan-request.service';
 import {
+  Address,
   dropDownCollection,
   IdsRecuperados,
   LoanRequest,
@@ -42,6 +52,7 @@ import {
   removeEmptyValues,
 } from 'src/app/shared/utils/functions.utils';
 import { User } from 'src/app/shared/interfaces/userData.interface';
+import { AddressService } from '../../services/adress.service';
 
 @Component({
   selector: 'app-loan',
@@ -63,6 +74,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #installmentsService = inject(InstallmentsService);
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
+  readonly #addressService = inject(AddressService);
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
   loanRequestId?: string;
@@ -72,7 +84,6 @@ export class LoanComponent implements OnDestroy, OnInit {
   customerFolderName?: string;
   position: string = 'bottom';
   mainForm: FormGroup;
-  // customerSearchForm: FormGroup;
   tiposCalle: dropDownCollection[] = tiposCalle;
   estadosDeLaRepublica: dropDownCollection[] = estadosDeLaRepublica;
   plazo?: Plazo[];
@@ -107,17 +118,67 @@ export class LoanComponent implements OnDestroy, OnInit {
   closedDate?: Date;
   currentUser!: User | null;
   timeoutRef?: NodeJS.Timeout;
-  id_domicilio_cliente?: number;
-  id_domicilio_aval?: number;
   id_agente?: number;
   id_loan?: number;
   nombre_agente?: string;
   modified_by_name?: string;
   closed_by_name?: string;
   id_grupo_original?: number;
+  idDomicilioSearch$: Subject<{
+    id: number;
+    formName: string;
+    inputRef: InputNumber;
+  }> = new Subject();
+  domiciliosInputRef?: {
+    formName: string;
+    inputRef: InputNumber;
+  };
 
   constructor() {
-    this.mainForm = this.#formBuilder.group({
+    this.mainForm = this.formInit();
+    this.addressSearchSubjectInit();
+  }
+
+  ngOnInit(): void {
+    this.currentUser = getUserFromLocalStorage();
+    this.#activatedRoute.url.pipe(takeUntil(this.destroy$)).subscribe((url) => {
+      this.windowMode = url[0].path as WindowMode;
+    });
+
+    this.#activatedRoute.params
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((params) => {
+        this.windowModeParams = params;
+        this.loanRequestId = this.windowModeParams['loanId'];
+      });
+
+    this.#installmentsService
+      .getInstallments()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: (data) => {
+          this.plazo = data;
+        },
+        error: (error) => {
+          console.log(error);
+        },
+      });
+
+    if (this.windowMode === 'view') {
+      this.showLoadingModal = true;
+      this.clearAsyncValidators();
+      this.fillFormForViewMode();
+    }
+  }
+
+  ngOnDestroy(): void {
+    window.clearTimeout(this.timeoutRef);
+    this.destroy$.next(null);
+    this.destroy$.complete();
+  }
+
+  formInit() {
+    return this.#formBuilder.group({
       cantidad_prestada: ['', [Validators.required, Validators.min(1000)]],
       plazo: ['', Validators.required],
       fecha_inicial: ['', Validators.required],
@@ -162,6 +223,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               updateOn: 'blur',
             },
           ],
+          id_domicilio_cliente: [],
           tipo_calle_cliente: ['', Validators.required],
           nombre_calle_cliente: ['', Validators.required],
           numero_exterior_cliente: [null, Validators.required],
@@ -220,6 +282,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               updateOn: 'blur',
             },
           ],
+          id_domicilio_aval: [],
           tipo_calle_aval: ['', Validators.required],
           nombre_calle_aval: ['', Validators.required],
           numero_exterior_aval: ['', Validators.required],
@@ -237,44 +300,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         }
       ),
     });
-  }
-
-  ngOnInit(): void {
-    this.currentUser = getUserFromLocalStorage();
-    this.#activatedRoute.url.pipe(takeUntil(this.destroy$)).subscribe((url) => {
-      this.windowMode = url[0].path as WindowMode;
-    });
-
-    this.#activatedRoute.params
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((params) => {
-        this.windowModeParams = params;
-        this.loanRequestId = this.windowModeParams['loanId'];
-      });
-
-    this.#installmentsService
-      .getInstallments()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (data) => {
-          this.plazo = data;
-        },
-        error: (error) => {
-          console.log(error);
-        },
-      });
-
-    if (this.windowMode === 'view') {
-      this.showLoadingModal = true;
-      this.clearAsyncValidators();
-      this.fillFormForViewMode();
-    }
-  }
-
-  ngOnDestroy(): void {
-    window.clearTimeout(this.timeoutRef);
-    this.destroy$.next(null);
-    this.destroy$.complete();
   }
 
   /**
@@ -533,17 +558,11 @@ export class LoanComponent implements OnDestroy, OnInit {
         ...(this.id_cliente_recuperado
           ? { id_cliente: this.id_cliente_recuperado }
           : {}),
-        ...(this.id_domicilio_cliente
-          ? { id_domicilio_cliente: this.id_domicilio_cliente }
-          : {}),
       },
       formAval: {
         ...this.mainForm.value.formAval,
         ...(this.id_aval_recuperado
           ? { id_aval: this.id_aval_recuperado }
-          : {}),
-        ...(this.id_domicilio_aval
-          ? { id_domicilio_aval: this.id_domicilio_aval }
           : {}),
       },
       ...additionalData,
@@ -585,7 +604,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         'No se encontraron los datos del usuario en localStorage'
       );
     return {
-      // NOTE: si existe el id_agente significa que se recupero el dato, osea que es un update, caso contrario es un newLoanRequest
       id_agente: this.id_agente || this.currentUser.ID,
       created_by: this.createdBy || this.currentUser.ID,
       user_role: this.currentUser.ROL,
@@ -632,8 +650,14 @@ export class LoanComponent implements OnDestroy, OnInit {
   updateCustomerFoundId(idsRecuperados: IdsRecuperados) {
     this.id_cliente_recuperado = idsRecuperados.id_cliente;
     this.id_aval_recuperado = idsRecuperados.id_aval;
-    this.id_domicilio_cliente = idsRecuperados.id_domicilio_cliente;
-    this.id_domicilio_aval = idsRecuperados.id_domicilio_aval;
+    this.mainForm.patchValue({
+      formCliente: {
+        id_domicilio_cliente: idsRecuperados.id_domicilio_cliente,
+      },
+      formAval: {
+        id_domicilio_aval: idsRecuperados.id_domicilio_aval,
+      },
+    });
   }
 
   /** Encargada de eliminar los validadores asincronos cuando no se necesitan, solo son requedidos en modo new, en los demas modos no se necesitan */
@@ -695,8 +719,6 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.id = data.id;
           this.id_loan = data.id_loan;
           this.id_agente = data.id_agente;
-          this.id_domicilio_cliente = data.id_domicilio_cliente;
-          this.id_domicilio_aval = data.id_domicilio_aval;
           this.createdBy = data.created_by;
           this.createdDate = data.created_date;
           this.modifiedBy = data.modified_by;
@@ -742,6 +764,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               correo_electronico_cliente: data.correo_electronico_cliente,
               ocupacion_cliente: data.ocupacion_cliente,
               curp_cliente: data.curp_cliente,
+              id_domicilio_cliente: data.id_domicilio_cliente,
               tipo_calle_cliente: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_cliente
               ),
@@ -764,6 +787,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               telefono_movil_aval: data.telefono_movil_aval,
               correo_electronico_aval: data.correo_electronico_aval,
               curp_aval: data.curp_aval,
+              id_domicilio_aval: data.id_domicilio_aval,
               tipo_calle_aval: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_aval
               ),
@@ -820,5 +844,100 @@ export class LoanComponent implements OnDestroy, OnInit {
         if (this.status !== 'ACTUALIZAR') return true;
     }
     return false; // windowMode !== 'new'
+  }
+
+  searchAddressByID(
+    event: InputNumberInputEvent,
+    formName: string,
+    inputRef: InputNumber
+  ) {
+    if (!event.value) return;
+    this.idDomicilioSearch$.next({ id: +event.value, formName, inputRef });
+  }
+
+  addressSearchSubjectInit() {
+    this.idDomicilioSearch$
+      .pipe(
+        debounceTime(1500),
+        tap((requestData) => {
+          this.domiciliosInputRef = {
+            formName: requestData.formName,
+            inputRef: requestData.inputRef,
+          };
+        }),
+        switchMap((addressRequestData) =>
+          this.#addressService.getAddress(addressRequestData.id).pipe(
+            map((foundAddressData) => ({
+              addressData: foundAddressData,
+              formName: addressRequestData.formName,
+              inputRef: addressRequestData.inputRef,
+            })),
+            catchError((error) => {
+              this.mainForm.patchValue({
+                [this.domiciliosInputRef?.formName as string]: {
+                  [this.domiciliosInputRef?.inputRef.inputId as string]: null,
+                },
+              });
+              this.#messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: `${error.error.error || error.error}`,
+                life: 5000,
+              });
+              return EMPTY;
+            })
+          )
+        )
+      )
+      .subscribe({
+        next: ({ addressData, formName }) => {
+          this.fillAddressDataIntoForm(addressData, formName);
+          this.#messageService.add({
+            severity: 'success',
+            summary: 'Exito',
+            detail: 'Direccion encontrada',
+            life: 5000,
+          });
+        },
+      });
+  }
+
+  fillAddressDataIntoForm(address: Address, formName: string) {
+    switch (formName) {
+      case 'formCliente':
+        this.mainForm.get(formName)?.patchValue({
+          tipo_calle_cliente: tiposCalle.find(
+            (tipo) => tipo.value === address.tipo_calle
+          ),
+          nombre_calle_cliente: address.nombre_calle,
+          numero_exterior_cliente: address.numero_exterior,
+          numero_interior_cliente: address.numero_interior,
+          colonia_cliente: address.colonia,
+          municipio_cliente: address.municipio,
+          estado_cliente: estadosDeLaRepublica.find(
+            (estado) => estado.value === address.estado
+          ),
+          cp_cliente: address.cp,
+          referencias_dom_cliente: address.referencias,
+        });
+        break;
+      case 'formAval':
+        this.mainForm.get(formName)?.patchValue({
+          tipo_calle_aval: tiposCalle.find(
+            (tipo) => tipo.value === address.tipo_calle
+          ),
+          nombre_calle_aval: address.nombre_calle,
+          numero_exterior_aval: address.numero_exterior,
+          numero_interior_aval: address.numero_interior,
+          colonia_aval: address.colonia,
+          municipio_aval: address.municipio,
+          estado_aval: estadosDeLaRepublica.find(
+            (estado) => estado.value === address.estado
+          ),
+          cp_aval: address.cp,
+          referencias_dom_aval: address.referencias,
+        });
+        break;
+    }
   }
 }
