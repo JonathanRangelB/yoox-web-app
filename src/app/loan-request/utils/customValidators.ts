@@ -60,7 +60,8 @@ export function atLeastOneValidator(controlNames: string[]): ValidatorFn {
 
 export function existingCurpAsyncValidator(
   existingCurpValidationService: ExistingCurpValidationService,
-  table: string
+  table: string,
+  id_persona: number | undefined
 ): AsyncValidatorFn {
   return ({
     value: curp,
@@ -70,6 +71,7 @@ export function existingCurpAsyncValidator(
       .validate({
         curp,
         table,
+        id_persona,
       })
       .pipe(
         map(() => {
@@ -87,7 +89,8 @@ export function existingCurpAsyncValidator(
 export function existingPhonesAsyncValidator(
   validatorExistingPhoneService: ValidatorExistingPhoneService,
   table: tableType,
-  type: phoneType
+  type: phoneType,
+  id_persona: number | undefined
 ): AsyncValidatorFn {
   return ({
     value: phone,
@@ -96,6 +99,7 @@ export function existingPhonesAsyncValidator(
     const payload = {
       [type]: phone,
       table,
+      id_persona,
     };
     return validatorExistingPhoneService.validate(payload).pipe(
       map(() => {
