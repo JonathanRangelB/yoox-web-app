@@ -102,8 +102,8 @@ export class LoanComponent implements OnDestroy, OnInit {
   pagoSemanal: number | null = null;
   uploading = false;
   uploadSuccessfull = false;
-  id_cliente_recuperado = 0;
-  id_aval_recuperado = 0;
+  id_cliente_recuperado?: number;
+  id_aval_recuperado?: number;
   showLoadingModal = false;
   viewLoan: any;
   observationsHistory = '';
@@ -166,7 +166,7 @@ export class LoanComponent implements OnDestroy, OnInit {
 
     if (this.windowMode === 'view') {
       this.showLoadingModal = true;
-      this.clearAsyncValidators();
+      // this.clearAsyncValidators();
       this.fillFormForViewMode();
     }
   }
@@ -188,41 +188,11 @@ export class LoanComponent implements OnDestroy, OnInit {
           nombre_cliente: ['', Validators.required],
           apellido_paterno_cliente: ['', Validators.required],
           apellido_materno_cliente: ['', Validators.required],
-          telefono_fijo_cliente: [
-            '',
-            {
-              asyncValidators: existingPhonesAsyncValidator(
-                this.#validatorPhonesService,
-                'CLIENTES',
-                'telefono_fijo'
-              ),
-              updateOn: 'blur',
-            },
-          ],
-          telefono_movil_cliente: [
-            '',
-            {
-              asyncValidators: existingPhonesAsyncValidator(
-                this.#validatorPhonesService,
-                'CLIENTES',
-                'telefono_movil'
-              ),
-              updateOn: 'blur',
-            },
-          ],
+          telefono_fijo_cliente: [''],
+          telefono_movil_cliente: [''],
           correo_electronico_cliente: ['', emailValidator()],
           ocupacion_cliente: [''],
-          curp_cliente: [
-            '',
-            {
-              validators: [Validators.required, curpValidator()],
-              asyncValidators: existingCurpAsyncValidator(
-                this.#validatorCurpService,
-                'CLIENTES'
-              ),
-              updateOn: 'blur',
-            },
-          ],
+          curp_cliente: ['', [Validators.required, curpValidator()]],
           id_domicilio_cliente: [],
           tipo_calle_cliente: ['', Validators.required],
           nombre_calle_cliente: ['', Validators.required],
@@ -248,40 +218,10 @@ export class LoanComponent implements OnDestroy, OnInit {
           nombre_aval: ['', Validators.required],
           apellido_paterno_aval: ['', Validators.required],
           apellido_materno_aval: ['', Validators.required],
-          telefono_fijo_aval: [
-            '',
-            {
-              asyncValidators: existingPhonesAsyncValidator(
-                this.#validatorPhonesService,
-                'AVALES',
-                'telefono_fijo'
-              ),
-              updateOn: 'blur',
-            },
-          ],
-          telefono_movil_aval: [
-            '',
-            {
-              asyncValidators: existingPhonesAsyncValidator(
-                this.#validatorPhonesService,
-                'AVALES',
-                'telefono_movil'
-              ),
-              updateOn: 'blur',
-            },
-          ],
+          telefono_fijo_aval: [''],
+          telefono_movil_aval: [''],
           correo_electronico_aval: ['', emailValidator()],
-          curp_aval: [
-            '',
-            {
-              validators: [Validators.required, curpValidator()],
-              asyncValidators: existingCurpAsyncValidator(
-                this.#validatorCurpService,
-                'AVALES'
-              ),
-              updateOn: 'blur',
-            },
-          ],
+          curp_aval: ['', [Validators.required, curpValidator()]],
           id_domicilio_aval: [],
           tipo_calle_aval: ['', Validators.required],
           nombre_calle_aval: ['', Validators.required],
@@ -624,22 +564,6 @@ export class LoanComponent implements OnDestroy, OnInit {
   toggleCustomerSearch() {
     this.customerSearchVisible = !this.customerSearchVisible;
     this.switchBusqueda()?.writeValue(this.customerSearchVisible);
-    if (this.id_cliente_recuperado) {
-      this.clearAsyncValidators();
-    } else {
-      this.mainForm
-        .get('formCliente.curp_cliente')
-        ?.setAsyncValidators(
-          existingCurpAsyncValidator(this.#validatorCurpService, 'CLIENTES')
-        );
-      this.mainForm
-        .get('formAval.curp_aval')
-        ?.setAsyncValidators(
-          existingCurpAsyncValidator(this.#validatorCurpService, 'AVALES')
-        );
-
-      this.mainForm.updateValueAndValidity();
-    }
   }
 
   /**
@@ -658,36 +582,6 @@ export class LoanComponent implements OnDestroy, OnInit {
         id_domicilio_aval: idsRecuperados.id_domicilio_aval,
       },
     });
-  }
-
-  /** Encargada de eliminar los validadores asincronos cuando no se necesitan, solo son requedidos en modo new, en los demas modos no se necesitan */
-  clearAsyncValidators() {
-    const form_curp_cliente = this.mainForm.get('formCliente.curp_cliente');
-    const form_curp_aval = this.mainForm.get('formAval.curp_aval');
-    const form_telefono_movil_cliente = this.mainForm.get(
-      'formCliente.telefono_movil_cliente'
-    );
-    const form_telefono_fijo_cliente = this.mainForm.get(
-      'formCliente.telefono_fijo_cliente'
-    );
-    const form_telefono_movil_aval = this.mainForm.get(
-      'formAval.telefono_movil_aval'
-    );
-    const form_telefono_fijo_aval = this.mainForm.get(
-      'formAval.telefono_fijo_aval'
-    );
-    form_curp_cliente?.clearAsyncValidators();
-    form_curp_cliente?.updateValueAndValidity();
-    form_curp_aval?.clearAsyncValidators();
-    form_curp_aval?.updateValueAndValidity();
-    form_telefono_movil_cliente?.clearAsyncValidators();
-    form_telefono_movil_cliente?.updateValueAndValidity();
-    form_telefono_fijo_cliente?.clearAsyncValidators();
-    form_telefono_fijo_cliente?.updateValueAndValidity();
-    form_telefono_movil_aval?.clearAsyncValidators();
-    form_telefono_movil_aval?.updateValueAndValidity();
-    form_telefono_fijo_aval?.clearAsyncValidators();
-    form_telefono_fijo_aval?.updateValueAndValidity();
   }
 
   /**
@@ -750,6 +644,9 @@ export class LoanComponent implements OnDestroy, OnInit {
             (plazo) => plazo.id === data.id_plazo
           )?.semanas_refinancia;
           this.observationsHistory = data.observaciones;
+          this.id_cliente_recuperado = data.id_cliente || undefined;
+          this.id_aval_recuperado = data.id_aval || undefined;
+          this.mainForm = this.formInit();
           this.mainForm.patchValue({
             cantidad_prestada: data.cantidad_prestada,
             plazo: plazos.find((plazo) => plazo.id === data.id_plazo),
@@ -939,5 +836,43 @@ export class LoanComponent implements OnDestroy, OnInit {
         });
         break;
     }
+  }
+
+  restartCurpValidator(form: string, input: string) {
+    const path = `${form}.${input}`;
+    const formInput = this.mainForm.get(path);
+    const table = form.includes('formCliente') ? 'CLIENTES' : 'AVALES';
+    const id =
+      table == 'CLIENTES'
+        ? this.id_cliente_recuperado
+        : this.id_aval_recuperado;
+    // formInput?.clearAsyncValidators();
+    formInput?.setAsyncValidators(
+      existingCurpAsyncValidator(this.#validatorCurpService, table, id)
+    );
+    formInput?.updateValueAndValidity();
+  }
+
+  restartPhonesValidator(form: string, formControlName: string) {
+    const path = `${form}.${formControlName}`;
+    const formInput = this.mainForm.get(path);
+    const table = form.includes('formCliente') ? 'CLIENTES' : 'AVALES';
+    const tipo_telefono = formControlName.includes('fijo')
+      ? 'telefono_fijo'
+      : 'telefono_movil';
+    const id =
+      table == 'CLIENTES'
+        ? this.id_cliente_recuperado
+        : this.id_aval_recuperado;
+    // formInput?.clearAsyncValidators();
+    formInput?.setAsyncValidators(
+      existingPhonesAsyncValidator(
+        this.#validatorPhonesService,
+        table,
+        tipo_telefono,
+        id
+      )
+    );
+    formInput?.updateValueAndValidity();
   }
 }
