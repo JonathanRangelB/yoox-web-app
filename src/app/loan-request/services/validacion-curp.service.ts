@@ -11,6 +11,7 @@ export class ExistingCurpValidationService {
     const token = localStorage.getItem('token');
     if (!token) throw new Error('Token not found');
 
+    // TODO: considerar cambiar a un metodo get en lugar de post
     return this.#http.post(`${this.#baseUrl}validate/curp`, body, {
       headers: { authorization: `${token}` },
     });

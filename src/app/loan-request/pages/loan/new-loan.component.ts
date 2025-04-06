@@ -846,7 +846,6 @@ export class LoanComponent implements OnDestroy, OnInit {
       table == 'CLIENTES'
         ? this.id_cliente_recuperado
         : this.id_aval_recuperado;
-    // formInput?.clearAsyncValidators();
     formInput?.setAsyncValidators(
       existingCurpAsyncValidator(this.#validatorCurpService, table, id)
     );
@@ -864,7 +863,6 @@ export class LoanComponent implements OnDestroy, OnInit {
       table == 'CLIENTES'
         ? this.id_cliente_recuperado
         : this.id_aval_recuperado;
-    // formInput?.clearAsyncValidators();
     formInput?.setAsyncValidators(
       existingPhonesAsyncValidator(
         this.#validatorPhonesService,
