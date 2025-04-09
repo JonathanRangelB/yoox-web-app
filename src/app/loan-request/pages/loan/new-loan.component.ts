@@ -1,5 +1,12 @@
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { Component, inject, OnDestroy, OnInit, viewChild } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+  signal,
+  viewChild,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 
@@ -53,6 +60,7 @@ import {
 } from 'src/app/shared/utils/functions.utils';
 import { User } from 'src/app/shared/interfaces/userData.interface';
 import { AddressService } from '../../services/adress.service';
+import { Refinance } from '../../components/refinance-search/types/refinance';
 
 @Component({
   selector: 'app-loan',
@@ -75,12 +83,14 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
   readonly #addressService = inject(AddressService);
+  refinanceResults = signal<Refinance | null>(null);
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
   loanRequestId?: string;
   id?: number;
   destroy$ = new Subject();
   customerSearchVisible = false;
+  customerRefinanceVisible = false;
   customerFolderName?: string;
   position: string = 'bottom';
   mainForm: FormGroup;
@@ -564,6 +574,10 @@ export class LoanComponent implements OnDestroy, OnInit {
   toggleCustomerSearch() {
     this.customerSearchVisible = !this.customerSearchVisible;
     this.switchBusqueda()?.writeValue(this.customerSearchVisible);
+  }
+
+  toggleRefinanceSearch() {
+    this.customerRefinanceVisible = !this.customerRefinanceVisible;
   }
 
   /**

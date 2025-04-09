@@ -1,48 +1,65 @@
-import { Component, DestroyRef, inject, OnInit, signal } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  inject,
+  input,
+  OnInit,
+  output,
+  signal,
+} from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Refinance } from './types/refinance';
 import { CommonModule } from '@angular/common';
 import { TableModule, TableRowSelectEvent } from 'primeng/table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap } from 'rxjs';
 
 @Component({
   selector: 'app-refinance-search',
   imports: [CommonModule, TableModule],
   templateUrl: './refinance-search.component.html',
+  styles: `
+    p-table {
+      display: block;
+      margin-right: 1.5rem;
+    }
+  `,
 })
 export class RefinanceSearchComponent implements OnInit {
-  endpoint = environment.API_URL;
-  loading = false;
-  query = signal<string>(`${this.endpoint}loans-refinance?customerid=146`);
-  refinanceItems: Refinance[] = [];
-  #searchRefinanceService = inject(HttpClient).get<Refinance[]>(this.query(), {
-    headers: {
-      authorization: localStorage.getItem('token') || '',
-    },
-  });
+  readonly searchId = input.required<string | number>();
+  readonly searchRefinanceResults = output<Refinance[]>();
+  readonly #searchRefinanceService = inject(HttpClient);
   readonly #destroyRef$ = inject(DestroyRef);
+  endpoint = environment.API_URL;
+  loading = signal(true);
+  refinanceItems = signal<Refinance[]>([]);
 
   ngOnInit(): void {
+    console.log('searchId', this.searchId);
     this.refinanceSearch();
   }
 
   refinanceSearch() {
     this.#searchRefinanceService
-      .pipe(
-        takeUntilDestroyed(this.#destroyRef$),
-        tap(() => (this.loading = true))
+      .get<Refinance[]>(
+        `${this.endpoint}loans-refinance?customerid=${this.searchId()}`,
+        {
+          headers: {
+            authorization: localStorage.getItem('token') || '',
+          },
+        }
       )
+      .pipe(takeUntilDestroyed(this.#destroyRef$))
       .subscribe({
         next: (data) => {
-          this.refinanceItems = data;
-          this.loading = false;
+          this.loading.set(false);
+          this.refinanceItems.set(data);
+          this.searchRefinanceResults.emit(data);
         },
         error: (error) => {
           console.log(error);
-          this.refinanceItems = [];
-          this.loading = false;
+          this.loading.set(false);
+          this.searchRefinanceResults.emit([]);
         },
       });
   }

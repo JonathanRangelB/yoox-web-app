@@ -44,11 +44,7 @@
         (onRowSelect)="llenaCampos($event)"
         [value]="clientesEncontrados()"
         styleClass="p-datatable-striped"
-        scrollHeight="flex"
-        [tableStyle]="{
-          'min-width': '40rem',
-          'table-layout': 'fixed',
-        }">
+        scrollHeight="flex">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>

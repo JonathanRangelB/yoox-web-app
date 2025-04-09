@@ -44,9 +44,9 @@ import { IdsRecuperados } from '../../types/loan-request.interface';
   providers: [MessageService],
   templateUrl: './busqueda-clientes.component.html',
   styles: `
-    table tr td {
-      display: inline-block;
-      width: 100px; /* adjust to desired width */
+    p-table {
+      display: block;
+      margin-right: 1.5rem;
     }
   `,
 })
