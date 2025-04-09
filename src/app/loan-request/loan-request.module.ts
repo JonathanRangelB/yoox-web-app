@@ -63,4 +63,4 @@ import { RefinanceSearchComponent } from './components/refinance-search/refinanc
   ],
   providers: [ConfirmationService, MessageService],
 })
-export class LoanRequestModule { }
+export class LoanRequestModule {}

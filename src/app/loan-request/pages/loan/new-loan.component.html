@@ -213,7 +213,7 @@
           <p style="text-align: center; font-size: 1.4rem">
             ID de cliente seleccionado: {{ id_cliente_recuperado }}
           </p>
-          <app-refinance-search/>
+          <app-refinance-search />
         }
         <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">
           <div class="col-12 sm:col-6 flex flex-column">
@@ -261,7 +261,9 @@
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="telefono_fijo_cliente">Telefono fijo</label>
             <p-inputMask
-              (onFocus)="restartPhonesValidator('formCliente', 'telefono_fijo_cliente')"
+              (onFocus)="
+                restartPhonesValidator('formCliente', 'telefono_fijo_cliente')
+              "
               formControlName="telefono_fijo_cliente"
               inputId="telefono_fijo_cliente"
               mask="999-999-9999"
@@ -281,8 +283,8 @@
                   'telefonoExistente'
                 ]
               ) {
-                <ng-container
-                  > Numero telefonico fijo de cliente existente</ng-container
+                <ng-container>
+                  Numero telefonico fijo de cliente existente</ng-container
                 >
               }
             </small>
@@ -290,7 +292,9 @@
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="telefono_movil_cliente">Telefono movil</label>
             <p-inputMask
-              (onFocus)="restartPhonesValidator('formCliente', 'telefono_movil_cliente')"
+              (onFocus)="
+                restartPhonesValidator('formCliente', 'telefono_movil_cliente')
+              "
               formControlName="telefono_movil_cliente"
               inputId="telefono_movil_cliente"
               mask="999-999-9999"
@@ -310,8 +314,8 @@
                   'telefonoExistente'
                 ]
               ) {
-                <ng-container
-                  > Numero telefonico movil de cliente existente</ng-container
+                <ng-container>
+                  Numero telefonico movil de cliente existente</ng-container
                 >
               }
             </small>
@@ -385,8 +389,8 @@
               formControlName="id_domicilio_cliente"
               [useGrouping]="false"
               [showClear]="true"
-              [max]=2147483647
-              (onInput)="searchAddressByID($event,'formCliente', inputRef)"
+              [max]="2147483647"
+              (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
               min="1"
               placeholder="Solo ID's registrados"
               [style]="{ width: '100%' }" />
@@ -623,7 +627,9 @@
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="telefono_fijo_aval">Telefono fijo</label>
               <p-inputMask
-              (onFocus)="restartPhonesValidator('formAval', 'telefono_fijo_aval')"
+                (onFocus)="
+                  restartPhonesValidator('formAval', 'telefono_fijo_aval')
+                "
                 formControlName="telefono_fijo_aval"
                 inputId="telefono_fijo_aval"
                 mask="999-999-9999"
@@ -641,8 +647,8 @@
                     'telefonoExistente'
                   ]
                 ) {
-                  <ng-container
-                    > Numero telefónico fijo de aval existente</ng-container
+                  <ng-container>
+                    Numero telefónico fijo de aval existente</ng-container
                   >
                 }
               </small>
@@ -650,7 +656,9 @@
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="telefono_movil_aval">Telefono movil</label>
               <p-inputMask
-                (onFocus)="restartPhonesValidator('formAval', 'telefono_movil_aval')"
+                (onFocus)="
+                  restartPhonesValidator('formAval', 'telefono_movil_aval')
+                "
                 formControlName="telefono_movil_aval"
                 inputId="telefono_movil_aval"
                 mask="999-999-9999"
@@ -669,8 +677,8 @@
                     'telefonoExistente'
                   ]
                 ) {
-                  <ng-container
-                    > Numero telefónico movil de aval existente</ng-container
+                  <ng-container>
+                    Numero telefónico movil de aval existente</ng-container
                   >
                 }
               </small>
@@ -693,7 +701,7 @@
               <label for="curp_aval">CURP (Sólo Mayusculas y numeros)</label>
               <p-inputMask
                 #curp_aval
-                (onFocus)="restartCurpValidator('formAval','curp_aval')"
+                (onFocus)="restartCurpValidator('formAval', 'curp_aval')"
                 mask="aaaa-999999-aaaaaa-99"
                 inputId="curp_aval"
                 characterPattern="[A-Z]"
@@ -728,8 +736,8 @@
                 #inputRef
                 inputId="id_domicilio_aval"
                 id="id_domicilio_aval"
-                max=2147483647
-                (onInput)="searchAddressByID($event,'formAval',inputRef)"
+                max="2147483647"
+                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
                 formControlName="id_domicilio_aval"
                 [useGrouping]="false"
                 [showClear]="true"

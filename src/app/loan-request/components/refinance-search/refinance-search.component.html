@@ -1,28 +1,27 @@
-@if(refinanceItems.length > 0){
+@if (refinanceItems.length > 0) {
   <p>Se pueden refinanciar los siguientes prestamos:</p>
-<p-table
-  selectionMode="single"
-  dataKey="id"
-  (onRowSelect)="onRowSelect($event)"
-  [value]="refinanceItems"
-  styleClass="p-datatable-striped"
-  scrollHeight="flex"
-  >
-  <ng-template pTemplate="header">
-    <tr>
-      <th>FOLIO</th>
-      <th>CANTIDAD</th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-item>
-    <tr [pSelectableRow]="item" style="word-wrap: break-word">
-      <td>{{ item.id_prestamo }}</td>
-      <td>{{ item.cantidad_restante }}</td>
-    </tr>
-  </ng-template>
-</p-table>
+  <p-table
+    selectionMode="single"
+    dataKey="id"
+    (onRowSelect)="onRowSelect($event)"
+    [value]="refinanceItems"
+    styleClass="p-datatable-striped"
+    scrollHeight="flex">
+    <ng-template pTemplate="header">
+      <tr>
+        <th>FOLIO</th>
+        <th>CANTIDAD</th>
+      </tr>
+    </ng-template>
+    <ng-template pTemplate="body" let-item>
+      <tr [pSelectableRow]="item" style="word-wrap: break-word">
+        <td>{{ item.id_prestamo }}</td>
+        <td>{{ item.cantidad_restante }}</td>
+      </tr>
+    </ng-template>
+  </p-table>
 } @else {
-  @if(loading){
+  @if (loading) {
     <p>Buscando refinanciamientos...</p>
   } @else {
     <p>El cliente no tiene prestamos validos a refinanciar</p>
