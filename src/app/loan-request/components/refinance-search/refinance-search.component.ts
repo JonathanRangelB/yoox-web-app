@@ -35,7 +35,6 @@ export class RefinanceSearchComponent implements OnInit {
   refinanceItems = signal<Refinance[]>([]);
 
   ngOnInit(): void {
-    console.log('searchId', this.searchId);
     this.refinanceSearch();
   }
 
@@ -56,8 +55,7 @@ export class RefinanceSearchComponent implements OnInit {
           this.refinanceItems.set(data);
           this.searchRefinanceResults.emit(data);
         },
-        error: (error) => {
-          console.log(error);
+        error: () => {
           this.loading.set(false);
           this.searchRefinanceResults.emit([]);
         },

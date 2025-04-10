@@ -213,10 +213,13 @@
           <p style="text-align: center; font-size: 1.4rem">
             ID de cliente seleccionado: {{ id_cliente_recuperado }}
           </p>
-          <app-refinance-search
-            [searchId]="id_cliente_recuperado"
-            (visible)="toggleRefinanceSearch()"
-            (searchRefinanceResults)="refinanceResults()" />
+
+          @if (!customerSearchVisible) {
+            <app-refinance-search
+              [searchId]="id_cliente_recuperado"
+              (visible)="toggleRefinanceSearch()"
+              (searchRefinanceResults)="refinanceResults()" />
+          }
         }
         <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">
           <div class="col-12 sm:col-6 flex flex-column">
