@@ -20,14 +20,20 @@
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
   <!-- inicio de Card -->
   <!-- fin de Card -->
-  <p-stepper orientation="vertical" style="max-width: 720px; margin: 0 auto">
+  <p-stepper
+    #stepper
+    orientation="vertical"
+    style="max-width: 720px; margin: 0 auto">
     <!-- inicio de Cantidades y plazos -->
     <p-stepperPanel header="Cantidades y plazos">
       <ng-template
         pTemplate="content"
         let-index="index"
         let-nextCallback="nextCallback">
-        <p>Todos los campos son obligatorios</p>
+        <p>
+          <span class="pi pi-exclamation-triangle" style="color: yellow"></span>
+          Todos los campos son obligatorios
+        </p>
         <div class="grid py-3 pr-2" style="margin-right: 0">
           <!-- inicio de cantidades y plazos -->
           <div class="col-12 sm:col-4 flex flex-column">
@@ -149,32 +155,48 @@
               style="color: green; font-weight: bold"
               [value]="semana_refinanciamiento" />
           </p-inputGroup>
-          <!-- <p-inputGroup [style]="{ width: '99%' }"> -->
-          <!--   <p-inputGroupAddon> -->
-          <!--     <i class="pi pi-receipt"></i> -->
-          <!--     <span> Pagaria los dias:</span> -->
-          <!--   </p-inputGroupAddon> -->
-          <!--   <input -->
-          <!--     pInputText -->
-          <!--     disabled="true" -->
-          <!--     id="dia_semana" -->
-          <!--     placeholder="Dia de la semana que se abona" -->
-          <!--     [value]="dia_semana" /> -->
-          <!-- </p-inputGroup> -->
-          <!-- <p-inputGroup [style]="{ width: '99%' }"> -->
-          <!--   <p-inputGroupAddon> -->
-          <!--     <i class="pi pi-calendar-clock"></i> -->
-          <!--     <span> Fecha final estimada:</span> -->
-          <!--   </p-inputGroupAddon> -->
-          <!--   <input -->
-          <!--     type="text" -->
-          <!--     pInputText -->
-          <!--     id="fecha_final_estimada" -->
-          <!--     placeholder="Fecha final estimada" -->
-          <!--     disabled="true" -->
-          <!--     [value]="fecha_final_estimada_string" /> -->
-          <!-- </p-inputGroup> -->
-          <!-- final de valores calculados -->
+          @if (refinanceResults()) {
+            <p>Datos de refinanciamiento 👇</p>
+            <p-inputGroup [style]="{ width: '99%' }">
+              <p-inputGroupAddon>
+                <i class="pi pi-user"></i>
+                <span> ID de cliente:</span>
+              </p-inputGroupAddon>
+              <input
+                pInputText
+                disabled="true"
+                id="dia_semana"
+                placeholder="Dia de la semana que se abona"
+                [value]="refinanceResults()?.id_cliente" />
+            </p-inputGroup>
+            <p-inputGroup [style]="{ width: '99%' }">
+              <p-inputGroupAddon>
+                <i class="pi pi-receipt"></i>
+                <span> Folio a refinanciar:</span>
+              </p-inputGroupAddon>
+              <input
+                pInputText
+                disabled="true"
+                id="dia_semana"
+                placeholder="Dia de la semana que se abona"
+                [value]="refinanceResults()?.id_prestamo" />
+            </p-inputGroup>
+            <p-inputGroup [style]="{ width: '99%' }">
+              <p-inputGroupAddon>
+                <i class="pi pi-money-bill"></i>
+                <span> Cantidad Restante:</span>
+              </p-inputGroupAddon>
+              <input
+                pInputText
+                disabled="true"
+                id="dia_semana"
+                placeholder="Dia de la semana que se abona"
+                [value]="
+                  refinanceResults()?.cantidad_restante
+                    | currency: 'MXN' : 'symbol' : '1.2-2'
+                " />
+            </p-inputGroup>
+          }
         </div>
         <div class="flex justify-content-end pb-4 gap-2 pr-3">
           <p-button
@@ -218,7 +240,7 @@
             <app-refinance-search
               [searchId]="id_cliente_recuperado"
               (visible)="toggleRefinanceSearch()"
-              (searchRefinanceResults)="refinanceResults()" />
+              (searchRefinanceResults)="onRefinanceResults($event)" />
           }
         }
         <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">

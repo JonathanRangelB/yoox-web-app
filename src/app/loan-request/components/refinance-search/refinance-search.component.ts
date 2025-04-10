@@ -27,7 +27,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 })
 export class RefinanceSearchComponent implements OnInit {
   readonly searchId = input.required<string | number>();
-  readonly searchRefinanceResults = output<Refinance[]>();
+  readonly searchRefinanceResults = output<Refinance>();
   readonly #searchRefinanceService = inject(HttpClient);
   readonly #destroyRef$ = inject(DestroyRef);
   endpoint = environment.API_URL;
@@ -53,16 +53,14 @@ export class RefinanceSearchComponent implements OnInit {
         next: (data) => {
           this.loading.set(false);
           this.refinanceItems.set(data);
-          this.searchRefinanceResults.emit(data);
         },
         error: () => {
           this.loading.set(false);
-          this.searchRefinanceResults.emit([]);
         },
       });
   }
 
   onRowSelect(event: TableRowSelectEvent) {
-    console.log(event.data);
+    this.searchRefinanceResults.emit(event.data);
   }
 }

@@ -61,6 +61,7 @@ import {
 import { User } from 'src/app/shared/interfaces/userData.interface';
 import { AddressService } from '../../services/adress.service';
 import { Refinance } from '../../components/refinance-search/types/refinance';
+import { Stepper } from 'primeng/stepper';
 
 @Component({
   selector: 'app-loan',
@@ -72,6 +73,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   fileUpload = viewChild<FileUpload>('fileUpload');
   switchBusqueda = viewChild<InputSwitch>('switchBusqueda');
   dialogMessage = viewChild<Dialog>('dialogMessage');
+  stepper = viewChild<Stepper>('stepper');
   readonly #formBuilder = inject(FormBuilder);
   readonly #confirmationService = inject(ConfirmationService);
   readonly #messageService = inject(MessageService);
@@ -886,5 +888,11 @@ export class LoanComponent implements OnDestroy, OnInit {
       )
     );
     formInput?.updateValueAndValidity();
+  }
+
+  onRefinanceResults(refinanceData: Refinance) {
+    this.refinanceResults.set(refinanceData);
+    this.stepper()?.nextCallback(null, -1);
+    console.log({ refinanceData });
   }
 }
