@@ -27,7 +27,7 @@ export interface LoanRequest {
   id_agente: number;
   nombre_agente: string;
   id_grupo_original: number;
-  id_cliente: null;
+  id_cliente: number;
   nombre_cliente: string;
   apellido_paterno_cliente: string;
   apellido_materno_cliente: string;
@@ -46,7 +46,7 @@ export interface LoanRequest {
   cp_cliente: string;
   id_domicilio_cliente: number;
   referencias_dom_cliente: string;
-  id_aval: null;
+  id_aval: number;
   nombre_aval: string;
   apellido_paterno_aval: string;
   apellido_materno_aval: string;
@@ -82,6 +82,8 @@ export interface LoanRequest {
   closed_by_name: string;
   status_code: null;
   id_looan: number;
+  id_loan_to_refinance: number;
+  cantidad_restante: number;
 }
 
 export interface Plazo {

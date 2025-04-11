@@ -1,0 +1,37 @@
+@if (loading()) {
+  <p>
+    Buscando información
+    <i class="pi pi-spin pi-spinner" style="font-size: 1rem"></i>
+  </p>
+} @else {
+  @if (refinanceItems().length > 0) {
+    <p>
+      Prestamos refinanciables válidos del cliente
+      <i class="pi pi-check" style="color: green"></i>
+    </p>
+    <p-table
+      selectionMode="single"
+      dataKey="id_prestamo"
+      (onRowSelect)="onRowSelect($event)"
+      [value]="refinanceItems()"
+      styleClass="p-datatable-striped"
+      scrollHeight="flex">
+      <ng-template pTemplate="header">
+        <tr>
+          <th>FOLIO PRESTAMO</th>
+          <th>CANTIDAD RESTANTE</th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-item>
+        <tr [pSelectableRow]="item" style="word-wrap: break-word">
+          <td>{{ item.id_prestamo }}</td>
+          <td>
+            {{ item.cantidad_restante | currency: 'MXN' : 'symbol' : '1.2-2' }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  } @else {
+    <p>No se encontraron prestamos refinanciables válidos del cliente</p>
+  }
+}

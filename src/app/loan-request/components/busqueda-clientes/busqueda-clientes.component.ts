@@ -43,12 +43,7 @@ import { IdsRecuperados } from '../../types/loan-request.interface';
   ],
   providers: [MessageService],
   templateUrl: './busqueda-clientes.component.html',
-  styles: `
-    table tr td {
-      display: inline-block;
-      width: 100px; /* adjust to desired width */
-    }
-  `,
+  styleUrls: ['./busqueda-clientes.component.css'],
 })
 export class BusquedaClientesComponent {
   readonly parentForm = input.required<FormGroup>();

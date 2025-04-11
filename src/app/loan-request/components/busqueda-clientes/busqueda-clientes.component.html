@@ -1,4 +1,6 @@
-<section class="grid py-3 pr-3 mr-0 row-gap-3" [formGroup]="customerSearchForm">
+<section
+  class="grid py-3 pr-3 mr-1 row-gap-3 max-w-89vw md:max-w-57vw"
+  [formGroup]="customerSearchForm">
   <p-inputNumber
     placeholder="Código"
     inputId="ID"
@@ -44,11 +46,7 @@
         (onRowSelect)="llenaCampos($event)"
         [value]="clientesEncontrados()"
         styleClass="p-datatable-striped"
-        scrollHeight="flex"
-        [tableStyle]="{
-          'min-width': '40rem',
-          'table-layout': 'fixed',
-        }">
+        scrollHeight="flex">
         <ng-template pTemplate="header">
           <tr>
             <th>ID</th>
@@ -61,8 +59,8 @@
         <ng-template pTemplate="body" let-cliente>
           <tr [pSelectableRow]="cliente" style="word-wrap: break-word">
             <td>{{ cliente.id_cliente }}</td>
-            <td>{{ cliente.curp_cliente }}</td>
             <td>{{ cliente.nombre_cliente }}</td>
+            <td>{{ cliente.curp_cliente }}</td>
             <td>{{ cliente.ocupacion_cliente }}</td>
             <td>{{ cliente.correo_electronico_cliente }}</td>
           </tr>
