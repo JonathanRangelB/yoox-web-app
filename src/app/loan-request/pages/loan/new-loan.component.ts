@@ -668,6 +668,13 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.observationsHistory = data.observaciones;
           this.id_cliente_recuperado = data.id_cliente || undefined;
           this.id_aval_recuperado = data.id_aval || undefined;
+          if (data.id_loan_to_refinance) {
+            this.refinanceResults.set({
+              id_prestamo: data.id_loan_to_refinance,
+              id_cliente: data.id_cliente,
+              cantidad_restante: data.cantidad_restante,
+            });
+          }
           this.mainForm = this.formInit();
           this.mainForm.patchValue({
             cantidad_prestada: data.cantidad_prestada,
@@ -726,6 +733,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.calculaDiaDeLaSemana(
             new Date(data.fecha_inicial.replace(/Z$/, ''))
           );
+          this.updateAmountValidator(data.cantidad_restante);
           this.mainForm.updateValueAndValidity();
           this.#messageService.add({
             severity: 'success',
