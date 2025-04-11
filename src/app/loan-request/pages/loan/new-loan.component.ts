@@ -85,6 +85,8 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
   readonly #addressService = inject(AddressService);
+  readonly minLoanAmount = 1000;
+  customLoanAmount?: number;
   refinanceResults = signal<Refinance | null>(null);
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
@@ -191,7 +193,10 @@ export class LoanComponent implements OnDestroy, OnInit {
 
   formInit() {
     return this.#formBuilder.group({
-      cantidad_prestada: ['', [Validators.required, Validators.min(1000)]],
+      cantidad_prestada: [
+        '',
+        [Validators.required, Validators.min(this.minLoanAmount)],
+      ],
       plazo: ['', Validators.required],
       fecha_inicial: ['', Validators.required],
       observaciones: [''],
@@ -563,6 +568,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       fecha_final_estimada: this.fecha_final_estimada,
       dia_semana: this.dia_semana,
       cantidad_pagar: this.cantidad_pagar,
+      id_loan_to_refinance: this.refinanceResults()?.id_prestamo,
     };
   }
 
@@ -891,8 +897,24 @@ export class LoanComponent implements OnDestroy, OnInit {
   }
 
   onRefinanceResults(refinanceData: Refinance) {
+    if (!refinanceData) return;
     this.refinanceResults.set(refinanceData);
     this.stepper()?.nextCallback(null, -1);
     console.log({ refinanceData });
+    if (refinanceData.cantidad_restante) {
+      this.updateAmountValidator(refinanceData.cantidad_restante);
+    }
+  }
+
+  updateAmountValidator(amount: number) {
+    const inputElement = this.mainForm.get('cantidad_prestada');
+    this.customLoanAmount =
+      this.minLoanAmount > amount ? this.minLoanAmount : amount;
+    inputElement?.setValidators([
+      Validators.required,
+      Validators.min(this.customLoanAmount),
+    ]);
+    inputElement?.setValue(this.customLoanAmount);
+    inputElement?.updateValueAndValidity();
   }
 }

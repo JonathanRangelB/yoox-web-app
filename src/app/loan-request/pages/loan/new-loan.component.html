@@ -60,7 +60,11 @@
               >
               <ng-container
                 *ngIf="mainForm.get('cantidad_prestada')?.errors?.['min']">
-                Cantidad minima de 1000</ng-container
+                Cantidad minima de
+                {{
+                  customLoanAmount || minLoanAmount
+                    | currency: 'MXN' : 'symbol' : '1.2-2'
+                }}</ng-container
               >
             </small>
           </div>
