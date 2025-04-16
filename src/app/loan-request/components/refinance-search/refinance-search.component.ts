@@ -11,19 +11,13 @@ import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Refinance } from './types/refinance';
 import { CommonModule } from '@angular/common';
-import { TableModule, TableRowSelectEvent } from 'primeng/table';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-refinance-search',
-  imports: [CommonModule, TableModule],
+  imports: [CommonModule, DropdownModule],
   templateUrl: './refinance-search.component.html',
-  styles: `
-    p-table {
-      display: block;
-      margin-right: 1.5rem;
-    }
-  `,
 })
 export class RefinanceSearchComponent implements OnInit {
   readonly searchId = input.required<string | number>();
@@ -60,7 +54,7 @@ export class RefinanceSearchComponent implements OnInit {
       });
   }
 
-  onRowSelect(event: TableRowSelectEvent) {
-    this.searchRefinanceResults.emit(event.data);
+  onDropdownChange(event: DropdownChangeEvent) {
+    this.searchRefinanceResults.emit(event.value);
   }
 }
