@@ -62,7 +62,7 @@
                 *ngIf="mainForm.get('cantidad_prestada')?.errors?.['min']">
                 Cantidad minima de
                 {{
-                  customLoanAmount || minLoanAmount
+                  customLoanRefinanceAmount || customLoanAmount || minLoanAmount
                     | currency: 'MXN' : 'symbol' : '1.2-2'
                 }}</ng-container
               >
@@ -746,7 +746,7 @@
               <small
                 id="curp_cliente-help"
                 class="mb-2 text-red-500"
-                [hidden]="hideField('formCliente.curp_cliente')">
+                [hidden]="hideField('formAval.curp_aval')">
                 @if (mainForm.get('formAval.curp_aval')?.errors?.['required']) {
                   <ng-container> CURP requerido</ng-container>
                 }

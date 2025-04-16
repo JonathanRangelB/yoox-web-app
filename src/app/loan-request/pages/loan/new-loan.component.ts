@@ -87,6 +87,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #addressService = inject(AddressService);
   readonly minLoanAmount = 1000;
   customLoanAmount?: number;
+  customLoanRefinanceAmount?: number;
   refinanceResults = signal<Refinance | null>(null);
   windowMode: WindowMode = 'new';
   windowModeParams!: Params;
@@ -733,7 +734,10 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.calculaDiaDeLaSemana(
             new Date(data.fecha_inicial.replace(/Z$/, ''))
           );
-          this.updateAmountValidator(data.cantidad_restante);
+          this.updateAmountValidator(
+            data.cantidad_prestada,
+            data.cantidad_restante
+          );
           this.mainForm.updateValueAndValidity();
           this.#messageService.add({
             severity: 'success',
@@ -914,13 +918,14 @@ export class LoanComponent implements OnDestroy, OnInit {
     }
   }
 
-  updateAmountValidator(amount: number) {
+  updateAmountValidator(amount: number, refinanceAmount?: number) {
     const inputElement = this.mainForm.get('cantidad_prestada');
     this.customLoanAmount =
       this.minLoanAmount > amount ? this.minLoanAmount : amount;
+    this.customLoanRefinanceAmount ??= refinanceAmount;
     inputElement?.setValidators([
       Validators.required,
-      Validators.min(this.customLoanAmount),
+      Validators.min(refinanceAmount || this.customLoanAmount),
     ]);
     inputElement?.setValue(this.customLoanAmount);
     inputElement?.updateValueAndValidity();
