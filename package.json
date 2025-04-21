@@ -6,7 +6,7 @@
     "env": "node ./scripts/set-env.js",
     "start": "pnpm run env && ng serve --configuration development",
     "build": "pnpm run env && ng build --configuration production",
-    "build:purgecss": "pnpm run env && ng build --configuration production && pnpm run purgecss",
+    "build:purgecss": "pnpm run env && ng build --configuration production",
     "watch": "pnpm run env && ng build --watch --configuration development",
     "test": "pnpm run env && ng test --configuration development",
     "commitlint": "commitlint --edit",
@@ -20,7 +20,7 @@
     "e2e:ci": "ng e2e --watch false --headless",
     "all:ci": "pnpm run env && npm run lint:ci && npm run test:ci && npm run e2e:ci",
     "prepare": "husky install",
-    "purgecss": "node scripts/purgecss.js",
+    "postbuild": "node ./scripts/purgecss.mjs",
     "httpserver": "pnpm dlx http-server dist/yoox-web-app/browser/ -p 4200"
   },
   "private": true,
