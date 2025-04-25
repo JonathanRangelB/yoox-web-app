@@ -397,7 +397,6 @@ export class LoanComponent implements OnDestroy, OnInit {
           'Algún dato es incorrecto o aun no se ha proporcionado, revisa nuevamente los campos en el formulario.',
         life: 5000,
       });
-      //this.mainForm.markAllAsTouched();
       this.markFormGroupTouched(this.mainForm);
       return;
     }
@@ -918,14 +917,20 @@ export class LoanComponent implements OnDestroy, OnInit {
     }
   }
 
-  updateAmountValidator(amount: number, refinanceAmount?: number) {
+  updateAmountValidator(cantidad_prestada: number, cantidad_restante?: number) {
     const inputElement = this.mainForm.get('cantidad_prestada');
     this.customLoanAmount =
-      this.minLoanAmount > amount ? this.minLoanAmount : amount;
-    this.customLoanRefinanceAmount ??= refinanceAmount;
+      this.minLoanAmount > cantidad_prestada
+        ? this.minLoanAmount
+        : cantidad_prestada;
+    if (typeof cantidad_restante === 'number')
+      this.customLoanRefinanceAmount =
+        cantidad_restante < this.minLoanAmount
+          ? this.minLoanAmount
+          : cantidad_restante;
     inputElement?.setValidators([
       Validators.required,
-      Validators.min(refinanceAmount || this.customLoanAmount),
+      Validators.min(cantidad_restante || this.customLoanAmount),
     ]);
     inputElement?.setValue(this.customLoanAmount);
     inputElement?.updateValueAndValidity();

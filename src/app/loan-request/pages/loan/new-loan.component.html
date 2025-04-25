@@ -12,9 +12,6 @@
     <p *ngIf="modifiedBy">Modificado por: {{ modified_by_name }}</p>
     <p *ngIf="modifiedDate">
       Fecha de modificación: {{ modifiedDate | date: 'long' }}
-    </p>
-    <p *ngIf="closedBy">Cerrado por: {{ closed_by_name }}</p>
-    <p *ngIf="closedDate">Cerrado en: {{ closedDate | date: 'long' }}</p>
   </p-card>
 }
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
@@ -71,8 +68,6 @@
           <div class="col-12 sm:col-4 flex flex-column">
             <label for="plazo">Plazo</label>
             <p-dropdown
-              inputId="plazo"
-              id="plazo"
               formControlName="plazo"
               [options]="plazo"
               optionLabel="semanas_plazo"
@@ -378,7 +373,7 @@
             <label for="curp_cliente">CURP (Sólo Mayusculas y numeros)</label>
             <p-inputMask
               (onFocus)="restartCurpValidator('formCliente', 'curp_cliente')"
-              mask="aaaa-999999-aaaaaa-99"
+              mask="aaaa-999999-aaaaaa-*9"
               inputId="curp_cliente"
               characterPattern="[A-Z]"
               unmask="true"
@@ -417,7 +412,6 @@
             <p-inputNumber
               #inputRef
               inputId="id_domicilio_cliente"
-              id="id_domicilio_cliente"
               formControlName="id_domicilio_cliente"
               [useGrouping]="false"
               [showClear]="true"
@@ -437,7 +431,6 @@
             <label for="tipo_calle_cliente">Tipo de calle</label>
             <p-dropdown
               inputId="tipo_calle_cliente"
-              id="tipo_calle_cliente"
               formControlName="tipo_calle_cliente"
               [options]="tiposCalle"
               optionLabel="name"
@@ -732,9 +725,8 @@
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="curp_aval">CURP (Sólo Mayusculas y numeros)</label>
               <p-inputMask
-                #curp_aval
                 (onFocus)="restartCurpValidator('formAval', 'curp_aval')"
-                mask="aaaa-999999-aaaaaa-99"
+                mask="aaaa-999999-aaaaaa-*9"
                 inputId="curp_aval"
                 characterPattern="[A-Z]"
                 unmask="true"
@@ -744,7 +736,7 @@
                 placeholder="AAAA-000000-AAAAAA-00"
                 [style]="{ width: '100%' }" />
               <small
-                id="curp_cliente-help"
+                id="curp_aval-help"
                 class="mb-2 text-red-500"
                 [hidden]="hideField('formAval.curp_aval')">
                 @if (mainForm.get('formAval.curp_aval')?.errors?.['required']) {
@@ -767,7 +759,6 @@
               <p-inputNumber
                 #inputRef
                 inputId="id_domicilio_aval"
-                id="id_domicilio_aval"
                 max="2147483647"
                 (onInput)="searchAddressByID($event, 'formAval', inputRef)"
                 formControlName="id_domicilio_aval"
@@ -818,6 +809,7 @@
               <label for="numero_exterior_aval">Número Exterior</label>
               <input
                 pInputText
+                id="numero_exterior_aval"
                 formControlName="numero_exterior_aval"
                 showClear="true"
                 pKeyFilter="int"
@@ -985,13 +977,13 @@
             multiple="true" />
         </div>
         <div class="flex flex-column gap-2 mt-3 mr-3">
-          <label for="observaciones">Historial de observaciones</label>
+          <label for="observationsHistory">Historial de observaciones</label>
           <textarea
             rows="5"
             cols="30"
             pInputTextarea
             [value]="observationsHistory"
-            id="observaciones"
+            id="observationsHistory"
             [disabled]="true">
           </textarea>
         </div>
