@@ -225,8 +225,9 @@
             (onChange)="toggleCustomerSearch()" />
         </div>
         @if (customerSearchVisible) {
-          <app-busqueda-clientes
+          <app-people-search
             [parentForm]="mainForm"
+            [searchOnTable]="'clientes'"
             (idsRecuperados)="updateCustomerFoundId($event)"
             (visible)="toggleCustomerSearch()" />
         }
@@ -605,6 +606,22 @@
             <p style="text-align: center; font-size: 1.4rem">
               ID de aval seleccionado: {{ id_aval_recuperado }}
             </p>
+          }
+          <div class="flex justify-content-center align-items-center pr-3">
+            <p>¿Necesitas buscar un aval existente?</p>
+            <p-inputSwitch
+              inputId="habilitarCamposAval"
+              class="ml-3"
+              #switchBusquedaAval
+              [ngSwitch]="endorsmentSearchVisible"
+              (onChange)="toggleEndorsmentSearch()" />
+          </div>
+          @if (endorsmentSearchVisible) {
+            <app-people-search
+              [parentForm]="mainForm"
+              [searchOnTable]="'avales'"
+              (avalesRecuperados)="updateEndorsmentFormFields($event)"
+              (visible)="toggleEndorsmentSearch()" />
           }
           <div formGroupName="formAval" class="grid py-3 pr-3 mr-0">
             <div class="col-12 sm:col-6 flex flex-column">

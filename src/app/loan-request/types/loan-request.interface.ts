@@ -12,11 +12,30 @@ export interface CurrentUser {
   ID_ROL: number;
 }
 
-export interface IdsRecuperados {
+export interface ResultadosBusquedaCliente {
   id_cliente: number;
   id_aval: number;
   id_domicilio_cliente: number;
   id_domicilio_aval: number;
+}
+
+export interface ResultadosBusquedaAval {
+  id_aval?: number;
+  nombre?: string;
+  telefono_fijo?: string;
+  telefono_movil?: string;
+  correo_electronico?: string;
+  curp?: string;
+  id_domicilio?: null;
+  tipo_calle?: null;
+  nombre_calle?: string;
+  numero_exterior?: string;
+  numero_interior?: string;
+  colonia?: string;
+  municipio?: string;
+  estado?: null;
+  cp?: string;
+  referencias_dom?: null;
 }
 
 export interface LoanRequest {

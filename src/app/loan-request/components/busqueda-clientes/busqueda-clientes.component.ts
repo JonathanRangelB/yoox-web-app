@@ -23,12 +23,16 @@ import { TooltipModule } from 'primeng/tooltip';
 
 import { curpValidator } from '../../utils/customValidators';
 import { SearchCustomersService } from '../../services/search-customers.service';
-import { Customer } from '../../types/searchCustomers.interface';
+import {
+  Customer,
+  Guarantor,
+  SearchGuarantorOptions,
+} from '../../types/searchCustomers.interface';
 import { estadosDeLaRepublica, tiposCalle } from '../../utils/consts';
-import { IdsRecuperados } from '../../types/loan-request.interface';
+import { ResultadosBusquedaCliente } from '../../types/loan-request.interface';
 
 @Component({
-  selector: 'app-busqueda-clientes',
+  selector: 'app-people-search',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
     CommonModule,
@@ -47,12 +51,15 @@ import { IdsRecuperados } from '../../types/loan-request.interface';
 })
 export class BusquedaClientesComponent {
   readonly parentForm = input.required<FormGroup>();
+  readonly searchOnTable = input.required<'clientes' | 'avales'>();
   readonly visible = output<void>();
-  readonly idsRecuperados = output<IdsRecuperados>();
+  readonly idsRecuperados = output<ResultadosBusquedaCliente>();
+  readonly avalesRecuperados = output<Guarantor>();
   readonly #formBuilder = inject(FormBuilder);
   readonly #searchCustomerService = inject(SearchCustomersService);
   readonly #messageService = inject(MessageService);
   clientesEncontrados = signal<Customer[]>([]);
+  avalesEncontrados = signal<Guarantor[]>([]);
   loading = signal(false);
   customerSearchForm = this.#formBuilder.group({
     id: [null],
@@ -184,6 +191,14 @@ export class BusquedaClientesComponent {
     this.visible.emit();
   }
 
+  search(event: SubmitEvent | MouseEvent) {
+    if (this.searchOnTable() === 'clientes') {
+      this.customerSearch(event);
+    } else {
+      this.guaranteesSearch(event);
+    }
+  }
+
   /** Metodo principal encargado de buscar los registros de clientes */
   customerSearch(event: SubmitEvent | MouseEvent) {
     event.preventDefault();
@@ -225,6 +240,42 @@ export class BusquedaClientesComponent {
         });
       },
     });
+  }
+
+  guaranteesSearch(event: SubmitEvent | MouseEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.loading.set(true);
+    const formData = this.#generatePayload();
+    if (Object.keys(formData).length === 0) {
+      this.loading.set(false);
+      this.#messageService.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se proporciono ningun dato de busqueda',
+      });
+      return;
+    }
+    const payload = { ...formData } as unknown as SearchGuarantorOptions;
+    this.#searchCustomerService.searchGuarantees(payload).subscribe({
+      next: (avales) => {
+        this.loading.set(false);
+        this.avalesEncontrados.set(avales);
+      },
+      error: ({ error, errorMessage, errorType }) => {
+        this.loading.set(false);
+        this.#messageService.add({
+          severity: 'error',
+          summary: error?.message || errorMessage,
+          detail: error?.error || errorType,
+        });
+      },
+    });
+  }
+
+  emmitEndorsment(event: TableRowSelectEvent) {
+    this.avalesRecuperados.emit(event.data as Guarantor);
+    this.#hideSelfComponent();
   }
 
   /**

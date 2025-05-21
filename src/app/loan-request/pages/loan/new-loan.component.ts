@@ -46,10 +46,11 @@ import { LoanRequestService } from '../../services/loan-request.service';
 import {
   Address,
   dropDownCollection,
-  IdsRecuperados,
+  ResultadosBusquedaCliente,
   LoanRequest,
   Plazo,
   WindowMode,
+  ResultadosBusquedaAval,
 } from '../../types/loan-request.interface';
 import { ExistingCurpValidationService } from '../../services/validacion-curp.service';
 import { ValidatorExistingPhoneService } from '../../services/validacion-telefonos.service';
@@ -62,6 +63,7 @@ import { User } from 'src/app/shared/interfaces/userData.interface';
 import { AddressService } from '../../services/adress.service';
 import { Refinance } from '../../components/refinance-search/types/refinance';
 import { Stepper } from 'primeng/stepper';
+import { Guarantor } from '../../types/searchCustomers.interface';
 
 @Component({
   selector: 'app-loan',
@@ -72,6 +74,7 @@ import { Stepper } from 'primeng/stepper';
 export class LoanComponent implements OnDestroy, OnInit {
   fileUpload = viewChild<FileUpload>('fileUpload');
   switchBusqueda = viewChild<InputSwitch>('switchBusqueda');
+  switchBusquedaAvales = viewChild<InputSwitch>('switchBusquedaAval');
   dialogMessage = viewChild<Dialog>('dialogMessage');
   stepper = viewChild<Stepper>('stepper');
   readonly #formBuilder = inject(FormBuilder);
@@ -95,6 +98,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   id?: number;
   destroy$ = new Subject();
   customerSearchVisible = false;
+  endorsmentSearchVisible = false;
   customerRefinanceVisible = false;
   customerFolderName?: string;
   position: string = 'bottom';
@@ -584,6 +588,12 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.switchBusqueda()?.writeValue(this.customerSearchVisible);
   }
 
+  /** Activa y desactiva el componente de busqueda de clientes y actualiza el estado del inputswitch  */
+  toggleEndorsmentSearch() {
+    this.endorsmentSearchVisible = !this.endorsmentSearchVisible;
+    this.switchBusquedaAvales()?.writeValue(this.endorsmentSearchVisible);
+  }
+
   toggleRefinanceSearch() {
     this.customerRefinanceVisible = !this.customerRefinanceVisible;
   }
@@ -591,17 +601,31 @@ export class LoanComponent implements OnDestroy, OnInit {
   /**
    * guarda los valores de id_cliente e id_aval los cuales son recuperados/emitidos del componente de busqueda
    *
-   * @param idsRecuperados - Los Id's recuperados de emitidos por el componente de busqueda
+   * @param searchResults - Los Id's recuperados de emitidos por el componente de busqueda
    */
-  updateCustomerFoundId(idsRecuperados: IdsRecuperados) {
-    this.id_cliente_recuperado = idsRecuperados.id_cliente;
-    this.id_aval_recuperado = idsRecuperados.id_aval;
+  updateCustomerFoundId(searchResults: ResultadosBusquedaCliente) {
+    this.id_cliente_recuperado = searchResults.id_cliente;
+    this.id_aval_recuperado = searchResults.id_aval;
     this.mainForm.patchValue({
       formCliente: {
-        id_domicilio_cliente: idsRecuperados.id_domicilio_cliente,
+        id_domicilio_cliente: searchResults.id_domicilio_cliente,
       },
       formAval: {
-        id_domicilio_aval: idsRecuperados.id_domicilio_aval,
+        id_domicilio_aval: searchResults.id_domicilio_aval,
+      },
+    });
+  }
+
+  /**
+   * guarda los valores de id_cliente e id_aval los cuales son recuperados/emitidos del componente de busqueda
+   *
+   * @param searchResults - Los Id's recuperados de emitidos por el componente de busqueda
+   */
+  updateEndorsmentFoundId(searchResults: ResultadosBusquedaAval) {
+    this.id_aval_recuperado = searchResults.id_aval;
+    this.mainForm.patchValue({
+      formAval: {
+        id_domicilio_aval: searchResults.id_domicilio,
       },
     });
   }
@@ -934,5 +958,28 @@ export class LoanComponent implements OnDestroy, OnInit {
     ]);
     inputElement?.setValue(this.customLoanAmount);
     inputElement?.updateValueAndValidity();
+  }
+
+  updateEndorsmentFormFields(data: Guarantor) {
+    this.id_aval_recuperado = data.id_aval;
+    this.mainForm.get('formAval')?.patchValue({
+      id_domicilio_aval: data.id_domicilio,
+      nombre_aval: data.nombre,
+      telefono_fijo_aval: data.telefono_fijo ?? '',
+      telefono_movil_aval: data.telefono_movil ?? '',
+      correo_electronico_aval: data.correo_electronico ?? '',
+      curp_aval: data.curp,
+      tipo_calle_aval: tiposCalle.find((item) => item.name === data.tipo_calle),
+      nombre_calle_aval: data.nombre_calle,
+      numero_exterior_aval: data.numero_exterior,
+      numero_interior_aval: data.numero_interior,
+      colonia_aval: data.colonia,
+      municipio_aval: data.municipio,
+      estado_aval: estadosDeLaRepublica.find(
+        (item) => item.name === data.estado
+      ),
+      cp_aval: data.cp,
+      referencias_dom_aval: data.referencias_dom,
+    });
   }
 }

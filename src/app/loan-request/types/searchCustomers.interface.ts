@@ -42,3 +42,28 @@ export interface Customer {
   cp_aval: string;
   referencias_dom_aval: null;
 }
+
+export interface SearchGuarantorOptions {
+  id: number;
+  nombre: string;
+  curp: string;
+}
+
+export interface Guarantor {
+  id_aval: number;
+  nombre: string;
+  telefono_fijo: string;
+  telefono_movil: string;
+  correo_electronico: string;
+  curp: string;
+  id_domicilio: number;
+  tipo_calle: string;
+  nombre_calle: string;
+  numero_exterior: string;
+  numero_interior: string;
+  colonia: string;
+  municipio: string;
+  estado: string;
+  cp: string;
+  referencias_dom: string;
+}
