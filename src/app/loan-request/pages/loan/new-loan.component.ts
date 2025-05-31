@@ -377,6 +377,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           });
         },
         error: (err) => {
+          console.error(err);
           this.#messageService.add({
             severity: 'error',
             summary: 'Rechazado',
@@ -490,6 +491,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           );
         },
         error: (error: any) => {
+          console.error(error);
           this.uploading = false;
           this.#messageService.add({
             severity: 'error',
@@ -829,6 +831,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               inputRef: addressRequestData.inputRef,
             })),
             catchError((error) => {
+              console.error(error);
               this.mainForm.patchValue({
                 [this.domiciliosInputRef?.formName as string]: {
                   [this.domiciliosInputRef?.inputRef.inputId as string]: null,
