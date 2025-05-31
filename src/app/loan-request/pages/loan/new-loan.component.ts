@@ -546,7 +546,9 @@ export class LoanComponent implements OnDestroy, OnInit {
       request_number: this.loanRequestId,
       modified_by: this.currentUser?.ID,
       user_role: this.currentUser?.ROL,
-      observaciones: this.observationsHistory.trim(),
+      ...(this.observationsHistory
+        ? { observaciones: this.observationsHistory.trim() }
+        : {}),
     };
     return removeEmptyValues(requestData);
   }
