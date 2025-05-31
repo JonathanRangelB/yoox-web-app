@@ -12,6 +12,8 @@
     <p *ngIf="modifiedBy">Modificado por: {{ modified_by_name }}</p>
     <p *ngIf="modifiedDate">
       Fecha de modificación: {{ modifiedDate | date: 'medium': 'UTC' }}
+    <p>Cerrado por: {{ closed_by_name }}</p>
+    <p>Fecha de cierre: {{ closedDate | date: 'medium': 'UTC'}}</p>
   </p-card>
 }
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
