@@ -56,7 +56,7 @@ import { Component } from '@angular/core';
         Tienes derecho a acceder a tus datos personales, rectificarlos cuando
         sean inexactos, cancelarlos u oponerte a su tratamiento para fines
         específicos. Para ejercer estos derechos, puedes enviar una solicitud al
-        correo: contacto&#64;yooxgrupofinanciero.com, acompañada de una
+        correo: solucionesfinancieras&#64;gmail.com, acompañada de una
         identificación oficial.
       </p>
 
@@ -88,7 +88,7 @@ import { Component } from '@angular/core';
         <p>
           Si tienes dudas o deseas más información sobre el tratamiento de tus
           datos personales, puedes contactarnos al correo electrónico:
-          <strong>contacto&#64;yooxgrupofinanciero.com</strong>.
+          <strong>solucionesfinancieras&#64;gmail.com</strong>.
         </p>
       </div>
     </div>

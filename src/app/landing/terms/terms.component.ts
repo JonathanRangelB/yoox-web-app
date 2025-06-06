@@ -22,7 +22,7 @@ import { Component } from '@angular/core';
         Este sitio es operado por <strong>Yoox Grupo Financiero</strong>, con
         domicilio en Guadalajara, Jalisco, México. Para cualquier consulta
         relacionada con estos Términos y Condiciones, puedes contactarnos a
-        través del correo electrónico: contacto&#64;yooxgrupofinanciero.com.
+        través del correo electrónico: solucionesfinancieras&#64;gmail.com
       </p>
 
       <h2>2. Protección y Uso de Datos Personales</h2>
