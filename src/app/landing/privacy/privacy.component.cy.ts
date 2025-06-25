@@ -1,7 +1,7 @@
-import { PrivacyComponent } from './privacy.component'
+import { PrivacyComponent } from './privacy.component';
 
 describe('PrivacyComponent', () => {
   it('should mount', () => {
-    cy.mount(PrivacyComponent)
-  })
-})
+    cy.mount(PrivacyComponent);
+  });
+});

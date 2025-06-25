@@ -1,4 +1,4 @@
-import { User } from '../interfaces/userData.interface';
+import { TokenUserData } from '../interfaces/userData.interface';
 
 /**
  * Function to remove empty values from an object recursively
@@ -25,14 +25,14 @@ export function removeEmptyValues(obj: any): any {
 }
 
 /** Function that gets the currently logged user from localStorage */
-export function getUserFromLocalStorage(): User | null {
+export function getUserFromLocalStorage(): TokenUserData | null {
   const user = localStorage.getItem('user');
   if (!user) {
     console.warn('No se encontraron los datos del usuario en localStorage');
     return null;
   }
   try {
-    return JSON.parse(user) as User;
+    return JSON.parse(user) as TokenUserData;
   } catch (error) {
     console.error('Error parsing user data from localStorage', error);
     return null;

@@ -7,7 +7,7 @@ import {
   Validators,
 } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UserData } from 'src/app/shared/interfaces/userData.interface';
+import { LoginResponse } from 'src/app/shared/interfaces/userData.interface';
 import { AuthService } from 'src/app/login/services/AuthService';
 import { environment } from 'src/environments/environment';
 import { ButtonModule } from 'primeng/button';
@@ -34,7 +34,7 @@ export class LoginPageComponent implements OnInit {
   isProdEnv = environment.PRODUCTION;
   environmentName = environment.ENV_NAME;
   loginForm!: FormGroup;
-  userData?: UserData;
+  loginResponse?: LoginResponse;
   error = '';
   loading = false;
   errorMessage = 'Ocurrio un error al intentar ingresar, intente mas tarde';
@@ -51,7 +51,7 @@ export class LoginPageComponent implements OnInit {
   requestLogin() {
     // clean up the messages of previous calls
     this.error = '';
-    this.userData = undefined;
+    this.loginResponse = undefined;
     this.loading = true;
 
     this.authService
@@ -65,13 +65,13 @@ export class LoginPageComponent implements OnInit {
       });
   }
 
-  handleSuccessfullLogin = (user: UserData) => {
-    this.userData = user;
+  handleSuccessfullLogin = (token: LoginResponse) => {
+    const user = this.authService.currentUser;
     this.loading = false;
-    localStorage.setItem('token', user.Autorization);
-    localStorage.setItem('idusuario', user.user.ID.toString());
-    localStorage.setItem('nombreusuario', user.user.NOMBRE.toString());
-    localStorage.setItem('user', JSON.stringify(user.user));
+    localStorage.setItem('token', token.token);
+    localStorage.setItem('idusuario', user!.ID.toString());
+    localStorage.setItem('nombreusuario', user!.NOMBRE);
+    localStorage.setItem('user', JSON.stringify(user));
 
     this.router.navigate(['/dashboard']);
   };

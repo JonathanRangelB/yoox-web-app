@@ -59,7 +59,7 @@ import {
   getUserFromLocalStorage,
   removeEmptyValues,
 } from 'src/app/shared/utils/functions.utils';
-import { User } from 'src/app/shared/interfaces/userData.interface';
+import { TokenUserData } from 'src/app/shared/interfaces/userData.interface';
 import { AddressService } from '../../services/adress.service';
 import { Refinance } from '../../components/refinance-search/types/refinance';
 import { Stepper } from 'primeng/stepper';
@@ -135,7 +135,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   modifiedDate?: Date;
   modifiedBy?: number;
   closedDate?: Date;
-  currentUser!: User | null;
+  currentUser!: TokenUserData | null;
   timeoutRef?: NodeJS.Timeout;
   id_agente?: number;
   id_loan?: number;

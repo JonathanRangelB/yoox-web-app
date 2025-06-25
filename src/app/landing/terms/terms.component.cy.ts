@@ -1,7 +1,7 @@
-import { TermsComponent } from './terms.component'
+import { TermsComponent } from './terms.component';
 
 describe('TermsComponent', () => {
   it('should mount', () => {
-    cy.mount(TermsComponent)
-  })
-})
+    cy.mount(TermsComponent);
+  });
+});

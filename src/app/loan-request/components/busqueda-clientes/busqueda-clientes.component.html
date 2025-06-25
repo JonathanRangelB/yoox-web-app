@@ -37,7 +37,7 @@
       tooltipPosition="bottom"></i>
   </div>
   <div class="card col-12">
-    @if(searchOnTable() === 'clientes'){
+    @if (searchOnTable() === 'clientes') {
       @if (!clientesEncontrados().length) {
         <div style="text-align: center">No hay registros.</div>
       } @else {
@@ -89,9 +89,9 @@
             </ng-template>
             <ng-template pTemplate="body" let-aval>
               <tr [pSelectableRow]="aval" style="word-wrap: break-word">
-                <td>{{ aval.id_aval}}</td>
-                <td>{{ aval.nombre}}</td>
-                <td>{{ aval.curp}}</td>
+                <td>{{ aval.id_aval }}</td>
+                <td>{{ aval.nombre }}</td>
+                <td>{{ aval.curp }}</td>
               </tr>
             </ng-template>
           </p-table>
