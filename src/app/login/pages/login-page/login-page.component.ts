@@ -80,7 +80,7 @@ export class LoginPageComponent implements OnInit {
     this.loading = false;
     if (error instanceof HttpErrorResponse) {
       if (error.status == 404) {
-        this.error = error.error?.message;
+        this.error = error.error;
       } else {
         this.error = this.errorMessage;
       }
