@@ -8,31 +8,81 @@ import { Router } from '@angular/router';
 })
 export class LandingComponent {
   readonly #router = inject(Router);
-  title = 'YOOX web app';
   currentYear = new Date().getFullYear();
 
   carouselItems = [
     {
       imageUrl:
-        'https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-      title: 'Planificación financiera',
+        'https://images.pexels.com/photos/4386431/pexels-photo-4386431.jpeg?auto=compress&cs=tinysrgb&w=800&h=500&fit=crop',
+      title: 'Créditos Personales',
     },
     {
       imageUrl:
-        'https://images.unsplash.com/photo-1554224155-6726b3ff858f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1711&q=80',
-      title: 'Inversiones inteligentes',
+        'https://images.pexels.com/photos/3760263/pexels-photo-3760263.jpeg?auto=compress&cs=tinysrgb&w=800&h=500&fit=crop',
+      title: 'Créditos Empresariales',
     },
     {
       imageUrl:
-        'https://images.unsplash.com/photo-1434626881859-194d67b2b86f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1774&q=80',
-      title: 'Ahorro para el futuro',
-    },
-    {
-      imageUrl:
-        'https://images.unsplash.com/photo-1450101499163-c8848c66ca85?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1740&q=80',
-      title: 'Gestión de presupuestos',
+        'https://images.pexels.com/photos/259027/pexels-photo-259027.jpeg?auto=compress&cs=tinysrgb&w=800&h=500&fit=crop',
+      title: 'Créditos Hipotecarios',
     },
   ];
+
+  constructor() {
+    this.initAll();
+  }
+
+  initAll() {
+    // Header scroll effect - Fixed for dark mode
+    window.addEventListener('scroll', () => {
+      const header = document.querySelector('.header');
+      if (header) {
+        if (window.scrollY > 50) {
+          header.classList.add('scrolled');
+        } else {
+          header.classList.remove('scrolled');
+        }
+      }
+    });
+
+    // Video fallback handling
+    document.addEventListener('DOMContentLoaded', function () {
+      const video = document.querySelector('.hero-video') as HTMLVideoElement;
+      const fallback = document.querySelector(
+        '.hero-fallback'
+      ) as HTMLHtmlElement;
+
+      if (video && fallback) {
+        // Set initial video opacity to 0 for smooth transition
+        video.style.opacity = '0';
+        video.style.transition = 'opacity 1s ease-in-out';
+
+        // Show fallback initially
+        fallback.style.opacity = '1';
+
+        // Handle video load success
+        video.addEventListener('canplay', function () {
+          this.style.opacity = '1';
+          fallback.style.opacity = '0';
+        });
+
+        // Handle video load error
+        video.addEventListener('error', function () {
+          this.style.display = 'none';
+          fallback.style.opacity = '1';
+        });
+
+        // Timeout fallback in case video takes too long
+        setTimeout(() => {
+          if (video.readyState < 3) {
+            // HAVE_FUTURE_DATA
+            video.style.display = 'none';
+            fallback.style.opacity = '1';
+          }
+        }, 5000);
+      }
+    });
+  }
 
   navigateTo(path: string) {
     this.#router.navigate([path]);

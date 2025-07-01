@@ -7,6 +7,8 @@ import { Router } from '@angular/router';
   standalone: false,
 })
 export class NotFoundComponent {
+  currentYear = new Date().getFullYear();
+
   constructor(private router: Router) {}
   goBack() {
     this.router.navigate(['/']);
