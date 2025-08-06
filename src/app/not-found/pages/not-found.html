@@ -1,88 +1,97 @@
 <header class="header">
-      <nav class="nav">
-        <div class="nav-container">
-          <div class="logo">
-            <img src="../../../assets/yoox.svg" alt="Financiera Guadalajara Logo" class="logo-img">
-            <span class="logo-text">Grupo Financiero YOOX</span>
-          </div>
-        </div>
-      </nav>
-    </header>
-
-    <!-- 404 Error Section -->
-    <section class="error-section">
-      <div class="error-background">
-        <!-- Animated background elements -->
-        <div class="floating-shapes">
-          <div class="shape shape-1"></div>
-          <div class="shape shape-2"></div>
-          <div class="shape shape-3"></div>
-          <div class="shape shape-4"></div>
-          <div class="shape shape-5"></div>
-        </div>
+  <nav class="nav">
+    <div class="nav-container">
+      <div class="logo">
+        <img
+          src="../../../assets/yoox.svg"
+          alt="Financiera Guadalajara Logo"
+          class="logo-img" />
+        <span class="logo-text">Grupo Financiero YOOX</span>
       </div>
+    </div>
+  </nav>
+</header>
 
-      <div class="error-content">
-        <div class="error-container">
-          <div class="error-number">404</div>
-          <h1 class="error-title">Página <span class="highlight">No Encontrada</span></h1>
-          <p class="error-subtitle">
-            Lo sentimos, la página que estás buscando no existe o ha sido movida.
-            Te invitamos a regresar a nuestro sitio principal para conocer nuestros servicios financieros.
-          </p>
+<!-- 404 Error Section -->
+<section class="error-section">
+  <div class="error-background">
+    <!-- Animated background elements -->
+    <div class="floating-shapes">
+      <div class="shape shape-1"></div>
+      <div class="shape shape-2"></div>
+      <div class="shape shape-3"></div>
+      <div class="shape shape-4"></div>
+      <div class="shape shape-5"></div>
+    </div>
+  </div>
 
-          <div class="error-actions">
-            <button class="btn-secondary" onclick="history.back()">
-              ← Regresar
-            </button>
-          </div>
-        </div>
+  <div class="error-content">
+    <div class="error-container">
+      <div class="error-number">404</div>
+      <h1 class="error-title">
+        Página <span class="highlight">No Encontrada</span>
+      </h1>
+      <p class="error-subtitle">
+        Lo sentimos, la página que estás buscando no existe o ha sido movida. Te
+        invitamos a regresar a nuestro sitio principal para conocer nuestros
+        servicios financieros.
+      </p>
+
+      <div class="error-actions">
+        <button class="btn-secondary" onclick="history.back()">
+          ← Regresar
+        </button>
       </div>
-    </section>
+    </div>
+  </div>
+</section>
 
-    <footer class="footer">
-      <div class="container">
-        <div class="footer-content">
-          <div class="footer-section">
-            <h4>Grupo Financiero YOOX</h4>
-            <p>Tu socio financiero de confianza en Guadalajara desde 1995.</p>
-            <a routerLink="/terms"><p>Terminos y condiciones</p></a>
-            <a routerLink="/privacy"><p>Privacidad</p></a>
-          </div>
-          <div class="footer-section">
-            <h4>👤 Contacto</h4>
-            <p>📍 Av. Vallarta 1234, Guadalajara, Jalisco</p>
-            <p>📞 (33) 1234-5678</p>
-            <p>✉️ solucionesfinancieras&#64;gmail.com</p>
-          </div>
-          <div class="footer-section">
-            <h4>📅 Horarios</h4>
-            <p>Lunes - Viernes: 9:00 AM - 6:00 PM</p>
-            <p>Sábados y Domingos: Cerrado</p>
-          </div>
-        </div>
-        <div class="footer-bottom">
-      <p>&copy; {{currentYear}} Grupo Financiero YOOX. Todos los derechos reservados.</p>
-        </div>
+<footer class="footer">
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section">
+        <h4>Grupo Financiero YOOX</h4>
+        <p>Tu socio financiero de confianza en Guadalajara desde 1995.</p>
+        <a routerLink="/terms"><p>Terminos y condiciones</p></a>
+        <a routerLink="/privacy"><p>Privacidad</p></a>
       </div>
-    </footer>
+      <div class="footer-section">
+        <h4>👤 Contacto</h4>
+        <p>📍 Av. Vallarta 1234, Guadalajara, Jalisco</p>
+        <p>📞 (33) 1234-5678</p>
+        <p>✉️ solucionesfinancieras&#64;gmail.com</p>
+      </div>
+      <div class="footer-section">
+        <h4>📅 Horarios</h4>
+        <p>Lunes - Viernes: 9:00 AM - 6:00 PM</p>
+        <p>Sábados y Domingos: Cerrado</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>
+        &copy; {{ currentYear }} Grupo Financiero YOOX. Todos los derechos
+        reservados.
+      </p>
+    </div>
+  </div>
+</footer>
 
-    <script>
-      // Header scroll effect
-      window.addEventListener('scroll', () => {
-        const header = document.querySelector('.header');
-        if (window.scrollY > 100) {
-          header.style.background = 'rgba(15, 23, 42, 0.98)';
-        } else {
-          header.style.background = 'rgba(15, 23, 42, 0.95)';
-        }
-      });
+<script>
+  // Header scroll effect
+  window.addEventListener('scroll', () => {
+    const header = document.querySelector('.header');
+    if (window.scrollY > 100) {
+      header.style.background = 'rgba(15, 23, 42, 0.98)';
+    } else {
+      header.style.background = 'rgba(15, 23, 42, 0.95)';
+    }
+  });
 
-      // Animate shapes on load
-      document.addEventListener('DOMContentLoaded', function() {
-        const shapes = document.querySelectorAll('.shape');
-        shapes.forEach((shape, index) => {
-          shape.style.animationDelay = `${index * 0.5}s`;
-        });
-      });
-    </script>
+  // Animate shapes on load
+  document.addEventListener('DOMContentLoaded', function () {
+    const shapes = document.querySelectorAll('.shape');
+    shapes.forEach((shape, index) => {
+      shape.style.animationDelay = `${index * 0.5}s`;
+    });
+  });
+</script>

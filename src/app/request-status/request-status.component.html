@@ -82,13 +82,23 @@
     <pre *ngIf="isProdEnv !== 'true'">
       Entorno actual: {{ environmentName }}
     </pre>
-    <p-button
-      class="mt-3"
-      data-cy="regresar"
-      label="regresar"
-      type="button"
-      (onClick)="goToLanding()"></p-button>
+    <div class="flex flex-row justify-content-between">
+      <p-button
+        class="mt-3"
+        data-cy="regresar"
+        label="Regresar"
+        type="button"
+        (onClick)="goToLanding()"></p-button>
+      <p-button
+        class="mt-3 ml-3"
+        data-cy="qr_alta"
+        label="Alta de telefono"
+        icon="pi pi-qrcode"
+        type="button"
+        (onClick)="qrVisible = !qrVisible"></p-button>
+    </div>
   </form>
+
   <p-dialog
     data-cy="dialog_result"
     header="Información de la solicitud"
@@ -170,5 +180,18 @@
         <h2 class="text-center">No se encontró información</h2>
       </p-card>
     }
+  </p-dialog>
+  <p-dialog
+    data-cy="dialog_result"
+    header="Escanea el QR para darte de alta"
+    [modal]="true"
+    [(visible)]="qrVisible"
+    [style]="{ width: '30rem' }"
+    [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
+    <img src="./assets/ALTA.png" class="mb-3 w-full" alt="logo" />
+    <p>
+      También puedes acceder desde este link:
+      <a href="https://wa.me/5213313008582?text=ALTA">ALTA</a>
+    </p>
   </p-dialog>
 </div>

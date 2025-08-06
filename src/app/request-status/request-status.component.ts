@@ -38,6 +38,7 @@ import { Router } from '@angular/router';
 export class RequestStatusComponent {
   router = inject(Router);
   requestForm!: FormGroup;
+  qrVisible = false;
   isProdEnv = environment.PRODUCTION;
   environmentName = environment.ENV_NAME;
   loading = signal<boolean>(false);
