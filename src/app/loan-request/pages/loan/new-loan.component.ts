@@ -535,12 +535,13 @@ export class LoanComponent implements OnDestroy, OnInit {
       ? this.statusProvisional
       : this.status;
     if (this.windowMode === 'view') {
-      if (this.currentUser?.ROL === 'Cobrador')
+      if (this.currentUser?.ROL === 'Cobrador') {
         newStatus = newStatus === 'ACTUALIZAR' ? 'EN REVISION' : newStatus;
-      else {
+      } else {
         newStatus = newStatus === 'EN REVISION' ? 'ACTUALIZAR' : newStatus;
       }
     }
+    this.statusProvisional = newStatus;
     requestData = {
       ...requestData,
       loan_request_status: newStatus,
