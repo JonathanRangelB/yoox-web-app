@@ -646,6 +646,9 @@ export class LoanComponent implements OnDestroy, OnInit {
     const date = new Date().toLocaleString('es-MX');
     const currentUser = localStorage.getItem('user');
     const nombreUsuario = JSON.parse(currentUser!).NOMBRE;
+    if (!this.observationsHistory) {
+      return `${nombreUsuario} - ${date}:\n${campoObservaciones?.value}`;
+    }
     return (
       this.observationsHistory +
       `\n\n${nombreUsuario} - ${date}:\n${campoObservaciones?.value}`
