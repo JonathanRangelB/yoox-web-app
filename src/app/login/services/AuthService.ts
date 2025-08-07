@@ -18,6 +18,7 @@ import { TokenValidationResponse } from '../interfaces/tokenValidationResponse';
 import { environment } from 'src/environments/environment';
 import { UserCredentials } from 'src/app/shared/interfaces/user.interface';
 import { Router } from '@angular/router';
+import { jwtDecode } from 'jwt-decode';
 
 @Injectable({
   providedIn: 'root',
@@ -48,9 +49,7 @@ export class AuthService implements OnDestroy {
       .post<LoginResponse>(`${this.baseUrl}login`, { userId, password })
       .pipe(
         tap((response) => {
-          this.tokenUserData = JSON.parse(
-            atob(response.token.split('.')[1])
-          ) as TokenUserData;
+          this.tokenUserData = jwtDecode<TokenUserData>(response.token);
           this.startTokenValidation();
         })
       );
@@ -82,10 +81,7 @@ export class AuthService implements OnDestroy {
   }
 
   getUserDataFromToken(token: string) {
-    const tokenPayload = token.split(' ')[1];
-    const tokenUserData = JSON.parse(
-      atob(tokenPayload.split('.')[1])
-    ) as TokenUserData;
+    const tokenUserData = jwtDecode<TokenUserData>(token);
     return tokenUserData;
   }
 
