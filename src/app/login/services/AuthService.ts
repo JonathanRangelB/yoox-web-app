@@ -104,13 +104,6 @@ export class AuthService implements OnDestroy {
       const now = Date.now();
       const expirationTime = tokenUserData.exp * 1000;
       const timeRemaining = expirationTime - now;
-      console.table({
-        now,
-        expirationTime,
-        timeRemaining,
-        timeFrameToValidate: this.timeFrameToValidate,
-      });
-
       // Solo validar si el token expira en 15 minutos o menos
       const result =
         timeRemaining > 0 && timeRemaining <= this.timeFrameToValidate;
