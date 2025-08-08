@@ -518,12 +518,22 @@ export class LoanComponent implements OnDestroy, OnInit {
       ...this.mainForm.value,
       formCliente: {
         ...this.mainForm.value.formCliente,
+        nombre_cliente: this.mainForm.value.formCliente.nombre_cliente.trim(),
+        apellido_paterno_cliente:
+          this.mainForm.value.formCliente.apellido_paterno_cliente.trim(),
+        apellido_materno_cliente:
+          this.mainForm.value.formCliente.apellido_materno_cliente.trim(),
         ...(this.id_cliente_recuperado
           ? { id_cliente: this.id_cliente_recuperado }
           : {}),
       },
       formAval: {
         ...this.mainForm.value.formAval,
+        nombre_aval: this.mainForm.value.formAval.nombre_aval.trim(),
+        apellido_paterno_aval:
+          this.mainForm.value.formAval.apellido_paterno_aval.trim(),
+        apellido_materno_aval:
+          this.mainForm.value.formAval.apellido_materno_aval.trim(),
         ...(this.id_aval_recuperado
           ? { id_aval: this.id_aval_recuperado }
           : {}),
