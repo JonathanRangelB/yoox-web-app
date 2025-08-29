@@ -1,6 +1,39 @@
 <div class="p-2 width-maximo">
-  <!-- <h2>Este es tu listado de solicitudes:</h2> -->
   <p-menubar [model]="menuItems()">
+    <ng-template pTemplate="item" let-item>
+      <ng-container *ngIf="item.dropdown; else normalItem">
+        <div style="padding: 0.75rem 1.25rem">
+          <p-dropdown
+            [options]="requestUserList()"
+            placeholder="Agentes"
+            optionLabel="NOMBRE"
+            filter="true"
+            showClear="true"
+            id="ID"
+            (click)="$event.stopPropagation()"
+            (mousedown)="$event.stopPropagation()"
+            (onChange)="userSelected($event)"
+            (onClear)="selectedUser = undefined"
+            selected
+            [appendTo]="'body'"
+            [style]="{ width: '100%' }"
+            [(ngModel)]="selectedUser"></p-dropdown>
+        </div>
+      </ng-container>
+      <ng-template #normalItem>
+        <a class="p-menuitem-link" [routerLink]="item.routerLink">
+          <span
+            [class]="'p-menuitem-icon ng-star-inserted ' + item.icon"
+            *ngIf="item.icon"></span>
+          <i
+            *ngIf="selectedStatusItem === item.status"
+            class="pi pi-check"
+            style="color: green"></i>
+          <span class="p-menuitem-text">&nbsp;{{ item.label }}</span>
+          <span *ngIf="item.items" class="pi pi-angle-right ml-auto"></span>
+        </a>
+      </ng-template>
+    </ng-template>
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2">
         <p-button
@@ -13,12 +46,12 @@
           pInputText
           [(ngModel)]="searchInputValue"
           [placeholder]="searchTerm"
-          (keypress)="$event.keyCode === 13 ? inputSearch() : null"
+          (keypress)="inputSearch($event)"
           class="w-11rem md:w-auto" />
         <p-button
           size="small"
           icon="pi pi-search"
-          (onClick)="inputSearch()"></p-button>
+          (onClick)="inputSearch($event)"></p-button>
       </div>
     </ng-template>
   </p-menubar>
@@ -35,7 +68,6 @@
         <ng-template pTemplate="list" let-requests>
           <div class="grid grid-nogutter">
             <div
-              class="col-12"
               *ngFor="let item of requests; let first = first"
               class="col-12">
               <div
@@ -95,13 +127,6 @@
           </div>
         </ng-template>
       </p-dataView>
-      <p-paginator
-        class="paginator"
-        (onPageChange)="onPageChange($event)"
-        [first]="first"
-        [rows]="rows"
-        [totalRecords]="totalRecords"
-        [rowsPerPageOptions]="[5, 10, 20, 50]" />
     }
   </section>
   <p-dialog

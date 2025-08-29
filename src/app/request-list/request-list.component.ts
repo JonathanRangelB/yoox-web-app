@@ -32,6 +32,7 @@ import {
 } from './types/requests';
 import { RequestListService } from './services/request-list.service';
 import { toTitleCaseAndSplit } from '../shared/utils/functions.utils';
+import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-request-list',
@@ -47,6 +48,7 @@ import { toTitleCaseAndSplit } from '../shared/utils/functions.utils';
     ProgressSpinnerModule,
     TagModule,
     ToastModule,
+    DropdownModule,
   ],
   templateUrl: './request-list.component.html',
   styleUrls: ['./request-list.component.css'],
@@ -73,7 +75,6 @@ export class RequestListComponent implements OnInit {
   sortOrder!: number;
   totalRecords: number = 0;
   userIdFilter?: number;
-  loggedUser?: User;
   selectedMenuItem: MenuItem | null = null;
   selectedStatusItem: string | null = null;
 
@@ -94,6 +95,7 @@ export class RequestListComponent implements OnInit {
                   this.selectedStatusItem === LoanStatusEnum.revision
                     ? 'pi pi-check'
                     : '',
+                status: LoanStatusEnum.revision,
               },
               {
                 label: 'Aprobado',
@@ -102,6 +104,7 @@ export class RequestListComponent implements OnInit {
                   this.selectedStatusItem === LoanStatusEnum.aprobado
                     ? 'pi pi-check'
                     : '',
+                status: LoanStatusEnum.aprobado,
               },
               {
                 label: 'Rechazado',
@@ -110,6 +113,7 @@ export class RequestListComponent implements OnInit {
                   this.selectedStatusItem === LoanStatusEnum.rechazado
                     ? 'pi pi-check'
                     : '',
+                status: LoanStatusEnum.rechazado,
               },
               {
                 label: 'Actualizar',
@@ -118,6 +122,7 @@ export class RequestListComponent implements OnInit {
                   this.selectedStatusItem === LoanStatusEnum.actualizar
                     ? 'pi pi-check'
                     : '',
+                status: LoanStatusEnum.actualizar,
               },
               {
                 separator: true,
@@ -129,13 +134,15 @@ export class RequestListComponent implements OnInit {
                   this.selectedStatusItem === LoanStatusEnum.todos
                     ? 'pi pi-check'
                     : '',
+                status: LoanStatusEnum.todos,
               },
             ],
           },
           {
-            label: 'Agente',
-            icon: 'pi pi-user',
-            items: this.usersList(),
+            // necesito inyectar este elemento para indicarle al menu que aqui hay algo especial
+            // de tipo dropdown, en el template se valida este atributo para renderizar el componente
+            // el resto de elementos se renderizan como opciones normales del menu
+            dropdown: true,
           },
         ],
       },
@@ -178,7 +185,6 @@ export class RequestListComponent implements OnInit {
 
   ngOnInit(): void {
     this.showLoadingModal = true;
-    this.loggedUser = JSON.parse(localStorage.getItem('user')!);
     this.getRequestListItems({
       offSetRows: this.first,
       fetchRowsNumber: this.rows,
@@ -266,7 +272,10 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  inputSearch() {
+  inputSearch(event: KeyboardEvent | MouseEvent) {
+    if (event instanceof KeyboardEvent) {
+      if (event.code !== 'Enter') return;
+    }
     if (this.searchInputValue.length < 1) return;
     this.showLoadingModal = true;
     this.searchStatus = '';
@@ -301,8 +310,10 @@ export class RequestListComponent implements OnInit {
         next: (data) => {
           this.showLoadingModal = false;
           this.requests.update(() => data.loanRequests);
-          this.requestUserList.update(() => data.usersList);
-          this.generateUsersList();
+          this.requestUserList.update(() =>
+            data.usersList.sort((a, b) => a.ID - b.ID)
+          );
+          // this.generateUsersList();
           this.totalRecords = data.loanRequests[0].CNT;
         },
         error: (errorRes: HttpErrorResponse) => {
@@ -321,7 +332,7 @@ export class RequestListComponent implements OnInit {
     this.usersList.update(() => [
       ...this.requestUserList().map((user): MenuItem => {
         return {
-          label: toTitleCaseAndSplit(user.NOMBRE),
+          label: `${user.ID} - ${toTitleCaseAndSplit(user.NOMBRE)}`,
           icon:
             this.selectedMenuItem?.label === toTitleCaseAndSplit(user.NOMBRE)
               ? 'pi pi-check'
@@ -370,5 +381,16 @@ export class RequestListComponent implements OnInit {
   selectStatusItem(status: LoanStatusEnum) {
     this.selectedStatusItem = status;
     this.searchByStatus({ status, userIdFilter: this.userIdFilter });
+  }
+
+  userSelected(event: DropdownChangeEvent) {
+    const user = event.value as User;
+    this.selectedUser = user;
+    this.showLoadingModal = true;
+    this.getRequestListItems({
+      offSetRows: 0,
+      fetchRowsNumber: this.rows,
+      ...(this.searchStatus && { status: this.searchStatus }),
+    });
   }
 }
