@@ -2,7 +2,17 @@
   <form
     (ngSubmit)="requestLogin()"
     [formGroup]="loginForm"
-    class="col-12 md:col-6 lg:col-4 mx-2 my-auto">
+    class="col-12 md:col-6 lg:col-4 mx-2 my-auto max-w-full">
+    <div
+      class="flex flex-row justify-content-center align-items-center mb-2 gap-2">
+      <img
+        src="./assets/yoox.svg"
+        height="40"
+        class=""
+        alt="logo"
+        style="view-transition-name: banner" />
+      <span>Grupo financiero YOOX</span>
+    </div>
     <p-panel header="Ingresa tus credenciales">
       <span class="p-float-label mt-3">
         <input
@@ -46,7 +56,7 @@
       <button
         pButton
         data-cy="login-button"
-        class="mt-4 w-full"
+        class="mt-5 w-full"
         type="submit"
         label="Acceder"
         [loading]="loading"
@@ -59,5 +69,9 @@
   Entorno actual: {{ environmentName }}
   </pre
     >
+    <p-button
+      label="regresar"
+      type="button"
+      (onClick)="goToLanding()"></p-button>
   </form>
 </div>

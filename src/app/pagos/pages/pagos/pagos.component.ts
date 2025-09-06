@@ -1,19 +1,56 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { ConfirmationService, MessageService } from 'primeng/api';
 
 import { obtenerFechaEnEspanol } from 'src/app/shared/utils/date.utils';
 import { PagosService } from '../../services/pagos-service';
-import { PrestamoConDetallesCompletos } from '../../interfaces/prestamos.interface';
+import {
+  PrestamoConDetallesCompletos,
+  Status,
+} from '../../interfaces/prestamos.interface';
 import { Prestamos } from 'src/app/pagos/interfaces/prestamos.interface';
 import { PrestamosDetalle } from '../../interfaces/prestamos_detalle.interface';
 import { SPAltaPago } from 'src/app/pagos/interfaces/SPAltaPago.interface';
+import { CommonModule } from '@angular/common';
+import { InputNumberModule } from 'primeng/inputnumber';
+import { DataViewModule } from 'primeng/dataview';
+import { TagModule } from 'primeng/tag';
+import { ButtonModule } from 'primeng/button';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { ToastModule } from 'primeng/toast';
+import { FieldsetModule } from 'primeng/fieldset';
+
+type severity =
+  | 'success'
+  | 'secondary'
+  | 'info'
+  | 'warning'
+  | 'danger'
+  | 'contrast'
+  | undefined;
 
 @Component({
   selector: 'app-pagos',
   templateUrl: './pagos.component.html',
   styleUrl: './pagos.component.scss',
+  imports: [
+    CommonModule,
+    InputNumberModule,
+    DataViewModule,
+    TagModule,
+    ButtonModule,
+    ConfirmDialogModule,
+    ToastModule,
+    ReactiveFormsModule,
+    FieldsetModule,
+  ],
+  providers: [ConfirmationService, MessageService],
 })
 export class PagosComponent implements OnInit {
   public cargandoDatosDePrestamo = false;
@@ -35,27 +72,58 @@ export class PagosComponent implements OnInit {
     private fb: FormBuilder
   ) {}
 
+  /**
+   * Initializes the component by creating a form group for the folio input field.
+   *
+   * This function sets up the initial state of the component by creating a form group
+   * using the FormBuilder service. The form group has a single control named 'folio'
+   * with a required validator.
+   *
+   * @return {void} This function does not return anything.
+   */
   ngOnInit(): void {
     this.folioForm = this.fb.group({
       folio: [null, Validators.required],
     });
   }
 
-  getSeverity({ STATUS }: PrestamosDetalle) {
+  /**
+   * Returns the severity level based on the status of a PrestamosDetalle object.
+   *
+   * @param {PrestamosDetalle} item - The PrestamosDetalle object to check the status of.
+   * @return {severity} The severity level: 'success', 'warning', 'danger', or undefined.
+   */
+  getSeverity({ STATUS }: PrestamosDetalle): severity {
     if (STATUS === 'PAGADO') return 'success';
     else if (STATUS === 'NO PAGADO') return 'warning';
     else if (STATUS === 'CANCELADO') return 'warning';
     else if (STATUS === 'ANULADO') return 'warning';
+    else if (STATUS === 'REFINANCIADO') return 'warning';
     else return 'danger';
   }
 
+  /**
+   * Determines whether to enable or disable a button based on the status of a loan.
+   *
+   * @param {PrestamosDetalle} item - The loan item to check the status of.
+   * @return {boolean} Returns true if the status is 'PAGADO', 'CANCELADO', 'ANULADO', or 'REFINANCIADO', otherwise false.
+   */
   activarBotonPago({ STATUS }: PrestamosDetalle): boolean {
     if (STATUS === 'PAGADO') return true;
     else if (STATUS === 'CANCELADO') return true;
     else if (STATUS === 'ANULADO') return true;
+    else if (STATUS === 'REFINANCIADO') return true;
     else return false;
   }
 
+  /**
+   * Displays a confirmation dialog to the user asking if they want to pay a certain amount for a specific week and loan.
+   * If the user accepts, it calls the registrarPago method with the given item.
+   * If the user rejects, it calls the rechazarPago method with the given item.
+   *
+   * @param {PrestamosDetalle} item - The item containing the amount and week number of the payment, as well as the loan ID.
+   * @return {void} This function does not return anything.
+   */
   pagar(item: PrestamosDetalle): void {
     this.confirmationService.confirm({
       message: `¿Estás seguro de pagar ${item.CANTIDAD} correspondientes a la semana ${item.NUMERO_SEMANA} para el folio ${item.ID_PRESTAMO}?`,
@@ -64,8 +132,14 @@ export class PagosComponent implements OnInit {
     });
   }
 
+  /**
+   * Registers a payment for a given loan item.
+   *
+   * @param {PrestamosDetalle} item - The loan item to register the payment for.
+   * @return {void} This function does not return anything.
+   */
   registrarPago(item: PrestamosDetalle): void {
-    const usuarioActual: number = +(localStorage.getItem('idusuario') || '');
+    const usuarioActual: number = +(localStorage.getItem('idusuario') ?? '');
     item.LOADING = true;
     const sPAltaPago: SPAltaPago = {
       ID_PRESTAMO: +item.ID_PRESTAMO,
@@ -89,11 +163,17 @@ export class PagosComponent implements OnInit {
     // Si las validaciones anteriores pasaron, se procede a registrar el pago
     this.pagosService.pay(sPAltaPago).subscribe({
       next: () => this.resgistrarPagoExitoso(item),
-      error: (err) => this.errorAlRegistrarPago(err),
+      error: (err) => this.errorAlRegistrarPago(item, err),
     });
   }
 
-  resgistrarPagoExitoso(item: PrestamosDetalle) {
+  /**
+   * Updates the payment status of a given item to 'PAGADO' and updates the UI with the updated information.
+   *
+   * @param {PrestamosDetalle} item - The item to update the payment status for.
+   * @return {void} This function does not return anything.
+   */
+  resgistrarPagoExitoso(item: PrestamosDetalle): void {
     item.LOADING = false;
     this.prestamosDetalle = this.prestamosDetalle.map((pago) => {
       if (pago.NUMERO_SEMANA === item.NUMERO_SEMANA) {
@@ -104,46 +184,78 @@ export class PagosComponent implements OnInit {
       } else return pago;
     });
 
+    // Actualiza la informacion del prestamo para mostrarlo en la UI
+    this.pagosPendientes = this.pagosPendientes + 1;
+    this.prestamo!.CANTIDAD_RESTANTE =
+      this.prestamo!.CANTIDAD_RESTANTE - item.CANTIDAD;
+    if (this.totalPagos === this.pagosPendientes) {
+      this.prestamo!.STATUS = Status.Pagado;
+    }
+
     this.messageService.add({
       severity: 'success',
       summary: 'Pago exitoso',
-      detail: `El pago correspondiendte a ${item.NUMERO_SEMANA} del folio ${item.ID_PRESTAMO} se ha registrado`,
+      detail: `El pago de la semana ${item.NUMERO_SEMANA} correspondiente al folio ${item.ID_PRESTAMO} se ha registrado`,
       icon: 'pi pi-check',
       life: 5000,
     });
   }
 
-  errorAlRegistrarPago(err: any): void {
+  /**
+   * Handles the error that occurs when attempting to register a payment.
+   *
+   * @param {any} err - The error object containing information about the error.
+   * @return {void} This function does not return anything.
+   */
+  errorAlRegistrarPago(item: PrestamosDetalle, err: any): void {
+    item.LOADING = false;
     this.messageService.add({
       severity: 'error',
       summary: 'Error',
-      detail: `Ocurrio un error al interntar registrar el pago: ${err.error.message}`,
+      detail: `${err.error.message}`,
       icon: 'pi pi-exclamation-triangle',
       life: 5000,
     });
     console.log(err);
   }
 
+  /**
+   * Adds a warning message to the message service with the details of the rejected payment.
+   *
+   * @param {PrestamosDetalle} prestamosDetalle - The details of the rejected payment.
+   * @return {void} This function does not return anything.
+   */
   rechazarPago({ NUMERO_SEMANA, ID_PRESTAMO }: PrestamosDetalle): void {
     this.messageService.add({
       severity: 'warn',
       summary: 'Acción cancelada',
-      detail: `El pago correspondiendte a ${NUMERO_SEMANA} del folio ${ID_PRESTAMO} no se ha registrado`,
+      detail: `El pago de la semana ${NUMERO_SEMANA} correspondiente al folio ${ID_PRESTAMO} no se ha registrado`,
       icon: 'pi pi-exclamation-triangle',
       life: 5000,
     });
   }
 
+  /**
+   * Retrieves payment details by folio and updates the component state accordingly.
+   *
+   * @return {void} This function does not return anything.
+   */
   buscarFolio(): void {
     this.cargandoDatosDePrestamo = true;
     this.hideTable = false;
-    this.pagosService.getPaymentsById(this.folioForm!.value.folio).subscribe({
-      next: (prestamoConDetallesCompletos) =>
+    this.pagosService.getPaymentsById(this.folioForm.value.folio).subscribe({
+      next: (prestamoConDetallesCompletos: PrestamoConDetallesCompletos) =>
         this.datosDelFolio(prestamoConDetallesCompletos),
-      error: (err) => this.errorEnDatosDelFolio(err),
+      error: (err: unknown) => this.errorEnDatosDelFolio(err),
     });
   }
 
+  /**
+   * Updates the component state with the retrieved payment details.
+   *
+   * @param {PrestamoConDetallesCompletos} prestamoConDetallesCompletos - The object containing the retrieved payment details.
+   * @return {void} This function does not return anything.
+   */
   datosDelFolio(
     prestamoConDetallesCompletos: PrestamoConDetallesCompletos
   ): void {
@@ -167,12 +279,21 @@ export class PagosComponent implements OnInit {
       this.totalPagos = prestamosDetalle.length;
       this.pagosPendientes = prestamosDetalle.filter(
         ({ STATUS }) =>
-          STATUS === 'PAGADO' || STATUS === 'CANCELADO' || STATUS === 'ANULADO'
+          STATUS === 'PAGADO' ||
+          STATUS === 'CANCELADO' ||
+          STATUS === 'ANULADO' ||
+          STATUS === 'REFINANCIADO'
       ).length;
     }
     this.cargandoDatosDePrestamo = false;
   }
 
+  /**
+   * Handles the error when retrieving information for a specific loan.
+   *
+   * @param {unknown} err - The error object.
+   * @return {void} This function does not return anything.
+   */
   errorEnDatosDelFolio(err: unknown): void {
     this.prestamosDetalle = [];
     this.prestamo = undefined;
@@ -188,6 +309,12 @@ export class PagosComponent implements OnInit {
     this.cargandoDatosDePrestamo = false;
   }
 
+  /**
+   * Checks if the given week is part of the correct sequence of weeks.
+   *
+   * @param {PrestamosDetalle} semana - The week to check.
+   * @return {boolean} Returns true if the week is part of the correct sequence, false otherwise.
+   */
   comprobarSecuenciaDeSemanas(semana: PrestamosDetalle): boolean {
     const semanaCorrecta = this.prestamosDetalle.find(
       ({ STATUS }) => STATUS === 'NO PAGADO' || STATUS === 'VENCIDO'
@@ -205,6 +332,12 @@ export class PagosComponent implements OnInit {
     return true;
   }
 
+  /**
+   * Returns the corresponding icon class based on the loading status and status of a loan.
+   *
+   * @param {PrestamosDetalle} loanDetail - The loan detail object containing the loading status and status.
+   * @return {string} The icon class corresponding to the loading status and status.
+   */
   obtenerIcono({ LOADING, STATUS }: PrestamosDetalle): string {
     if (LOADING) return 'pi pi-spin pi-spinner';
     else if (STATUS === 'PAGADO') return 'pi pi-check';
@@ -212,16 +345,24 @@ export class PagosComponent implements OnInit {
     else if (STATUS === 'CANCELADO') return 'pi pi-times';
     else if (STATUS === 'VENCIDO') return 'pi pi-money-bill';
     else if (STATUS === 'ANULADO') return 'pi pi-money-bill';
+    else if (STATUS === 'REFINANCIADO') return 'pi pi-money-bill';
     else return 'pi pi-question';
   }
 
+  /**
+   * Checks if the given loan detail is within the allowed payment advance period.
+   *
+   * @param {PrestamosDetalle} semana - The loan detail to check.
+   * @return {boolean} True if the payment is within the allowed period, false otherwise.
+   */
   esPagoAdelantadoPermitido(semana: PrestamosDetalle): boolean {
+    if (!this.pagosAdelantadosPermitidos) return false;
     // Inicializo la fecha actual y posteriormente la hora, minuto y segundo los pongo en 0 para evitar que por cambios de zona horaria existan comportamientos inesperados como por ejemplo el cambio de dia anterior por la zona horaria en la cual nos encontramos, actualmente -6 hrs. GMT
     // NOTA: tengo que manejar la fecha en formato utc ya que el backend me envia la fecha de vencimiento en formato utc y necesito que ambos tengan la misma zona horaria
     const fechaMaxima = new Date();
     fechaMaxima.setHours(0, 0, 0);
     fechaMaxima.setDate(
-      fechaMaxima.getDate() + this.pagosAdelantadosPermitidos! * 7
+      fechaMaxima.getDate() + this.pagosAdelantadosPermitidos * 7
     );
 
     // Obtengo la fecha de vencimiento de la semana a la cual se quiere registrar el pago. La fecha esta en formato utc, que es lo que me da el backend
@@ -239,7 +380,6 @@ export class PagosComponent implements OnInit {
       return false;
     }
 
-    // si llegue a este punto todo es correcto y se puede registrar el pago
     return true;
   }
 }

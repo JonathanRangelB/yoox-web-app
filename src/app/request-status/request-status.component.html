@@ -1,0 +1,197 @@
+<div class="grid justify-content-center h-full mx-1">
+  <form
+    (ngSubmit)="requestStatus()"
+    [formGroup]="requestForm"
+    class="col-12 md:col-6 lg:col-4 mx-2 my-auto max-w-full">
+    <div
+      class="flex flex-row justify-content-center align-items-center mb-2 gap-2">
+      <img
+        src="./assets/yoox.svg"
+        height="40"
+        class=""
+        alt="logo"
+        style="view-transition-name: banner" />
+      <span>Grupo financiero YOOX</span>
+    </div>
+    <p-panel header="Ingresa los datos de tu solicitud">
+      <span class="p-float-label mt-3">
+        <input
+          pInputText
+          data-cy="loanrequestid"
+          id="loanrequestid"
+          type="text"
+          formControlName="loanrequestid"
+          placeholder="A1BB2C"
+          maxlength="6"
+          required
+          oninput="this.value = this.value.toUpperCase()"
+          class="w-full" />
+        <label for="loanrequestid">Número de solicitud:</label>
+      </span>
+      <small
+        id="username-help"
+        class="text-red-500"
+        [hidden]="
+          requestForm.controls['loanrequestid'].valid ||
+          !requestForm.controls['loanrequestid'].dirty
+        ">
+        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['required']">
+          El número de solicitud es requerido
+        </p>
+        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['pattern']">
+          Debe tener 6 caracteres. Sólo se admiten letras y numeros.
+        </p>
+      </small>
+      <span class="p-float-label mt-5">
+        <input
+          pInputText
+          data-cy="customerlastname"
+          formControlName="customerlastname"
+          id="customerlastname"
+          type="text"
+          maxlength="50"
+          class="w-full"
+          oninput="this.value = this.value.toUpperCase()"
+          placeholder="Ramirez"
+          aria-errormessage="customerlastname" />
+        <label for="customerlastname">Apellido paterno:</label>
+      </span>
+      <small
+        id="user-error"
+        class="text-red-500"
+        [hidden]="
+          requestForm.controls['customerlastname'].valid ||
+          !requestForm.controls['customerlastname'].dirty
+        "
+        >El apellido paterno es requerido</small
+      >
+      <button
+        pButton
+        data-cy="buscar"
+        class="mt-5 w-full"
+        type="submit"
+        label="Buscar"
+        [loading]="loading()"
+        [disabled]="!requestForm.valid"></button>
+      @if (error()) {
+        <p class="text-red-500 text-center mb-0" id="error-message">
+          {{ error() }}.
+        </p>
+      }
+    </p-panel>
+    <pre *ngIf="isProdEnv !== 'true'">
+      Entorno actual: {{ environmentName }}
+    </pre>
+    <div class="flex flex-row justify-content-between">
+      <p-button
+        class="mt-3"
+        data-cy="regresar"
+        label="Regresar"
+        type="button"
+        (onClick)="goToLanding()"></p-button>
+      <p-button
+        class="mt-3 ml-3"
+        data-cy="qr_alta"
+        label="Alta de telefono"
+        icon="pi pi-qrcode"
+        type="button"
+        (onClick)="qrVisible = !qrVisible"></p-button>
+    </div>
+  </form>
+
+  <p-dialog
+    data-cy="dialog_result"
+    header="Información de la solicitud"
+    [modal]="true"
+    [(visible)]="visible"
+    [style]="{ width: '50rem' }"
+    [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
+    @if (loanRequestInfo()) {
+      <!-- inicio de informacion -->
+      <p-card>
+        <ng-template pTemplate="title">
+          <strong>Estado: </strong>
+          <span
+            [ngClass]="{
+              'status-aprobado':
+                loanRequestInfo()?.loan_request_status === 'APROBADO',
+              'status-revision':
+                loanRequestInfo()?.loan_request_status === 'EN REVISION',
+              'status-actualizar':
+                loanRequestInfo()?.loan_request_status === 'ACTUALIZAR',
+              'status-rechazado':
+                loanRequestInfo()?.loan_request_status === 'RECHAZADO',
+            }"
+            >{{ loanRequestInfo()?.loan_request_status }}</span
+          >
+        </ng-template>
+
+        <ng-template pTemplate="content">
+          <div class="p-grid p-fluid">
+            <div class="p-col-12">
+              <strong>Número de solicitud:</strong>
+              {{ loanRequestInfo()?.request_number }}
+            </div>
+
+            <div class="p-col-12">
+              <strong>Agente asignado:</strong>
+              {{ loanRequestInfo()?.nombre_agente }}
+            </div>
+
+            <div class="p-col-12">
+              <strong>Cliente:</strong>
+              {{ loanRequestInfo()?.nombre_cliente }}
+              {{ loanRequestInfo()?.apellido_paterno_cliente }}
+              {{ loanRequestInfo()?.apellido_materno_cliente }}
+            </div>
+
+            @if (loanRequestInfo()?.nombre_aval) {
+              <div class="p-col-12">
+                <strong>Aval:</strong>
+                {{ loanRequestInfo()?.nombre_aval }}
+                {{ loanRequestInfo()?.apellido_paterno_aval }}
+                {{ loanRequestInfo()?.apellido_materno_aval }}
+              </div>
+            }
+
+            <div class="p-col-12">
+              <strong>Cantidad solicitada:</strong> ${{
+                loanRequestInfo()?.cantidad_prestada | number: '1.2-2'
+              }}
+            </div>
+
+            <div class="p-col-12">
+              <strong>Fecha Inicial:</strong>
+              {{ loanRequestInfo()?.fecha_inicial | date: 'longDate' }}
+            </div>
+          </div>
+        </ng-template>
+      </p-card>
+      <!-- final de informacion -->
+      <button
+        class="w-full md:w-auto mt-3"
+        pButton
+        data-cy="cerrar"
+        type="button"
+        (click)="visible.set(false)"
+        label="Cerrar"></button>
+    } @else {
+      <p-card>
+        <h2 class="text-center">No se encontró información</h2>
+      </p-card>
+    }
+  </p-dialog>
+  <p-dialog
+    data-cy="dialog_result"
+    header="Escanea el QR para darte de alta"
+    [modal]="true"
+    [(visible)]="qrVisible"
+    [style]="{ width: '30rem' }"
+    [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
+    <img src="./assets/ALTA.png" class="mb-3 w-full" alt="logo" />
+    <p>
+      También puedes acceder desde este link:
+      <a href="https://wa.me/5213313008582?text=ALTA">ALTA</a>
+    </p>
+  </p-dialog>
+</div>
