@@ -14,6 +14,7 @@ export class PagosService {
   getPaymentsById(folio: string) {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('idusuario');
+    console.log({ token, userId });
     return this.http
       .post<PrestamoConDetallesCompletos>(
         `${this.API_URL}loan/${folio}`,
