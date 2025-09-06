@@ -5,20 +5,28 @@ import { authGuardGuard } from './shared/guards/auth.guard';
 const routes: Routes = [
   {
     path: '',
-    loadChildren() {
-      return import('./landing/landing.module').then((m) => m.LandingModule);
-    },
+    loadChildren: () =>
+      import('./landing/landing.module').then((m) => m.LandingModule),
+  },
+  {
+    path: 'dashboard',
+    canActivate: [authGuardGuard],
+    loadChildren: () =>
+      import('./dashboard/dashboard.module').then((m) => m.DashboardModule),
   },
   {
     path: 'login',
-    loadChildren: () =>
-      import('./login/login.module').then((m) => m.LoginModule),
+    loadComponent: () =>
+      import('./login/pages/login-page/login-page.component').then(
+        (c) => c.LoginPageComponent
+      ),
   },
   {
-    path: 'pagos',
-    canActivate: [authGuardGuard],
-    loadChildren: () =>
-      import('./pagos/pagos.module').then((m) => m.PagosModule),
+    path: 'requeststatus',
+    loadComponent: () =>
+      import('./request-status/request-status.component').then(
+        (c) => c.RequestStatusComponent
+      ),
   },
   {
     path: 'not-found',
@@ -30,7 +38,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes)],
+  imports: [RouterModule.forRoot(routes, { enableViewTransitions: true })],
   exports: [RouterModule],
 })
 export class AppRoutingModule {}

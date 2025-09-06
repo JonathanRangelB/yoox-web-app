@@ -1,0 +1,146 @@
+<div class="p-2 width-maximo">
+  <p-menubar [model]="menuItems()">
+    <ng-template pTemplate="item" let-item>
+      <ng-container *ngIf="item.dropdown; else normalItem">
+        <div style="padding: 0.75rem 1.25rem">
+          <p-dropdown
+            [options]="requestUserList()"
+            placeholder="Agentes"
+            optionLabel="NOMBRE"
+            filter="true"
+            showClear="true"
+            id="ID"
+            (click)="$event.stopPropagation()"
+            (mousedown)="$event.stopPropagation()"
+            (onChange)="userSelected($event)"
+            (onClear)="selectedUser = undefined"
+            selected
+            [appendTo]="'body'"
+            [style]="{ width: '100%' }"
+            [(ngModel)]="selectedUser"></p-dropdown>
+        </div>
+      </ng-container>
+      <ng-template #normalItem>
+        <a class="p-menuitem-link" [routerLink]="item.routerLink">
+          <span
+            [class]="'p-menuitem-icon ng-star-inserted ' + item.icon"
+            *ngIf="item.icon"></span>
+          <i
+            *ngIf="selectedStatusItem === item.status"
+            class="pi pi-check"
+            style="color: green"></i>
+          <span class="p-menuitem-text">&nbsp;{{ item.label }}</span>
+          <span *ngIf="item.items" class="pi pi-angle-right ml-auto"></span>
+        </a>
+      </ng-template>
+    </ng-template>
+    <ng-template pTemplate="end">
+      <div class="flex align-items-center gap-2">
+        <p-button
+          [icon]="searchTermIcon"
+          size="small"
+          (onClick)="changeSearchTerm()"></p-button>
+        <input
+          type="text"
+          id="search"
+          pInputText
+          [(ngModel)]="searchInputValue"
+          [placeholder]="searchTerm"
+          (keypress)="inputSearch($event)"
+          class="w-11rem md:w-auto" />
+        <p-button
+          size="small"
+          icon="pi pi-search"
+          (onClick)="inputSearch($event)"></p-button>
+      </div>
+    </ng-template>
+  </p-menubar>
+  <section class="grid">
+    @if (requests().length === 0) {
+      <p class="center">No hay solicitudes pendientes</p>
+    } @else {
+      <p-dataView
+        #dv
+        class="m-2 w-full dataview"
+        [value]="requests()"
+        [sortField]="sortField"
+        [sortOrder]="sortOrder">
+        <ng-template pTemplate="list" let-requests>
+          <div class="grid grid-nogutter">
+            <div
+              *ngFor="let item of requests; let first = first"
+              class="col-12">
+              <div
+                class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3"
+                [ngClass]="{ 'border-top-1 surface-border': !first }">
+                <div class="md:w-10rem relative">
+                  <p-tag
+                    [severity]="getSeverity(item)"
+                    [style.left.px]="4"
+                    [value]="item.loan_request_status"
+                    [style.top.px]="4" />
+                </div>
+                <div
+                  class="flex flex-column md:flex-row justify-content-between md:align-items-center flex-1 gap-4">
+                  <div
+                    class="flex flex-row md:flex-column justify-content-between align-items-start gap-2">
+                    <div>
+                      <span class="font-medium text-secondary text-sm">
+                        <span class="pi pi-user"></span>
+                        {{ item.nombre_cliente | uppercase }}
+                        {{ item.apellido_paterno_cliente | uppercase }}
+                        {{ item.apellido_materno_cliente | uppercase }}
+                      </span>
+                      <div class="font-medium text-secondary text-sm mt-2">
+                        <span class="pi pi-hashtag"></span>
+                        {{ item.request_number | uppercase }}
+                      </div>
+                      <div class="text-lg font-medium text-900 mt-2">
+                        <span class="pi pi-file-pdf"></span>
+                        {{ item.request_number }}-{{
+                          item.apellido_paterno_cliente | uppercase
+                        }}
+                      </div>
+                    </div>
+                    <div>
+                      <span
+                        ><span class="pi pi-calendar-plus"></span>
+                        {{ item.created_date | date }}</span
+                      >
+                    </div>
+                  </div>
+                  <div
+                    class="flex flex-column md:align-items-end gap-2 md:gap-5">
+                    <span class="text-xl font-semibold text-900">
+                      ${{ item.cantidad_prestada | number }}
+                    </span>
+                    <div class="flex justify-content-center md:flex-row gap-2">
+                      <p-button
+                        icon="pi pi-file-edit"
+                        label="Revisar"
+                        (click)="handleClick(item)" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </p-dataView>
+    }
+  </section>
+  <p-dialog
+    #dialogMessage
+    header="Cargando información"
+    [modal]="true"
+    [(visible)]="showLoadingModal"
+    closable="false"
+    [style]="{ width: '16.46rem' }"
+    class="text-center">
+    @if (showLoadingModal) {
+      <p-progressSpinner />
+    }
+  </p-dialog>
+  <p-toast
+    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />
+</div>

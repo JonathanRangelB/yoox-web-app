@@ -3,7 +3,7 @@
 
 # YooxWebApp (Angular v18)
 
-![angularLogo](./src/assets/angular.webp)
+[![angularLogo](./src/assets/angular.webp)](https://angular.dev/)
 
 <!--toc:start-->
 
@@ -52,7 +52,14 @@ API_URL: <api-url>,`
 
 1. Create a new account on Infisical.
 2. Ask to this repo owner to add your account to the YOOX app project.
-3. Download `.env` file from Infisical for the 'Development' environment or install the [Infisical CLI](https://infisical.com/docs/cli/overview) and follow the instructions there (infisical login and then infisical export > `.env`)
+3. Download `.env` file from Infisical for the 'Development' environment or install the [Infisical CLI](https://infisical.com/docs/cli/overview) and run the following commands:
+
+```bash
+infisical login
+# and then
+infisical export > .env
+```
+
 4. Finally, once you have the `.env` file, you can run the following command to generate the `.env` file in the project root:
 
 ```bash

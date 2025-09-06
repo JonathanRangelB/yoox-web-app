@@ -15,12 +15,15 @@ export class PagosService {
     const token = localStorage.getItem('token');
     const userId = localStorage.getItem('idusuario');
     return this.http
-      .get<PrestamoConDetallesCompletos>(`${this.API_URL}loan/${folio}`, {
-        headers: {
-          authorization: `${token}`,
-          idusuario: `${userId}`,
-        },
-      })
+      .post<PrestamoConDetallesCompletos>(
+        `${this.API_URL}loan/${folio}`,
+        { idusuario: userId },
+        {
+          headers: {
+            authorization: `${token}`,
+          },
+        }
+      )
       .pipe(shareReplay());
   }
 

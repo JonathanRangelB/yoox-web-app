@@ -1,0 +1,1130 @@
+@if (windowMode !== 'new') {
+  <p-card
+    header="Información de la solicitud"
+    class="mx-3"
+    [style]="{ maxWidth: '720px', margin: '0 auto' }">
+    <h3>Status: {{ status }}</h3>
+    <h3 *ngIf="id_loan">Folio de prestamo: {{ id_loan }}</h3>
+    <p>Folio de solicitud: {{ loanRequestId }}</p>
+    <p>Carpeta de documentación: {{ customerFolderName }}</p>
+    <p>Creado por: {{ nombre_agente }}</p>
+    <p>Fecha de creación: {{ createdDate | date: 'medium' : 'UTC' }}</p>
+    <p *ngIf="modifiedBy">Modificado por: {{ modified_by_name }}</p>
+    <p *ngIf="modifiedDate">
+      Fecha de modificación: {{ modifiedDate | date: 'medium' : 'UTC' }}
+    </p>
+
+    <p *ngIf="closed_by_name">Cerrado por: {{ closed_by_name }}</p>
+    <p *ngIf="closedDate">
+      Fecha de cierre: {{ closedDate | date: 'medium' : 'UTC' }}
+    </p>
+  </p-card>
+}
+<form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
+  <!-- inicio de Card -->
+  <!-- fin de Card -->
+  <p-stepper
+    #stepper
+    orientation="vertical"
+    style="max-width: 720px; margin: 0 auto">
+    <!-- inicio de Cantidades y plazos -->
+    <p-stepperPanel header="Cantidades y plazos">
+      <ng-template
+        pTemplate="content"
+        let-index="index"
+        let-nextCallback="nextCallback">
+        <p>
+          <span class="pi pi-exclamation-triangle" style="color: yellow"></span>
+          Todos los campos son obligatorios
+        </p>
+        <div class="grid py-3 pr-2" style="margin-right: 0">
+          <!-- inicio de cantidades y plazos -->
+          <div class="col-12 sm:col-4 flex flex-column">
+            <label for="cantidad_prestada">Cantidad a prestar</label>
+            <p-inputNumber
+              inputId="cantidad_prestada"
+              formControlName="cantidad_prestada"
+              placeholder="Cantidad"
+              mode="currency"
+              currency="MXN"
+              locale="es-MX"
+              maxFractionDigits="0"
+              showClear="true"
+              [style]="{ width: '100%' }"
+              [inputStyle]="{ width: '100%' }"
+              (onInput)="onInputCantidad($event)" />
+            <small
+              id="cantidad-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('cantidad_prestada')">
+              <ng-container
+                *ngIf="mainForm.get('cantidad_prestada')?.errors?.['required']">
+                Cantidad requerida</ng-container
+              >
+              <ng-container
+                *ngIf="mainForm.get('cantidad_prestada')?.errors?.['min']">
+                Cantidad minima de
+                {{
+                  customLoanRefinanceAmount || customLoanAmount || minLoanAmount
+                    | currency: 'MXN' : 'symbol' : '1.2-2'
+                }}</ng-container
+              >
+            </small>
+          </div>
+          <div class="col-12 sm:col-4 flex flex-column">
+            <label for="plazo">Plazo</label>
+            <p-dropdown
+              formControlName="plazo"
+              [options]="plazo"
+              optionLabel="semanas_plazo"
+              (onChange)="onPlazoChanged($event)"
+              placeholder="Plazo de semanas"
+              [style]="{ width: '100%' }" />
+            <small
+              id="plazo-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('plazo')"
+              >Selecciona un plazo</small
+            >
+          </div>
+          <div class="col-12 sm:col-4 flex flex-column">
+            <label for="fecha_inicial">Fecha inicial</label>
+            <p-calendar
+              inputId="fecha_inicial"
+              formControlName="fecha_inicial"
+              placeholder="dd/mm/aaaa"
+              [iconDisplay]="'input'"
+              [showIcon]="true"
+              [showButtonBar]="true"
+              (onSelect)="calculaDiaDeLaSemana($event)"
+              dateFormat="dd/mm/yy"
+              readonlyInput="true"
+              [style]="{ width: '100%' }" />
+            <small
+              id="fecha_inicial-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('fecha_inicial')"
+              >Fecha Inicial requerida</small
+            >
+          </div>
+
+          <!-- inicio valores calculados -->
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-money-bill"></i>
+              <span> Pago semanal:</span>
+            </p-inputGroupAddon>
+            <input
+              pInputText
+              disabled="true"
+              id="cantidadSemanal"
+              placeholder="Cantidad semanal"
+              style="color: green; font-weight: bold"
+              [value]="pagoSemanal | number: '1.0-2'" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-percentage"></i>
+              <span> Tasa de interes:</span>
+            </p-inputGroupAddon>
+            <input
+              disabled="true"
+              pInputText
+              id="tasaDeInteres"
+              placeholder="Tasa de interes"
+              [value]="tasa_interes" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-wallet"></i>
+              <span> Total a pagar:</span>
+            </p-inputGroupAddon>
+            <input
+              pInputText
+              disabled="true"
+              id="cantidadTotal"
+              placeholder="Cantidad total a pagar"
+              style="color: green; font-weight: bold"
+              [value]="cantidad_pagar | number: '1.0-2'" />
+          </p-inputGroup>
+          <p-inputGroup [style]="{ width: '99%' }">
+            <p-inputGroupAddon>
+              <i class="pi pi-calendar-clock"></i>
+              <span> Semana de refinanciamiento:</span>
+            </p-inputGroupAddon>
+            <input
+              pInputText
+              disabled="true"
+              id="semana_refinanciamiento"
+              placeholder="Semana"
+              style="color: green; font-weight: bold"
+              [value]="semana_refinanciamiento" />
+          </p-inputGroup>
+          @if (refinanceResults()) {
+            <p>Datos de refinanciamiento 👇</p>
+            <p-inputGroup [style]="{ width: '99%' }">
+              <p-inputGroupAddon>
+                <i class="pi pi-user"></i>
+                <span> ID de cliente:</span>
+              </p-inputGroupAddon>
+              <input
+                pInputText
+                disabled="true"
+                id="dia_semana"
+                placeholder="Dia de la semana que se abona"
+                [value]="refinanceResults()?.id_cliente" />
+            </p-inputGroup>
+            <p-inputGroup [style]="{ width: '99%' }">
+              <p-inputGroupAddon>
+                <i class="pi pi-receipt"></i>
+                <span> Folio a refinanciar:</span>
+              </p-inputGroupAddon>
+              <input
+                pInputText
+                disabled="true"
+                id="dia_semana"
+                placeholder="Dia de la semana que se abona"
+                [value]="refinanceResults()?.id_prestamo" />
+            </p-inputGroup>
+            <p-inputGroup [style]="{ width: '99%' }">
+              <p-inputGroupAddon>
+                <i class="pi pi-money-bill"></i>
+                <span> Cantidad Restante:</span>
+              </p-inputGroupAddon>
+              <input
+                pInputText
+                disabled="true"
+                id="dia_semana"
+                placeholder="Dia de la semana que se abona"
+                [value]="
+                  refinanceResults()?.cantidad_restante
+                    | currency: 'MXN' : 'symbol' : '1.2-2'
+                " />
+            </p-inputGroup>
+          }
+        </div>
+        <div class="flex justify-content-end pb-4 gap-2 pr-3">
+          <p-button
+            label="Siguiente"
+            icon="pi pi-angle-double-right"
+            iconPos="right"
+            (onClick)="nextCallback.emit()" />
+        </div>
+      </ng-template>
+    </p-stepperPanel>
+    <!-- fin de Cantidades y plazos -->
+
+    <!-- inicio de Datos del ciente -->
+    <p-stepperPanel header="Datos del cliente">
+      <ng-template
+        pTemplate="content"
+        let-prevCallback="prevCallback"
+        let-nextCallback="nextCallback"
+        let-index="index">
+        <div class="flex justify-content-center align-items-center pr-3">
+          <p>¿Necesitas buscar un cliente existente?</p>
+          <p-inputSwitch
+            inputId="habilitarCamposAval"
+            class="ml-3"
+            #switchBusqueda
+            [ngSwitch]="customerSearchVisible"
+            (onChange)="toggleCustomerSearch()" />
+        </div>
+        @if (customerSearchVisible) {
+          <app-people-search
+            [parentForm]="mainForm"
+            [searchOnTable]="'clientes'"
+            (idsRecuperados)="updateCustomerFoundId($event)"
+            (visible)="toggleCustomerSearch()" />
+        }
+        @if (id_cliente_recuperado) {
+          <p style="text-align: center; font-size: 1.4rem">
+            ID de cliente seleccionado: {{ id_cliente_recuperado }}
+          </p>
+
+          @if (!customerSearchVisible) {
+            <app-refinance-search
+              [searchId]="id_cliente_recuperado"
+              (visible)="toggleRefinanceSearch()"
+              (searchRefinanceResults)="onRefinanceResults($event)" />
+          }
+        }
+        <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="nombre_cliente">Nombre cliente</label>
+            <input
+              formControlName="nombre_cliente"
+              pInputText
+              oninput="this.value = this.value.toUpperCase()"
+              id="nombre_cliente"
+              aria-describedby="nombre_cliente-help" />
+            <small
+              class="mb-2 text-red-500"
+              id="nombre_cliente-help"
+              [hidden]="hideField('formCliente.nombre_cliente')"
+              >Nombre de cliente requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="apellido_paterno_cliente">Apellido paterno</label>
+            <input
+              formControlName="apellido_paterno_cliente"
+              pInputText
+              oninput="this.value = this.value.toUpperCase()"
+              id="apellido_paterno_cliente"
+              aria-describedby="apellido_paterno_cliente-help" />
+            <small
+              class="mb-2 text-red-500"
+              id="apellido_paterno_cliente-help"
+              [hidden]="hideField('formCliente.apellido_paterno_cliente')"
+              >Apellido paterno requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="apellido_materno_cliente">Apellido materno</label>
+            <input
+              formControlName="apellido_materno_cliente"
+              pInputText
+              oninput="this.value = this.value.toUpperCase()"
+              id="apellido_materno_cliente"
+              aria-describedby="apellido_materno_cliente-help" />
+            <small
+              id="apellido_materno_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.apellido_materno_cliente')"
+              >Apellido materno requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="telefono_fijo_cliente">Telefono fijo</label>
+            <p-inputMask
+              (onFocus)="
+                restartPhonesValidator('formCliente', 'telefono_fijo_cliente')
+              "
+              formControlName="telefono_fijo_cliente"
+              inputId="telefono_fijo_cliente"
+              mask="999-999-9999"
+              unmask="true"
+              showClear="true"
+              [autoClear]="false"
+              placeholder="999-999-9999"
+              [style]="{ width: '100%' }" />
+            <small id="telefono_fijo_cliente-help" class="mb-2 text-red-500">
+              @if (
+                mainForm.get('formCliente')?.errors?.['atLeastOneRequired']
+              ) {
+                <ng-container>Algun numero telefonico necesario</ng-container>
+              }
+              @if (
+                mainForm.get('formCliente.telefono_fijo_cliente')?.errors?.[
+                  'telefonoExistente'
+                ]
+              ) {
+                <ng-container>
+                  Numero telefonico fijo de cliente existente</ng-container
+                >
+              }
+            </small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="telefono_movil_cliente">Telefono movil</label>
+            <p-inputMask
+              (onFocus)="
+                restartPhonesValidator('formCliente', 'telefono_movil_cliente')
+              "
+              formControlName="telefono_movil_cliente"
+              inputId="telefono_movil_cliente"
+              mask="999-999-9999"
+              unmask="true"
+              showClear="true"
+              [autoClear]="false"
+              placeholder="999-999-9999"
+              [style]="{ width: '100%' }" />
+            <small id="telefono_movil_cliente-help" class="mb-2 text-red-500">
+              @if (
+                mainForm.get('formCliente')?.errors?.['atLeastOneRequired']
+              ) {
+                <ng-container>Algun numero telefonico necesario</ng-container>
+              }
+              @if (
+                mainForm.get('formCliente.telefono_movil_cliente')?.errors?.[
+                  'telefonoExistente'
+                ]
+              ) {
+                <ng-container>
+                  Numero telefonico movil de cliente existente</ng-container
+                >
+              }
+            </small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="correo_electronico_cliente">Correo electronico</label>
+            <input
+              pInputText
+              formControlName="correo_electronico_cliente"
+              id="correo_electronico_cliente"
+              aria-describedby="correo_electronico_cliente-help" />
+            <small
+              id="correo_electronico_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.correo_electronico_cliente')">
+              Formato de correo invalido
+            </small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="ocupacion_cliente">Ocupacion</label>
+            <input
+              pInputText
+              formControlName="ocupacion_cliente"
+              id="ocupacion_cliente"
+              aria-describedby="ocupacion_cliente-help" />
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="curp_cliente">CURP (Sólo Mayusculas y numeros)</label>
+            <p-inputMask
+              (onFocus)="restartCurpValidator('formCliente', 'curp_cliente')"
+              mask="aaaa-999999-aaaaaa-*9"
+              inputId="curp_cliente"
+              characterPattern="[A-Z]"
+              unmask="true"
+              showClear="true"
+              autoClear="false"
+              formControlName="curp_cliente"
+              placeholder="AAAA-000000-AAAAAA-00"
+              [style]="{ width: '100%' }" />
+            <small
+              id="curp_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.curp_cliente')">
+              @if (
+                mainForm.get('formCliente.curp_cliente')?.errors?.['required']
+              ) {
+                <ng-container> CURP requerido</ng-container>
+              }
+              @if (
+                mainForm.get('formCliente.curp_cliente')?.errors?.[
+                  'invalidCurp'
+                ]
+              ) {
+                <ng-container> Formato de CURP invalido</ng-container>
+              }
+              @if (
+                mainForm.get('formCliente.curp_cliente')?.errors?.[
+                  'curpExistente'
+                ]
+              ) {
+                <ng-container>CURP existente</ng-container>
+              }
+            </small>
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="id_domicilio_cliente">ID Domicilio 🏡</label>
+            <p-inputNumber
+              #inputRef
+              inputId="id_domicilio_cliente"
+              formControlName="id_domicilio_cliente"
+              [useGrouping]="false"
+              [showClear]="true"
+              [max]="2147483647"
+              (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
+              min="1"
+              placeholder="Solo ID's registrados"
+              [style]="{ width: '100%' }" />
+            <small
+              id="id_domicilio_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.id_domicilio_cliente')"
+              >ID de domicilio inexistente</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="tipo_calle_cliente">Tipo de calle</label>
+            <p-dropdown
+              inputId="tipo_calle_cliente"
+              formControlName="tipo_calle_cliente"
+              [options]="tiposCalle"
+              optionLabel="name"
+              [showClear]="true"
+              placeholder="Selecciona el tipo de calle"
+              [style]="{ width: '100%' }" />
+            <small
+              id="tipo_calle_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.tipo_calle_cliente')"
+              >Selecciona un tipo de calle</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="nombre_calle_cliente">Nombre de la calle</label>
+            <input
+              pInputText
+              formControlName="nombre_calle_cliente"
+              id="nombre_calle_cliente"
+              aria-describedby="nombre_calle_cliente-help" />
+            <small
+              id="nombre_calle_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.nombre_calle_cliente')"
+              >Nombre de calle es requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="numero_exterior_cliente">Número Exterior</label>
+            <input
+              pInputText
+              formControlName="numero_exterior_cliente"
+              id="numero_exterior_cliente"
+              showClear="true"
+              pKeyFilter="int"
+              aria-describedby="numero_exterior_cliente-help" />
+            <small
+              id="numero_exterior_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.numero_exterior_cliente')"
+              >El numero de exterior es requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="numero_interior_cliente">Número Interior</label>
+            <input
+              pInputText
+              formControlName="numero_interior_cliente"
+              id="numero_interior_cliente"
+              inputId="numero_interior_cliente"
+              showClear="true"
+              aria-describedby="numero_interior_cliente-help" />
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="colonia_cliente">Colonia</label>
+            <input
+              pInputText
+              id="colonia_cliente"
+              aria-describedby="colonia_cliente-help"
+              formControlName="colonia_cliente" />
+            <small
+              id="colonia_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.colonia_cliente')"
+              >La colonia es requerida</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="municipio_cliente">Municipio</label>
+            <input
+              pInputText
+              formControlName="municipio_cliente"
+              id="municipio_cliente"
+              aria-describedby="municipio_cliente-help" />
+            <small
+              id="municipio_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.municipio_cliente')"
+              >Municipio Requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="estado_cliente">Entidad Federativa</label>
+            <p-dropdown
+              [options]="estadosDeLaRepublica"
+              inputId="estado_cliente"
+              id="estado_cliente"
+              emptyFilterMessage="Sin resultados"
+              formControlName="estado_cliente"
+              optionLabel="name"
+              [filter]="true"
+              filterBy="name"
+              [showClear]="true"
+              placeholder="Selecciona un estado"
+              [style]="{ width: '100%' }" />
+            <small
+              id="estado_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.estado_cliente')"
+              >El estado es requerido</small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="cp_cliente">Código postal</label>
+            <input
+              pInputText
+              formControlName="cp_cliente"
+              id="cp_cliente"
+              inputId="cp_cliente"
+              autoClear="false"
+              showClear="true"
+              pKeyFilter="int"
+              placeholder="99999"
+              [maxlength]="5"
+              aria-describedby="cp_cliente-help" />
+            <small
+              id="cp_cliente-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.cp_cliente')"
+              ><ng-container
+                *ngIf="
+                  mainForm.get('formCliente.cp_cliente')?.errors?.['required']
+                ">
+                Código postal requerido</ng-container
+              >
+              <ng-container
+                *ngIf="
+                  mainForm.get('formCliente.cp_cliente')?.errors?.[
+                    'lenghtNotMatch'
+                  ]
+                ">
+                El número debe de tener 5 digitos</ng-container
+              ></small
+            >
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="referencias_dom_cliente"
+              >Referencias del domicilio</label
+            >
+            <input
+              pInputText
+              formControlName="referencias_dom_cliente"
+              id="referencias_dom_cliente"
+              aria-describedby="referencias_dom_cliente-help" />
+          </div>
+        </div>
+        <div class="flex justify-content-between pb-4 gap-2 pr-3">
+          <p-button
+            label="Anterior"
+            icon="pi pi-angle-double-left"
+            severity="secondary"
+            (onClick)="prevCallback.emit()" />
+          <p-button
+            label="Siguiente"
+            icon="pi pi-angle-double-right"
+            iconPos="right"
+            (onClick)="nextCallback.emit()" />
+        </div>
+      </ng-template>
+    </p-stepperPanel>
+    <!-- final de Datos del ciente -->
+
+    <!-- inicio camposAval -->
+    <p-stepperPanel header="Datos de aval">
+      <ng-template
+        pTemplate="content"
+        let-prevCallback="prevCallback"
+        let-nextCallback="nextCallback"
+        let-index="index">
+        <div class="flex flex-column">
+          @if (id_aval_recuperado) {
+            <p style="text-align: center; font-size: 1.4rem">
+              ID de aval seleccionado: {{ id_aval_recuperado }}
+            </p>
+          }
+          <div class="flex justify-content-center align-items-center pr-3">
+            <p>¿Necesitas buscar un aval existente?</p>
+            <p-inputSwitch
+              inputId="habilitarCamposAval"
+              class="ml-3"
+              #switchBusquedaAval
+              [ngSwitch]="endorsmentSearchVisible"
+              (onChange)="toggleEndorsmentSearch()" />
+          </div>
+          @if (endorsmentSearchVisible) {
+            <app-people-search
+              [parentForm]="mainForm"
+              [searchOnTable]="'avales'"
+              (avalesRecuperados)="updateEndorsmentFormFields($event)"
+              (visible)="toggleEndorsmentSearch()" />
+          }
+          <div formGroupName="formAval" class="grid py-3 pr-3 mr-0">
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="nombre_aval">Nombre aval</label>
+              <input
+                formControlName="nombre_aval"
+                pInputText
+                oninput="this.value = this.value.toUpperCase()"
+                id="nombre_aval"
+                aria-describedby="nombre_aval-help" />
+              <small
+                class="mb-2 text-red-500"
+                id="nombre_aval-help"
+                [hidden]="hideField('formAval.nombre_aval')"
+                >Nombre de aval requerido</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="apellido_paterno_aval">Apellido paterno aval</label>
+              <input
+                formControlName="apellido_paterno_aval"
+                pInputText
+                oninput="this.value = this.value.toUpperCase()"
+                id="apellido_paterno_aval"
+                aria-describedby="apellido_paterno_aval-help" />
+              <small
+                class="mb-2 text-red-500"
+                id="apellido_paterno_aval-help"
+                [hidden]="hideField('formAval.apellido_paterno_aval')"
+                >Apellido paterno del aval requerido</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="apellido_materno_aval">Apellido materno aval</label>
+              <input
+                formControlName="apellido_materno_aval"
+                pInputText
+                oninput="this.value = this.value.toUpperCase()"
+                id="apellido_materno_aval"
+                aria-describedby="apellido_materno_aval-help" />
+              <small
+                id="apellido_materno_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.apellido_materno_aval')"
+                >Apellido materno del aval requerido</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="telefono_fijo_aval">Telefono fijo</label>
+              <p-inputMask
+                (onFocus)="
+                  restartPhonesValidator('formAval', 'telefono_fijo_aval')
+                "
+                formControlName="telefono_fijo_aval"
+                inputId="telefono_fijo_aval"
+                mask="999-999-9999"
+                unmask="true"
+                showClear="true"
+                [autoClear]="false"
+                placeholder="999-999-9999"
+                [style]="{ width: '100%' }" />
+              <small id="telefono_fijo_aval-help" class="mb-2 text-red-500">
+                @if (mainForm.get('formAval')?.errors?.['atLeastOneRequired']) {
+                  <ng-container>Algun numero telefonico necesario</ng-container>
+                }
+                @if (
+                  mainForm.get('formAval.telefono_fijo_aval')?.errors?.[
+                    'telefonoExistente'
+                  ]
+                ) {
+                  <ng-container>
+                    Numero telefónico fijo de aval existente</ng-container
+                  >
+                }
+              </small>
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="telefono_movil_aval">Telefono movil</label>
+              <p-inputMask
+                (onFocus)="
+                  restartPhonesValidator('formAval', 'telefono_movil_aval')
+                "
+                formControlName="telefono_movil_aval"
+                inputId="telefono_movil_aval"
+                mask="999-999-9999"
+                minlength="10"
+                unmask="true"
+                showClear="true"
+                [autoClear]="false"
+                placeholder="999-999-9999"
+                [style]="{ width: '100%' }" />
+              <small id="telefono_movil_aval-help" class="mb-2 text-red-500">
+                @if (mainForm.get('formAval')?.errors?.['atLeastOneRequired']) {
+                  <ng-container>Algun numero telefonico necesario</ng-container>
+                }
+                @if (
+                  mainForm.get('formAval.telefono_movil_aval')?.errors?.[
+                    'telefonoExistente'
+                  ]
+                ) {
+                  <ng-container>
+                    Numero telefónico movil de aval existente</ng-container
+                  >
+                }
+              </small>
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="correo_electronico_aval">Correo electronico</label>
+              <input
+                pInputText
+                formControlName="correo_electronico_aval"
+                id="correo_electronico_aval"
+                aria-describedby="correo_electronico_aval-help" />
+              <small
+                id="correo_electronico_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.correo_electronico_aval')">
+                Formato de correo invalido
+              </small>
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="curp_aval">CURP (Sólo Mayusculas y numeros)</label>
+              <p-inputMask
+                (onFocus)="restartCurpValidator('formAval', 'curp_aval')"
+                mask="aaaa-999999-aaaaaa-*9"
+                inputId="curp_aval"
+                characterPattern="[A-Z]"
+                unmask="true"
+                autoClear="false"
+                showClear="true"
+                formControlName="curp_aval"
+                placeholder="AAAA-000000-AAAAAA-00"
+                [style]="{ width: '100%' }" />
+              <small
+                id="curp_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.curp_aval')">
+                @if (mainForm.get('formAval.curp_aval')?.errors?.['required']) {
+                  <ng-container> CURP requerido</ng-container>
+                }
+                @if (
+                  mainForm.get('formAval.curp_aval')?.errors?.['invalidCurp']
+                ) {
+                  <ng-container> Formato de CURP invalido</ng-container>
+                }
+                @if (
+                  mainForm.get('formAval.curp_aval')?.errors?.['curpExistente']
+                ) {
+                  <ng-container>CURP existente</ng-container>
+                }
+              </small>
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="id_domicilio_aval">ID Domicilio 🏡</label>
+              <p-inputNumber
+                #inputRef
+                inputId="id_domicilio_aval"
+                max="2147483647"
+                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
+                formControlName="id_domicilio_aval"
+                [useGrouping]="false"
+                [showClear]="true"
+                placeholder="Solo ID's registrados"
+                [style]="{ width: '100%' }" />
+              <small
+                id="id_domicilio_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.id_domicilio_aval')"
+                >ID de domicilio inexistente</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="tipo_calle_aval">Tipo de calle</label>
+              <p-dropdown
+                inputId="tipo_calle_aval"
+                id="tipo_calle_aval"
+                formControlName="tipo_calle_aval"
+                [options]="tiposCalle"
+                optionLabel="name"
+                [showClear]="true"
+                placeholder="Selecciona el tipo de calle"
+                [style]="{ width: '100%' }" />
+              <small
+                id="tipoAval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.tipo_calle_aval')"
+                >Selecciona un tipo de calle</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="nombre_calle_aval">Nombre de la calle</label>
+              <input
+                pInputText
+                formControlName="nombre_calle_aval"
+                id="nombre_calle_aval"
+                aria-describedby="nombre_calle_aval-help" />
+              <small
+                id="nombre_calle_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.nombre_calle_aval')"
+                >Nombre de calle es requerido</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="numero_exterior_aval">Número Exterior</label>
+              <input
+                pInputText
+                id="numero_exterior_aval"
+                formControlName="numero_exterior_aval"
+                showClear="true"
+                pKeyFilter="int"
+                inputId="numero_exterior_aval"
+                aria-describedby="numero_exterior_aval-help" />
+              <small
+                id="numero_exterior_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.numero_exterior_aval')"
+                >El numero de exterior es requerido</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="numero_interior_aval">Número Interior</label>
+              <input
+                pInputText
+                formControlName="numero_interior_aval"
+                id="numero_interior_aval"
+                inputId="numero_interior_aval"
+                showClear="true"
+                aria-describedby="numero_interior_aval-help" />
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="colonia_aval">Colonia</label>
+              <input
+                pInputText
+                id="colonia_aval"
+                aria-describedby="colonia_aval-help"
+                formControlName="colonia_aval" />
+              <small
+                id="colonia_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.colonia_aval')"
+                >La colonia es requerida</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="municipio_aval">Municipio</label>
+              <input
+                pInputText
+                formControlName="municipio_aval"
+                id="municipio_aval"
+                aria-describedby="municipio_aval-help" />
+              <small
+                id="municipio_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.municipio_aval')"
+                >Municipio Requerido</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="estado_aval">Entidad Federativa</label>
+              <p-dropdown
+                [options]="estadosDeLaRepublica"
+                inputId="estado_aval"
+                id="estado_aval"
+                emptyFilterMessage="Sin resultados"
+                formControlName="estado_aval"
+                optionLabel="name"
+                [filter]="true"
+                filterBy="name"
+                [showClear]="true"
+                placeholder="Selecciona un estado"
+                [style]="{ width: '100%' }" />
+              <small
+                id="estado_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.estado_aval')"
+                >El estado es requerido</small
+              >
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="cp_aval">Código postal</label>
+              <input
+                pInputText
+                formControlName="cp_aval"
+                id="cp_aval"
+                inputId="cp_aval"
+                autoClear="false"
+                showClear="true"
+                pKeyFilter="int"
+                placeholder="99999"
+                [maxlength]="5"
+                aria-describedby="cp_aval-help" />
+              <small
+                id="cp_aval-help"
+                class="mb-2 text-red-500"
+                [hidden]="hideField('formAval.cp_aval')">
+                <ng-container
+                  *ngIf="
+                    mainForm.get('formAval.cp_aval')?.errors?.['required']
+                  ">
+                  Código postal requerido</ng-container
+                >
+                <ng-container
+                  *ngIf="
+                    mainForm.get('formAval.cp_aval')?.errors?.['lenghtNotMatch']
+                  ">
+                  El número debe de tener 5 digitos</ng-container
+                >
+              </small>
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="referencias_dom_aval"
+                >Referencias del domicilio</label
+              >
+              <input
+                pInputText
+                formControlName="referencias_dom_aval"
+                id="referencias_dom_aval"
+                aria-describedby="referencias_dom_aval-help" />
+            </div>
+          </div>
+        </div>
+        <div class="flex justify-content-between pb-4 gap-2 pr-3">
+          <p-button
+            label="Anterior"
+            icon="pi pi-angle-double-left"
+            severity="secondary"
+            (onClick)="prevCallback.emit()" />
+          <p-button
+            label="Siguiente"
+            icon="pi pi-angle-double-right"
+            iconPos="right"
+            (onClick)="nextCallback.emit()" />
+        </div>
+      </ng-template>
+    </p-stepperPanel>
+    <!-- fin de camposAval -->
+
+    <!-- inicio Documentación -->
+    <p-stepperPanel header="Documentación">
+      <ng-template
+        pTemplate="content"
+        let-prevCallback="prevCallback"
+        let-class="pl-0"
+        let-index="index">
+        @if (windowMode === 'view') {
+          @defer (on viewport) {
+            <div class="flex flex-column mr-3 pt-3">
+              <app-list-s3-files
+                [customerFolder]="customerFolderName!"></app-list-s3-files>
+            </div>
+          } @placeholder {
+            <p>Sin archivos</p>
+          }
+        }
+        <div class="flex flex-column mr-3 pt-3">
+          <p-fileUpload
+            #fileUpload
+            customUpload="true"
+            (uploadHandler)="onUpload($event)"
+            showUploadButton="false"
+            chooseLabel="Agregar"
+            [disabled]="status === 'RECHAZADO' || status === 'APROBADO'"
+            uploadLabel="Subir"
+            mode="advanced"
+            cancelLabel="Limpiar"
+            maxFileSize="10485760"
+            invalidFileLimitMessageDetail="Limite de {0} como máximo"
+            invalidFileLimitMessageSummary="Limite de archivos exedido"
+            invalidFileSizeMessageDetail="Máximo permitido es de {0}"
+            invalidFileSizeMessageSummary="Tamaño excedido"
+            fileLimit="5"
+            multiple="true" />
+        </div>
+        <div class="flex flex-column gap-2 mt-3 mr-3">
+          <label for="observationsHistory">Historial de observaciones</label>
+          <textarea
+            rows="5"
+            cols="30"
+            pInputTextarea
+            [value]="observationsHistory"
+            id="observationsHistory"
+            [disabled]="true">
+          </textarea>
+        </div>
+        <div class="flex flex-column gap-2 mt-3 mr-3">
+          <label for="observaciones">Añadir observaciones</label>
+          <textarea
+            formControlName="observaciones"
+            rows="5"
+            cols="30"
+            autoResize="true"
+            pInputTextarea
+            id="observaciones">
+          </textarea>
+        </div>
+        @if (
+          windowMode === 'view' &&
+          currentUser?.ROL !== 'Cobrador' &&
+          status !== 'RECHAZADO' &&
+          status !== 'APROBADO'
+        ) {
+          <section class="mt-3">
+            <span>Acciones administrativas </span>
+            <i
+              class="pi pi-info-circle"
+              pTooltip="Los siguientes botones no actualizan el status de la solicitud actual al ser presionados, el status se actualiza al usar el botón 'Enviar'."></i>
+            <div class="mt-3 ml-0 grid gap-2">
+              <p-button
+                pTooltip="Rechazar la solicitud actual, esta acción no se puede deshacer."
+                tooltipPosition="bottom"
+                label="Rechazar"
+                (onClick)="updateProvitionalStatus('RECHAZADO')"
+                severity="danger"></p-button>
+              <p-button
+                pTooltip="Solicita una actualización de información al agente."
+                tooltipPosition="bottom"
+                label="Solicitar actualización"
+                [hidden]="status === 'ACTUALIZAR'"
+                (onClick)="updateProvitionalStatus('ACTUALIZAR')"
+                severity="warning"></p-button>
+              <p-button
+                *ngIf="currentUser?.ROL !== 'Líder de grupo'"
+                pTooltip="Se acepta la solicitud y se genera el prestamo de manera automatica."
+                tooltipPosition="bottom"
+                [hidden]="status === 'ACTUALIZAR'"
+                label="Aprobar"
+                (onClick)="updateProvitionalStatus('APROBADO')"
+                severity="success"></p-button>
+            </div>
+            @if (statusProvisional) {
+              <p>
+                El status nuevo será:
+                <strong>
+                  {{ statusProvisional }}
+                </strong>
+              </p>
+              @if (statusProvisional === status) {
+                <i class="pi pi-exclamation-triangle" style="color: yellow"></i>
+                <span>
+                  El status seleccionado es el mismo al actual, no habra cambio
+                  alguno.
+                </span>
+              }
+            }
+          </section>
+        }
+        <div class="flex justify-content-between py-4 gap-2 pr-3">
+          <p-button
+            label="Anterior"
+            icon="pi pi-angle-double-left"
+            severity="secondary"
+            (onClick)="prevCallback.emit()" />
+          @if (shouldHideSendButton()) {
+            <span>
+              <i class="pi pi-exclamation-triangle" style="color: red"></i>
+              Solicitud no modificable</span
+            >
+          } @else {
+            <p-button
+              type="submit"
+              label="Enviar"
+              [loading]="uploading"
+              [disabled]="uploadSuccessfull"
+              icon="pi pi-cloud-upload"
+              iconPos="right" />
+          }
+        </div>
+      </ng-template>
+    </p-stepperPanel>
+
+    <!-- fin Documentación -->
+  </p-stepper>
+
+  <p-toast
+    [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />
+  <p-confirmDialog
+    key="positionDialog"
+    [position]="position"
+    rejectButtonStyleClass="p-button-outlined" />
+</form>
+<p-dialog
+  #dialogMessage
+  header="Cargando información"
+  [modal]="true"
+  [(visible)]="showLoadingModal"
+  closable="false"
+  [style]="{ width: '16.46rem' }"
+  class="text-center">
+  @if (showLoadingModal) {
+    <p-progressSpinner />
+    <!-- <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i> -->
+  }
+</p-dialog>
+<!-- <pre>{{ mainForm.value | json }}</pre> -->
+<!-- <pre>{{ mainForm.get('formCliente')?.errors | json }}</pre> -->
+<!-- <pre>{{ mainForm.get('formAval')?.errors | json }}</pre> -->

@@ -1,6 +1,9 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { LandingComponent } from './landing.component';
+import { ToolbarModule } from 'primeng/toolbar';
+import { ButtonModule } from 'primeng/button';
+import { CarouselModule } from 'primeng/carousel';
 
 describe('LandingComponent', () => {
   let component: LandingComponent;
@@ -9,6 +12,7 @@ describe('LandingComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LandingComponent],
+      imports: [ToolbarModule, ButtonModule, CarouselModule],
     });
     fixture = TestBed.createComponent(LandingComponent);
     component = fixture.componentInstance;

@@ -5,9 +5,9 @@ const targetPath = './src/environments/environment.ts';
 
 const envFileContent = `
 export const environment = {
-  PRODUCTION: '${process.env.PRODUCTION}',
-  ENV_NAME: '${process.env.ENV_NAME}',
-  API_URL: '${process.env.API_URL}',
+  PRODUCTION: '${process.env.PRODUCTION || false}',
+  ENV_NAME: '${process.env.ENV_NAME || "localhost"}',
+  API_URL: '${process.env.API_URL || "http://localhost:3000/v1/"}',
 };
 `;
 

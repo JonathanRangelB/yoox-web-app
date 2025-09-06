@@ -3,25 +3,45 @@ import { MenuItem } from 'primeng/api';
 import { AuthService } from 'src/app/login/services/AuthService';
 
 @Component({
-  selector: 'app-layout',
-  templateUrl: './layout.component.html',
-  styles: [],
+  selector: 'app-dashboard',
+  templateUrl: './dashboard.component.html',
+  styleUrls: ['./dashboard.component.css'],
+  standalone: false,
 })
-export class LayoutComponent {
+export class DashboardComponent {
   private authService = inject(AuthService);
   isSidebarVisible = false;
+  nombreUsuario = localStorage.getItem('nombreusuario') || 'quien eres?';
 
   items: MenuItem[] = [
     {
       label: 'Altas',
+      expanded: true,
       items: [
-        { label: 'Pagos', icon: 'pi pi-fw pi-user-plus', routerLink: '/pagos' },
+        {
+          label: 'Pagos',
+          icon: 'pi pi-fw pi-credit-card',
+          routerLink: '/dashboard/pagos',
+          command: () => this.toggleSidebar(),
+        },
+        {
+          label: 'Solicitud de prestamo',
+          icon: 'pi pi-fw pi-file-plus',
+          routerLink: '/dashboard/loan-request',
+          command: () => this.toggleSidebar(),
+        },
       ],
     },
     {
-      label: 'Cerrar sesión',
-      icon: 'pi pi-fw pi-power-off',
-      command: () => this.logout(),
+      label: 'Consultas',
+      items: [
+        {
+          label: 'Listado de solicitudes',
+          icon: 'pi pi-fw pi-file',
+          routerLink: '/dashboard/request-list',
+          command: () => this.toggleSidebar(),
+        },
+      ],
     },
   ];
 

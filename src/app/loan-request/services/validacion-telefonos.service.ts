@@ -1,0 +1,19 @@
+import { inject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { environment } from 'src/environments/environment';
+
+@Injectable({ providedIn: 'root' })
+export class ValidatorExistingPhoneService {
+  readonly #http = inject(HttpClient);
+  readonly #baseUrl = environment.API_URL;
+
+  validate(body: any) {
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('Token not found');
+
+    // TODO: considerar cambiar a un metodo get en lugar de post
+    return this.#http.post(`${this.#baseUrl}validate/phones`, body, {
+      headers: { authorization: `${token}` },
+    });
+  }
+}
