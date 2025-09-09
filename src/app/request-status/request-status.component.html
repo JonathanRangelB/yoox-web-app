@@ -188,10 +188,10 @@
     [(visible)]="qrVisible"
     [style]="{ width: '30rem' }"
     [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
-    <img src="./assets/ALTA.png" class="mb-3 w-full" alt="logo" />
+    <img [src]="qrImage" class="mb-3 w-full" alt="logo" />
     <p>
       También puedes acceder desde este link:
-      <a href="https://wa.me/5213313008582?text=ALTA">ALTA</a>
+      <a [href]="'https://wa.me/521' + phoneNumber + '?text=ALTA'">ALTA</a>
     </p>
   </p-dialog>
 </div>

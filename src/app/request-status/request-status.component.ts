@@ -47,6 +47,8 @@ export class RequestStatusComponent {
   loanRequestInfo = signal<CustomerLoanStatus | null>(null);
   customerLoanStatusService = inject(CustomerLoanStatusService);
   readonly #destroyRef$ = inject(DestroyRef);
+  qrImage: string = '';
+  phoneNumber: string = '';
 
   constructor() {
     this.requestForm = new FormGroup({
@@ -59,6 +61,10 @@ export class RequestStatusComponent {
         Validators.maxLength(50),
       ]),
     });
+    this.qrImage = this.isProdEnv
+      ? './assets/ALTA_PROD.png'
+      : './assets/ALTA.png';
+    this.phoneNumber = this.isProdEnv ? '3339829205' : '3313008582';
   }
 
   requestStatus() {
