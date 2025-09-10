@@ -243,10 +243,18 @@
           </p>
 
           @if (!customerSearchVisible) {
-            <app-refinance-search
-              [searchId]="id_cliente_recuperado"
-              (visible)="toggleRefinanceSearch()"
-              (searchRefinanceResults)="onRefinanceResults($event)" />
+            <div class="flex justify-content-center align-items-center pr-3">
+              <span>¿Deseas buscar refinanciamientos válidos?</span>
+              <p-inputSwitch
+                class="ml-3"
+                (onChange)="toggleRefinanceSearch()" />
+            </div>
+            @if (showRefinanceComponent) {
+              <app-refinance-search
+                [searchId]="id_cliente_recuperado"
+                (visible)="toggleRefinanceSearchComponent()"
+                (searchRefinanceResults)="onRefinanceResults($event)" />
+            }
           }
         }
         <div formGroupName="formCliente" class="grid py-3 pr-3 mr-0">
