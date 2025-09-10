@@ -100,6 +100,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   customerSearchVisible = false;
   endorsmentSearchVisible = false;
   customerRefinanceVisible = false;
+  showRefinanceComponent = false;
   customerFolderName?: string;
   position: string = 'bottom';
   mainForm: FormGroup;
@@ -609,8 +610,12 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.switchBusquedaAvales()?.writeValue(this.endorsmentSearchVisible);
   }
 
-  toggleRefinanceSearch() {
+  toggleRefinanceSearchComponent() {
     this.customerRefinanceVisible = !this.customerRefinanceVisible;
+  }
+
+  toggleRefinanceSearch() {
+    this.showRefinanceComponent = !this.showRefinanceComponent;
   }
 
   /**
