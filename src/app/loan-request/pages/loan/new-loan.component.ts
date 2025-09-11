@@ -200,7 +200,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   formInit() {
     return this.#formBuilder.group({
       cantidad_prestada: [
-        '',
+        this.minLoanAmount,
         [Validators.required, Validators.min(this.minLoanAmount)],
       ],
       plazo: ['', Validators.required],
@@ -957,31 +957,46 @@ export class LoanComponent implements OnDestroy, OnInit {
 
   onRefinanceResults(refinanceData: Refinance) {
     if (!refinanceData) return;
+    const cantidad_prestada = this.mainForm.get('cantidad_prestada')?.value;
     this.refinanceResults.set(refinanceData);
     this.stepper()?.nextCallback(null, -1);
     console.log({ refinanceData });
     if (refinanceData.cantidad_restante) {
-      this.updateAmountValidator(refinanceData.cantidad_restante);
+      this.updateAmountValidator(
+        cantidad_prestada,
+        refinanceData.cantidad_restante
+      );
     }
   }
 
-  updateAmountValidator(cantidad_prestada: number, cantidad_restante?: number) {
+  updateAmountValidator(
+    cantidad_prestada: number,
+    cantidad_restante: number = 0
+  ) {
     const inputElement = this.mainForm.get('cantidad_prestada');
     this.customLoanAmount =
       this.minLoanAmount > cantidad_prestada
         ? this.minLoanAmount
         : cantidad_prestada;
-    if (typeof cantidad_restante === 'number')
+    if (cantidad_restante && cantidad_restante > 0)
       this.customLoanRefinanceAmount =
         cantidad_restante < this.minLoanAmount
           ? this.minLoanAmount
           : cantidad_restante;
+    else {
+      this.customLoanRefinanceAmount = this.minLoanAmount;
+    }
     inputElement?.setValidators([
       Validators.required,
       Validators.min(cantidad_restante || this.customLoanAmount),
     ]);
     inputElement?.setValue(this.customLoanAmount);
     inputElement?.updateValueAndValidity();
+    console.log({
+      cantidad_restante,
+      customLoanRefinanceAmount: this.customLoanRefinanceAmount,
+      customLoanAmount: this.customLoanAmount,
+    });
   }
 
   updateEndorsmentFormFields(data: Guarantor) {
