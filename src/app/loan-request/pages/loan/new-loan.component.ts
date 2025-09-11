@@ -992,11 +992,6 @@ export class LoanComponent implements OnDestroy, OnInit {
     ]);
     inputElement?.setValue(this.customLoanAmount);
     inputElement?.updateValueAndValidity();
-    console.log({
-      cantidad_restante,
-      customLoanRefinanceAmount: this.customLoanRefinanceAmount,
-      customLoanAmount: this.customLoanAmount,
-    });
   }
 
   updateEndorsmentFormFields(data: Guarantor) {
