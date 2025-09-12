@@ -986,10 +986,17 @@ export class LoanComponent implements OnDestroy, OnInit {
     else {
       this.customLoanRefinanceAmount = this.minLoanAmount;
     }
-    inputElement?.setValidators([
-      Validators.required,
-      Validators.min(cantidad_restante || this.customLoanAmount),
-    ]);
+    if (this.windowMode === 'view') {
+      inputElement?.setValidators([
+        Validators.required,
+        Validators.min(cantidad_restante || this.customLoanRefinanceAmount),
+      ]);
+    } else {
+      inputElement?.setValidators([
+        Validators.required,
+        Validators.min(cantidad_restante || this.customLoanAmount),
+      ]);
+    }
     inputElement?.setValue(this.customLoanAmount);
     inputElement?.updateValueAndValidity();
   }
