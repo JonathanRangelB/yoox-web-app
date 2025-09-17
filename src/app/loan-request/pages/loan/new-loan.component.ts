@@ -960,7 +960,6 @@ export class LoanComponent implements OnDestroy, OnInit {
     const cantidad_prestada = this.mainForm.get('cantidad_prestada')?.value;
     this.refinanceResults.set(refinanceData);
     this.stepper()?.nextCallback(null, -1);
-    console.log({ refinanceData });
     if (refinanceData.cantidad_restante) {
       this.updateAmountValidator(
         cantidad_prestada,
@@ -1022,5 +1021,11 @@ export class LoanComponent implements OnDestroy, OnInit {
       cp_aval: data.cp,
       referencias_dom_aval: data.referencias_dom,
     });
+  }
+
+  refinanceResultsClear() {
+    this.refinanceResults.set(null);
+    this.stepper()?.nextCallback(null, -1);
+    this.updateAmountValidator(this.minLoanAmount);
   }
 }
