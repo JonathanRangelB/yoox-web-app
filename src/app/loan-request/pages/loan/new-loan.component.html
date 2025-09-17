@@ -28,7 +28,7 @@
     orientation="vertical"
     style="max-width: 720px; margin: 0 auto">
     <!-- inicio de Cantidades y plazos -->
-    <p-stepperPanel header="Cantidades y plazos">
+    <p-stepperPanel header="Cantidades y plazos 💵">
       <ng-template
         pTemplate="content"
         let-index="index"
@@ -201,6 +201,14 @@
                     | currency: 'MXN' : 'symbol' : '1.2-2'
                 " />
             </p-inputGroup>
+            <div
+              class="w-full flex justify-content-center align-items-center pr-3 mt-3 column-gap-3">
+              <span>¿Eliminar refinanciamiento?</span>
+              <p-button
+                label="Eliminar"
+                icon="pi pi-undo"
+                (onClick)="refinanceResultsClear()" />
+            </div>
           }
         </div>
         <div class="flex justify-content-end pb-4 gap-2 pr-3">
@@ -215,7 +223,7 @@
     <!-- fin de Cantidades y plazos -->
 
     <!-- inicio de Datos del ciente -->
-    <p-stepperPanel header="Datos del cliente">
+    <p-stepperPanel header="Datos del cliente 🙋">
       <ng-template
         pTemplate="content"
         let-prevCallback="prevCallback"
@@ -612,7 +620,7 @@
     <!-- final de Datos del ciente -->
 
     <!-- inicio camposAval -->
-    <p-stepperPanel header="Datos de aval">
+    <p-stepperPanel header="Datos del aval 🙋">
       <ng-template
         pTemplate="content"
         let-prevCallback="prevCallback"
@@ -978,7 +986,7 @@
     <!-- fin de camposAval -->
 
     <!-- inicio Documentación -->
-    <p-stepperPanel header="Documentación">
+    <p-stepperPanel header="Documentación 📂">
       <ng-template
         pTemplate="content"
         let-prevCallback="prevCallback"
