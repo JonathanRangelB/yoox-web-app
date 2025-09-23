@@ -1027,5 +1027,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.refinanceResults.set(null);
     this.stepper()?.nextCallback(null, -1);
     this.updateAmountValidator(this.minLoanAmount);
+    this.cantidadIngresada = this.minLoanAmount;
+    this.calculaPrestamo()
   }
 }
