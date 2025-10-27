@@ -244,6 +244,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           telefono_fijo_aval: [''],
           telefono_movil_aval: [''],
           correo_electronico_aval: ['', emailValidator()],
+          ocupacion_aval: [''],
           curp_aval: ['', [Validators.required, curpValidator()]],
           id_domicilio_aval: [],
           tipo_calle_aval: ['', Validators.required],
@@ -759,6 +760,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               telefono_fijo_aval: data.telefono_fijo_aval,
               telefono_movil_aval: data.telefono_movil_aval,
               correo_electronico_aval: data.correo_electronico_aval,
+              ocupacion_aval: data.ocupacion_aval,
               curp_aval: data.curp_aval,
               id_domicilio_aval: data.id_domicilio_aval,
               tipo_calle_aval: tiposCalle.find(
