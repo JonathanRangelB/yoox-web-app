@@ -511,6 +511,14 @@
               aria-describedby="numero_interior_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
+            <label for="cruce_calles_cliente">Cruce de calles:</label>
+            <input
+              pInputText
+              formControlName="cruce_calles_cliente"
+              id="cruce_calles_cliente"
+              aria-describedby="cruce_calles_cliente-help" />
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
             <label for="colonia_cliente">Colonia</label>
             <input
               pInputText
@@ -886,6 +894,14 @@
                 aria-describedby="numero_interior_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
+              <label for="cruce_calles_aval">Cruce de calles:</label>
+              <input
+                pInputText
+                formControlName="cruce_calles_aval"
+                id="cruce_calles_aval"
+                aria-describedby="cruce_calles_aval-help" />
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
               <label for="colonia_aval">Colonia</label>
               <input
                 pInputText
@@ -1149,6 +1165,6 @@
     <!-- <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i> -->
   }
 </p-dialog>
-<!-- <pre>{{ mainForm.value | json }}</pre> -->
-<!-- <pre>{{ mainForm.get('formCliente')?.errors | json }}</pre> -->
-<!-- <pre>{{ mainForm.get('formAval')?.errors | json }}</pre> -->
+<pre>{{ mainForm.value | json }}</pre>
+<pre>Errores FormCliente: {{ mainForm.get('formCliente')?.errors | json }}</pre>
+<pre>Errores FormAval: {{ mainForm.get('formAval')?.errors | json }}</pre>

@@ -81,6 +81,7 @@ export class BusquedaClientesComponent {
       nombre_calle_cliente,
       numero_exterior_cliente,
       numero_interior_cliente,
+      cruce_calles_cliente,
       colonia_cliente,
       municipio_cliente,
       estado_cliente,
@@ -95,6 +96,7 @@ export class BusquedaClientesComponent {
       nombre_calle_aval,
       numero_exterior_aval,
       numero_interior_aval,
+      cruce_calles_aval,
       colonia_aval,
       municipio_aval,
       estado_aval,
@@ -138,6 +140,9 @@ export class BusquedaClientesComponent {
       .get('formCliente.numero_interior_cliente')
       ?.setValue(numero_interior_cliente);
     this.parentForm()
+      .get('formCliente.cruce_calles_cliente')
+      ?.setValue(cruce_calles_cliente);
+    this.parentForm()
       .get('formCliente.colonia_cliente')
       ?.setValue(colonia_cliente);
     this.parentForm()
@@ -174,6 +179,10 @@ export class BusquedaClientesComponent {
     this.parentForm()
       .get('formAval.numero_interior_aval')
       ?.setValue(numero_interior_aval ?? '');
+    this.parentForm()
+      .get('formAval.cruce_calles_aval')
+      ?.setValue(cruce_calles_aval);
+
     this.parentForm().get('formAval.colonia_aval')?.setValue(colonia_aval);
     this.parentForm().get('formAval.municipio_aval')?.setValue(municipio_aval);
     this.parentForm()
@@ -230,6 +239,7 @@ export class BusquedaClientesComponent {
       next: (foundCustomers: Customer[]) => {
         this.loading.set(false);
         this.clientesEncontrados.set(foundCustomers);
+        console.log(foundCustomers);
       },
       error: ({ error, errorMessage, errorType }) => {
         this.loading.set(false);

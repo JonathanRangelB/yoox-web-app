@@ -20,6 +20,7 @@ export interface Customer {
   nombre_calle_cliente: string;
   numero_exterior_cliente: string;
   numero_interior_cliente: string;
+  cruce_calles_cliente: string;
   colonia_cliente: string;
   municipio_cliente: string;
   estado_cliente: string;
@@ -36,6 +37,7 @@ export interface Customer {
   nombre_calle_aval: string;
   numero_exterior_aval: string;
   numero_interior_aval: string;
+  cruce_calles_aval: string;
   colonia_aval: string;
   municipio_aval: string;
   estado_aval: null;
@@ -61,6 +63,7 @@ export interface Guarantor {
   nombre_calle: string;
   numero_exterior: string;
   numero_interior: string;
+  cruce_calles: string;
   colonia: string;
   municipio: string;
   estado: string;
