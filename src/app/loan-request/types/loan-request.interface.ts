@@ -72,6 +72,7 @@ export interface LoanRequest {
   telefono_fijo_aval: string;
   telefono_movil_aval: string;
   correo_electronico_aval: string;
+  ocupacion_aval: string;
   curp_aval: string;
   tipo_calle_aval: string;
   nombre_calle_aval: string;
