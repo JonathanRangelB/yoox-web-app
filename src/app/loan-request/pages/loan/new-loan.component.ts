@@ -1046,6 +1046,13 @@ export class LoanComponent implements OnDestroy, OnInit {
 
   openGmapsLocation() {
     const location = this.mainForm.get('formCliente.gmaps_url_location')?.value;
-    window.open(location, '_blank');
+    if (new RegExp(urlRegex).test(location)) window.open(location, '_blank');
+    else
+      this.#messageService.add({
+        severity: 'error',
+        summary: 'URL invalida',
+        detail: 'No se puede abrir la ubicación.',
+        life: 3000,
+      });
   }
 }
