@@ -1041,11 +1041,11 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.stepper()?.nextCallback(null, -1);
     this.updateAmountValidator(this.minLoanAmount);
     this.cantidadIngresada = this.minLoanAmount;
-    this.calculaPrestamo()
+    this.calculaPrestamo();
   }
 
   openGmapsLocation() {
-    const location = this.mainForm.get("formCliente.gmaps_url_location")?.value
+    const location = this.mainForm.get('formCliente.gmaps_url_location')?.value;
     window.open(location, '_blank');
   }
 }

@@ -158,8 +158,12 @@ export class BusquedaClientesComponent {
         estadosDeLaRepublica.find((data) => data.value === estado_cliente)
       );
     this.parentForm().get('formCliente.cp_cliente')?.setValue(cp_cliente);
-    this.parentForm().get('formCliente.referencias_dom_cliente')?.setValue(referencias_dom_cliente || "");
-    this.parentForm().get('formCliente.gmaps_url_location')?.setValue(gmaps_url_location || "");
+    this.parentForm()
+      .get('formCliente.referencias_dom_cliente')
+      ?.setValue(referencias_dom_cliente || '');
+    this.parentForm()
+      .get('formCliente.gmaps_url_location')
+      ?.setValue(gmaps_url_location || '');
 
     // Comienzan los campos de aval
     this.parentForm().get('formAval.nombre_aval')?.setValue(nombre_aval);
@@ -198,7 +202,9 @@ export class BusquedaClientesComponent {
         estadosDeLaRepublica.find((data) => data.value === estado_aval)
       );
     this.parentForm().get('formAval.cp_aval')?.setValue(cp_aval);
-    this.parentForm().get('formAval.referencias_dom_aval')?.setValue(referencias_dom_aval || "");
+    this.parentForm()
+      .get('formAval.referencias_dom_aval')
+      ?.setValue(referencias_dom_aval || '');
     this.#hideSelfComponent();
   }
 

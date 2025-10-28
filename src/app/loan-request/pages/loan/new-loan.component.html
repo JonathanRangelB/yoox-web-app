@@ -611,9 +611,7 @@
               aria-describedby="referencias_dom_cliente-help" />
           </div>
           <div class="col-12 sm:col-5 flex flex-column">
-            <label for="gmaps_url_location"
-              >Ubicación en Google Maps</label
-            >
+            <label for="gmaps_url_location">Ubicación en Google Maps</label>
             <input
               pInputText
               formControlName="gmaps_url_location"
@@ -624,22 +622,18 @@
               class="mb-2 text-red-500"
               [hidden]="hideField('formCliente.gmaps_url_location')"
               ><ng-container
-                *ngIf="
-                  mainForm.get('formCliente.gmaps_url_location')?.errors
-                ">
+                *ngIf="mainForm.get('formCliente.gmaps_url_location')?.errors">
                 URL inválida</ng-container
               >
-              </small
-            >
+            </small>
           </div>
           <div class="col-12 sm:col-1 flex flex-column pl-0">
-          <p-button
-            class="mt-3"
-            icon="pi pi-map-marker"
-            pTooltip="Abrir ubicación en Google Maps"
-            tooltipPosition="top"
-            (onClick)="openGmapsLocation()"
-          />
+            <p-button
+              class="mt-3"
+              icon="pi pi-map-marker"
+              pTooltip="Abrir ubicación en Google Maps"
+              tooltipPosition="top"
+              (onClick)="openGmapsLocation()" />
           </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
@@ -806,14 +800,14 @@
                 Formato de correo invalido
               </small>
             </div>
-          <div class="col-12 sm:col-6 flex flex-column">
-            <label for="ocupacion_aval">Ocupación</label>
-            <input
-              pInputText
-              formControlName="ocupacion_aval"
-              id="ocupacion_aval"
-              aria-describedby="ocupacion_aval-help" />
-          </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="ocupacion_aval">Ocupación</label>
+              <input
+                pInputText
+                formControlName="ocupacion_aval"
+                id="ocupacion_aval"
+                aria-describedby="ocupacion_aval-help" />
+            </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="curp_aval">CURP (Sólo Mayusculas y numeros)</label>
               <p-inputMask
