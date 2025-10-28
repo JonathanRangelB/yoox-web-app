@@ -32,6 +32,7 @@ import {
   estadosDeLaRepublica,
   plazos,
   tiposCalle,
+  urlRegex,
 } from '../../utils/consts';
 import {
   atLeastOneValidator,
@@ -227,6 +228,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           estado_cliente: ['', Validators.required],
           cp_cliente: ['', [Validators.required, lengthValidator(5)]],
           referencias_dom_cliente: [''],
+          gmaps_url_location: ['', Validators.pattern(urlRegex)],
         },
         {
           validators: [
@@ -755,6 +757,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               ),
               cp_cliente: data.cp_cliente,
               referencias_dom_cliente: data.referencias_dom_cliente,
+              gmaps_url_location: data.gmaps_url_location,
             },
             formAval: {
               nombre_aval: data.nombre_aval,
@@ -1016,6 +1019,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       telefono_fijo_aval: data.telefono_fijo ?? '',
       telefono_movil_aval: data.telefono_movil ?? '',
       correo_electronico_aval: data.correo_electronico ?? '',
+      ocupacion_aval: data.ocupacion ?? '',
       curp_aval: data.curp,
       tipo_calle_aval: tiposCalle.find((item) => item.name === data.tipo_calle),
       nombre_calle_aval: data.nombre_calle,
@@ -1038,5 +1042,10 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.updateAmountValidator(this.minLoanAmount);
     this.cantidadIngresada = this.minLoanAmount;
     this.calculaPrestamo()
+  }
+
+  openGmapsLocation() {
+    const location = this.mainForm.get("formCliente.gmaps_url_location")?.value
+    window.open(location, '_blank');
   }
 }

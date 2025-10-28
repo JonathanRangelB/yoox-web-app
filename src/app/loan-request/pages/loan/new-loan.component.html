@@ -610,6 +610,37 @@
               id="referencias_dom_cliente"
               aria-describedby="referencias_dom_cliente-help" />
           </div>
+          <div class="col-12 sm:col-5 flex flex-column">
+            <label for="gmaps_url_location"
+              >Ubicación en Google Maps</label
+            >
+            <input
+              pInputText
+              formControlName="gmaps_url_location"
+              id="gmaps_url_location"
+              aria-describedby="gmaps_url_location-help" />
+            <small
+              id="gmaps_url_location-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.gmaps_url_location')"
+              ><ng-container
+                *ngIf="
+                  mainForm.get('formCliente.gmaps_url_location')?.errors
+                ">
+                URL inválida</ng-container
+              >
+              </small
+            >
+          </div>
+          <div class="col-12 sm:col-1 flex flex-column pl-0">
+          <p-button
+            class="mt-3"
+            icon="pi pi-map-marker"
+            pTooltip="Abrir ubicación en Google Maps"
+            tooltipPosition="top"
+            (onClick)="openGmapsLocation()"
+          />
+          </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
           <p-button
@@ -1165,6 +1196,6 @@
     <!-- <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i> -->
   }
 </p-dialog>
-<pre>{{ mainForm.value | json }}</pre>
-<pre>Errores FormCliente: {{ mainForm.get('formCliente')?.errors | json }}</pre>
-<pre>Errores FormAval: {{ mainForm.get('formAval')?.errors | json }}</pre>
+<!-- <pre>{{ mainForm.value | json }}</pre> -->
+<!-- <pre>Errores FormCliente: {{ mainForm.get('formCliente')?.errors | json }}</pre> -->
+<!-- <pre>Errores FormAval: {{ mainForm.get('formAval')?.errors | json }}</pre> -->

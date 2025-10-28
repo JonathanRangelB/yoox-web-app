@@ -25,12 +25,14 @@ export interface Customer {
   municipio_cliente: string;
   estado_cliente: string;
   cp_cliente: string;
-  referencias_dom_cliente: null;
+  referencias_dom_cliente: string;
+  gmaps_url_location: string;
   id_aval: number;
   nombre_aval: string;
   telefono_fijo_aval: string;
   telefono_movil_aval: string;
   correo_electronico_aval: string;
+  ocupacion_aval: string;
   curp_aval: string;
   id_domicilio_aval: number;
   tipo_calle_aval: null;
@@ -42,7 +44,7 @@ export interface Customer {
   municipio_aval: string;
   estado_aval: null;
   cp_aval: string;
-  referencias_dom_aval: null;
+  referencias_dom_aval: string;
 }
 
 export interface SearchGuarantorOptions {
@@ -57,6 +59,7 @@ export interface Guarantor {
   telefono_fijo: string;
   telefono_movil: string;
   correo_electronico: string;
+  ocupacion: string;
   curp: string;
   id_domicilio: number;
   tipo_calle: string;

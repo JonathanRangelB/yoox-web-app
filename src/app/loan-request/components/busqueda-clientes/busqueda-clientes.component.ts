@@ -87,10 +87,13 @@ export class BusquedaClientesComponent {
       estado_cliente,
       cp_cliente,
       id_domicilio_cliente,
+      referencias_dom_cliente,
+      gmaps_url_location,
       nombre_aval,
       telefono_fijo_aval,
       telefono_movil_aval,
       correo_electronico_aval,
+      ocupacion_aval,
       curp_aval,
       tipo_calle_aval,
       nombre_calle_aval,
@@ -102,6 +105,7 @@ export class BusquedaClientesComponent {
       estado_aval,
       cp_aval,
       id_domicilio_aval,
+      referencias_dom_aval,
     } = event.data as Customer;
 
     this.idsRecuperados.emit({
@@ -154,6 +158,8 @@ export class BusquedaClientesComponent {
         estadosDeLaRepublica.find((data) => data.value === estado_cliente)
       );
     this.parentForm().get('formCliente.cp_cliente')?.setValue(cp_cliente);
+    this.parentForm().get('formCliente.referencias_dom_cliente')?.setValue(referencias_dom_cliente || "");
+    this.parentForm().get('formCliente.gmaps_url_location')?.setValue(gmaps_url_location || "");
 
     // Comienzan los campos de aval
     this.parentForm().get('formAval.nombre_aval')?.setValue(nombre_aval);
@@ -166,6 +172,7 @@ export class BusquedaClientesComponent {
     this.parentForm()
       .get('formAval.correo_electronico_aval')
       ?.setValue(correo_electronico_aval ?? '');
+    this.parentForm().get('formAval.ocupacion_aval')?.setValue(ocupacion_aval);
     this.parentForm().get('formAval.curp_aval')?.setValue(curp_aval);
     this.parentForm()
       .get('formAval.tipo_calle_aval')
@@ -191,6 +198,7 @@ export class BusquedaClientesComponent {
         estadosDeLaRepublica.find((data) => data.value === estado_aval)
       );
     this.parentForm().get('formAval.cp_aval')?.setValue(cp_aval);
+    this.parentForm().get('formAval.referencias_dom_aval')?.setValue(referencias_dom_aval || "");
     this.#hideSelfComponent();
   }
 

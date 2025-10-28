@@ -67,6 +67,7 @@ export interface LoanRequest {
   cp_cliente: string;
   id_domicilio_cliente: number;
   referencias_dom_cliente: string;
+  gmaps_url_location: string;
   id_aval: number;
   nombre_aval: string;
   apellido_paterno_aval: string;
