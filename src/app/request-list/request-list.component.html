@@ -132,7 +132,6 @@
   <p-sidebar [(visible)]="showFilterMenu" position="right">
     <ng-template pTemplate="header">
       <div class="flex align-items-center gap-2">
-        <i class="pi pi-filter text-2xl"></i>
         <span class="font-bold">{{
           'Filtrado y ordenamiento' | titlecase
         }}</span>
@@ -142,10 +141,14 @@
     <div class="p-3">
       <!-- Sección de Filtros -->
       <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-3 mt-0">Filtrar por...</h3>
+        <h3 class="text-lg font-semibold mb-3 mt-0">
+          <i class="pi pi-filter"></i> Filtrar por...
+        </h3>
 
         <div class="mb-3">
-          <label class="block mb-2">Agente</label>
+          <label class="block mb-2"
+            >Agente <i class="pi pi-user" pTooltip="Seleccione un agente"></i
+          ></label>
           <p-dropdown
             [(ngModel)]="selectedAgente"
             [options]="requestUserList()"
@@ -162,7 +165,9 @@
         </div>
 
         <div class="mb-3">
-          <label class="block mb-2">Grupos</label>
+          <label class="block mb-2"
+            >Grupos <i class="pi pi-users" pTooltip="Seleccione un agente"></i
+          ></label>
           <p-dropdown
             [(ngModel)]="selectedGrupo"
             [options]="grupos"
@@ -179,7 +184,10 @@
         </div>
 
         <div class="mb-3">
-          <label class="block mb-2">Gerencia</label>
+          <label class="block mb-2"
+            >Gerencia
+            <i class="pi pi-briefcase" pTooltip="Seleccione un agente"></i
+          ></label>
           <p-dropdown
             [(ngModel)]="selectedGerencia"
             [options]="gerencias"
@@ -213,13 +221,17 @@
 
       <!-- Sección de Ordenamiento -->
       <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-0">Ordenar por...</h3>
+        <h3 class="text-lg font-semibold mb-0">
+          <i class="pi pi-sort" pTooltip="Ordenar por..."></i> Ordenar por...
+        </h3>
         <div class="text-md font-italic mb-3">
           (Solo se aplica uno a la vez)
         </div>
 
         <div class="mb-3">
-          <label class="block mb-2">Fecha</label>
+          <label class="block mb-2"
+            >Fecha <i class="pi pi-calendar" pTooltip="Seleccione un agente"></i
+          ></label>
           <p-dropdown
             [(ngModel)]="selectedOrdenFecha"
             [options]="opcionesFecha"
@@ -233,7 +245,10 @@
         </div>
 
         <div class="mb-3">
-          <label class="block mb-2">Cantidad</label>
+          <label class="block mb-2"
+            >Cantidad
+            <i class="pi pi-dollar" pTooltip="Seleccione un agente"></i
+          ></label>
           <p-dropdown
             [(ngModel)]="selectedOrdenCantidad"
             [options]="opcionesCantidad"
