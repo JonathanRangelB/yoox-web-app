@@ -141,7 +141,7 @@
     <div class="p-3">
       <!-- Sección de Filtros -->
       <div class="mb-4">
-        <h3 class="text-lg font-semibold mb-3 mt-0">
+        <h3 class="text-lg font-semibold mt-0">
           <i class="pi pi-filter"></i> Filtrar por...
         </h3>
 
@@ -150,6 +150,7 @@
             >Agente <i class="pi pi-user" pTooltip="Seleccione un agente"></i
           ></label>
           <p-dropdown
+            #agentDropdown
             [(ngModel)]="selectedAgente"
             [options]="requestUserList()"
             optionLabel="NOMBRE"
@@ -157,8 +158,9 @@
             placeholder="Seleccione un agente"
             styleClass="w-full"
             filter="true"
+            filterby="NOMBRE"
             [virtualScroll]="true"
-            [virtualScrollItemSize]="10"
+            [virtualScrollItemSize]="20"
             [showClear]="true"
             (onChange)="onAgenteChange($event)">
           </p-dropdown>
@@ -169,6 +171,7 @@
             >Grupos <i class="pi pi-users" pTooltip="Seleccione un agente"></i
           ></label>
           <p-dropdown
+            #groupDropdown
             [(ngModel)]="selectedGrupo"
             [options]="grupos"
             placeholder="Seleccione un grupo"
@@ -189,6 +192,7 @@
             <i class="pi pi-briefcase" pTooltip="Seleccione un agente"></i
           ></label>
           <p-dropdown
+            #managerDropdown
             [(ngModel)]="selectedGerencia"
             [options]="gerencias"
             placeholder="Seleccione una gerencia"
@@ -205,7 +209,7 @@
 
         <div class="flex justify-content-center gap-2">
           <p-button
-            label="Reestablecer"
+            label="Limpiar"
             iconPos="right"
             class="p-button-danger"
             (click)="restoreDefaults()">
@@ -214,6 +218,8 @@
             label="Aplicar"
             iconPos="right"
             class="p-button-danger"
+            [loading]="filterRequest"
+            [disabled]="filterRequest"
             (click)="applySearchRules()">
           </p-button>
         </div>
@@ -225,7 +231,7 @@
           <i class="pi pi-sort" pTooltip="Ordenar por..."></i> Ordenar por...
         </h3>
         <div class="text-md font-italic mb-3">
-          (Solo se aplica uno a la vez)
+          (Solo se aplica un orden a la vez)
         </div>
 
         <div class="mb-3">
@@ -233,6 +239,7 @@
             >Fecha <i class="pi pi-calendar" pTooltip="Seleccione un agente"></i
           ></label>
           <p-dropdown
+            #fechaDropdown
             [(ngModel)]="selectedOrdenFecha"
             [options]="opcionesFecha"
             placeholder="Seleccione orden"
@@ -250,6 +257,7 @@
             <i class="pi pi-dollar" pTooltip="Seleccione un agente"></i
           ></label>
           <p-dropdown
+            #cantidadDropdown
             [(ngModel)]="selectedOrdenCantidad"
             [options]="opcionesCantidad"
             placeholder="Seleccione orden"
@@ -260,6 +268,13 @@
             (onChange)="onOrdenCantidadChange($event)">
           </p-dropdown>
         </div>
+
+        <p-button
+          label="Reestablecer ordenamiento"
+          iconPos="right"
+          class="w-full"
+          (click)="restoreOrderDefaults()">
+        </p-button>
       </div>
     </div>
   </p-sidebar>

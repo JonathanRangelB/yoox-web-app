@@ -6,6 +6,7 @@ import {
   inject,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -32,7 +33,11 @@ import {
 } from './types/requests';
 import { RequestListService } from './services/request-list.service';
 import { toTitleCaseAndSplit } from '../shared/utils/functions.utils';
-import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import {
+  Dropdown,
+  DropdownChangeEvent,
+  DropdownModule,
+} from 'primeng/dropdown';
 import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
@@ -58,6 +63,7 @@ import { SidebarModule } from 'primeng/sidebar';
 })
 export class RequestListComponent implements OnInit {
   requests = signal<Requests[]>([]);
+  unfilteredRequests: Requests[] = [];
   usersList = signal<MenuItem[]>([]);
   requestUserList = signal<User[]>([]);
   selectedUser?: User;
@@ -80,6 +86,12 @@ export class RequestListComponent implements OnInit {
   selectedMenuItem: MenuItem | null = null;
   selectedStatusItem: string | null = null;
   showFilterMenu: boolean = true;
+  filterRequest: boolean = false;
+  agentDropdown = viewChild<Dropdown>('agentDropdown');
+  groupDropdown = viewChild<Dropdown>('groupDropdown');
+  managerDropdown = viewChild<Dropdown>('managerDropdown');
+  fechaDropdown = viewChild<Dropdown>('fechaDropdown');
+  cantidadDropdown = viewChild<Dropdown>('cantidadDropdown');
 
   menuItems = computed(() => {
     return [
@@ -316,11 +328,14 @@ export class RequestListComponent implements OnInit {
           this.requestUserList.update(() =>
             data.usersList.sort((a, b) => a.ID - b.ID)
           );
+          this.filterRequest = false;
           // this.generateUsersList();
           this.totalRecords = data.loanRequests[0].CNT;
+          this.unfilteredRequests = [...data.loanRequests];
         },
         error: (errorRes: HttpErrorResponse) => {
           this.showLoadingModal = false;
+          this.filterRequest = false;
           this.#messageService.add({
             severity: 'error',
             summary: errorRes.error?.message || errorRes.name,
@@ -397,12 +412,12 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  agentes: User[] = this.requestUserList();
-
   grupos = [
-    { label: 'Grupo A', value: 'grupoA' },
+    { label: 'Grupo A Grupo A Grupo A ', value: 'grupoA' }, // maximo 24 caracteres en el label para que no aparezca el scroll horizontal
     { label: 'Grupo B', value: 'grupoB' },
     { label: 'Grupo C', value: 'grupoC' },
+    { label: 'Grupo D', value: 'grupoD' },
+    { label: 'Grupo E', value: 'grupoE' },
   ];
 
   gerencias = [
@@ -428,22 +443,19 @@ export class RequestListComponent implements OnInit {
   selectedOrdenCantidad: any = null;
 
   onAgenteChange(event: any) {
-    this.getRequestListItems({
-      offSetRows: this.first,
-      fetchRowsNumber: this.rows,
-    });
-    console.log('Agente seleccionado:', event.value);
+    this.selectedAgente = this.selectedAgente = event.value;
   }
 
   onGrupoChange(event: any) {
-    console.log('Grupo seleccionado:', event.value);
+    this.selectedGrupo = event.value;
   }
 
   onGerenciaChange(event: any) {
-    console.log('Gerencia seleccionada:', event.value);
+    this.selectedGerencia = event.value;
   }
 
   onOrdenFechaChange(event: any) {
+    this.selectedOrdenCantidad = null;
     switch (event.value) {
       case 'recientes':
         this.orderbyDate('desc');
@@ -452,10 +464,10 @@ export class RequestListComponent implements OnInit {
         this.orderbyDate('asc');
         break;
     }
-    console.log('Orden por fecha:', event.value);
   }
 
   onOrdenCantidadChange(event: any) {
+    this.selectedOrdenFecha = null;
     switch (event.value) {
       case 'menor':
         this.orderbyAmount('asc');
@@ -464,14 +476,36 @@ export class RequestListComponent implements OnInit {
         this.orderbyAmount('desc');
         break;
     }
-    console.log('Orden por cantidad:', event.value);
   }
 
   restoreDefaults() {
-    alert('Restaurar valores por defecto');
+    this.agentDropdown()?.clear();
+    this.groupDropdown()?.clear();
+    this.managerDropdown()?.clear();
+    this.selectedAgente = null;
+    this.selectedGrupo = null;
+    this.selectedGerencia = null;
+    this.restoreOrderDefaults();
+  }
+
+  restoreOrderDefaults() {
+    this.fechaDropdown()?.clear();
+    this.cantidadDropdown()?.clear();
+    this.requests.update(() => [...this.unfilteredRequests]);
   }
 
   applySearchRules() {
-    alert('Restaurar valores por defecto');
+    this.filterRequest = true;
+    const options: RequestListOptions = {
+      offSetRows: this.first,
+      fetchRowsNumber: this.rows,
+      ...(this.selectedAgente && { userIdFilter: this.selectedAgente.ID }),
+      ...(this.selectedGrupo && { groupIdFilter: this.selectedGrupo.ID }),
+      ...(this.selectedGerencia && {
+        managementIdFilter: this.selectedGerencia.ID,
+      }),
+    };
+    this.getRequestListItems(options);
+    this.restoreOrderDefaults();
   }
 }
