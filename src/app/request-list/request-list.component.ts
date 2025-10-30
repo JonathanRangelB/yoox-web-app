@@ -33,6 +33,7 @@ import {
 import { RequestListService } from './services/request-list.service';
 import { toTitleCaseAndSplit } from '../shared/utils/functions.utils';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
   selector: 'app-request-list',
@@ -49,6 +50,7 @@ import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
     TagModule,
     ToastModule,
     DropdownModule,
+    SidebarModule,
   ],
   templateUrl: './request-list.component.html',
   styleUrls: ['./request-list.component.css'],
@@ -77,6 +79,7 @@ export class RequestListComponent implements OnInit {
   userIdFilter?: number;
   selectedMenuItem: MenuItem | null = null;
   selectedStatusItem: string | null = null;
+  showFilterMenu: boolean = true;
 
   menuItems = computed(() => {
     return [
@@ -392,5 +395,83 @@ export class RequestListComponent implements OnInit {
       fetchRowsNumber: this.rows,
       ...(this.searchStatus && { status: this.searchStatus }),
     });
+  }
+
+  agentes: User[] = this.requestUserList();
+
+  grupos = [
+    { label: 'Grupo A', value: 'grupoA' },
+    { label: 'Grupo B', value: 'grupoB' },
+    { label: 'Grupo C', value: 'grupoC' },
+  ];
+
+  gerencias = [
+    { label: 'Gerencia Norte', value: 'norte' },
+    { label: 'Gerencia Sur', value: 'sur' },
+    { label: 'Gerencia Este', value: 'este' },
+  ];
+
+  opcionesFecha = [
+    { label: 'Recientes', value: 'recientes' },
+    { label: 'Antiguos', value: 'antiguos' },
+  ];
+
+  opcionesCantidad = [
+    { label: 'Mayor', value: 'mayor' },
+    { label: 'Menor', value: 'menor' },
+  ];
+
+  selectedAgente: any = null;
+  selectedGrupo: any = null;
+  selectedGerencia: any = null;
+  selectedOrdenFecha: any = null;
+  selectedOrdenCantidad: any = null;
+
+  onAgenteChange(event: any) {
+    this.getRequestListItems({
+      offSetRows: this.first,
+      fetchRowsNumber: this.rows,
+    });
+    console.log('Agente seleccionado:', event.value);
+  }
+
+  onGrupoChange(event: any) {
+    console.log('Grupo seleccionado:', event.value);
+  }
+
+  onGerenciaChange(event: any) {
+    console.log('Gerencia seleccionada:', event.value);
+  }
+
+  onOrdenFechaChange(event: any) {
+    switch (event.value) {
+      case 'recientes':
+        this.orderbyDate('desc');
+        break;
+      case 'antiguos':
+        this.orderbyDate('asc');
+        break;
+    }
+    console.log('Orden por fecha:', event.value);
+  }
+
+  onOrdenCantidadChange(event: any) {
+    switch (event.value) {
+      case 'menor':
+        this.orderbyAmount('asc');
+        break;
+      case 'mayor':
+        this.orderbyAmount('desc');
+        break;
+    }
+    console.log('Orden por cantidad:', event.value);
+  }
+
+  restoreDefaults() {
+    alert('Restaurar valores por defecto');
+  }
+
+  applySearchRules() {
+    alert('Restaurar valores por defecto');
   }
 }

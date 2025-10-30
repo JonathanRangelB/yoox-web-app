@@ -129,6 +129,126 @@
       </p-dataView>
     }
   </section>
+  <p-sidebar [(visible)]="showFilterMenu" position="right">
+    <ng-template pTemplate="header">
+      <div class="flex align-items-center gap-2">
+        <i class="pi pi-filter text-2xl"></i>
+        <span class="font-bold">{{
+          'Filtrado y ordenamiento' | titlecase
+        }}</span>
+      </div>
+    </ng-template>
+
+    <div class="p-3">
+      <!-- Sección de Filtros -->
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-3 mt-0">Filtrar por...</h3>
+
+        <div class="mb-3">
+          <label class="block mb-2">Agente</label>
+          <p-dropdown
+            [(ngModel)]="selectedAgente"
+            [options]="requestUserList()"
+            optionLabel="NOMBRE"
+            id="ID"
+            placeholder="Seleccione un agente"
+            styleClass="w-full"
+            filter="true"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="10"
+            [showClear]="true"
+            (onChange)="onAgenteChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2">Grupos</label>
+          <p-dropdown
+            [(ngModel)]="selectedGrupo"
+            [options]="grupos"
+            placeholder="Seleccione un grupo"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            filter="true"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="10"
+            [showClear]="true"
+            (onChange)="onGrupoChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2">Gerencia</label>
+          <p-dropdown
+            [(ngModel)]="selectedGerencia"
+            [options]="gerencias"
+            placeholder="Seleccione una gerencia"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            filter="true"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="10"
+            [showClear]="true"
+            (onChange)="onGerenciaChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="flex justify-content-center gap-2">
+          <p-button
+            label="Reestablecer"
+            iconPos="right"
+            class="p-button-danger"
+            (click)="restoreDefaults()">
+          </p-button>
+          <p-button
+            label="Aplicar"
+            iconPos="right"
+            class="p-button-danger"
+            (click)="applySearchRules()">
+          </p-button>
+        </div>
+      </div>
+
+      <!-- Sección de Ordenamiento -->
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-0">Ordenar por...</h3>
+        <div class="text-md font-italic mb-3">
+          (Solo se aplica uno a la vez)
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2">Fecha</label>
+          <p-dropdown
+            [(ngModel)]="selectedOrdenFecha"
+            [options]="opcionesFecha"
+            placeholder="Seleccione orden"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            [showClear]="true"
+            (onChange)="onOrdenFechaChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2">Cantidad</label>
+          <p-dropdown
+            [(ngModel)]="selectedOrdenCantidad"
+            [options]="opcionesCantidad"
+            placeholder="Seleccione orden"
+            onLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            [showClear]="true"
+            (onChange)="onOrdenCantidadChange($event)">
+          </p-dropdown>
+        </div>
+      </div>
+    </div>
+  </p-sidebar>
+
   <p-dialog
     #dialogMessage
     header="Cargando información"
