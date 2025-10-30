@@ -485,7 +485,6 @@ export class RequestListComponent implements OnInit {
     this.selectedAgente = null;
     this.selectedGrupo = null;
     this.selectedGerencia = null;
-    this.restoreOrderDefaults();
   }
 
   restoreOrderDefaults() {
