@@ -414,16 +414,16 @@ export class RequestListComponent implements OnInit {
 
   grupos = [
     { label: 'Grupo A Grupo A Grupo A ', value: 'grupoA' }, // maximo 24 caracteres en el label para que no aparezca el scroll horizontal
-    { label: 'Grupo B', value: 'grupoB' },
-    { label: 'Grupo C', value: 'grupoC' },
-    { label: 'Grupo D', value: 'grupoD' },
-    { label: 'Grupo E', value: 'grupoE' },
+    { label: 'Grupo B', ID: 'grupoB' },
+    { label: 'Grupo C', ID: 'grupoC' },
+    { label: 'Grupo D', ID: 'grupoD' },
+    { label: 'Grupo E', ID: 'grupoE' },
   ];
 
   gerencias = [
-    { label: 'Gerencia Norte', value: 'norte' },
-    { label: 'Gerencia Sur', value: 'sur' },
-    { label: 'Gerencia Este', value: 'este' },
+    { label: 'Gerencia Norte', ID: 'norte' },
+    { label: 'Gerencia Sur', ID: 'sur' },
+    { label: 'Gerencia Este', ID: 'este' },
   ];
 
   opcionesFecha = [
