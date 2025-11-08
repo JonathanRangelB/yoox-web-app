@@ -18,7 +18,7 @@ import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MenuItem, MessageService } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { PaginatorModule } from 'primeng/paginator';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Router } from '@angular/router';
 import { TagModule } from 'primeng/tag';
@@ -28,16 +28,10 @@ import {
   LoanStatusEnum,
   RequestListOptions,
   Requests,
-  SearchOptions,
   User,
 } from './types/requests';
 import { RequestListService } from './services/request-list.service';
-import { toTitleCaseAndSplit } from '../shared/utils/functions.utils';
-import {
-  Dropdown,
-  DropdownChangeEvent,
-  DropdownModule,
-} from 'primeng/dropdown';
+import { Dropdown, DropdownModule } from 'primeng/dropdown';
 import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
@@ -74,7 +68,6 @@ export class RequestListComponent implements OnInit {
   first: number = 0;
   rows: number = 5;
   searchInputValue = '';
-  searchStatus = '';
   searchTerm: 'cliente' | 'folio' = 'cliente';
   searchTermIcon: string = 'pi pi-user';
   showLoadingModal = false;
@@ -92,6 +85,7 @@ export class RequestListComponent implements OnInit {
   managerDropdown = viewChild<Dropdown>('managerDropdown');
   fechaDropdown = viewChild<Dropdown>('fechaDropdown');
   cantidadDropdown = viewChild<Dropdown>('cantidadDropdown');
+  statusDropdown = viewChild<Dropdown>('statusDropdown');
 
   menuItems = computed(() => {
     return [
@@ -169,38 +163,12 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  onPageChange(event: PaginatorState) {
-    this.showLoadingModal = true;
-    this.rows = event.rows!;
-    this.first = event.first!;
-    this.getRequestListItems({
-      offSetRows: this.first,
-      fetchRowsNumber: this.rows,
-    });
-  }
-
-  searchByStatus({ status, userIdFilter }: SearchOptions) {
-    this.showLoadingModal = true;
-    this.searchStatus = status === LoanStatusEnum.todos ? '' : status;
-    // necesitamos resetear el paginador colocando en 0 el offset/first
-    // para los casos que se estaba en una pagina muy arriba para
-    // asegurar obtener un resultado desde el inicio de la paginacion
-    this.first = 0;
-    this.getRequestListItems({
-      offSetRows: this.first,
-      fetchRowsNumber: this.rows,
-      ...(status && { status: this.searchStatus }),
-      ...(userIdFilter && { userIdFilter }),
-    });
-  }
-
   inputSearch(event: KeyboardEvent | MouseEvent) {
     if (event instanceof KeyboardEvent) {
       if (event.code !== 'Enter') return;
     }
     if (this.searchInputValue.length < 1) return;
     this.showLoadingModal = true;
-    this.searchStatus = '';
     if (this.searchTerm === 'cliente') {
       const nombreCliente = this.searchInputValue;
       this.getRequestListItems({
@@ -219,12 +187,6 @@ export class RequestListComponent implements OnInit {
   }
 
   getRequestListItems(options: RequestListOptions) {
-    if (this.searchStatus) {
-      options.status = this.searchStatus;
-    }
-    if (this.selectedUser?.ID) {
-      options.userIdFilter = this.selectedUser?.ID;
-    }
     this.#requestListService
       .getRequestsList(options)
       .pipe(takeUntilDestroyed(this.#destroyRef$))
@@ -253,72 +215,6 @@ export class RequestListComponent implements OnInit {
       });
   }
 
-  generateUsersList() {
-    this.usersList.update(() => [
-      ...this.requestUserList().map((user): MenuItem => {
-        return {
-          label: `${user.ID} - ${toTitleCaseAndSplit(user.NOMBRE)}`,
-          icon:
-            this.selectedMenuItem?.label === toTitleCaseAndSplit(user.NOMBRE)
-              ? 'pi pi-check'
-              : '',
-          command: () => {
-            this.selectedMenuItem = {
-              label: toTitleCaseAndSplit(user.NOMBRE),
-              icon: 'pi pi-check',
-            };
-            this.selectedUser = {
-              NOMBRE: toTitleCaseAndSplit(user.NOMBRE),
-              ID: user.ID,
-            };
-            return this.getRequestListItems({
-              offSetRows: 0,
-              fetchRowsNumber: this.rows,
-              userIdFilter: user.ID,
-              ...(this.searchStatus && { status: this.searchStatus }),
-            });
-          },
-        };
-      }),
-      {
-        separator: true,
-      },
-      {
-        label: 'Mostrar todos',
-        icon:
-          this.selectedMenuItem?.label === 'Mostrar todos' ? 'pi pi-check' : '',
-        command: () => {
-          this.selectedMenuItem = {
-            label: 'Mostrar todos',
-            icon: 'pi pi-check',
-          };
-          this.selectedUser = undefined;
-          return this.getRequestListItems({
-            offSetRows: 0,
-            fetchRowsNumber: this.rows,
-            ...(this.searchStatus && { status: this.searchStatus }),
-          });
-        },
-      },
-    ]);
-  }
-
-  selectStatusItem(status: LoanStatusEnum) {
-    this.selectedStatusItem = status;
-    this.searchByStatus({ status, userIdFilter: this.userIdFilter });
-  }
-
-  userSelected(event: DropdownChangeEvent) {
-    const user = event.value as User;
-    this.selectedUser = user;
-    this.showLoadingModal = true;
-    this.getRequestListItems({
-      offSetRows: 0,
-      fetchRowsNumber: this.rows,
-      ...(this.searchStatus && { status: this.searchStatus }),
-    });
-  }
-
   groups = [
     { label: 'Grupo A Grupo A Grupo A ', value: 1 }, // maximo 24 caracteres en el label para que no aparezca el scroll horizontal
     { label: 'Grupo B', ID: 2 },
@@ -343,11 +239,19 @@ export class RequestListComponent implements OnInit {
     { label: 'Menor', value: 'menor' },
   ];
 
+  opcionesStatus = [
+    { label: 'En Revisión', value: LoanStatusEnum.revision },
+    { label: 'Aprobado', value: LoanStatusEnum.aprobado },
+    { label: 'Rechazado', value: LoanStatusEnum.rechazado },
+    { label: 'Actualizar', value: LoanStatusEnum.actualizar },
+  ];
+
   selectedAgente: any = null;
   selectedGrupo: any = null;
   selectedGerencia: any = null;
   selectedOrdenFecha: any = null;
   selectedOrdenCantidad: any = null;
+  selectedStatus: any = null;
 
   onAgenteChange(event: any) {
     this.selectedAgente = this.selectedAgente = event.value;
@@ -359,6 +263,10 @@ export class RequestListComponent implements OnInit {
 
   onGerenciaChange(event: any) {
     this.selectedGerencia = event.value;
+  }
+
+  onStatusChange(event: any) {
+    this.selectedStatus = event.value;
   }
 
   onOrdenFechaChange(event: any) {
@@ -389,9 +297,11 @@ export class RequestListComponent implements OnInit {
     this.agentDropdown()?.clear();
     this.groupDropdown()?.clear();
     this.managerDropdown()?.clear();
+    this.statusDropdown()?.clear();
     this.selectedAgente = null;
     this.selectedGrupo = null;
     this.selectedGerencia = null;
+    this.selectedStatus = null;
   }
 
   restoreOrderDefaults() {
@@ -405,12 +315,14 @@ export class RequestListComponent implements OnInit {
     const options: RequestListOptions = {
       offSetRows: this.first,
       fetchRowsNumber: this.rows,
+      ...(this.selectedStatus && { status: this.selectedStatus }),
       ...(this.selectedAgente && { userIdFilter: this.selectedAgente.ID }),
       ...(this.selectedGrupo && { groupIdFilter: this.selectedGrupo.ID }),
       ...(this.selectedGerencia && {
         managementIdFilter: this.selectedGerencia.ID,
       }),
     };
+    console.log({ options });
     this.getRequestListItems(options);
     this.restoreOrderDefaults();
   }

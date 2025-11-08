@@ -23,6 +23,8 @@ export interface RequestListOptions {
   nombreCliente?: string;
   folio?: string;
   userIdFilter?: number;
+  groupIdFilter?: number;
+  managementIdFilter?: number;
 }
 
 export type LoanStatus =
@@ -42,7 +44,7 @@ export enum LoanStatusEnum {
   aprobado = 'APROBADO',
   rechazado = 'RECHAZADO',
   actualizar = 'ACTUALIZAR',
-  todos = 'TODOS',
+  todos = '',
 }
 
 export interface User {

@@ -35,12 +35,7 @@
     @if (requests().length === 0) {
       <p class="center">No hay solicitudes pendientes</p>
     } @else {
-      <p-dataView
-        #dv
-        class="m-2 w-full dataview"
-        [value]="requests()"
-        [sortField]="sortField"
-        [sortOrder]="sortOrder">
+      <p-dataView #dv class="m-2 w-full dataview" [value]="requests()">
         <ng-template pTemplate="list" let-requests>
           <div class="grid grid-nogutter">
             <div
@@ -183,6 +178,23 @@
           </p-dropdown>
         </div>
 
+        <div class="mb-3">
+          <label class="block mb-2"
+            >Status <i class="pi pi-tags" pTooltip="Seleccione un agente"></i
+          ></label>
+          <p-dropdown
+            #statusDropdown
+            [(ngModel)]="selectedStatus"
+            [options]="opcionesStatus"
+            placeholder="Seleccione status"
+            onLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            [showClear]="true"
+            (onChange)="onStatusChange($event)">
+          </p-dropdown>
+        </div>
+
         <div class="flex justify-content-center gap-2">
           <p-button
             label="Limpiar"
@@ -207,7 +219,7 @@
           <i class="pi pi-sort" pTooltip="Ordenar por..."></i> Ordenar por...
         </h3>
         <div class="text-md font-italic mb-3">
-          (Solo se aplica un orden a la vez)
+          (Solo se aplica un orden a la vez sobre los elementos filtrados)
         </div>
 
         <div class="mb-3">
