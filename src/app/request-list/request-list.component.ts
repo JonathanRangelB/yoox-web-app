@@ -85,7 +85,7 @@ export class RequestListComponent implements OnInit {
   userIdFilter?: number;
   selectedMenuItem: MenuItem | null = null;
   selectedStatusItem: string | null = null;
-  showFilterMenu: boolean = true;
+  showFilterMenu: boolean = false;
   filterRequest: boolean = false;
   agentDropdown = viewChild<Dropdown>('agentDropdown');
   groupDropdown = viewChild<Dropdown>('groupDropdown');
@@ -96,104 +96,11 @@ export class RequestListComponent implements OnInit {
   menuItems = computed(() => {
     return [
       {
-        label: 'filtar por...',
+        label: 'Filtrado y ordenamiento',
         icon: 'pi pi-filter',
-        items: [
-          {
-            label: 'Status',
-            icon: 'pi pi-chart-bar',
-            items: [
-              {
-                label: 'En Revision',
-                command: () => this.selectStatusItem(LoanStatusEnum.revision),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.revision
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.revision,
-              },
-              {
-                label: 'Aprobado',
-                command: () => this.selectStatusItem(LoanStatusEnum.aprobado),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.aprobado
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.aprobado,
-              },
-              {
-                label: 'Rechazado',
-                command: () => this.selectStatusItem(LoanStatusEnum.rechazado),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.rechazado
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.rechazado,
-              },
-              {
-                label: 'Actualizar',
-                command: () => this.selectStatusItem(LoanStatusEnum.actualizar),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.actualizar
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.actualizar,
-              },
-              {
-                separator: true,
-              },
-              {
-                label: 'Mostrar todos',
-                command: () => this.selectStatusItem(LoanStatusEnum.todos),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.todos
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.todos,
-              },
-            ],
-          },
-          {
-            // necesito inyectar este elemento para indicarle al menu que aqui hay algo especial
-            // de tipo dropdown, en el template se valida este atributo para renderizar el componente
-            // el resto de elementos se renderizan como opciones normales del menu
-            dropdown: true,
-          },
-        ],
-      },
-      {
-        label: 'Ordenar por...',
-        icon: 'pi pi-sort',
-        items: [
-          {
-            label: 'Fecha',
-            icon: 'pi pi-calendar',
-            items: [
-              {
-                label: 'Recientes',
-                command: () => this.orderbyDate('desc'),
-              },
-              {
-                label: 'Antiguos',
-                command: () => this.orderbyDate('asc'),
-              },
-            ],
-          },
-          {
-            label: 'Cantidad',
-            icon: 'pi pi-dollar',
-            items: [
-              {
-                label: 'Mayor',
-                command: () => this.orderbyAmount('desc'),
-              },
-              {
-                label: 'Menor',
-                command: () => this.orderbyAmount('asc'),
-              },
-            ],
-          },
-        ],
+        command: () => {
+          this.showFilterMenu = !this.showFilterMenu;
+        },
       },
     ];
   });
@@ -412,18 +319,18 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  grupos = [
-    { label: 'Grupo A Grupo A Grupo A ', value: 'grupoA' }, // maximo 24 caracteres en el label para que no aparezca el scroll horizontal
-    { label: 'Grupo B', ID: 'grupoB' },
-    { label: 'Grupo C', ID: 'grupoC' },
-    { label: 'Grupo D', ID: 'grupoD' },
-    { label: 'Grupo E', ID: 'grupoE' },
+  groups = [
+    { label: 'Grupo A Grupo A Grupo A ', value: 1 }, // maximo 24 caracteres en el label para que no aparezca el scroll horizontal
+    { label: 'Grupo B', ID: 2 },
+    { label: 'Grupo C', ID: 3 },
+    { label: 'Grupo D', ID: 4 },
+    { label: 'Grupo E', ID: 5 },
   ];
 
-  gerencias = [
-    { label: 'Gerencia Norte', ID: 'norte' },
-    { label: 'Gerencia Sur', ID: 'sur' },
-    { label: 'Gerencia Este', ID: 'este' },
+  management = [
+    { label: 'Gerencia Norte', ID: 1 },
+    { label: 'Gerencia Sur', ID: 2 },
+    { label: 'Gerencia Este', ID: 3 },
   ];
 
   opcionesFecha = [

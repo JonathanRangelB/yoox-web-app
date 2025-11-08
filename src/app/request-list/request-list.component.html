@@ -1,38 +1,14 @@
 <div class="p-2 width-maximo">
-  <p-menubar [model]="menuItems()">
-    <ng-template pTemplate="item" let-item>
-      <ng-container *ngIf="item.dropdown; else normalItem">
-        <div style="padding: 0.75rem 1.25rem">
-          <p-dropdown
-            [options]="requestUserList()"
-            placeholder="Agentes"
-            optionLabel="NOMBRE"
-            filter="true"
-            showClear="true"
-            id="ID"
-            (click)="$event.stopPropagation()"
-            (mousedown)="$event.stopPropagation()"
-            (onChange)="userSelected($event)"
-            (onClear)="selectedUser = undefined"
-            selected
-            [appendTo]="'body'"
-            [style]="{ width: '100%' }"
-            [(ngModel)]="selectedUser"></p-dropdown>
-        </div>
-      </ng-container>
-      <ng-template #normalItem>
-        <a class="p-menuitem-link" [routerLink]="item.routerLink">
-          <span
-            [class]="'p-menuitem-icon ng-star-inserted ' + item.icon"
-            *ngIf="item.icon"></span>
-          <i
-            *ngIf="selectedStatusItem === item.status"
-            class="pi pi-check"
-            style="color: green"></i>
-          <span class="p-menuitem-text">&nbsp;{{ item.label }}</span>
-          <span *ngIf="item.items" class="pi pi-angle-right ml-auto"></span>
-        </a>
-      </ng-template>
+  <p-menubar>
+    <ng-template pTemplate="start">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-filter"
+        outlined="true"
+        pTooltip="Filtrado y ordenamiento"
+        class="p-button-text p-button-plain"
+        (click)="showFilterMenu = !showFilterMenu"></button>
     </ng-template>
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2">
@@ -173,7 +149,7 @@
           <p-dropdown
             #groupDropdown
             [(ngModel)]="selectedGrupo"
-            [options]="grupos"
+            [options]="groups"
             placeholder="Seleccione un grupo"
             optionLabel="label"
             id="ID"
@@ -194,7 +170,7 @@
           <p-dropdown
             #managerDropdown
             [(ngModel)]="selectedGerencia"
-            [options]="gerencias"
+            [options]="management"
             placeholder="Seleccione una gerencia"
             optionLabel="label"
             id="ID"
