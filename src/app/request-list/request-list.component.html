@@ -89,7 +89,7 @@
                       <p-button
                         icon="pi pi-file-edit"
                         label="Revisar"
-                        (click)="handleClick(item)" />
+                        (click)="openRecord(item)" />
                     </div>
                   </div>
                 </div>
@@ -144,9 +144,9 @@
           <p-dropdown
             #groupDropdown
             [(ngModel)]="selectedGrupo"
-            [options]="groups"
+            [options]="groups()"
             placeholder="Seleccione un grupo"
-            optionLabel="label"
+            optionLabel="NOMBRE"
             id="ID"
             styleClass="w-full"
             filter="true"
@@ -165,9 +165,9 @@
           <p-dropdown
             #managerDropdown
             [(ngModel)]="selectedGerencia"
-            [options]="management"
+            [options]="management()"
             placeholder="Seleccione una gerencia"
-            optionLabel="label"
+            optionLabel="NOMBRE"
             id="ID"
             styleClass="w-full"
             filter="true"

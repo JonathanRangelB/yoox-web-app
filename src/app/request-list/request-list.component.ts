@@ -1,7 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  computed,
   DestroyRef,
   inject,
   OnInit,
@@ -16,7 +15,7 @@ import { CardModule } from 'primeng/card';
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
 import { PaginatorModule } from 'primeng/paginator';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -25,7 +24,10 @@ import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 
 import {
+  Groups,
   LoanStatusEnum,
+  Management,
+  RequestList,
   RequestListOptions,
   Requests,
   User,
@@ -56,48 +58,36 @@ import { SidebarModule } from 'primeng/sidebar';
   providers: [MessageService],
 })
 export class RequestListComponent implements OnInit {
-  requests = signal<Requests[]>([]);
-  unfilteredRequests: Requests[] = [];
-  usersList = signal<MenuItem[]>([]);
-  requestUserList = signal<User[]>([]);
-  selectedUser?: User;
   readonly #destroyRef$ = inject(DestroyRef);
   readonly #messageService = inject(MessageService);
   readonly #requestListService = inject(RequestListService);
   readonly router = inject(Router);
-  first: number = 0;
-  rows: number = 5;
-  searchInputValue = '';
-  searchTerm: 'cliente' | 'folio' = 'cliente';
-  searchTermIcon: string = 'pi pi-user';
-  showLoadingModal = false;
-  sortField!: string;
-  sortOptions!: { label: string; value: string }[];
-  sortOrder!: number;
-  totalRecords: number = 0;
-  userIdFilter?: number;
-  selectedMenuItem: MenuItem | null = null;
-  selectedStatusItem: string | null = null;
-  showFilterMenu: boolean = false;
-  filterRequest: boolean = false;
   agentDropdown = viewChild<Dropdown>('agentDropdown');
   groupDropdown = viewChild<Dropdown>('groupDropdown');
   managerDropdown = viewChild<Dropdown>('managerDropdown');
   fechaDropdown = viewChild<Dropdown>('fechaDropdown');
   cantidadDropdown = viewChild<Dropdown>('cantidadDropdown');
   statusDropdown = viewChild<Dropdown>('statusDropdown');
-
-  menuItems = computed(() => {
-    return [
-      {
-        label: 'Filtrado y ordenamiento',
-        icon: 'pi pi-filter',
-        command: () => {
-          this.showFilterMenu = !this.showFilterMenu;
-        },
-      },
-    ];
-  });
+  requests = signal<Requests[]>([]);
+  requestUserList = signal<User[]>([]);
+  groups = signal<Groups[]>([]);
+  management = signal<Management[]>([]);
+  unfilteredRequests: Requests[] = [];
+  selectedGrupo: any = null;
+  selectedAgente: any = null;
+  selectedGerencia: any = null;
+  selectedOrdenFecha: any = null;
+  selectedOrdenCantidad: any = null;
+  selectedStatus: any = null;
+  searchInputValue = '';
+  searchTerm: 'cliente' | 'folio' = 'cliente';
+  searchTermIcon: string = 'pi pi-user';
+  showLoadingModal = false;
+  showFilterMenu: boolean = false;
+  filterRequest: boolean = false;
+  totalRecords: number = 0;
+  first: number = 0;
+  rows: number = 5;
 
   ngOnInit(): void {
     this.showLoadingModal = true;
@@ -107,10 +97,23 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  handleClick(solicitud: Requests) {
-    const loan_request = solicitud.request_number;
-    this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
-  }
+  // COMPONENT FUNCTIONS
+  opcionesFecha = [
+    { label: 'Recientes', value: 'recientes' },
+    { label: 'Antiguos', value: 'antiguos' },
+  ];
+
+  opcionesCantidad = [
+    { label: 'Mayor', value: 'mayor' },
+    { label: 'Menor', value: 'menor' },
+  ];
+
+  opcionesStatus = [
+    { label: 'En Revisión', value: LoanStatusEnum.revision },
+    { label: 'Aprobado', value: LoanStatusEnum.aprobado },
+    { label: 'Rechazado', value: LoanStatusEnum.rechazado },
+    { label: 'Actualizar', value: LoanStatusEnum.actualizar },
+  ];
 
   getSeverity(request: Requests) {
     switch (request.loan_request_status) {
@@ -151,6 +154,42 @@ export class RequestListComponent implements OnInit {
     );
   }
 
+  getRequestListItems(options: RequestListOptions) {
+    this.#requestListService
+      .getRequestsList(options)
+      .pipe(takeUntilDestroyed(this.#destroyRef$))
+      .subscribe({
+        next: (data: RequestList) => {
+          this.showLoadingModal = false;
+          this.requests.update(() => data.loanRequests);
+          this.requestUserList.update(() =>
+            data.usersList.sort((a, b) => a.ID - b.ID)
+          );
+          this.groups.update(() => data.groups);
+          this.management.update(() => data.management);
+          this.filterRequest = false;
+          this.totalRecords = data.loanRequests[0].CNT;
+          this.unfilteredRequests = [...data.loanRequests];
+        },
+        error: (errorRes: HttpErrorResponse) => {
+          this.showLoadingModal = false;
+          this.filterRequest = false;
+          this.#messageService.add({
+            severity: 'error',
+            summary: errorRes.error?.message || errorRes.name,
+            detail: errorRes.error?.error || errorRes.statusText,
+            life: 3000,
+          });
+        },
+      });
+  }
+
+  // EVENTS
+  openRecord(solicitud: Requests) {
+    const loan_request = solicitud.request_number;
+    this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
+  }
+
   changeSearchTerm() {
     this.searchTerm = this.searchTerm === 'cliente' ? 'folio' : 'cliente';
     this.searchTermIcon =
@@ -161,6 +200,40 @@ export class RequestListComponent implements OnInit {
       detail: `Busqueda por ${this.searchTerm}`,
       life: 3000,
     });
+  }
+
+  restoreDefaults() {
+    this.agentDropdown()?.clear();
+    this.groupDropdown()?.clear();
+    this.managerDropdown()?.clear();
+    this.statusDropdown()?.clear();
+    this.selectedAgente = null;
+    this.selectedGrupo = null;
+    this.selectedGerencia = null;
+    this.selectedStatus = null;
+  }
+
+  restoreOrderDefaults() {
+    this.fechaDropdown()?.clear();
+    this.cantidadDropdown()?.clear();
+    this.requests.update(() => [...this.unfilteredRequests]);
+  }
+
+  applySearchRules() {
+    this.filterRequest = true;
+    const options: RequestListOptions = {
+      offSetRows: this.first,
+      fetchRowsNumber: this.rows,
+      ...(this.selectedStatus && { status: this.selectedStatus }),
+      ...(this.selectedAgente && { userIdFilter: this.selectedAgente.ID }),
+      ...(this.selectedGrupo && { groupIdFilter: this.selectedGrupo.ID }),
+      ...(this.selectedGerencia && {
+        managementIdFilter: this.selectedGerencia.ID,
+      }),
+    };
+    console.log({ options });
+    this.getRequestListItems(options);
+    this.restoreOrderDefaults();
   }
 
   inputSearch(event: KeyboardEvent | MouseEvent) {
@@ -185,73 +258,6 @@ export class RequestListComponent implements OnInit {
       });
     }
   }
-
-  getRequestListItems(options: RequestListOptions) {
-    this.#requestListService
-      .getRequestsList(options)
-      .pipe(takeUntilDestroyed(this.#destroyRef$))
-      .subscribe({
-        next: (data) => {
-          this.showLoadingModal = false;
-          this.requests.update(() => data.loanRequests);
-          this.requestUserList.update(() =>
-            data.usersList.sort((a, b) => a.ID - b.ID)
-          );
-          this.filterRequest = false;
-          // this.generateUsersList();
-          this.totalRecords = data.loanRequests[0].CNT;
-          this.unfilteredRequests = [...data.loanRequests];
-        },
-        error: (errorRes: HttpErrorResponse) => {
-          this.showLoadingModal = false;
-          this.filterRequest = false;
-          this.#messageService.add({
-            severity: 'error',
-            summary: errorRes.error?.message || errorRes.name,
-            detail: errorRes.error?.error || errorRes.statusText,
-            life: 3000,
-          });
-        },
-      });
-  }
-
-  groups = [
-    { label: 'Grupo A Grupo A Grupo A ', value: 1 }, // maximo 24 caracteres en el label para que no aparezca el scroll horizontal
-    { label: 'Grupo B', ID: 2 },
-    { label: 'Grupo C', ID: 3 },
-    { label: 'Grupo D', ID: 4 },
-    { label: 'Grupo E', ID: 5 },
-  ];
-
-  management = [
-    { label: 'Gerencia Norte', ID: 1 },
-    { label: 'Gerencia Sur', ID: 2 },
-    { label: 'Gerencia Este', ID: 3 },
-  ];
-
-  opcionesFecha = [
-    { label: 'Recientes', value: 'recientes' },
-    { label: 'Antiguos', value: 'antiguos' },
-  ];
-
-  opcionesCantidad = [
-    { label: 'Mayor', value: 'mayor' },
-    { label: 'Menor', value: 'menor' },
-  ];
-
-  opcionesStatus = [
-    { label: 'En Revisión', value: LoanStatusEnum.revision },
-    { label: 'Aprobado', value: LoanStatusEnum.aprobado },
-    { label: 'Rechazado', value: LoanStatusEnum.rechazado },
-    { label: 'Actualizar', value: LoanStatusEnum.actualizar },
-  ];
-
-  selectedAgente: any = null;
-  selectedGrupo: any = null;
-  selectedGerencia: any = null;
-  selectedOrdenFecha: any = null;
-  selectedOrdenCantidad: any = null;
-  selectedStatus: any = null;
 
   onAgenteChange(event: any) {
     this.selectedAgente = this.selectedAgente = event.value;
@@ -291,39 +297,5 @@ export class RequestListComponent implements OnInit {
         this.orderbyAmount('desc');
         break;
     }
-  }
-
-  restoreDefaults() {
-    this.agentDropdown()?.clear();
-    this.groupDropdown()?.clear();
-    this.managerDropdown()?.clear();
-    this.statusDropdown()?.clear();
-    this.selectedAgente = null;
-    this.selectedGrupo = null;
-    this.selectedGerencia = null;
-    this.selectedStatus = null;
-  }
-
-  restoreOrderDefaults() {
-    this.fechaDropdown()?.clear();
-    this.cantidadDropdown()?.clear();
-    this.requests.update(() => [...this.unfilteredRequests]);
-  }
-
-  applySearchRules() {
-    this.filterRequest = true;
-    const options: RequestListOptions = {
-      offSetRows: this.first,
-      fetchRowsNumber: this.rows,
-      ...(this.selectedStatus && { status: this.selectedStatus }),
-      ...(this.selectedAgente && { userIdFilter: this.selectedAgente.ID }),
-      ...(this.selectedGrupo && { groupIdFilter: this.selectedGrupo.ID }),
-      ...(this.selectedGerencia && {
-        managementIdFilter: this.selectedGerencia.ID,
-      }),
-    };
-    console.log({ options });
-    this.getRequestListItems(options);
-    this.restoreOrderDefaults();
   }
 }

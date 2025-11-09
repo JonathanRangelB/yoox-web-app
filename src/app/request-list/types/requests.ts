@@ -1,6 +1,8 @@
 export interface RequestList {
   loanRequests: Requests[];
   usersList: User[];
+  groups: [];
+  management: [];
 }
 
 export interface Requests {
@@ -50,4 +52,14 @@ export enum LoanStatusEnum {
 export interface User {
   NOMBRE: string;
   ID: number;
+}
+
+export interface Management {
+  label?: string;
+  ID?: number;
+}
+
+export interface Groups {
+  label?: string;
+  ID?: number;
 }
