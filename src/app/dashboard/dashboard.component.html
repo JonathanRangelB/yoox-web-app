@@ -29,13 +29,14 @@
     </ng-template>
     <p-panelMenu [model]="items" styleClass="w-full" pRipple />
     <ng-template pTemplate="footer">
-      <div class="flex justify-content-center gap-2">
+      <div class="flex align-items-center flex-column gap-2">
         <p-button
           label="Cerrar sesión"
           icon="pi pi-sign-out"
           iconPos="right"
           class="p-button-danger"
           (click)="logout()" />
+        <div>Versión web: {{ appVersion }}</div>
       </div>
     </ng-template>
   </p-sidebar>

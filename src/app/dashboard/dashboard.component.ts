@@ -1,6 +1,7 @@
 import { Component, inject } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from 'src/app/login/services/AuthService';
+import { version } from '../../../package.json';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,7 @@ export class DashboardComponent {
   private authService = inject(AuthService);
   isSidebarVisible = false;
   nombreUsuario = localStorage.getItem('nombreusuario') || 'quien eres?';
+  appVersion = version;
 
   items: MenuItem[] = [
     {
