@@ -33,7 +33,7 @@
   </p-menubar>
   <section class="grid">
     @if (requests().length === 0) {
-      <p class="center">No hay solicitudes pendientes</p>
+      <p class="center">No hay solicitudes</p>
     } @else {
       <p-dataView #dv class="m-2 w-full dataview" [value]="requests()">
         <ng-template pTemplate="list" let-requests>
@@ -139,7 +139,7 @@
 
         <div class="mb-3">
           <label class="block mb-2"
-            >Grupos <i class="pi pi-users" pTooltip="Seleccione un agente"></i
+            >Grupos <i class="pi pi-users" pTooltip="Seleccione un grupo"></i
           ></label>
           <p-dropdown
             #groupDropdown
@@ -160,7 +160,7 @@
         <div class="mb-3">
           <label class="block mb-2"
             >Gerencia
-            <i class="pi pi-briefcase" pTooltip="Seleccione un agente"></i
+            <i class="pi pi-briefcase" pTooltip="Seleccione una gerencia"></i
           ></label>
           <p-dropdown
             #managerDropdown
@@ -180,7 +180,7 @@
 
         <div class="mb-3">
           <label class="block mb-2"
-            >Status <i class="pi pi-tags" pTooltip="Seleccione un agente"></i
+            >Status <i class="pi pi-tags" pTooltip="Seleccione un status"></i
           ></label>
           <p-dropdown
             #statusDropdown
@@ -224,7 +224,7 @@
 
         <div class="mb-3">
           <label class="block mb-2"
-            >Fecha <i class="pi pi-calendar" pTooltip="Seleccione un agente"></i
+            >Fecha <i class="pi pi-calendar" pTooltip="Ordenar por fecha"></i
           ></label>
           <p-dropdown
             #fechaDropdown
@@ -241,8 +241,7 @@
 
         <div class="mb-3">
           <label class="block mb-2"
-            >Cantidad
-            <i class="pi pi-dollar" pTooltip="Seleccione un agente"></i
+            >Cantidad <i class="pi pi-dollar" pTooltip="Ordar por cantidad"></i
           ></label>
           <p-dropdown
             #cantidadDropdown

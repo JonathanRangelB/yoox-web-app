@@ -172,6 +172,8 @@ export class RequestListComponent implements OnInit {
           this.unfilteredRequests = [...data.loanRequests];
         },
         error: (errorRes: HttpErrorResponse) => {
+          this.requests.update(() => []);
+          this.unfilteredRequests = [];
           this.showLoadingModal = false;
           this.filterRequest = false;
           this.#messageService.add({
@@ -231,7 +233,6 @@ export class RequestListComponent implements OnInit {
         managementIdFilter: this.selectedGerencia.ID,
       }),
     };
-    console.log({ options });
     this.getRequestListItems(options);
     this.restoreOrderDefaults();
   }
