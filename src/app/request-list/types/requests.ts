@@ -1,6 +1,8 @@
 export interface RequestList {
   loanRequests: Requests[];
   usersList: User[];
+  groups: [];
+  management: [];
 }
 
 export interface Requests {
@@ -23,6 +25,8 @@ export interface RequestListOptions {
   nombreCliente?: string;
   folio?: string;
   userIdFilter?: number;
+  groupIdFilter?: number;
+  managementIdFilter?: number;
 }
 
 export type LoanStatus =
@@ -42,10 +46,20 @@ export enum LoanStatusEnum {
   aprobado = 'APROBADO',
   rechazado = 'RECHAZADO',
   actualizar = 'ACTUALIZAR',
-  todos = 'TODOS',
+  todos = '',
 }
 
 export interface User {
   NOMBRE: string;
   ID: number;
+}
+
+export interface Management {
+  label?: string;
+  ID?: number;
+}
+
+export interface Groups {
+  label?: string;
+  ID?: number;
 }

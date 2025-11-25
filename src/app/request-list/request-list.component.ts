@@ -1,11 +1,11 @@
 import { CommonModule } from '@angular/common';
 import {
   Component,
-  computed,
   DestroyRef,
   inject,
   OnInit,
   signal,
+  viewChild,
 } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -15,24 +15,26 @@ import { CardModule } from 'primeng/card';
 import { DataViewModule } from 'primeng/dataview';
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
-import { MenuItem, MessageService } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
-import { PaginatorModule, PaginatorState } from 'primeng/paginator';
+import { PaginatorModule } from 'primeng/paginator';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { Router } from '@angular/router';
 import { TagModule } from 'primeng/tag';
 import { ToastModule } from 'primeng/toast';
 
 import {
+  Groups,
   LoanStatusEnum,
+  Management,
+  RequestList,
   RequestListOptions,
   Requests,
-  SearchOptions,
   User,
 } from './types/requests';
 import { RequestListService } from './services/request-list.service';
-import { toTitleCaseAndSplit } from '../shared/utils/functions.utils';
-import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
+import { Dropdown, DropdownModule } from 'primeng/dropdown';
+import { SidebarModule } from 'primeng/sidebar';
 
 @Component({
   selector: 'app-request-list',
@@ -49,139 +51,43 @@ import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
     TagModule,
     ToastModule,
     DropdownModule,
+    SidebarModule,
   ],
   templateUrl: './request-list.component.html',
   styleUrls: ['./request-list.component.css'],
   providers: [MessageService],
 })
 export class RequestListComponent implements OnInit {
-  requests = signal<Requests[]>([]);
-  usersList = signal<MenuItem[]>([]);
-  requestUserList = signal<User[]>([]);
-  selectedUser?: User;
   readonly #destroyRef$ = inject(DestroyRef);
   readonly #messageService = inject(MessageService);
   readonly #requestListService = inject(RequestListService);
   readonly router = inject(Router);
-  first: number = 0;
-  rows: number = 5;
+  agentDropdown = viewChild<Dropdown>('agentDropdown');
+  groupDropdown = viewChild<Dropdown>('groupDropdown');
+  managerDropdown = viewChild<Dropdown>('managerDropdown');
+  fechaDropdown = viewChild<Dropdown>('fechaDropdown');
+  cantidadDropdown = viewChild<Dropdown>('cantidadDropdown');
+  statusDropdown = viewChild<Dropdown>('statusDropdown');
+  requests = signal<Requests[]>([]);
+  requestUserList = signal<User[]>([]);
+  groups = signal<Groups[]>([]);
+  management = signal<Management[]>([]);
+  unfilteredRequests: Requests[] = [];
+  selectedGrupo: any = null;
+  selectedAgente: any = null;
+  selectedGerencia: any = null;
+  selectedOrdenFecha: any = null;
+  selectedOrdenCantidad: any = null;
+  selectedStatus: any = null;
   searchInputValue = '';
-  searchStatus = '';
   searchTerm: 'cliente' | 'folio' = 'cliente';
   searchTermIcon: string = 'pi pi-user';
   showLoadingModal = false;
-  sortField!: string;
-  sortOptions!: { label: string; value: string }[];
-  sortOrder!: number;
+  showFilterMenu: boolean = false;
+  filterRequest: boolean = false;
   totalRecords: number = 0;
-  userIdFilter?: number;
-  selectedMenuItem: MenuItem | null = null;
-  selectedStatusItem: string | null = null;
-
-  menuItems = computed(() => {
-    return [
-      {
-        label: 'filtar por...',
-        icon: 'pi pi-filter',
-        items: [
-          {
-            label: 'Status',
-            icon: 'pi pi-chart-bar',
-            items: [
-              {
-                label: 'En Revision',
-                command: () => this.selectStatusItem(LoanStatusEnum.revision),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.revision
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.revision,
-              },
-              {
-                label: 'Aprobado',
-                command: () => this.selectStatusItem(LoanStatusEnum.aprobado),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.aprobado
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.aprobado,
-              },
-              {
-                label: 'Rechazado',
-                command: () => this.selectStatusItem(LoanStatusEnum.rechazado),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.rechazado
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.rechazado,
-              },
-              {
-                label: 'Actualizar',
-                command: () => this.selectStatusItem(LoanStatusEnum.actualizar),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.actualizar
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.actualizar,
-              },
-              {
-                separator: true,
-              },
-              {
-                label: 'Mostrar todos',
-                command: () => this.selectStatusItem(LoanStatusEnum.todos),
-                icon:
-                  this.selectedStatusItem === LoanStatusEnum.todos
-                    ? 'pi pi-check'
-                    : '',
-                status: LoanStatusEnum.todos,
-              },
-            ],
-          },
-          {
-            // necesito inyectar este elemento para indicarle al menu que aqui hay algo especial
-            // de tipo dropdown, en el template se valida este atributo para renderizar el componente
-            // el resto de elementos se renderizan como opciones normales del menu
-            dropdown: true,
-          },
-        ],
-      },
-      {
-        label: 'Ordenar por...',
-        icon: 'pi pi-sort',
-        items: [
-          {
-            label: 'Fecha',
-            icon: 'pi pi-calendar',
-            items: [
-              {
-                label: 'Recientes',
-                command: () => this.orderbyDate('desc'),
-              },
-              {
-                label: 'Antiguos',
-                command: () => this.orderbyDate('asc'),
-              },
-            ],
-          },
-          {
-            label: 'Cantidad',
-            icon: 'pi pi-dollar',
-            items: [
-              {
-                label: 'Mayor',
-                command: () => this.orderbyAmount('desc'),
-              },
-              {
-                label: 'Menor',
-                command: () => this.orderbyAmount('asc'),
-              },
-            ],
-          },
-        ],
-      },
-    ];
-  });
+  first: number = 0;
+  rows: number = 5;
 
   ngOnInit(): void {
     this.showLoadingModal = true;
@@ -191,10 +97,23 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  handleClick(solicitud: Requests) {
-    const loan_request = solicitud.request_number;
-    this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
-  }
+  // COMPONENT FUNCTIONS
+  opcionesFecha = [
+    { label: 'Recientes', value: 'recientes' },
+    { label: 'Antiguos', value: 'antiguos' },
+  ];
+
+  opcionesCantidad = [
+    { label: 'Mayor', value: 'mayor' },
+    { label: 'Menor', value: 'menor' },
+  ];
+
+  opcionesStatus = [
+    { label: 'En Revisión', value: LoanStatusEnum.revision },
+    { label: 'Aprobado', value: LoanStatusEnum.aprobado },
+    { label: 'Rechazado', value: LoanStatusEnum.rechazado },
+    { label: 'Actualizar', value: LoanStatusEnum.actualizar },
+  ];
 
   getSeverity(request: Requests) {
     switch (request.loan_request_status) {
@@ -235,6 +154,44 @@ export class RequestListComponent implements OnInit {
     );
   }
 
+  getRequestListItems(options: RequestListOptions) {
+    this.#requestListService
+      .getRequestsList(options)
+      .pipe(takeUntilDestroyed(this.#destroyRef$))
+      .subscribe({
+        next: (data: RequestList) => {
+          this.showLoadingModal = false;
+          this.requests.update(() => data.loanRequests);
+          this.requestUserList.update(() =>
+            data.usersList.sort((a, b) => a.ID - b.ID)
+          );
+          this.groups.update(() => data.groups);
+          this.management.update(() => data.management);
+          this.filterRequest = false;
+          this.totalRecords = data.loanRequests[0].CNT;
+          this.unfilteredRequests = [...data.loanRequests];
+        },
+        error: (errorRes: HttpErrorResponse) => {
+          this.requests.update(() => []);
+          this.unfilteredRequests = [];
+          this.showLoadingModal = false;
+          this.filterRequest = false;
+          this.#messageService.add({
+            severity: 'error',
+            summary: errorRes.error?.message || errorRes.name,
+            detail: errorRes.error?.error || errorRes.statusText,
+            life: 3000,
+          });
+        },
+      });
+  }
+
+  // EVENTS
+  openRecord(solicitud: Requests) {
+    const loan_request = solicitud.request_number;
+    this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
+  }
+
   changeSearchTerm() {
     this.searchTerm = this.searchTerm === 'cliente' ? 'folio' : 'cliente';
     this.searchTermIcon =
@@ -247,29 +204,37 @@ export class RequestListComponent implements OnInit {
     });
   }
 
-  onPageChange(event: PaginatorState) {
-    this.showLoadingModal = true;
-    this.rows = event.rows!;
-    this.first = event.first!;
-    this.getRequestListItems({
-      offSetRows: this.first,
-      fetchRowsNumber: this.rows,
-    });
+  restoreDefaults() {
+    this.agentDropdown()?.clear();
+    this.groupDropdown()?.clear();
+    this.managerDropdown()?.clear();
+    this.statusDropdown()?.clear();
+    this.selectedAgente = null;
+    this.selectedGrupo = null;
+    this.selectedGerencia = null;
+    this.selectedStatus = null;
   }
 
-  searchByStatus({ status, userIdFilter }: SearchOptions) {
-    this.showLoadingModal = true;
-    this.searchStatus = status === LoanStatusEnum.todos ? '' : status;
-    // necesitamos resetear el paginador colocando en 0 el offset/first
-    // para los casos que se estaba en una pagina muy arriba para
-    // asegurar obtener un resultado desde el inicio de la paginacion
-    this.first = 0;
-    this.getRequestListItems({
+  restoreOrderDefaults() {
+    this.fechaDropdown()?.clear();
+    this.cantidadDropdown()?.clear();
+    this.requests.update(() => [...this.unfilteredRequests]);
+  }
+
+  applySearchRules() {
+    this.filterRequest = true;
+    const options: RequestListOptions = {
       offSetRows: this.first,
       fetchRowsNumber: this.rows,
-      ...(status && { status: this.searchStatus }),
-      ...(userIdFilter && { userIdFilter }),
-    });
+      ...(this.selectedStatus && { status: this.selectedStatus }),
+      ...(this.selectedAgente && { userIdFilter: this.selectedAgente.ID }),
+      ...(this.selectedGrupo && { groupIdFilter: this.selectedGrupo.ID }),
+      ...(this.selectedGerencia && {
+        managementIdFilter: this.selectedGerencia.ID,
+      }),
+    };
+    this.getRequestListItems(options);
+    this.restoreOrderDefaults();
   }
 
   inputSearch(event: KeyboardEvent | MouseEvent) {
@@ -278,7 +243,6 @@ export class RequestListComponent implements OnInit {
     }
     if (this.searchInputValue.length < 1) return;
     this.showLoadingModal = true;
-    this.searchStatus = '';
     if (this.searchTerm === 'cliente') {
       const nombreCliente = this.searchInputValue;
       this.getRequestListItems({
@@ -296,101 +260,43 @@ export class RequestListComponent implements OnInit {
     }
   }
 
-  getRequestListItems(options: RequestListOptions) {
-    if (this.searchStatus) {
-      options.status = this.searchStatus;
+  onAgenteChange(event: any) {
+    this.selectedAgente = this.selectedAgente = event.value;
+  }
+
+  onGrupoChange(event: any) {
+    this.selectedGrupo = event.value;
+  }
+
+  onGerenciaChange(event: any) {
+    this.selectedGerencia = event.value;
+  }
+
+  onStatusChange(event: any) {
+    this.selectedStatus = event.value;
+  }
+
+  onOrdenFechaChange(event: any) {
+    this.selectedOrdenCantidad = null;
+    switch (event.value) {
+      case 'recientes':
+        this.orderbyDate('desc');
+        break;
+      case 'antiguos':
+        this.orderbyDate('asc');
+        break;
     }
-    if (this.selectedUser?.ID) {
-      options.userIdFilter = this.selectedUser?.ID;
+  }
+
+  onOrdenCantidadChange(event: any) {
+    this.selectedOrdenFecha = null;
+    switch (event.value) {
+      case 'menor':
+        this.orderbyAmount('asc');
+        break;
+      case 'mayor':
+        this.orderbyAmount('desc');
+        break;
     }
-    this.#requestListService
-      .getRequestsList(options)
-      .pipe(takeUntilDestroyed(this.#destroyRef$))
-      .subscribe({
-        next: (data) => {
-          this.showLoadingModal = false;
-          this.requests.update(() => data.loanRequests);
-          this.requestUserList.update(() =>
-            data.usersList.sort((a, b) => a.ID - b.ID)
-          );
-          // this.generateUsersList();
-          this.totalRecords = data.loanRequests[0].CNT;
-        },
-        error: (errorRes: HttpErrorResponse) => {
-          this.showLoadingModal = false;
-          this.#messageService.add({
-            severity: 'error',
-            summary: errorRes.error?.message || errorRes.name,
-            detail: errorRes.error?.error || errorRes.statusText,
-            life: 3000,
-          });
-        },
-      });
-  }
-
-  generateUsersList() {
-    this.usersList.update(() => [
-      ...this.requestUserList().map((user): MenuItem => {
-        return {
-          label: `${user.ID} - ${toTitleCaseAndSplit(user.NOMBRE)}`,
-          icon:
-            this.selectedMenuItem?.label === toTitleCaseAndSplit(user.NOMBRE)
-              ? 'pi pi-check'
-              : '',
-          command: () => {
-            this.selectedMenuItem = {
-              label: toTitleCaseAndSplit(user.NOMBRE),
-              icon: 'pi pi-check',
-            };
-            this.selectedUser = {
-              NOMBRE: toTitleCaseAndSplit(user.NOMBRE),
-              ID: user.ID,
-            };
-            return this.getRequestListItems({
-              offSetRows: 0,
-              fetchRowsNumber: this.rows,
-              userIdFilter: user.ID,
-              ...(this.searchStatus && { status: this.searchStatus }),
-            });
-          },
-        };
-      }),
-      {
-        separator: true,
-      },
-      {
-        label: 'Mostrar todos',
-        icon:
-          this.selectedMenuItem?.label === 'Mostrar todos' ? 'pi pi-check' : '',
-        command: () => {
-          this.selectedMenuItem = {
-            label: 'Mostrar todos',
-            icon: 'pi pi-check',
-          };
-          this.selectedUser = undefined;
-          return this.getRequestListItems({
-            offSetRows: 0,
-            fetchRowsNumber: this.rows,
-            ...(this.searchStatus && { status: this.searchStatus }),
-          });
-        },
-      },
-    ]);
-  }
-
-  selectStatusItem(status: LoanStatusEnum) {
-    this.selectedStatusItem = status;
-    this.searchByStatus({ status, userIdFilter: this.userIdFilter });
-  }
-
-  userSelected(event: DropdownChangeEvent) {
-    const user = event.value as User;
-    this.selectedUser = user;
-    this.showLoadingModal = true;
-    this.getRequestListItems({
-      offSetRows: 0,
-      fetchRowsNumber: this.rows,
-      ...(this.searchStatus && { status: this.searchStatus }),
-    });
   }
 }

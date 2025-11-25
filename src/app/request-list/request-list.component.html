@@ -1,38 +1,14 @@
 <div class="p-2 width-maximo">
-  <p-menubar [model]="menuItems()">
-    <ng-template pTemplate="item" let-item>
-      <ng-container *ngIf="item.dropdown; else normalItem">
-        <div style="padding: 0.75rem 1.25rem">
-          <p-dropdown
-            [options]="requestUserList()"
-            placeholder="Agentes"
-            optionLabel="NOMBRE"
-            filter="true"
-            showClear="true"
-            id="ID"
-            (click)="$event.stopPropagation()"
-            (mousedown)="$event.stopPropagation()"
-            (onChange)="userSelected($event)"
-            (onClear)="selectedUser = undefined"
-            selected
-            [appendTo]="'body'"
-            [style]="{ width: '100%' }"
-            [(ngModel)]="selectedUser"></p-dropdown>
-        </div>
-      </ng-container>
-      <ng-template #normalItem>
-        <a class="p-menuitem-link" [routerLink]="item.routerLink">
-          <span
-            [class]="'p-menuitem-icon ng-star-inserted ' + item.icon"
-            *ngIf="item.icon"></span>
-          <i
-            *ngIf="selectedStatusItem === item.status"
-            class="pi pi-check"
-            style="color: green"></i>
-          <span class="p-menuitem-text">&nbsp;{{ item.label }}</span>
-          <span *ngIf="item.items" class="pi pi-angle-right ml-auto"></span>
-        </a>
-      </ng-template>
+  <p-menubar>
+    <ng-template pTemplate="start">
+      <button
+        pButton
+        type="button"
+        icon="pi pi-filter"
+        outlined="true"
+        pTooltip="Filtrado y ordenamiento"
+        class="p-button-text p-button-plain"
+        (click)="showFilterMenu = !showFilterMenu"></button>
     </ng-template>
     <ng-template pTemplate="end">
       <div class="flex align-items-center gap-2">
@@ -57,14 +33,9 @@
   </p-menubar>
   <section class="grid">
     @if (requests().length === 0) {
-      <p class="center">No hay solicitudes pendientes</p>
+      <p class="center">No hay solicitudes</p>
     } @else {
-      <p-dataView
-        #dv
-        class="m-2 w-full dataview"
-        [value]="requests()"
-        [sortField]="sortField"
-        [sortOrder]="sortOrder">
+      <p-dataView #dv class="m-2 w-full dataview" [value]="requests()">
         <ng-template pTemplate="list" let-requests>
           <div class="grid grid-nogutter">
             <div
@@ -118,7 +89,7 @@
                       <p-button
                         icon="pi pi-file-edit"
                         label="Revisar"
-                        (click)="handleClick(item)" />
+                        (click)="openRecord(item)" />
                     </div>
                   </div>
                 </div>
@@ -129,6 +100,172 @@
       </p-dataView>
     }
   </section>
+  <p-sidebar [(visible)]="showFilterMenu" position="right">
+    <ng-template pTemplate="header">
+      <div class="flex align-items-center gap-2">
+        <span class="font-bold">{{
+          'Filtrado y ordenamiento' | titlecase
+        }}</span>
+      </div>
+    </ng-template>
+
+    <div class="p-3">
+      <!-- Sección de Filtros -->
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mt-0">
+          <i class="pi pi-filter"></i> Filtrar por...
+        </h3>
+
+        <div class="mb-3">
+          <label class="block mb-2"
+            >Agente <i class="pi pi-user" pTooltip="Seleccione un agente"></i
+          ></label>
+          <p-dropdown
+            #agentDropdown
+            [(ngModel)]="selectedAgente"
+            [options]="requestUserList()"
+            optionLabel="NOMBRE"
+            id="ID"
+            placeholder="Seleccione un agente"
+            styleClass="w-full"
+            filter="true"
+            filterby="NOMBRE"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="20"
+            [showClear]="true"
+            (onChange)="onAgenteChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2"
+            >Grupos <i class="pi pi-users" pTooltip="Seleccione un grupo"></i
+          ></label>
+          <p-dropdown
+            #groupDropdown
+            [(ngModel)]="selectedGrupo"
+            [options]="groups()"
+            placeholder="Seleccione un grupo"
+            optionLabel="NOMBRE"
+            id="ID"
+            styleClass="w-full"
+            filter="true"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="10"
+            [showClear]="true"
+            (onChange)="onGrupoChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2"
+            >Gerencia
+            <i class="pi pi-briefcase" pTooltip="Seleccione una gerencia"></i
+          ></label>
+          <p-dropdown
+            #managerDropdown
+            [(ngModel)]="selectedGerencia"
+            [options]="management()"
+            placeholder="Seleccione una gerencia"
+            optionLabel="NOMBRE"
+            id="ID"
+            styleClass="w-full"
+            filter="true"
+            [virtualScroll]="true"
+            [virtualScrollItemSize]="10"
+            [showClear]="true"
+            (onChange)="onGerenciaChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2"
+            >Status <i class="pi pi-tags" pTooltip="Seleccione un status"></i
+          ></label>
+          <p-dropdown
+            #statusDropdown
+            [(ngModel)]="selectedStatus"
+            [options]="opcionesStatus"
+            placeholder="Seleccione status"
+            onLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            [showClear]="true"
+            (onChange)="onStatusChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="flex justify-content-center gap-2">
+          <p-button
+            label="Limpiar"
+            iconPos="right"
+            class="p-button-danger"
+            (click)="restoreDefaults()">
+          </p-button>
+          <p-button
+            label="Aplicar"
+            iconPos="right"
+            class="p-button-danger"
+            [loading]="filterRequest"
+            [disabled]="filterRequest"
+            (click)="applySearchRules()">
+          </p-button>
+        </div>
+      </div>
+
+      <!-- Sección de Ordenamiento -->
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold mb-0">
+          <i class="pi pi-sort" pTooltip="Ordenar por..."></i> Ordenar por...
+        </h3>
+        <div class="text-md font-italic mb-3">
+          (Solo se aplica un orden a la vez sobre los elementos filtrados)
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2"
+            >Fecha <i class="pi pi-calendar" pTooltip="Ordenar por fecha"></i
+          ></label>
+          <p-dropdown
+            #fechaDropdown
+            [(ngModel)]="selectedOrdenFecha"
+            [options]="opcionesFecha"
+            placeholder="Seleccione orden"
+            optionLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            [showClear]="true"
+            (onChange)="onOrdenFechaChange($event)">
+          </p-dropdown>
+        </div>
+
+        <div class="mb-3">
+          <label class="block mb-2"
+            >Cantidad <i class="pi pi-dollar" pTooltip="Ordar por cantidad"></i
+          ></label>
+          <p-dropdown
+            #cantidadDropdown
+            [(ngModel)]="selectedOrdenCantidad"
+            [options]="opcionesCantidad"
+            placeholder="Seleccione orden"
+            onLabel="label"
+            optionValue="value"
+            styleClass="w-full"
+            [showClear]="true"
+            (onChange)="onOrdenCantidadChange($event)">
+          </p-dropdown>
+        </div>
+
+        <p-button
+          label="Reestablecer ordenamiento"
+          iconPos="right"
+          class="w-full"
+          (click)="restoreOrderDefaults()">
+        </p-button>
+      </div>
+    </div>
+  </p-sidebar>
+
   <p-dialog
     #dialogMessage
     header="Cargando información"
