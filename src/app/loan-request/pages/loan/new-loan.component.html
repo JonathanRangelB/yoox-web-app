@@ -439,12 +439,12 @@
               #inputRef
               inputId="id_domicilio_cliente"
               formControlName="id_domicilio_cliente"
+              placeholder="Solo ID's registrados"
+              min="1"
               [useGrouping]="false"
               [showClear]="true"
               [max]="2147483647"
               (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
-              min="1"
-              placeholder="Solo ID's registrados"
               [style]="{ width: '100%' }" />
             <small
               id="id_domicilio_cliente-help"
@@ -844,13 +844,14 @@
               <label for="id_domicilio_aval">ID Domicilio 🏡</label>
               <p-inputNumber
                 #inputRef
-                inputId="id_domicilio_aval"
-                max="2147483647"
-                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
                 formControlName="id_domicilio_aval"
+                placeholder="Solo ID's registrados"
+                inputId="id_domicilio_aval"
+                min="1"
                 [useGrouping]="false"
                 [showClear]="true"
-                placeholder="Solo ID's registrados"
+                [max]="2147483647"
+                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
                 [style]="{ width: '100%' }" />
               <small
                 id="id_domicilio_aval-help"

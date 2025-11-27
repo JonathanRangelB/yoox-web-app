@@ -136,4 +136,5 @@ export interface Address {
   created_date: Date;
   modified_by_usr: number;
   modified_date: Date;
+  gmaps_url_location: string;
 }

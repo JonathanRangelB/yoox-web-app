@@ -907,6 +907,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           ),
           cp_cliente: address.cp,
           referencias_dom_cliente: address.referencias,
+          gmaps_url_location: address.gmaps_url_location,
         });
         break;
       case 'formAval':
