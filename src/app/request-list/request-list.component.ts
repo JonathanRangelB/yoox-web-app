@@ -262,14 +262,20 @@ export class RequestListComponent implements OnInit {
 
   onAgenteChange(event: any) {
     this.selectedAgente = this.selectedAgente = event.value;
+    this.selectedGrupo = null;
+    this.selectedGerencia = null;
   }
 
   onGrupoChange(event: any) {
     this.selectedGrupo = event.value;
+    this.selectedAgente = null;
+    this.selectedGerencia = null;
   }
 
   onGerenciaChange(event: any) {
     this.selectedGerencia = event.value;
+    this.selectedAgente = null;
+    this.selectedGrupo = null;
   }
 
   onStatusChange(event: any) {
