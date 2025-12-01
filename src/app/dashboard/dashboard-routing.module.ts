@@ -33,6 +33,13 @@ const routes: Routes = [
             (c) => c.RequestListComponent
           ),
       },
+      {
+        path: 'cobro-agenda',
+        loadComponent: () =>
+          import('./cobro-agenda/cobro-agenda.component').then(
+            (c) => c.CobroAgendaComponent
+          ),
+      },
       { path: '**', redirectTo: 'not-found' },
     ],
   },

@@ -1,0 +1,192 @@
+<p-button
+  label="Clear"
+  [outlined]="true"
+  icon="pi pi-filter-slash"
+  (onClick)="dt.clear()" />
+<p-button
+  label="Actualizar"
+  icon="pi pi-refresh"
+  (click)="refreshData()"
+  [loading]="loading" />
+<p-table
+  #dt
+  [value]="cobrosAgenda"
+  selectionmode="single"
+  [(selection)]="selectedRecord"
+  dataKey="id"
+  (onRowSelect)="onRowSelect($event)"
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[5, 10, 25, 50]"
+  [loading]="loading"
+  [globalFilterFields]="[
+    'clienteNombre',
+    'clienteCurp',
+    'telefono',
+    'email',
+    'referencia',
+    'estatusPago',
+    'metodoPago',
+  ]"
+  scrollHeight="flex">
+  <ng-template pTemplate="caption">
+    <div class="flex justify-content-between align-items-center">
+      <div class="flex gap-2">
+        <p-iconField>
+          <p-inputIcon>
+            <i class="pi pi-search"></i>
+          </p-inputIcon>
+          <input
+            pInputText
+            type="text"
+            placeholder="Buscar..."
+            (input)="onGlobalFilter($event, dt)" />
+        </p-iconField>
+      </div>
+      <div class="flex gap-2">
+        <p-dropdown
+          [options]="estatusPagoOptions"
+          placeholder="Filtrar por estatus"
+          (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
+          [showClear]="true" />
+        <p-dropdown
+          [options]="metodoPagoOptions"
+          placeholder="Filtrar por método"
+          (onChange)="dt.filter($event.value, 'metodoPago', 'equals')"
+          [showClear]="true" />
+      </div>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th style="min-width: 8rem">ID</th>
+      <th style="min-width: 15rem">
+        Cliente
+        <p-columnFilter type="text" field="clienteNombre" display="menu" />
+      </th>
+      <th style="min-width: 10rem">CURP</th>
+      <th style="min-width: 8rem">Teléfono</th>
+      <th style="min-width: 12rem">Email</th>
+      <th style="min-width: 8rem">Préstamo</th>
+      <th style="min-width: 8rem">Pago</th>
+      <th style="min-width: 8rem">Saldo</th>
+      <th style="min-width: 8rem">Pago #</th>
+      <th style="min-width: 10rem">Fecha Pago</th>
+      <th style="min-width: 10rem">Vencimiento</th>
+      <th style="min-width: 8rem">Estatus</th>
+      <th style="min-width: 8rem">Método</th>
+      <th style="min-width: 10rem">Referencia</th>
+      <th style="min-width: 20rem">Dirección</th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-cobro>
+    <tr [pSelectableRow]="cobro">
+      <td>{{ cobro.id }}</td>
+      <td>
+        <div class="flex flex-column">
+          <span class="font-weight-bold">{{ cobro.clienteNombre }}</span>
+        </div>
+      </td>
+      <td>
+        <span class="text-sm text-600">{{ cobro.clienteCurp }}</span>
+      </td>
+      <td>
+        <span class="text-sm">{{ cobro.telefono }}</span>
+      </td>
+      <td>
+        <span class="text-sm">{{ cobro.email }}</span>
+      </td>
+      <td class="text-right">
+        <span class="font-weight-bold">{{
+          formatCurrency(cobro.montoPrestamo)
+        }}</span>
+      </td>
+      <td class="text-right">
+        <span class="font-weight-bold">{{
+          formatCurrency(cobro.montoPago)
+        }}</span>
+      </td>
+      <td class="text-right">
+        <span class="font-weight-bold text-orange-500">{{
+          formatCurrency(cobro.saldoPendiente)
+        }}</span>
+      </td>
+      <td class="text-center">
+        <span class="text-sm"
+          >{{ cobro.numeroPago }}/{{ cobro.totalPagos }}</span
+        >
+      </td>
+      <td>
+        <span class="text-sm">{{ cobro.fechaPago | date: 'dd/MM/yyyy' }}</span>
+      </td>
+      <td>
+        <span class="text-sm">{{
+          cobro.fechaVencimiento | date: 'dd/MM/yyyy'
+        }}</span>
+      </td>
+      <td>
+        <p-tag
+          [value]="getEstatusLabel(cobro.estatusPago)"
+          [severity]="getEstatusSeverity(cobro.estatusPago)" />
+      </td>
+      <td>
+        <span class="text-sm text-capitalize">{{ cobro.metodoPago }}</span>
+      </td>
+      <td>
+        <span class="text-sm font-mono">{{ cobro.referencia }}</span>
+      </td>
+      <td>
+        <span class="text-sm" [title]="cobro.direccion"
+          >{{ cobro.direccion.substring(0, 30) }}...</span
+        >
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="16" class="text-center">
+        <div class="flex flex-column align-items-center">
+          <i class="pi pi-inbox text-4xl text-400 mb-3"></i>
+          <span class="text-600">No se encontraron registros de cobro</span>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="summary">
+    <div class="flex justify-content-between align-items-center">
+      <span class="text-sm text-600">
+        Total de registros: {{ cobrosAgenda.length || 0 }}
+      </span>
+      <div class="flex gap-4">
+        <span class="text-sm">
+          <span class="text-green-500 font-weight-bold">
+            {{ getCountByEstatus('pagado') }}
+          </span>
+          Pagados
+        </span>
+        <span class="text-sm">
+          <span class="text-blue-500 font-weight-bold">
+            {{ getCountByEstatus('pendiente') }}
+          </span>
+          Pendientes
+        </span>
+        <span class="text-sm">
+          <span class="text-red-500 font-weight-bold">
+            {{ getCountByEstatus('vencido') }}
+          </span>
+          Vencidos
+        </span>
+        <span class="text-sm">
+          <span class="text-orange-500 font-weight-bold">
+            {{ getCountByEstatus('parcial') }}
+          </span>
+          Parciales
+        </span>
+      </div>
+    </div>
+  </ng-template>
+</p-table>
