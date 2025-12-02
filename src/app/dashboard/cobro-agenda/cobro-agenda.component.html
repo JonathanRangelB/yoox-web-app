@@ -60,24 +60,92 @@
 
   <ng-template pTemplate="header">
     <tr>
-      <th style="min-width: 8rem">ID</th>
-      <th style="min-width: 15rem">
-        Cliente
-        <p-columnFilter type="text" field="clienteNombre" display="menu" />
-      </th>
+      <th style="min-width: 10rem">ID</th>
+      <th style="min-width: 15rem">Cliente</th>
       <th style="min-width: 10rem">CURP</th>
-      <th style="min-width: 8rem">Teléfono</th>
+      <th style="min-width: 13rem">Teléfono</th>
       <th style="min-width: 12rem">Email</th>
       <th style="min-width: 8rem">Préstamo</th>
       <th style="min-width: 8rem">Pago</th>
       <th style="min-width: 8rem">Saldo</th>
       <th style="min-width: 8rem">Pago #</th>
-      <th style="min-width: 10rem">Fecha Pago</th>
+      <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Fecha Pago
+          <p-sortIcon field="fechaVencimiento" />
+          <p-columnFilter
+            type="date"
+            field="fechaVencimiento"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
       <th style="min-width: 10rem">Vencimiento</th>
       <th style="min-width: 8rem">Estatus</th>
       <th style="min-width: 8rem">Método</th>
       <th style="min-width: 10rem">Referencia</th>
       <th style="min-width: 20rem">Dirección</th>
+    </tr>
+    <tr>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="id"
+          placeholder="ID"
+          ariaLabel="Filter id" />
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="clienteNombre"
+          placeholder="Nombre"
+          ariaLabel="Filtro Cliente" />
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="clienteCurp"
+          placeholder="CURP"
+          ariaLabel="Filtro CURP" />
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="telefono"
+          placeholder="Teléfono"
+          ariaLabel="Filtro Telefono" />
+      </th>
+      <th>
+        <p-columnFilter
+          type="text"
+          field="email"
+          placeholder="Email"
+          ariaLabel="Filtro CURP" />
+      </th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th></th>
+      <th>
+        <p-columnFilter field="estatusPago" matchMode="in" [showMenu]="false">
+          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
+            <p-multiSelect
+              [ngModel]="value"
+              [options]="estatusPagoOptions"
+              placeholder="Any"
+              (onChange)="filter($event.value)"
+              optionLabel="label">
+              <ng-template let-option pTemplate="item">
+                <div class="inline-block vertical-align-middle">
+                  <span class="ml-1 mt-1">{{ option.label }}</span>
+                </div>
+              </ng-template>
+            </p-multiSelect>
+          </ng-template>
+        </p-columnFilter>
+      </th>
     </tr>
   </ng-template>
 

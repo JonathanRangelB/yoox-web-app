@@ -8,6 +8,8 @@ import { InputIconModule } from 'primeng/inputicon';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { InputSwitchModule } from 'primeng/inputswitch';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { FormsModule } from '@angular/forms';
 
 interface CobroAgenda {
   id: string;
@@ -41,6 +43,8 @@ interface CobroAgenda {
     InputIconModule,
     ButtonModule,
     InputSwitchModule,
+    MultiSelectModule,
+    FormsModule,
   ],
   templateUrl: './cobro-agenda.component.html',
   styleUrls: ['./cobro-agenda.component.css'],
@@ -50,6 +54,7 @@ export class CobroAgendaComponent implements OnInit {
   cobrosAgenda: CobroAgenda[] = [];
   filteredCobros: CobroAgenda[] = [];
   loading: boolean = false;
+  statusSeleccionado = [];
 
   estatusPagoOptions = [
     { label: 'Pendiente', value: 'pendiente' },
@@ -64,8 +69,6 @@ export class CobroAgendaComponent implements OnInit {
     { label: 'Tarjeta', value: 'tarjeta' },
     { label: 'Depósito', value: 'deposito' },
   ];
-
-  constructor() { }
 
   ngOnInit(): void {
     this.loadCobrosAgenda();
