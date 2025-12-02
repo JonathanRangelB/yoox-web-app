@@ -22,8 +22,8 @@ describe('CobroAgendaComponent', () => {
   });
 
   it('should load cobros agenda on init', () => {
-    expect(component.cobrosAgenda).toBeDefined();
-    expect(component.cobrosAgenda.length).toBeGreaterThan(0);
+    expect(component.datosAgenda).toBeDefined();
+    expect(component.datosAgenda.length).toBeGreaterThan(0);
   });
 
   it('should format currency correctly', () => {

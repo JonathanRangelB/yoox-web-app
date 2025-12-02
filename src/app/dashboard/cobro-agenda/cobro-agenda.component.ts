@@ -8,7 +8,6 @@ import { InputIconModule } from 'primeng/inputicon';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { InputSwitchModule } from 'primeng/inputswitch';
-import { MultiSelectModule } from 'primeng/multiselect';
 import { FormsModule } from '@angular/forms';
 
 interface CobroAgenda {
@@ -43,7 +42,6 @@ interface CobroAgenda {
     InputIconModule,
     ButtonModule,
     InputSwitchModule,
-    MultiSelectModule,
     FormsModule,
   ],
   templateUrl: './cobro-agenda.component.html',
@@ -51,7 +49,7 @@ interface CobroAgenda {
 })
 export class CobroAgendaComponent implements OnInit {
   selectedRecord: CobroAgenda | null = null;
-  cobrosAgenda: CobroAgenda[] = [];
+  datosAgenda: CobroAgenda[] = [];
   filteredCobros: CobroAgenda[] = [];
   loading: boolean = false;
 
@@ -77,7 +75,7 @@ export class CobroAgendaComponent implements OnInit {
     this.loading = true;
 
     setTimeout(() => {
-      this.cobrosAgenda = [
+      this.datosAgenda = [
         {
           id: '1',
           clienteNombre: 'Juan Pérez López',
@@ -278,7 +276,7 @@ export class CobroAgendaComponent implements OnInit {
         },
       ];
 
-      this.filteredCobros = [...this.cobrosAgenda];
+      this.filteredCobros = [...this.datosAgenda];
       this.loading = false;
     }, 1000);
   }
@@ -301,7 +299,7 @@ export class CobroAgendaComponent implements OnInit {
   }
 
   getCountByEstatus(estatus: string): number {
-    return this.cobrosAgenda.filter((c) => c.estatusPago === estatus).length;
+    return this.datosAgenda.filter((c) => c.estatusPago === estatus).length;
   }
 
   getEstatusLabel(estatus: string): string {
@@ -335,7 +333,18 @@ export class CobroAgendaComponent implements OnInit {
     this.loadCobrosAgenda();
   }
 
-  onRowSelect(event: any) {
-    alert('seleccionado');
+  getSeverity(status: string) {
+    switch (status) {
+      case 'Vencido':
+        return 'danger';
+      case 'Pagado':
+        return 'success';
+      case 'Pendiente':
+        return 'info';
+      case 'Parcial':
+        return 'warning';
+      default:
+        return undefined;
+    }
   }
 }

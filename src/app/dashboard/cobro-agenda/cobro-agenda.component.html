@@ -8,13 +8,24 @@
   icon="pi pi-refresh"
   (click)="refreshData()"
   [loading]="loading" />
+<p-dropdown
+  [options]="estatusPagoOptions"
+  placeholder="Estatus"
+  (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
+  [showClear]="true" />
+<p-dropdown
+  [options]="estatusPagoOptions"
+  (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
+  placeholder="Estatus con Tags"
+  [showClear]="true">
+  <ng-template let-option pTemplate="item">
+    <p-tag [value]="option.value" [severity]="getSeverity(option.label)" />
+  </ng-template>
+</p-dropdown>
 <p-table
   #dt
-  [value]="cobrosAgenda"
-  selectionmode="single"
-  [(selection)]="selectedRecord"
-  dataKey="id"
-  (onRowSelect)="onRowSelect($event)"
+  sortMode="multiple"
+  [value]="datosAgenda"
   [paginator]="true"
   [rows]="10"
   [rowsPerPageOptions]="[5, 10, 25, 50]"
@@ -24,9 +35,7 @@
     'clienteCurp',
     'telefono',
     'email',
-    'referencia',
     'estatusPago',
-    'metodoPago',
   ]"
   scrollHeight="flex">
   <ng-template pTemplate="caption">
@@ -45,21 +54,120 @@
       </div>
     </div>
   </ng-template>
-
   <ng-template pTemplate="header">
     <tr>
-      <th style="min-width: 10rem">ID</th>
-      <th style="min-width: 15rem">Cliente</th>
-      <th style="min-width: 10rem">CURP</th>
-      <th style="min-width: 13rem">Teléfono</th>
-      <th style="min-width: 12rem">Email</th>
-      <th style="min-width: 8rem">Préstamo</th>
-      <th style="min-width: 8rem">Pago</th>
-      <th style="min-width: 8rem">Saldo</th>
-      <th style="min-width: 8rem">Pago #</th>
-      <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
+      <th style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          ID
+          <p-columnFilter
+            type="text"
+            field="id"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="clienteNombre" style="min-width: 15rem">
+        <div class="flex justify-content-between align-items-center">
+          Cliente
+          <p-sortIcon field="clienteNombre" />
+          <p-columnFilter
+            type="text"
+            field="clienteNombre"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="clienteCurp" style="min-width: 15rem">
+        <div class="flex justify-content-between align-items-center">
+          CURP
+          <p-sortIcon field="clienteCurp" />
+          <p-columnFilter
+            type="text"
+            field="clienteCurp"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="telefono" style="min-width: 12rem">
+        <div class="flex justify-content-between align-items-center">
+          Teléfono
+          <p-sortIcon field="telefono" />
+          <p-columnFilter
+            type="date"
+            field="telefono"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="email" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Email
+          <p-sortIcon field="email" />
+          <p-columnFilter
+            type="text"
+            field="email"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="montoPrestamo" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Préstamo
+          <p-sortIcon field="montoPrestamo" />
+          <p-columnFilter
+            type="text"
+            field="montoPrestamo"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="montoPago" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Pago
+          <p-sortIcon field="montoPago" />
+          <p-columnFilter
+            type="text"
+            field="montoPago"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="saldoPendiente" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Saldo
+          <p-sortIcon field="saldoPendiente" />
+          <p-columnFilter
+            type="text"
+            field="saldoPendiente"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="numeroPago" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Pago #
+          <p-sortIcon field="numeroPago" />
+          <p-columnFilter
+            type="text"
+            field="numeroPago"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="fechaPago" style="min-width: 10rem">
         <div class="flex justify-content-between align-items-center">
           Fecha Pago
+          <p-sortIcon field="fechaPago" />
+          <p-columnFilter
+            type="date"
+            field="fechaPago"
+            display="menu"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Vencimiento
           <p-sortIcon field="fechaVencimiento" />
           <p-columnFilter
             type="date"
@@ -68,68 +176,7 @@
             class="ml-auto" />
         </div>
       </th>
-      <th style="min-width: 10rem">Vencimiento</th>
       <th style="min-width: 8rem">Estatus</th>
-      <th style="min-width: 8rem">Método</th>
-      <th style="min-width: 10rem">Referencia</th>
-      <th style="min-width: 20rem">Dirección</th>
-    </tr>
-    <tr>
-      <th>
-        <p-columnFilter
-          type="text"
-          field="id"
-          placeholder="ID"
-          ariaLabel="Filter id" />
-      </th>
-      <th>
-        <p-columnFilter
-          type="text"
-          field="clienteNombre"
-          placeholder="Nombre"
-          ariaLabel="Filtro Cliente" />
-      </th>
-      <th>
-        <p-columnFilter
-          type="text"
-          field="clienteCurp"
-          placeholder="CURP"
-          ariaLabel="Filtro CURP" />
-      </th>
-      <th>
-        <p-columnFilter
-          type="text"
-          field="telefono"
-          placeholder="Teléfono"
-          ariaLabel="Filtro Telefono" />
-      </th>
-      <th>
-        <p-columnFilter
-          type="text"
-          field="email"
-          placeholder="Email"
-          ariaLabel="Filtro CURP" />
-      </th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th></th>
-      <th>
-        <p-columnFilter field="estatusPago" matchMode="in" [showMenu]="false">
-          <ng-template pTemplate="filter" let-value let-filter="filterCallback">
-            <p-dropdown
-              [options]="estatusPagoOptions"
-              placeholder="Estatus"
-              (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
-              [showClear]="true" />
-          </ng-template>
-        </p-columnFilter>
-      </th>
-      <th></th>
-      <th></th>
-      <th></th>
     </tr>
   </ng-template>
 
@@ -183,17 +230,17 @@
           [value]="getEstatusLabel(cobro.estatusPago)"
           [severity]="getEstatusSeverity(cobro.estatusPago)" />
       </td>
-      <td>
-        <span class="text-sm text-capitalize">{{ cobro.metodoPago }}</span>
-      </td>
-      <td>
-        <span class="text-sm font-mono">{{ cobro.referencia }}</span>
-      </td>
-      <td>
-        <span class="text-sm" [title]="cobro.direccion"
-          >{{ cobro.direccion.substring(0, 30) }}...</span
-        >
-      </td>
+      <!-- <td> -->
+      <!--   <span class="text-sm text-capitalize">{{ cobro.metodoPago }}</span> -->
+      <!-- </td> -->
+      <!-- <td> -->
+      <!--   <span class="text-sm font-mono">{{ cobro.referencia }}</span> -->
+      <!-- </td> -->
+      <!-- <td> -->
+      <!--   <span class="text-sm" [title]="cobro.direccion" -->
+      <!--     >{{ cobro.direccion.substring(0, 30) }}...</span -->
+      <!--   > -->
+      <!-- </td> -->
     </tr>
   </ng-template>
 
@@ -211,7 +258,7 @@
   <ng-template pTemplate="summary">
     <div class="flex justify-content-between align-items-center">
       <span class="text-sm text-600">
-        Total de registros: {{ cobrosAgenda.length || 0 }}
+        Total de registros: {{ datosAgenda.length || 0 }}
       </span>
       <div class="flex gap-4">
         <span class="text-sm">

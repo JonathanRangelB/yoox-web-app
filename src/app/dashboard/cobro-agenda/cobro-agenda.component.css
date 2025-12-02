@@ -25,6 +25,10 @@
     .p-table-tbody > tr:hover {
       background: #f8f9fa;
     }
+
+    .p-datatable-thead > th:hover {
+      background: rgba(255, 255, 255, 0.99) !important;
+    }
   }
 
   .p-paginator {
