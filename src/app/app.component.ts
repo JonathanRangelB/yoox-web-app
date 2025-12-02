@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { PrimeNGConfig } from 'primeng/api';
+import { ES_LOCALE } from 'src/assets/i18n/es_MX';
 
 @Component({
   selector: 'app-root',
@@ -11,5 +12,6 @@ export class AppComponent implements OnInit {
 
   ngOnInit(): void {
     this.primengConfig.ripple = true;
+    this.primengConfig.setTranslation(ES_LOCALE);
   }
 }

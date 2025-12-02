@@ -54,7 +54,6 @@ export class CobroAgendaComponent implements OnInit {
   cobrosAgenda: CobroAgenda[] = [];
   filteredCobros: CobroAgenda[] = [];
   loading: boolean = false;
-  statusSeleccionado = [];
 
   estatusPagoOptions = [
     { label: 'Pendiente', value: 'pendiente' },
