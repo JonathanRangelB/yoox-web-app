@@ -388,7 +388,7 @@
             </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
-            <label for="ocupacion_cliente">Ocupacion</label>
+            <label for="ocupacion_cliente">Ocupación</label>
             <input
               pInputText
               formControlName="ocupacion_cliente"
@@ -439,12 +439,12 @@
               #inputRef
               inputId="id_domicilio_cliente"
               formControlName="id_domicilio_cliente"
+              placeholder="Solo ID's registrados"
+              min="1"
               [useGrouping]="false"
               [showClear]="true"
               [max]="2147483647"
               (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
-              min="1"
-              placeholder="Solo ID's registrados"
               [style]="{ width: '100%' }" />
             <small
               id="id_domicilio_cliente-help"
@@ -509,6 +509,14 @@
               inputId="numero_interior_cliente"
               showClear="true"
               aria-describedby="numero_interior_cliente-help" />
+          </div>
+          <div class="col-12 sm:col-6 flex flex-column">
+            <label for="cruce_calles_cliente">Cruce de calles:</label>
+            <input
+              pInputText
+              formControlName="cruce_calles_cliente"
+              id="cruce_calles_cliente"
+              aria-describedby="cruce_calles_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="colonia_cliente">Colonia</label>
@@ -601,6 +609,31 @@
               formControlName="referencias_dom_cliente"
               id="referencias_dom_cliente"
               aria-describedby="referencias_dom_cliente-help" />
+          </div>
+          <div class="col-12 sm:col-5 flex flex-column">
+            <label for="gmaps_url_location">Ubicación en Google Maps</label>
+            <input
+              pInputText
+              formControlName="gmaps_url_location"
+              id="gmaps_url_location"
+              aria-describedby="gmaps_url_location-help" />
+            <small
+              id="gmaps_url_location-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('formCliente.gmaps_url_location')"
+              ><ng-container
+                *ngIf="mainForm.get('formCliente.gmaps_url_location')?.errors">
+                URL inválida</ng-container
+              >
+            </small>
+          </div>
+          <div class="col-12 sm:col-1 flex flex-column pl-0">
+            <p-button
+              class="mt-3"
+              icon="pi pi-map-marker"
+              pTooltip="Abrir ubicación en Google Maps"
+              tooltipPosition="top"
+              (onClick)="openGmapsLocation()" />
           </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
@@ -768,6 +801,14 @@
               </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
+              <label for="ocupacion_aval">Ocupación</label>
+              <input
+                pInputText
+                formControlName="ocupacion_aval"
+                id="ocupacion_aval"
+                aria-describedby="ocupacion_aval-help" />
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
               <label for="curp_aval">CURP (Sólo Mayusculas y numeros)</label>
               <p-inputMask
                 (onFocus)="restartCurpValidator('formAval', 'curp_aval')"
@@ -803,13 +844,14 @@
               <label for="id_domicilio_aval">ID Domicilio 🏡</label>
               <p-inputNumber
                 #inputRef
-                inputId="id_domicilio_aval"
-                max="2147483647"
-                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
                 formControlName="id_domicilio_aval"
+                placeholder="Solo ID's registrados"
+                inputId="id_domicilio_aval"
+                min="1"
                 [useGrouping]="false"
                 [showClear]="true"
-                placeholder="Solo ID's registrados"
+                [max]="2147483647"
+                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
                 [style]="{ width: '100%' }" />
               <small
                 id="id_domicilio_aval-help"
@@ -876,6 +918,14 @@
                 inputId="numero_interior_aval"
                 showClear="true"
                 aria-describedby="numero_interior_aval-help" />
+            </div>
+            <div class="col-12 sm:col-6 flex flex-column">
+              <label for="cruce_calles_aval">Cruce de calles:</label>
+              <input
+                pInputText
+                formControlName="cruce_calles_aval"
+                id="cruce_calles_aval"
+                aria-describedby="cruce_calles_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="colonia_aval">Colonia</label>
@@ -1142,5 +1192,5 @@
   }
 </p-dialog>
 <!-- <pre>{{ mainForm.value | json }}</pre> -->
-<!-- <pre>{{ mainForm.get('formCliente')?.errors | json }}</pre> -->
-<!-- <pre>{{ mainForm.get('formAval')?.errors | json }}</pre> -->
+<!-- <pre>Errores FormCliente: {{ mainForm.get('formCliente')?.errors | json }}</pre> -->
+<!-- <pre>Errores FormAval: {{ mainForm.get('formAval')?.errors | json }}</pre> -->

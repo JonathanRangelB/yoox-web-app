@@ -31,6 +31,7 @@ export interface ResultadosBusquedaAval {
   nombre_calle?: string;
   numero_exterior?: string;
   numero_interior?: string;
+  cruce_calles?: string;
   colonia?: string;
   municipio?: string;
   estado?: null;
@@ -59,12 +60,14 @@ export interface LoanRequest {
   nombre_calle_cliente: string;
   numero_exterior_cliente: string;
   numero_interior_cliente: string;
+  cruce_calles_cliente: string;
   colonia_cliente: string;
   municipio_cliente: string;
   estado_cliente: string;
   cp_cliente: string;
   id_domicilio_cliente: number;
   referencias_dom_cliente: string;
+  gmaps_url_location: string;
   id_aval: number;
   nombre_aval: string;
   apellido_paterno_aval: string;
@@ -72,11 +75,13 @@ export interface LoanRequest {
   telefono_fijo_aval: string;
   telefono_movil_aval: string;
   correo_electronico_aval: string;
+  ocupacion_aval: string;
   curp_aval: string;
   tipo_calle_aval: string;
   nombre_calle_aval: string;
   numero_exterior_aval: string;
   numero_interior_aval: string;
+  cruce_calles_aval: string;
   colonia_aval: string;
   municipio_aval: string;
   estado_aval: string;
@@ -121,6 +126,7 @@ export interface Address {
   nombre_calle: string;
   numero_exterior: string;
   numero_interior: string;
+  cruce_calles: string;
   colonia: string;
   municipio: string;
   estado: string;
@@ -130,4 +136,5 @@ export interface Address {
   created_date: Date;
   modified_by_usr: number;
   modified_date: Date;
+  gmaps_url_location: string;
 }

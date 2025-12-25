@@ -32,6 +32,7 @@ import {
   estadosDeLaRepublica,
   plazos,
   tiposCalle,
+  urlRegex,
 } from '../../utils/consts';
 import {
   atLeastOneValidator,
@@ -221,11 +222,13 @@ export class LoanComponent implements OnDestroy, OnInit {
           nombre_calle_cliente: ['', Validators.required],
           numero_exterior_cliente: [null, Validators.required],
           numero_interior_cliente: [''],
+          cruce_calles_cliente: [''],
           colonia_cliente: ['', Validators.required],
           municipio_cliente: ['', Validators.required],
           estado_cliente: ['', Validators.required],
           cp_cliente: ['', [Validators.required, lengthValidator(5)]],
           referencias_dom_cliente: [''],
+          gmaps_url_location: ['', Validators.pattern(urlRegex)],
         },
         {
           validators: [
@@ -244,12 +247,14 @@ export class LoanComponent implements OnDestroy, OnInit {
           telefono_fijo_aval: [''],
           telefono_movil_aval: [''],
           correo_electronico_aval: ['', emailValidator()],
+          ocupacion_aval: [''],
           curp_aval: ['', [Validators.required, curpValidator()]],
           id_domicilio_aval: [],
           tipo_calle_aval: ['', Validators.required],
           nombre_calle_aval: ['', Validators.required],
           numero_exterior_aval: ['', Validators.required],
           numero_interior_aval: [''],
+          cruce_calles_aval: [''],
           colonia_aval: ['', Validators.required],
           municipio_aval: ['', Validators.required],
           estado_aval: ['', Validators.required],
@@ -744,6 +749,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               nombre_calle_cliente: data.nombre_calle_cliente,
               numero_exterior_cliente: data.numero_exterior_cliente,
               numero_interior_cliente: data.numero_interior_cliente,
+              cruce_calles_cliente: data.cruce_calles_cliente,
               colonia_cliente: data.colonia_cliente,
               municipio_cliente: data.municipio_cliente,
               estado_cliente: estadosDeLaRepublica.find(
@@ -751,6 +757,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               ),
               cp_cliente: data.cp_cliente,
               referencias_dom_cliente: data.referencias_dom_cliente,
+              gmaps_url_location: data.gmaps_url_location,
             },
             formAval: {
               nombre_aval: data.nombre_aval,
@@ -759,6 +766,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               telefono_fijo_aval: data.telefono_fijo_aval,
               telefono_movil_aval: data.telefono_movil_aval,
               correo_electronico_aval: data.correo_electronico_aval,
+              ocupacion_aval: data.ocupacion_aval,
               curp_aval: data.curp_aval,
               id_domicilio_aval: data.id_domicilio_aval,
               tipo_calle_aval: tiposCalle.find(
@@ -767,6 +775,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               nombre_calle_aval: data.nombre_calle_aval,
               numero_exterior_aval: data.numero_exterior_aval,
               numero_interior_aval: data.numero_interior_aval,
+              cruce_calles_aval: data.cruce_calles_aval,
               colonia_aval: data.colonia_aval,
               municipio_aval: data.municipio_aval,
               estado_aval: estadosDeLaRepublica.find(
@@ -890,6 +899,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           nombre_calle_cliente: address.nombre_calle,
           numero_exterior_cliente: address.numero_exterior,
           numero_interior_cliente: address.numero_interior,
+          cruce_calles_cliente: address.cruce_calles,
           colonia_cliente: address.colonia,
           municipio_cliente: address.municipio,
           estado_cliente: estadosDeLaRepublica.find(
@@ -897,6 +907,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           ),
           cp_cliente: address.cp,
           referencias_dom_cliente: address.referencias,
+          gmaps_url_location: address.gmaps_url_location,
         });
         break;
       case 'formAval':
@@ -907,6 +918,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           nombre_calle_aval: address.nombre_calle,
           numero_exterior_aval: address.numero_exterior,
           numero_interior_aval: address.numero_interior,
+          cruce_calles_aval: address.cruce_calles,
           colonia_aval: address.colonia,
           municipio_aval: address.municipio,
           estado_aval: estadosDeLaRepublica.find(
@@ -1008,11 +1020,13 @@ export class LoanComponent implements OnDestroy, OnInit {
       telefono_fijo_aval: data.telefono_fijo ?? '',
       telefono_movil_aval: data.telefono_movil ?? '',
       correo_electronico_aval: data.correo_electronico ?? '',
+      ocupacion_aval: data.ocupacion ?? '',
       curp_aval: data.curp,
       tipo_calle_aval: tiposCalle.find((item) => item.name === data.tipo_calle),
       nombre_calle_aval: data.nombre_calle,
       numero_exterior_aval: data.numero_exterior,
       numero_interior_aval: data.numero_interior,
+      cruce_calles_aval: data.cruce_calles,
       colonia_aval: data.colonia,
       municipio_aval: data.municipio,
       estado_aval: estadosDeLaRepublica.find(
@@ -1028,6 +1042,18 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.stepper()?.nextCallback(null, -1);
     this.updateAmountValidator(this.minLoanAmount);
     this.cantidadIngresada = this.minLoanAmount;
-    this.calculaPrestamo()
+    this.calculaPrestamo();
+  }
+
+  openGmapsLocation() {
+    const location = this.mainForm.get('formCliente.gmaps_url_location')?.value;
+    if (new RegExp(urlRegex).test(location)) window.open(location, '_blank');
+    else
+      this.#messageService.add({
+        severity: 'error',
+        summary: 'URL invalida',
+        detail: 'No se puede abrir la ubicación.',
+        life: 3000,
+      });
   }
 }
