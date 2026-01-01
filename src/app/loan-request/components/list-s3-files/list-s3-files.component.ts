@@ -6,7 +6,7 @@ import {
   OnInit,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import { CardModule } from 'primeng/card';
 import { ButtonModule } from 'primeng/button';
 
@@ -16,7 +16,7 @@ import { RemovePathPipe } from '../../pipes/remove-path.pipe';
 
 @Component({
   selector: 'app-list-s3-files',
-  imports: [CommonModule, CardModule, ButtonModule, RemovePathPipe],
+  imports: [CardModule, ButtonModule, RemovePathPipe],
   templateUrl: './list-s3-files.component.html',
 })
 export class ListS3FilesComponent implements OnInit, OnDestroy {

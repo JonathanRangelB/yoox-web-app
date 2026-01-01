@@ -12,7 +12,7 @@ import { AuthService } from 'src/app/login/services/AuthService';
 import { environment } from 'src/environments/environment';
 import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
-import { CommonModule } from '@angular/common';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { ToastModule } from 'primeng/toast';
 import { MessageService } from 'primeng/api';
@@ -22,13 +22,12 @@ import { MessageService } from 'primeng/api';
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     ButtonModule,
     PanelModule,
     InputTextModule,
-    ToastModule,
-  ],
+    ToastModule
+],
   providers: [MessageService],
 })
 export class LoginPageComponent implements OnInit {

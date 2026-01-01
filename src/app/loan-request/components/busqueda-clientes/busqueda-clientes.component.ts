@@ -6,7 +6,7 @@ import {
   output,
   signal,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+
 import {
   FormBuilder,
   FormGroup,
@@ -35,7 +35,6 @@ import { ResultadosBusquedaCliente } from '../../types/loan-request.interface';
   selector: 'app-people-search',
   changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [
-    CommonModule,
     FormsModule,
     ReactiveFormsModule,
     InputTextModule,
@@ -43,8 +42,8 @@ import { ResultadosBusquedaCliente } from '../../types/loan-request.interface';
     ButtonModule,
     TableModule,
     ToastModule,
-    TooltipModule,
-  ],
+    TooltipModule
+],
   providers: [MessageService],
   templateUrl: './busqueda-clientes.component.html',
   styleUrls: ['./busqueda-clientes.component.css'],

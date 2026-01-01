@@ -35,12 +35,16 @@
           requestForm.controls['loanrequestid'].valid ||
           !requestForm.controls['loanrequestid'].dirty
         ">
-        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['required']">
-          El número de solicitud es requerido
-        </p>
-        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['pattern']">
-          Debe tener 6 caracteres. Sólo se admiten letras y numeros.
-        </p>
+        @if (requestForm.get('loanrequestid')?.errors?.['required']) {
+          <p>
+            El número de solicitud es requerido
+          </p>
+        }
+        @if (requestForm.get('loanrequestid')?.errors?.['pattern']) {
+          <p>
+            Debe tener 6 caracteres. Sólo se admiten letras y numeros.
+          </p>
+        }
       </small>
       <span class="p-float-label mt-5">
         <input
@@ -64,54 +68,56 @@
           !requestForm.controls['customerlastname'].dirty
         "
         >El apellido paterno es requerido</small
-      >
-      <button
-        pButton
-        data-cy="buscar"
-        class="mt-5 w-full"
-        type="submit"
-        label="Buscar"
-        [loading]="loading()"
+        >
+        <button
+          pButton
+          data-cy="buscar"
+          class="mt-5 w-full"
+          type="submit"
+          label="Buscar"
+          [loading]="loading()"
         [disabled]="!requestForm.valid"></button>
-      @if (error()) {
-        <p class="text-red-500 text-center mb-0" id="error-message">
-          {{ error() }}.
-        </p>
+        @if (error()) {
+          <p class="text-red-500 text-center mb-0" id="error-message">
+            {{ error() }}.
+          </p>
+        }
+      </p-panel>
+      @if (isProdEnv !== 'true') {
+        <pre>
+          Entorno actual: {{ environmentName }}
+        </pre>
       }
-    </p-panel>
-    <pre *ngIf="isProdEnv !== 'true'">
-      Entorno actual: {{ environmentName }}
-    </pre>
-    <div class="flex flex-row justify-content-between">
-      <p-button
-        class="mt-3"
-        data-cy="regresar"
-        label="Regresar"
-        type="button"
+      <div class="flex flex-row justify-content-between">
+        <p-button
+          class="mt-3"
+          data-cy="regresar"
+          label="Regresar"
+          type="button"
         (onClick)="goToLanding()"></p-button>
-      <p-button
-        class="mt-3 ml-3"
-        data-cy="qr_alta"
-        label="Alta de telefono"
-        icon="pi pi-qrcode"
-        type="button"
+        <p-button
+          class="mt-3 ml-3"
+          data-cy="qr_alta"
+          label="Alta de telefono"
+          icon="pi pi-qrcode"
+          type="button"
         (onClick)="qrVisible = !qrVisible"></p-button>
-    </div>
-  </form>
+      </div>
+    </form>
 
-  <p-dialog
-    data-cy="dialog_result"
-    header="Información de la solicitud"
-    [modal]="true"
-    [(visible)]="visible"
-    [style]="{ width: '50rem' }"
-    [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
-    @if (loanRequestInfo()) {
-      <!-- inicio de informacion -->
-      <p-card>
-        <ng-template pTemplate="title">
-          <strong>Estado: </strong>
-          <span
+    <p-dialog
+      data-cy="dialog_result"
+      header="Información de la solicitud"
+      [modal]="true"
+      [(visible)]="visible"
+      [style]="{ width: '50rem' }"
+      [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
+      @if (loanRequestInfo()) {
+        <!-- inicio de informacion -->
+        <p-card>
+          <ng-template pTemplate="title">
+            <strong>Estado: </strong>
+            <span
             [ngClass]="{
               'status-aprobado':
                 loanRequestInfo()?.loan_request_status === 'APROBADO',
@@ -122,76 +128,76 @@
               'status-rechazado':
                 loanRequestInfo()?.loan_request_status === 'RECHAZADO',
             }"
-            >{{ loanRequestInfo()?.loan_request_status }}</span
-          >
-        </ng-template>
+              >{{ loanRequestInfo()?.loan_request_status }}</span
+              >
+            </ng-template>
 
-        <ng-template pTemplate="content">
-          <div class="p-grid p-fluid">
-            <div class="p-col-12">
-              <strong>Número de solicitud:</strong>
-              {{ loanRequestInfo()?.request_number }}
-            </div>
+            <ng-template pTemplate="content">
+              <div class="p-grid p-fluid">
+                <div class="p-col-12">
+                  <strong>Número de solicitud:</strong>
+                  {{ loanRequestInfo()?.request_number }}
+                </div>
 
-            <div class="p-col-12">
-              <strong>Agente asignado:</strong>
-              {{ loanRequestInfo()?.nombre_agente }}
-            </div>
+                <div class="p-col-12">
+                  <strong>Agente asignado:</strong>
+                  {{ loanRequestInfo()?.nombre_agente }}
+                </div>
 
-            <div class="p-col-12">
-              <strong>Cliente:</strong>
-              {{ loanRequestInfo()?.nombre_cliente }}
-              {{ loanRequestInfo()?.apellido_paterno_cliente }}
-              {{ loanRequestInfo()?.apellido_materno_cliente }}
-            </div>
+                <div class="p-col-12">
+                  <strong>Cliente:</strong>
+                  {{ loanRequestInfo()?.nombre_cliente }}
+                  {{ loanRequestInfo()?.apellido_paterno_cliente }}
+                  {{ loanRequestInfo()?.apellido_materno_cliente }}
+                </div>
 
-            @if (loanRequestInfo()?.nombre_aval) {
-              <div class="p-col-12">
-                <strong>Aval:</strong>
-                {{ loanRequestInfo()?.nombre_aval }}
-                {{ loanRequestInfo()?.apellido_paterno_aval }}
-                {{ loanRequestInfo()?.apellido_materno_aval }}
+                @if (loanRequestInfo()?.nombre_aval) {
+                  <div class="p-col-12">
+                    <strong>Aval:</strong>
+                    {{ loanRequestInfo()?.nombre_aval }}
+                    {{ loanRequestInfo()?.apellido_paterno_aval }}
+                    {{ loanRequestInfo()?.apellido_materno_aval }}
+                  </div>
+                }
+
+                <div class="p-col-12">
+                  <strong>Cantidad solicitada:</strong> ${{
+                  loanRequestInfo()?.cantidad_prestada | number: '1.2-2'
+                  }}
+                </div>
+
+                <div class="p-col-12">
+                  <strong>Fecha Inicial:</strong>
+                  {{ loanRequestInfo()?.fecha_inicial | date: 'longDate' }}
+                </div>
               </div>
-            }
-
-            <div class="p-col-12">
-              <strong>Cantidad solicitada:</strong> ${{
-                loanRequestInfo()?.cantidad_prestada | number: '1.2-2'
-              }}
-            </div>
-
-            <div class="p-col-12">
-              <strong>Fecha Inicial:</strong>
-              {{ loanRequestInfo()?.fecha_inicial | date: 'longDate' }}
-            </div>
-          </div>
-        </ng-template>
-      </p-card>
-      <!-- final de informacion -->
-      <button
-        class="w-full md:w-auto mt-3"
-        pButton
-        data-cy="cerrar"
-        type="button"
-        (click)="visible.set(false)"
-        label="Cerrar"></button>
-    } @else {
-      <p-card>
-        <h2 class="text-center">No se encontró información</h2>
-      </p-card>
-    }
-  </p-dialog>
-  <p-dialog
-    data-cy="dialog_result"
-    header="Escanea el QR para darte de alta"
-    [modal]="true"
-    [(visible)]="qrVisible"
-    [style]="{ width: '30rem' }"
-    [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
-    <img [src]="qrImage" class="mb-3 w-full" alt="logo" />
-    <p>
-      También puedes acceder desde este link:
-      <a [href]="'https://wa.me/521' + phoneNumber + '?text=ALTA'">ALTA</a>
-    </p>
-  </p-dialog>
-</div>
+            </ng-template>
+          </p-card>
+          <!-- final de informacion -->
+          <button
+            class="w-full md:w-auto mt-3"
+            pButton
+            data-cy="cerrar"
+            type="button"
+            (click)="visible.set(false)"
+          label="Cerrar"></button>
+        } @else {
+          <p-card>
+            <h2 class="text-center">No se encontró información</h2>
+          </p-card>
+        }
+      </p-dialog>
+      <p-dialog
+        data-cy="dialog_result"
+        header="Escanea el QR para darte de alta"
+        [modal]="true"
+        [(visible)]="qrVisible"
+        [style]="{ width: '30rem' }"
+        [breakpoints]="{ '1124px': '65vw', '575px': '90vw' }">
+        <img [src]="qrImage" class="mb-3 w-full" alt="logo" />
+        <p>
+          También puedes acceder desde este link:
+          <a [href]="'https://wa.me/521' + phoneNumber + '?text=ALTA'">ALTA</a>
+        </p>
+      </p-dialog>
+    </div>
