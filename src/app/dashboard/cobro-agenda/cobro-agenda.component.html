@@ -1,23 +1,5 @@
-<p-button
-  label="Restaurar"
-  [outlined]="true"
-  icon="pi pi-filter-slash"
-  (onClick)="resetTable(dt)" />
-<p-button
-  label="Actualizar"
-  icon="pi pi-refresh"
-  (click)="refreshData()"
-  [loading]="loading" />
-<p-dropdown
-  [options]="estatusPagoOptions"
-  (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
-  placeholder="Estatus - Todos"
-  [showClear]="true">
-  <ng-template let-option pTemplate="item">
-    <p-tag [value]="option.value" [severity]="getSeverity(option.label)" />
-  </ng-template>
-</p-dropdown>
 <p-table
+  styleClass="p-2"
   #dt
   sortMode="multiple"
   [value]="datosAgenda"
@@ -46,22 +28,25 @@
           <input
             pInputText
             type="text"
+            pTooltip="Actualmente busca por ID, Cliente, Folio, Día de pago, Monto de préstamo, Monto de pago, Saldo pendiente y Estatus"
+            tooltipPosition="bottom"
             placeholder="Buscar en todo..."
             (input)="onGlobalFilter($event, dt)" />
         </p-iconField>
       </div>
+      <p-button icon="pi pi-bars" (onClick)="showFilterMenu()"></p-button>
     </div>
   </ng-template>
 
   <ng-template pTemplate="header">
     <tr>
-      <th pSortableColumn="id" style="min-width: 8rem">
+      <th pSortableColumn="id_cliente" style="min-width: 8rem">
         <div class="flex justify-content-between align-items-center">
-          ID
-          <p-sortIcon field="id" />
+          ID cliente
+          <p-sortIcon field="id_cliente" />
           <p-columnFilter
             type="text"
-            field="id"
+            field="id_cliente"
             display="menu"
             showOperator="false"
             showAddButton="false"
@@ -82,9 +67,35 @@
             class="ml-auto" />
         </div>
       </th>
-      <th pSortableColumn="folioDeCredito" style="min-width: 13rem">
+      <th pSortableColumn="nombreGrupo" style="min-width: 15rem">
         <div class="flex justify-content-between align-items-center">
-          Folio de crédito
+          Grupo
+          <p-sortIcon field="nombreGrupo" />
+          <p-columnFilter
+            type="text"
+            field="nombreGrupo"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="nombreGerencia" style="min-width: 15rem">
+        <div class="flex justify-content-between align-items-center">
+          Gerencia
+          <p-sortIcon field="nombreGerencia" />
+          <p-columnFilter
+            type="text"
+            field="nombreGerencia"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="folioDeCredito" style="min-width: 8rem">
+        <div class="flex justify-content-between align-items-center">
+          Folio
           <p-sortIcon field="folioDeCredito" />
           <p-columnFilter
             type="text"
@@ -163,7 +174,7 @@
       </th>
       <th pSortableColumn="fechaUltimoPago" style="min-width: 10rem">
         <div class="flex justify-content-between align-items-center">
-          Fecha Pago
+          Fecha último pago
           <p-sortIcon field="fechaUltimoPago" />
           <p-columnFilter
             type="date"
@@ -174,7 +185,7 @@
       </th>
       <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
         <div class="flex justify-content-between align-items-center">
-          Vencimiento
+          Vencimiento de crédito
           <p-sortIcon field="fechaVencimiento" />
           <p-columnFilter
             type="date"
@@ -189,10 +200,20 @@
 
   <ng-template pTemplate="body" let-cobro>
     <tr [pSelectableRow]="cobro">
-      <td>{{ cobro.id }}</td>
+      <td>{{ cobro.id_cliente }}</td>
       <td>
         <div class="flex flex-column">
           <span class="text-sm">{{ cobro.nombreCliente }}</span>
+        </div>
+      </td>
+      <td>
+        <div class="flex flex-column">
+          <span class="text-sm">{{ cobro.nombreGrupo }}</span>
+        </div>
+      </td>
+      <td>
+        <div class="flex flex-column">
+          <span class="text-sm">{{ cobro.nombreGerencia }}</span>
         </div>
       </td>
       <td>
@@ -291,3 +312,29 @@
     </div>
   </ng-template>
 </p-table>
+<p-sidebar [(visible)]="filterMenuOpen" position="right">
+  <ng-template pTemplate="header">
+    <div class="flex align-items-center gap-2">
+      <span class="font-bold">{{ 'Filtrado general' | titlecase }}</span>
+    </div>
+  </ng-template>
+  <p-button
+    label="Restaurar"
+    [outlined]="true"
+    icon="pi pi-filter-slash"
+    (onClick)="resetTable(dt)" />
+  <p-button
+    label="Actualizar"
+    icon="pi pi-refresh"
+    (click)="refreshData()"
+    [loading]="loading" />
+  <p-dropdown
+    [options]="estatusPagoOptions"
+    (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
+    placeholder="Estatus - Todos"
+    [showClear]="true">
+    <ng-template let-option pTemplate="item">
+      <p-tag [value]="option.value" [severity]="getSeverity(option.label)" />
+    </ng-template>
+  </p-dropdown>
+</p-sidebar>
