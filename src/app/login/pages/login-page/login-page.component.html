@@ -32,52 +32,52 @@
           loginForm.controls['user'].valid || !loginForm.controls['user'].dirty
         "
         >El usuario es requerido.</small
-        >
-        <span class="p-float-label mt-5">
-          <input
-            pInputText
-            data-cy="password-input"
-            formControlName="password"
-            id="password"
-            type="password"
-            class="w-full"
-            aria-errormessage="user-error" />
-          <label for="password">Contraseña:</label>
-        </span>
-        <small
-          id="user-error"
-          class="text-red-500"
+      >
+      <span class="p-float-label mt-5">
+        <input
+          pInputText
+          data-cy="password-input"
+          formControlName="password"
+          id="password"
+          type="password"
+          class="w-full"
+          aria-errormessage="user-error" />
+        <label for="password">Contraseña:</label>
+      </span>
+      <small
+        id="user-error"
+        class="text-red-500"
         [hidden]="
           loginForm.controls['password'].valid ||
           !loginForm.controls['password'].dirty
         "
-          >La contraseña es requerida.</small
-          >
-          <button
-            pButton
-            data-cy="login-button"
-            class="mt-5 w-full"
-            type="submit"
-            label="Acceder"
-            [loading]="loading"
-          [disabled]="!loginForm.valid"></button>
-          @if (error) {
-            <p class="text-red-500 text-center mb-0" id="error-message">
-              {{ error }}.
-            </p>
-          }
-        </p-panel>
-        @if (isProdEnv !== 'true') {
-          <pre>
+        >La contraseña es requerida.</small
+      >
+      <button
+        pButton
+        data-cy="login-button"
+        class="mt-5 w-full"
+        type="submit"
+        label="Acceder"
+        [loading]="loading"
+        [disabled]="!loginForm.valid"></button>
+      @if (error) {
+        <p class="text-red-500 text-center mb-0" id="error-message">
+          {{ error }}.
+        </p>
+      }
+    </p-panel>
+    @if (isProdEnv !== 'true') {
+      <pre>
             Entorno actual: {{ environmentName }}
             </pre
-            >
-          }
-          <p-button
-            label="regresar"
-            type="button"
-          (onClick)="goToLanding()"></p-button>
-        </form>
-      </div>
-      <p-toast
-        [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />
+      >
+    }
+    <p-button
+      label="regresar"
+      type="button"
+      (onClick)="goToLanding()"></p-button>
+  </form>
+</div>
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />

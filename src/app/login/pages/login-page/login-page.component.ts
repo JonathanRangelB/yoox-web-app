@@ -26,8 +26,8 @@ import { MessageService } from 'primeng/api';
     ButtonModule,
     PanelModule,
     InputTextModule,
-    ToastModule
-],
+    ToastModule,
+  ],
   providers: [MessageService],
 })
 export class LoginPageComponent implements OnInit {

@@ -42,8 +42,8 @@ import { ResultadosBusquedaCliente } from '../../types/loan-request.interface';
     ButtonModule,
     TableModule,
     ToastModule,
-    TooltipModule
-],
+    TooltipModule,
+  ],
   providers: [MessageService],
   templateUrl: './busqueda-clientes.component.html',
   styleUrls: ['./busqueda-clientes.component.css'],
