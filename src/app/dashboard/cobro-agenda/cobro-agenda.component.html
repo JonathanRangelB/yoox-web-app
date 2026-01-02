@@ -337,26 +337,100 @@
 <p-sidebar [(visible)]="filterMenuOpen" position="right">
   <ng-template pTemplate="header">
     <div class="flex align-items-center gap-2">
-      <span class="font-bold">{{ 'Filtrado general' | titlecase }}</span>
+      <span class="font-bold">{{ 'Filtrado' | titlecase }}</span>
     </div>
   </ng-template>
-  <p-button
-    label="Restaurar"
-    [outlined]="true"
-    icon="pi pi-filter-slash"
-    (onClick)="resetTable(dt)" />
-  <p-button
-    label="Actualizar"
-    icon="pi pi-refresh"
-    (click)="refreshData()"
-    [loading]="loading" />
-  <p-dropdown
-    [options]="estatusPagoOptions"
-    (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
-    placeholder="Estatus - Todos"
-    [showClear]="true">
-    <ng-template let-option pTemplate="item">
-      <p-tag [value]="option.value" [severity]="getSeverity(option.label)" />
-    </ng-template>
-  </p-dropdown>
+  <div class="p-3">
+    @if (this.currentUser?.ROL?.toLowerCase() !== 'cobrador') {
+      <div class="mb-3">
+        <div class="flex align-items-center gap-2">
+          <span class="font-bold"
+            >{{ 'Menú administrativo' | titlecase }}
+            <i class="pi pi-id-card"></i
+          ></span>
+        </div>
+        <label class="block my-2">Usuario</label>
+        <p-dropdown
+          [(ngModel)]="selectedUser"
+          [options]="users()"
+          placeholder="Seleccione un usuario"
+          optionLabel="NOMBRE"
+          id="ID"
+          styleClass="w-full"
+          filter="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="10"
+          [showClear]="true"
+          (onChange)="onSelectedUser($event)">
+        </p-dropdown>
+      </div>
+
+      <div class="mb-3">
+        <label class="block mb-2">Grupo</label>
+        <p-dropdown
+          [(ngModel)]="selectedUser"
+          [options]="users()"
+          placeholder="Seleccione un grupo"
+          optionLabel="NOMBRE"
+          id="ID"
+          styleClass="w-full"
+          filter="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="10"
+          [showClear]="true"
+          (onChange)="onSelectedUser($event)">
+        </p-dropdown>
+      </div>
+
+      <div class="mb-3">
+        <label class="block mb-2">Gerencia</label>
+        <p-dropdown
+          [(ngModel)]="selectedUser"
+          [options]="users()"
+          placeholder="Seleccione una gerencia"
+          optionLabel="NOMBRE"
+          id="ID"
+          styleClass="w-full"
+          filter="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="10"
+          [showClear]="true"
+          (onChange)="onSelectedUser($event)">
+        </p-dropdown>
+      </div>
+      <p-divider />
+    }
+
+    <div class="mb-3 flex flex-column gap-2">
+      <div class="flex align-items-center gap-2">
+        <span class="font-bold"
+          >Acciones de la tabla <i class="pi pi-table"></i
+        ></span>
+      </div>
+      <p-dropdown
+        [options]="estatusPagoOptions"
+        (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
+        placeholder="Estatus - Todos"
+        styleClass="w-full"
+        [showClear]="true">
+        <ng-template let-option pTemplate="item">
+          <p-tag
+            [value]="option.value"
+            [severity]="getSeverity(option.label)" />
+        </ng-template>
+      </p-dropdown>
+      <p-button
+        label="Restaurar"
+        styleClass="w-full"
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        (onClick)="resetTable(dt)" />
+      <p-button
+        label="Recargar datos"
+        styleClass="w-full"
+        icon="pi pi-refresh"
+        (click)="refreshData()"
+        [loading]="loading" />
+    </div>
+  </div>
 </p-sidebar>

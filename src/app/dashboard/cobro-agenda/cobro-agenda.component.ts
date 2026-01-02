@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -11,6 +11,8 @@ import { InputSwitchModule } from 'primeng/inputswitch';
 import { FormsModule } from '@angular/forms';
 import { SidebarModule } from 'primeng/sidebar';
 import { TooltipModule } from 'primeng/tooltip';
+import { DividerModule } from 'primeng/divider';
+import { getUserFromLocalStorage } from 'src/app/shared/utils/functions.utils';
 
 interface registroCobranza {
   id_cliente: number;
@@ -48,6 +50,7 @@ interface registroCobranza {
     FormsModule,
     SidebarModule,
     TooltipModule,
+    DividerModule,
   ],
   templateUrl: './cobro-agenda.component.html',
   styleUrls: ['./cobro-agenda.component.css'],
@@ -58,6 +61,9 @@ export class CobroAgendaComponent implements OnInit {
   respaldoDatosAgenda: registroCobranza[] = [];
   loading: boolean = false;
   filterMenuOpen: boolean = false;
+  users = signal<string[]>([]);
+  selectedUser: string = '';
+  currentUser = getUserFromLocalStorage();
 
   estatusPagoOptions = [
     { label: 'Pendiente', value: 'pendiente' },
@@ -223,5 +229,9 @@ export class CobroAgendaComponent implements OnInit {
 
   showFilterMenu() {
     this.filterMenuOpen = !this.filterMenuOpen;
+  }
+  onSelectedUser(event: any) {
+    alert('no implementado' + event);
+    return;
   }
 }
