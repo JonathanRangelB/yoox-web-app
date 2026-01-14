@@ -276,6 +276,7 @@
               pInputText
               oninput="this.value = this.value.toUpperCase()"
               id="nombre_cliente"
+              maxlength="50"
               aria-describedby="nombre_cliente-help" />
             <small
               class="mb-2 text-red-500"
@@ -291,6 +292,7 @@
               pInputText
               oninput="this.value = this.value.toUpperCase()"
               id="apellido_paterno_cliente"
+              maxlength="50"
               aria-describedby="apellido_paterno_cliente-help" />
             <small
               class="mb-2 text-red-500"
@@ -306,6 +308,7 @@
               pInputText
               oninput="this.value = this.value.toUpperCase()"
               id="apellido_materno_cliente"
+              maxlength="50"
               aria-describedby="apellido_materno_cliente-help" />
             <small
               id="apellido_materno_cliente-help"
@@ -326,6 +329,7 @@
               unmask="true"
               showClear="true"
               [autoClear]="false"
+              maxlength="15"
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
             <small id="telefono_fijo_cliente-help" class="mb-2 text-red-500">
@@ -356,6 +360,7 @@
               mask="999-999-9999"
               unmask="true"
               showClear="true"
+              maxlength="16"
               [autoClear]="false"
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
@@ -382,6 +387,7 @@
               pInputText
               formControlName="correo_electronico_cliente"
               id="correo_electronico_cliente"
+              maxlength="100"
               aria-describedby="correo_electronico_cliente-help" />
             <small
               id="correo_electronico_cliente-help"
@@ -396,6 +402,7 @@
               pInputText
               formControlName="ocupacion_cliente"
               id="ocupacion_cliente"
+              maxlength="50"
               aria-describedby="ocupacion_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -479,6 +486,7 @@
               pInputText
               formControlName="nombre_calle_cliente"
               id="nombre_calle_cliente"
+              maxlength="50"
               aria-describedby="nombre_calle_cliente-help" />
             <small
               id="nombre_calle_cliente-help"
@@ -495,6 +503,7 @@
               id="numero_exterior_cliente"
               showClear="true"
               pKeyFilter="int"
+              maxlength="6"
               aria-describedby="numero_exterior_cliente-help" />
             <small
               id="numero_exterior_cliente-help"
@@ -511,6 +520,7 @@
               id="numero_interior_cliente"
               inputId="numero_interior_cliente"
               showClear="true"
+              maxlength="6"
               aria-describedby="numero_interior_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -541,6 +551,7 @@
               pInputText
               formControlName="municipio_cliente"
               id="municipio_cliente"
+              maxlength="50"
               aria-describedby="municipio_cliente-help" />
             <small
               id="municipio_cliente-help"
@@ -688,6 +699,7 @@
                 pInputText
                 oninput="this.value = this.value.toUpperCase()"
                 id="nombre_aval"
+                maxlength="50"
                 aria-describedby="nombre_aval-help" />
               <small
                 class="mb-2 text-red-500"
@@ -703,6 +715,7 @@
                 pInputText
                 oninput="this.value = this.value.toUpperCase()"
                 id="apellido_paterno_aval"
+                maxlength="50"
                 aria-describedby="apellido_paterno_aval-help" />
               <small
                 class="mb-2 text-red-500"
@@ -718,6 +731,7 @@
                 pInputText
                 oninput="this.value = this.value.toUpperCase()"
                 id="apellido_materno_aval"
+                maxlength="50"
                 aria-describedby="apellido_materno_aval-help" />
               <small
                 id="apellido_materno_aval-help"
@@ -738,6 +752,7 @@
                 unmask="true"
                 showClear="true"
                 [autoClear]="false"
+                maxlength="15"
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
               <small id="telefono_fijo_aval-help" class="mb-2 text-red-500">
@@ -767,6 +782,7 @@
                 minlength="10"
                 unmask="true"
                 showClear="true"
+                maxlength="16"
                 [autoClear]="false"
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
@@ -791,6 +807,7 @@
                 pInputText
                 formControlName="correo_electronico_aval"
                 id="correo_electronico_aval"
+                maxlength="100"
                 aria-describedby="correo_electronico_aval-help" />
               <small
                 id="correo_electronico_aval-help"
@@ -805,6 +822,7 @@
                 pInputText
                 formControlName="ocupacion_aval"
                 id="ocupacion_aval"
+                maxlength="50"
                 aria-describedby="ocupacion_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -883,6 +901,7 @@
                 pInputText
                 formControlName="nombre_calle_aval"
                 id="nombre_calle_aval"
+                maxlength="50"
                 aria-describedby="nombre_calle_aval-help" />
               <small
                 id="nombre_calle_aval-help"
@@ -899,6 +918,7 @@
                 formControlName="numero_exterior_aval"
                 showClear="true"
                 pKeyFilter="int"
+                maxlength="6"
                 inputId="numero_exterior_aval"
                 aria-describedby="numero_exterior_aval-help" />
               <small
@@ -916,6 +936,7 @@
                 id="numero_interior_aval"
                 inputId="numero_interior_aval"
                 showClear="true"
+                maxlength="6"
                 aria-describedby="numero_interior_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -946,6 +967,7 @@
                 pInputText
                 formControlName="municipio_aval"
                 id="municipio_aval"
+                maxlength="50"
                 aria-describedby="municipio_aval-help" />
               <small
                 id="municipio_aval-help"
