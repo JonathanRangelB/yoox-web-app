@@ -128,24 +128,18 @@ export class CobroAgendaComponent implements OnInit {
 
   onSelectedUser(event: any) {
     this.selectedUser = event.value;
-    // this.groupDropdown()?.clear();
-    // this.managementDropdown()?.clear();
     this.selectedGroup = undefined;
     this.selectedManagement = undefined;
   }
 
   onSelectedGroup(event: any) {
     this.selectedGroup = event.value;
-    // this.userDropdown()?.clear();
-    // this.managementDropdown()?.clear();
     this.selectedUser = undefined;
     this.selectedManagement = undefined;
   }
 
   onSelectedManagement(event: any) {
     this.selectedManagement = event.value;
-    // this.userDropdown()?.clear();
-    // this.groupDropdown()?.clear();
     this.selectedUser = undefined;
     this.selectedGroup = undefined;
   }
