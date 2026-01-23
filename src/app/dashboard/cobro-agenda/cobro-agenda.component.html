@@ -17,7 +17,6 @@
     'montoPrestamo',
     'montoPago',
     'saldoPendiente',
-    'estatusPago',
   ]"
   scrollHeight="flex">
   <ng-template pTemplate="caption">
@@ -30,7 +29,7 @@
           <input
             pInputText
             type="text"
-            pTooltip="Actualmente busca por ID, Cliente, Folio, Día de pago, Monto de préstamo, Monto de pago, Saldo pendiente y Estatus"
+            pTooltip="Actualmente busca por ID, Cliente, Grupo, Gerencia, Folio, Día de pago, Monto de préstamo, Monto de pago y Saldo pendiente"
             tooltipPosition="bottom"
             placeholder="Buscar en todo..."
             (input)="onGlobalFilter($event, dt)" />
@@ -216,7 +215,6 @@
             class="ml-auto" />
         </div>
       </th>
-      <th style="min-width: 8rem">Estatus</th>
     </tr>
   </ng-template>
 
@@ -281,11 +279,6 @@
           cobro.fechaVencimiento | date: 'dd/MM/yyyy'
         }}</span>
       </td>
-      <td>
-        <p-tag
-          [value]="getEstatusLabel(cobro.estatusPago)"
-          [severity]="getEstatusSeverity(cobro.estatusPago)" />
-      </td>
     </tr>
   </ng-template>
 
@@ -303,41 +296,15 @@
   <ng-template pTemplate="summary">
     <div class="flex justify-content-between align-items-center">
       <span class="text-sm text-600">
-        Total: {{ datosAgenda.length || 0 }}
+        Registros: {{ datosAgenda.length || 0 }}
       </span>
-      <div class="flex gap-2">
-        <span class="text-sm">
-          <span class="text-green-500 font-weight-bold">
-            {{ getCountByEstatus('pagado') }}
-          </span>
-          Pagados
-        </span>
-        <span class="text-sm">
-          <span class="text-blue-500 font-weight-bold">
-            {{ getCountByEstatus('pendiente') }}
-          </span>
-          Pendientes
-        </span>
-        <span class="text-sm">
-          <span class="text-red-500 font-weight-bold">
-            {{ getCountByEstatus('vencido') }}
-          </span>
-          Vencidos
-        </span>
-        <span class="text-sm">
-          <span class="text-orange-500 font-weight-bold">
-            {{ getCountByEstatus('parcial') }}
-          </span>
-          Parciales
-        </span>
-      </div>
     </div>
   </ng-template>
 </p-table>
 <p-sidebar [(visible)]="filterMenuOpen" position="right">
   <ng-template pTemplate="header">
     <div class="flex align-items-center gap-2">
-      <span class="font-bold">{{ 'Filtrado' | titlecase }}</span>
+      <span class="font-bold">{{ 'Filtrado General' | titlecase }}</span>
     </div>
   </ng-template>
   <div class="p-3">
@@ -368,8 +335,8 @@
       <div class="mb-3">
         <label class="block mb-2">Grupo</label>
         <p-dropdown
-          [(ngModel)]="selectedUser"
-          [options]="users()"
+          [(ngModel)]="selectedGroup"
+          [options]="groups()"
           placeholder="Seleccione un grupo"
           optionLabel="NOMBRE"
           id="ID"
@@ -378,15 +345,15 @@
           [virtualScroll]="true"
           [virtualScrollItemSize]="10"
           [showClear]="true"
-          (onChange)="onSelectedUser($event)">
+          (onChange)="onSelectedGroup($event)">
         </p-dropdown>
       </div>
 
       <div class="mb-3">
         <label class="block mb-2">Gerencia</label>
         <p-dropdown
-          [(ngModel)]="selectedUser"
-          [options]="users()"
+          [(ngModel)]="selectedManagement"
+          [options]="management()"
           placeholder="Seleccione una gerencia"
           optionLabel="NOMBRE"
           id="ID"
@@ -395,7 +362,7 @@
           [virtualScroll]="true"
           [virtualScrollItemSize]="10"
           [showClear]="true"
-          (onChange)="onSelectedUser($event)">
+          (onChange)="onSelectedManagement($event)">
         </p-dropdown>
       </div>
       <p-divider />
@@ -407,18 +374,6 @@
           >Acciones de la tabla <i class="pi pi-table"></i
         ></span>
       </div>
-      <p-dropdown
-        [options]="estatusPagoOptions"
-        (onChange)="dt.filter($event.value, 'estatusPago', 'equals')"
-        placeholder="Estatus - Todos"
-        styleClass="w-full"
-        [showClear]="true">
-        <ng-template let-option pTemplate="item">
-          <p-tag
-            [value]="option.value"
-            [severity]="getSeverity(option.label)" />
-        </ng-template>
-      </p-dropdown>
       <p-button
         label="Restaurar"
         styleClass="w-full"

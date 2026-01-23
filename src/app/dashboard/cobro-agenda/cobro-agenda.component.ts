@@ -1,4 +1,4 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
 import { DropdownModule } from 'primeng/dropdown';
@@ -13,26 +13,12 @@ import { SidebarModule } from 'primeng/sidebar';
 import { TooltipModule } from 'primeng/tooltip';
 import { DividerModule } from 'primeng/divider';
 import { getUserFromLocalStorage } from 'src/app/shared/utils/functions.utils';
-
-interface registroCobranza {
-  id_cliente: number;
-  nombreCliente: string;
-  nombreGrupo: string;
-  nombreGerencia: string;
-  folioDeCredito: string;
-  diaDePago: string;
-  plazo: number;
-  montoPrestamo: number;
-  montoPago: number;
-  fechaUltimoPago: string | null;
-  pagoActual: number;
-  pagosRestante: number;
-  totalPagos: number;
-  saldoPendiente: number;
-  numeroAtrasos: number;
-  fechaVencimiento: string;
-  estatusPago: string;
-}
+import { AgendaService } from './services/agenda.service';
+import {
+  AgendaDeCobro,
+  DatosAgenda,
+  Group,
+} from './interfaces/cobro-agenda.interface';
 
 @Component({
   selector: 'app-cobro-agenda',
@@ -56,28 +42,19 @@ interface registroCobranza {
   styleUrls: ['./cobro-agenda.component.css'],
 })
 export class CobroAgendaComponent implements OnInit {
-  selectedRecord: registroCobranza | null = null;
-  datosAgenda: registroCobranza[] = [];
-  respaldoDatosAgenda: registroCobranza[] = [];
+  agendaService = inject(AgendaService);
+  selectedRecord: DatosAgenda | null = null;
+  datosAgenda: DatosAgenda[] = [];
+  respaldoDatosAgenda: DatosAgenda[] = [];
   loading: boolean = false;
   filterMenuOpen: boolean = false;
-  users = signal<string[]>([]);
-  selectedUser: string = '';
+  users = signal<Group[]>([]);
+  selectedUser: Group | undefined = undefined;
   currentUser = getUserFromLocalStorage();
-
-  estatusPagoOptions = [
-    { label: 'Pendiente', value: 'pendiente' },
-    { label: 'Pagado', value: 'pagado' },
-    { label: 'Vencido', value: 'vencido' },
-    { label: 'Parcial', value: 'parcial' },
-  ];
-
-  metodoPagoOptions = [
-    { label: 'Efectivo', value: 'efectivo' },
-    { label: 'Transferencia', value: 'transferencia' },
-    { label: 'Tarjeta', value: 'tarjeta' },
-    { label: 'Depósito', value: 'deposito' },
-  ];
+  groups = signal<Group[]>([]);
+  selectedGroup: Group | undefined = undefined;
+  management = signal<Group[]>([]);
+  selectedManagement: Group | undefined = undefined;
 
   ngOnInit(): void {
     this.loadCobrosAgenda();
@@ -86,108 +63,24 @@ export class CobroAgendaComponent implements OnInit {
   loadCobrosAgenda(): void {
     this.loading = true;
 
-    setTimeout(() => {
-      this.datosAgenda = [
-        {
-          id_cliente: 1,
-          nombreCliente: 'Jonathan Rangel Bernal Bernal Bernal',
-          nombreGrupo: 'Planeacion Agustin',
-          nombreGerencia: 'Gerencia Guillermo',
-          folioDeCredito: '00001A',
-          diaDePago: 'Lunes',
-          plazo: 14,
-          montoPrestamo: 10000,
-          montoPago: 1000,
-          fechaUltimoPago: null,
-          pagoActual: 5,
-          pagosRestante: 9,
-          totalPagos: 14,
-          saldoPendiente: 9000,
-          numeroAtrasos: 2,
-          fechaVencimiento: '2024-11-15',
-          estatusPago: 'pendiente',
+    this.agendaService
+      .getOutstandingCollectionsReport({
+        ...(this.selectedUser && {
+          userIdFilter: this.selectedUser.ID,
+        }),
+        ...(this.selectedGroup && {
+          groupIdFilter: this.selectedGroup.ID,
+        }),
+        ...(this.selectedManagement && {
+          managementIdFilter: this.selectedManagement.ID,
+        }),
+      })
+      .subscribe({
+        next: (data) => this.fillFiedlsWithData(data),
+        error: () => {
+          this.handleError();
         },
-        {
-          id_cliente: 2,
-          nombreCliente: 'María Guadalupe López García',
-          nombreGrupo: 'Planeacion Agustin',
-          nombreGerencia: 'Gerencia Guillermo',
-          folioDeCredito: '00002B',
-          diaDePago: 'Martes',
-          plazo: 10,
-          montoPrestamo: 8000,
-          montoPago: 1000,
-          fechaUltimoPago: '2025-12-02',
-          pagoActual: 8,
-          pagosRestante: 0,
-          totalPagos: 8,
-          saldoPendiente: 0,
-          numeroAtrasos: 0,
-          fechaVencimiento: '2025-12-02',
-          estatusPago: 'pagado',
-        },
-        {
-          id_cliente: 3,
-          nombreCliente: 'Carlos Alberto Hernández Ramírez',
-          nombreGrupo: 'Planeacion Agustin',
-          nombreGerencia: 'Gerencia Guillermo',
-          folioDeCredito: '00003A',
-          diaDePago: 'Miércoles',
-          plazo: 14,
-          montoPrestamo: 15000,
-          montoPago: 1500,
-          fechaUltimoPago: '2025-11-20',
-          pagoActual: 10,
-          pagosRestante: 4,
-          totalPagos: 14,
-          saldoPendiente: 6000,
-          numeroAtrasos: 1,
-          fechaVencimiento: '2025-12-18',
-          estatusPago: 'parcial',
-        },
-      ];
-
-      this.respaldoDatosAgenda = [...this.datosAgenda];
-      this.loading = false;
-    }, 1000);
-  }
-
-  getEstatusSeverity(
-    estatus: string
-  ): 'success' | 'info' | 'danger' | 'warning' | 'secondary' | 'contrast' {
-    switch (estatus) {
-      case 'pagado':
-        return 'success';
-      case 'pendiente':
-        return 'info';
-      case 'vencido':
-        return 'danger';
-      case 'parcial':
-        return 'warning';
-      default:
-        return 'info';
-    }
-  }
-
-  getCountByEstatus(estatus: string): number {
-    return this.datosAgenda.filter(
-      (c) => c.estatusPago.toUpperCase() === estatus.toUpperCase()
-    ).length;
-  }
-
-  getEstatusLabel(estatus: string): string {
-    switch (estatus) {
-      case 'pagado':
-        return 'Pagado';
-      case 'pendiente':
-        return 'Pendiente';
-      case 'vencido':
-        return 'Vencido';
-      case 'parcial':
-        return 'Parcial';
-      default:
-        return estatus;
-    }
+      });
   }
 
   formatCurrency(value: number): string {
@@ -230,8 +123,33 @@ export class CobroAgendaComponent implements OnInit {
   showFilterMenu() {
     this.filterMenuOpen = !this.filterMenuOpen;
   }
+
   onSelectedUser(event: any) {
-    alert('no implementado' + event);
-    return;
+    this.selectedUser = event.value;
+    this.loadCobrosAgenda();
+  }
+
+  onSelectedGroup(event: any) {
+    this.selectedGroup = event.value;
+    this.loadCobrosAgenda();
+  }
+
+  onSelectedManagement(event: any) {
+    this.selectedManagement = event.value;
+    this.loadCobrosAgenda();
+  }
+
+  fillFiedlsWithData(data: AgendaDeCobro) {
+    this.datosAgenda = data.datosAgenda;
+    this.respaldoDatosAgenda = [...data.datosAgenda];
+    this.users.set(data.usersList);
+    this.groups.set(data.groups);
+    this.management.set(data.management);
+    this.loading = false;
+  }
+
+  handleError() {
+    this.datosAgenda = [];
+    this.loading = false;
   }
 }
