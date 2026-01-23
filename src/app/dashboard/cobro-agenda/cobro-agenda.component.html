@@ -320,6 +320,7 @@
         <p-dropdown
           [(ngModel)]="selectedUser"
           [options]="users()"
+          #userDropdown
           placeholder="Seleccione un usuario"
           optionLabel="NOMBRE"
           id="ID"
@@ -337,6 +338,7 @@
         <p-dropdown
           [(ngModel)]="selectedGroup"
           [options]="groups()"
+          #groupdropdown
           placeholder="Seleccione un grupo"
           optionLabel="NOMBRE"
           id="ID"
@@ -354,6 +356,7 @@
         <p-dropdown
           [(ngModel)]="selectedManagement"
           [options]="management()"
+          #managementdropdown
           placeholder="Seleccione una gerencia"
           optionLabel="NOMBRE"
           id="ID"
@@ -365,6 +368,24 @@
           (onChange)="onSelectedManagement($event)">
         </p-dropdown>
       </div>
+
+      <div class="flex justify-content-center gap-2">
+        <p-button
+          label="Limpiar"
+          iconPos="right"
+          class="p-button-danger"
+          (click)="restoreDefaults()">
+        </p-button>
+        <p-button
+          label="Aplicar"
+          iconPos="right"
+          class="p-button-danger"
+          [loading]="loading"
+          [disabled]="loading"
+          (click)="requestAgendaData()">
+        </p-button>
+      </div>
+
       <p-divider />
     }
 
@@ -375,7 +396,7 @@
         ></span>
       </div>
       <p-button
-        label="Restaurar"
+        label="Restaurar filtros"
         styleClass="w-full"
         [outlined]="true"
         icon="pi pi-filter-slash"

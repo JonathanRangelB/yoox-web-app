@@ -1,7 +1,7 @@
-import { Component, inject, OnInit, signal } from '@angular/core';
+import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { TableModule } from 'primeng/table';
 import { InputTextModule } from 'primeng/inputtext';
-import { DropdownModule } from 'primeng/dropdown';
+import { Dropdown, DropdownModule } from 'primeng/dropdown';
 import { TagModule } from 'primeng/tag';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
@@ -55,14 +55,16 @@ export class CobroAgendaComponent implements OnInit {
   selectedGroup: Group | undefined = undefined;
   management = signal<Group[]>([]);
   selectedManagement: Group | undefined = undefined;
+  userDropdown = viewChild<Dropdown>('userDropdown');
+  groupDropdown = viewChild<Dropdown>('groupdropdown');
+  managementDropdown = viewChild<Dropdown>('managementdropdown');
 
   ngOnInit(): void {
-    this.loadCobrosAgenda();
+    this.requestAgendaData();
   }
 
-  loadCobrosAgenda(): void {
+  requestAgendaData(): void {
     this.loading = true;
-
     this.agendaService
       .getOutstandingCollectionsReport({
         ...(this.selectedUser && {
@@ -77,8 +79,8 @@ export class CobroAgendaComponent implements OnInit {
       })
       .subscribe({
         next: (data) => this.fillFiedlsWithData(data),
-        error: () => {
-          this.handleError();
+        error: (error) => {
+          this.handleError(error);
         },
       });
   }
@@ -96,7 +98,7 @@ export class CobroAgendaComponent implements OnInit {
   }
 
   refreshData(): void {
-    this.loadCobrosAgenda();
+    this.requestAgendaData();
   }
 
   getSeverity(status: string) {
@@ -126,17 +128,26 @@ export class CobroAgendaComponent implements OnInit {
 
   onSelectedUser(event: any) {
     this.selectedUser = event.value;
-    this.loadCobrosAgenda();
+    // this.groupDropdown()?.clear();
+    // this.managementDropdown()?.clear();
+    this.selectedGroup = undefined;
+    this.selectedManagement = undefined;
   }
 
   onSelectedGroup(event: any) {
     this.selectedGroup = event.value;
-    this.loadCobrosAgenda();
+    // this.userDropdown()?.clear();
+    // this.managementDropdown()?.clear();
+    this.selectedUser = undefined;
+    this.selectedManagement = undefined;
   }
 
   onSelectedManagement(event: any) {
     this.selectedManagement = event.value;
-    this.loadCobrosAgenda();
+    // this.userDropdown()?.clear();
+    // this.groupDropdown()?.clear();
+    this.selectedUser = undefined;
+    this.selectedGroup = undefined;
   }
 
   fillFiedlsWithData(data: AgendaDeCobro) {
@@ -148,8 +159,18 @@ export class CobroAgendaComponent implements OnInit {
     this.loading = false;
   }
 
-  handleError() {
+  restoreDefaults() {
+    this.userDropdown()?.clear();
+    this.groupDropdown()?.clear();
+    this.managementDropdown()?.clear();
+    this.selectedUser = undefined;
+    this.selectedGroup = undefined;
+    this.selectedManagement = undefined;
+  }
+
+  handleError(error: Error) {
     this.datosAgenda = [];
     this.loading = false;
+    console.error('Error loading data:', error.message);
   }
 }
