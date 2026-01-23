@@ -17,6 +17,8 @@
     'montoPrestamo',
     'montoPago',
     'saldoPendiente',
+    'numeroAtrasos',
+    'pagosRestante',
   ]"
   scrollHeight="flex">
   <ng-template pTemplate="caption">
@@ -29,7 +31,7 @@
           <input
             pInputText
             type="text"
-            pTooltip="Actualmente busca por ID, Cliente, Grupo, Gerencia, Folio, Día de pago, Monto de préstamo, Monto de pago y Saldo pendiente"
+            pTooltip="Actualmente busca por ID, Cliente, Grupo, Gerencia, Folio, Día de pago, Monto de préstamo, Monto de pago, Saldo pendiente, Pagos atrasados y Pagos restantes"
             tooltipPosition="bottom"
             placeholder="Buscar general..."
             (input)="onGlobalFilter($event, dt)" />
@@ -121,13 +123,13 @@
             class="ml-auto" />
         </div>
       </th>
-      <th pSortableColumn="plazo" style="min-width: 8rem">
+      <th pSortableColumn="totalSemanasPrestamo" style="min-width: 8rem">
         <div class="flex justify-content-between align-items-center">
           Plazo
-          <p-sortIcon field="plazo" />
+          <p-sortIcon field="totalSemanasPrestamo" />
           <p-columnFilter
             type="text"
-            field="plazo"
+            field="totalSemanasPrestamo"
             display="menu"
             showOperator="false"
             showAddButton="false"
@@ -223,12 +225,12 @@
         <div class="flex justify-content-between align-items-center">
           Fecha último pago
           <p-sortIcon field="fechaUltimoPago" />
-          <p-columnFilter
-            type="date"
-            field="fechaUltimoPago"
-            display="menu"
-            showOperator="false"
-            class="ml-auto" />
+          <!-- <p-columnFilter -->
+          <!--   type="date" -->
+          <!--   field="fechaUltimoPago" -->
+          <!--   display="menu" -->
+          <!--   showOperator="false" -->
+          <!--   class="ml-auto" /> -->
         </div>
       </th>
       <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
