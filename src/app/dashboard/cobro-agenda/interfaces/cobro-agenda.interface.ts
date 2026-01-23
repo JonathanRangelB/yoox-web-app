@@ -18,23 +18,23 @@ export interface AgendaDeCobro {
 }
 
 export interface DatosAgenda {
-  id_cliente: number;
-  nombreCliente: string;
-  nombreGrupo: string;
-  nombreGerencia: string;
-  folioDeCredito: string;
   diaDePago: string;
-  plazo: number;
-  montoPrestamo: number;
-  montoPago: number;
   fechaUltimoPago: Date;
+  fechaVencimiento: Date;
+  folioDeCredito: string;
+  id_cliente: number;
+  montoPago: number;
+  montoPrestamo: number;
+  nombreCliente: string;
+  nombreGerencia: string;
+  nombreGrupo: string;
+  numeroAtrasos: number;
   pagoActual: number;
   pagosRestante: number;
-  totalPagos: number;
+  plazo: number;
   saldoPendiente: number;
-  numeroAtrasos: number;
-  fechaVencimiento: Date;
-  estatusPago: string;
+  totalPagos: number;
+  totalSemanasPrestamo: number;
 }
 
 export interface Group {

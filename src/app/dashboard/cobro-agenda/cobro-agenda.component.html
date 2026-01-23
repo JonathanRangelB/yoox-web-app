@@ -8,7 +8,7 @@
   [rowsPerPageOptions]="[5, 10, 25, 50]"
   [loading]="loading"
   [globalFilterFields]="[
-    'id',
+    'id_cliente',
     'nombreCliente',
     'nombreGrupo',
     'nombreGerencia',
@@ -31,7 +31,7 @@
             type="text"
             pTooltip="Actualmente busca por ID, Cliente, Grupo, Gerencia, Folio, Día de pago, Monto de préstamo, Monto de pago y Saldo pendiente"
             tooltipPosition="bottom"
-            placeholder="Buscar en todo..."
+            placeholder="Buscar general..."
             (input)="onGlobalFilter($event, dt)" />
         </p-iconField>
       </div>
@@ -96,7 +96,7 @@
       </th>
       <th pSortableColumn="folioDeCredito" style="min-width: 8rem">
         <div class="flex justify-content-between align-items-center">
-          Folio
+          Folio Prestamo
           <p-sortIcon field="folioDeCredito" />
           <p-columnFilter
             type="text"
@@ -191,16 +191,44 @@
             class="ml-auto" />
         </div>
       </th>
+      <th pSortableColumn="numeroAtrasos" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          # Pagos Atrasados
+          <p-sortIcon field="numeroAtrasos" />
+          <p-columnFilter
+            type="text"
+            field="numeroAtrasos"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="pagosRestante" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Pagos Restantes
+          <p-sortIcon field="pagosRestante" />
+          <p-columnFilter
+            type="text"
+            field="pagosRestante"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
       <th pSortableColumn="fechaUltimoPago" style="min-width: 10rem">
         <div class="flex justify-content-between align-items-center">
           Fecha último pago
           <p-sortIcon field="fechaUltimoPago" />
-          <!-- <p-columnFilter -->
-          <!--   type="date" -->
-          <!--   field="fechaUltimoPago" -->
-          <!--   display="menu" -->
-          <!--   showOperator="false" -->
-          <!--   class="ml-auto" /> -->
+          <p-columnFilter
+            type="date"
+            field="fechaUltimoPago"
+            display="menu"
+            showOperator="false"
+            class="ml-auto" />
         </div>
       </th>
       <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
@@ -219,7 +247,7 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-cobro>
-    <tr [pSelectableRow]="cobro">
+    <tr>
       <td>{{ cobro.id_cliente }}</td>
       <td>
         <div class="flex flex-column">
@@ -245,7 +273,7 @@
         <span class="text-sm text-600">{{ cobro.diaDePago }}</span>
       </td>
       <td>
-        <span class="text-sm">{{ cobro.plazo }}</span>
+        <span class="text-sm">{{ cobro.totalSemanasPrestamo }}</span>
       </td>
       <td class="text-right">
         <span class="font-weight-bold">{{
@@ -265,9 +293,15 @@
       <td class="text-center">
         <span class="font-weight-bold"
           >{{ cobro.pagoActual }}/<span class="text-sm">{{
-            cobro.totalPagos
+            cobro.totalSemanasPrestamo
           }}</span></span
         >
+      </td>
+      <td>
+        <span class="text-sm text-600">{{ cobro.numeroAtrasos }}</span>
+      </td>
+      <td>
+        <span class="text-sm text-600">{{ cobro.pagosRestante }}</span>
       </td>
       <td>
         <span class="text-sm">{{
@@ -301,7 +335,7 @@
     </div>
   </ng-template>
 </p-table>
-<p-sidebar [(visible)]="filterMenuOpen" position="right">
+<p-sidebar [(visible)]="filterMenuOpen" position="right" #sidebar>
   <ng-template pTemplate="header">
     <div class="flex align-items-center gap-2">
       <span class="font-bold">{{ 'Filtrado General' | titlecase }}</span>
