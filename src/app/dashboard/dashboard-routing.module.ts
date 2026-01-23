@@ -36,7 +36,7 @@ const routes: Routes = [
       {
         path: 'cobro-agenda',
         loadComponent: () =>
-          import('./cobro-agenda/cobro-agenda.component').then(
+          import('../cobro-agenda/cobro-agenda.component').then(
             (c) => c.CobroAgendaComponent
           ),
       },
@@ -49,4 +49,4 @@ const routes: Routes = [
   imports: [RouterModule.forChild(routes)],
   exports: [RouterModule],
 })
-export class DashboardRoutingModule {}
+export class DashboardRoutingModule { }

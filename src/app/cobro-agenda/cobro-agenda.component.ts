@@ -13,14 +13,13 @@ import { Sidebar, SidebarModule } from 'primeng/sidebar';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
-
 import { AgendaService } from './services/agenda.service';
 import {
   AgendaDeCobro,
   DatosAgenda,
   Group,
 } from './interfaces/cobro-agenda.interface';
-import { getUserFromLocalStorage } from 'src/app/shared/utils/functions.utils';
+import { getUserFromLocalStorage } from '../shared/utils/functions.utils';
 
 @Component({
   selector: 'app-cobro-agenda',
