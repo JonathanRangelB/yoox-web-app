@@ -61,17 +61,23 @@
         label="Acceder"
         [loading]="loading"
         [disabled]="!loginForm.valid"></button>
-      <p *ngIf="error" class="text-red-500 text-center mb-0" id="error-message">
-        {{ error }}.
-      </p>
+      @if (error) {
+        <p class="text-red-500 text-center mb-0" id="error-message">
+          {{ error }}.
+        </p>
+      }
     </p-panel>
-    <pre *ngIf="isProdEnv !== 'true'">
-  Entorno actual: {{ environmentName }}
-  </pre
-    >
+    @if (isProdEnv !== 'true') {
+      <pre>
+            Entorno actual: {{ environmentName }}
+            </pre
+      >
+    }
     <p-button
       label="regresar"
       type="button"
       (onClick)="goToLanding()"></p-button>
   </form>
 </div>
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />

@@ -4,20 +4,26 @@
     class="mx-3"
     [style]="{ maxWidth: '720px', margin: '0 auto' }">
     <h3>Status: {{ status }}</h3>
-    <h3 *ngIf="id_loan">Folio de prestamo: {{ id_loan }}</h3>
+    @if (id_loan) {
+      <h3>Folio de prestamo: {{ id_loan }}</h3>
+    }
     <p>Folio de solicitud: {{ loanRequestId }}</p>
     <p>Carpeta de documentación: {{ customerFolderName }}</p>
     <p>Creado por: {{ nombre_agente }}</p>
     <p>Fecha de creación: {{ createdDate | date: 'medium' : 'UTC' }}</p>
-    <p *ngIf="modifiedBy">Modificado por: {{ modified_by_name }}</p>
-    <p *ngIf="modifiedDate">
-      Fecha de modificación: {{ modifiedDate | date: 'medium' : 'UTC' }}
-    </p>
+    @if (modifiedBy) {
+      <p>Modificado por: {{ modified_by_name }}</p>
+    }
+    @if (modifiedDate) {
+      <p>Fecha de modificación: {{ modifiedDate | date: 'medium' : 'UTC' }}</p>
+    }
 
-    <p *ngIf="closed_by_name">Cerrado por: {{ closed_by_name }}</p>
-    <p *ngIf="closedDate">
-      Fecha de cierre: {{ closedDate | date: 'medium' : 'UTC' }}
-    </p>
+    @if (closed_by_name) {
+      <p>Cerrado por: {{ closed_by_name }}</p>
+    }
+    @if (closedDate) {
+      <p>Fecha de cierre: {{ closedDate | date: 'medium' : 'UTC' }}</p>
+    }
   </p-card>
 }
 <form [formGroup]="mainForm" (ngSubmit)="onSubmit()">
@@ -57,18 +63,16 @@
               id="cantidad-help"
               class="mb-2 text-red-500"
               [hidden]="hideField('cantidad_prestada')">
-              <ng-container
-                *ngIf="mainForm.get('cantidad_prestada')?.errors?.['required']">
-                Cantidad requerida</ng-container
-              >
-              <ng-container
-                *ngIf="mainForm.get('cantidad_prestada')?.errors?.['min']">
+              @if (mainForm.get('cantidad_prestada')?.errors?.['required']) {
+                Cantidad requerida
+              }
+              @if (mainForm.get('cantidad_prestada')?.errors?.['min']) {
                 Cantidad minima de
                 {{
                   customLoanRefinanceAmount || customLoanAmount || minLoanAmount
                     | currency: 'MXN' : 'symbol' : '1.2-2'
-                }}</ng-container
-              >
+                }}
+              }
             </small>
           </div>
           <div class="col-12 sm:col-4 flex flex-column">
@@ -235,7 +239,6 @@
             inputId="habilitarCamposAval"
             class="ml-3"
             #switchBusqueda
-            [ngSwitch]="customerSearchVisible"
             (onChange)="toggleCustomerSearch()" />
         </div>
         @if (customerSearchVisible) {
@@ -273,6 +276,7 @@
               pInputText
               oninput="this.value = this.value.toUpperCase()"
               id="nombre_cliente"
+              maxlength="50"
               aria-describedby="nombre_cliente-help" />
             <small
               class="mb-2 text-red-500"
@@ -288,6 +292,7 @@
               pInputText
               oninput="this.value = this.value.toUpperCase()"
               id="apellido_paterno_cliente"
+              maxlength="50"
               aria-describedby="apellido_paterno_cliente-help" />
             <small
               class="mb-2 text-red-500"
@@ -303,6 +308,7 @@
               pInputText
               oninput="this.value = this.value.toUpperCase()"
               id="apellido_materno_cliente"
+              maxlength="50"
               aria-describedby="apellido_materno_cliente-help" />
             <small
               id="apellido_materno_cliente-help"
@@ -323,6 +329,7 @@
               unmask="true"
               showClear="true"
               [autoClear]="false"
+              maxlength="15"
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
             <small id="telefono_fijo_cliente-help" class="mb-2 text-red-500">
@@ -353,6 +360,7 @@
               mask="999-999-9999"
               unmask="true"
               showClear="true"
+              maxlength="16"
               [autoClear]="false"
               placeholder="999-999-9999"
               [style]="{ width: '100%' }" />
@@ -379,6 +387,7 @@
               pInputText
               formControlName="correo_electronico_cliente"
               id="correo_electronico_cliente"
+              maxlength="100"
               aria-describedby="correo_electronico_cliente-help" />
             <small
               id="correo_electronico_cliente-help"
@@ -393,6 +402,7 @@
               pInputText
               formControlName="ocupacion_cliente"
               id="ocupacion_cliente"
+              maxlength="50"
               aria-describedby="ocupacion_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -476,6 +486,7 @@
               pInputText
               formControlName="nombre_calle_cliente"
               id="nombre_calle_cliente"
+              maxlength="50"
               aria-describedby="nombre_calle_cliente-help" />
             <small
               id="nombre_calle_cliente-help"
@@ -492,6 +503,7 @@
               id="numero_exterior_cliente"
               showClear="true"
               pKeyFilter="int"
+              maxlength="6"
               aria-describedby="numero_exterior_cliente-help" />
             <small
               id="numero_exterior_cliente-help"
@@ -508,6 +520,7 @@
               id="numero_interior_cliente"
               inputId="numero_interior_cliente"
               showClear="true"
+              maxlength="6"
               aria-describedby="numero_interior_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -538,6 +551,7 @@
               pInputText
               formControlName="municipio_cliente"
               id="municipio_cliente"
+              maxlength="50"
               aria-describedby="municipio_cliente-help" />
             <small
               id="municipio_cliente-help"
@@ -583,22 +597,20 @@
             <small
               id="cp_cliente-help"
               class="mb-2 text-red-500"
-              [hidden]="hideField('formCliente.cp_cliente')"
-              ><ng-container
-                *ngIf="
-                  mainForm.get('formCliente.cp_cliente')?.errors?.['required']
-                ">
-                Código postal requerido</ng-container
-              >
-              <ng-container
-                *ngIf="
-                  mainForm.get('formCliente.cp_cliente')?.errors?.[
-                    'lenghtNotMatch'
-                  ]
-                ">
-                El número debe de tener 5 digitos</ng-container
-              ></small
-            >
+              [hidden]="hideField('formCliente.cp_cliente')">
+              @if (
+                mainForm.get('formCliente.cp_cliente')?.errors?.['required']
+              ) {
+                Código postal requerido
+              }
+              @if (
+                mainForm.get('formCliente.cp_cliente')?.errors?.[
+                  'lenghtNotMatch'
+                ]
+              ) {
+                El número debe de tener 5 digitos
+              }
+            </small>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="referencias_dom_cliente"
@@ -620,11 +632,10 @@
             <small
               id="gmaps_url_location-help"
               class="mb-2 text-red-500"
-              [hidden]="hideField('formCliente.gmaps_url_location')"
-              ><ng-container
-                *ngIf="mainForm.get('formCliente.gmaps_url_location')?.errors">
-                URL inválida</ng-container
-              >
+              [hidden]="hideField('formCliente.gmaps_url_location')">
+              @if (mainForm.get('formCliente.gmaps_url_location')?.errors) {
+                URL inválida
+              }
             </small>
           </div>
           <div class="col-12 sm:col-1 flex flex-column pl-0">
@@ -671,7 +682,6 @@
               inputId="habilitarCamposAval"
               class="ml-3"
               #switchBusquedaAval
-              [ngSwitch]="endorsmentSearchVisible"
               (onChange)="toggleEndorsmentSearch()" />
           </div>
           @if (endorsmentSearchVisible) {
@@ -689,6 +699,7 @@
                 pInputText
                 oninput="this.value = this.value.toUpperCase()"
                 id="nombre_aval"
+                maxlength="50"
                 aria-describedby="nombre_aval-help" />
               <small
                 class="mb-2 text-red-500"
@@ -704,6 +715,7 @@
                 pInputText
                 oninput="this.value = this.value.toUpperCase()"
                 id="apellido_paterno_aval"
+                maxlength="50"
                 aria-describedby="apellido_paterno_aval-help" />
               <small
                 class="mb-2 text-red-500"
@@ -719,6 +731,7 @@
                 pInputText
                 oninput="this.value = this.value.toUpperCase()"
                 id="apellido_materno_aval"
+                maxlength="50"
                 aria-describedby="apellido_materno_aval-help" />
               <small
                 id="apellido_materno_aval-help"
@@ -739,6 +752,7 @@
                 unmask="true"
                 showClear="true"
                 [autoClear]="false"
+                maxlength="15"
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
               <small id="telefono_fijo_aval-help" class="mb-2 text-red-500">
@@ -768,6 +782,7 @@
                 minlength="10"
                 unmask="true"
                 showClear="true"
+                maxlength="16"
                 [autoClear]="false"
                 placeholder="999-999-9999"
                 [style]="{ width: '100%' }" />
@@ -792,6 +807,7 @@
                 pInputText
                 formControlName="correo_electronico_aval"
                 id="correo_electronico_aval"
+                maxlength="100"
                 aria-describedby="correo_electronico_aval-help" />
               <small
                 id="correo_electronico_aval-help"
@@ -806,6 +822,7 @@
                 pInputText
                 formControlName="ocupacion_aval"
                 id="ocupacion_aval"
+                maxlength="50"
                 aria-describedby="ocupacion_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -884,6 +901,7 @@
                 pInputText
                 formControlName="nombre_calle_aval"
                 id="nombre_calle_aval"
+                maxlength="50"
                 aria-describedby="nombre_calle_aval-help" />
               <small
                 id="nombre_calle_aval-help"
@@ -900,6 +918,7 @@
                 formControlName="numero_exterior_aval"
                 showClear="true"
                 pKeyFilter="int"
+                maxlength="6"
                 inputId="numero_exterior_aval"
                 aria-describedby="numero_exterior_aval-help" />
               <small
@@ -917,6 +936,7 @@
                 id="numero_interior_aval"
                 inputId="numero_interior_aval"
                 showClear="true"
+                maxlength="6"
                 aria-describedby="numero_interior_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -947,6 +967,7 @@
                 pInputText
                 formControlName="municipio_aval"
                 id="municipio_aval"
+                maxlength="50"
                 aria-describedby="municipio_aval-help" />
               <small
                 id="municipio_aval-help"
@@ -993,18 +1014,14 @@
                 id="cp_aval-help"
                 class="mb-2 text-red-500"
                 [hidden]="hideField('formAval.cp_aval')">
-                <ng-container
-                  *ngIf="
-                    mainForm.get('formAval.cp_aval')?.errors?.['required']
-                  ">
-                  Código postal requerido</ng-container
-                >
-                <ng-container
-                  *ngIf="
-                    mainForm.get('formAval.cp_aval')?.errors?.['lenghtNotMatch']
-                  ">
-                  El número debe de tener 5 digitos</ng-container
-                >
+                @if (mainForm.get('formAval.cp_aval')?.errors?.['required']) {
+                  Código postal requerido
+                }
+                @if (
+                  mainForm.get('formAval.cp_aval')?.errors?.['lenghtNotMatch']
+                ) {
+                  El número debe de tener 5 digitos
+                }
               </small>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
@@ -1118,14 +1135,15 @@
                 [hidden]="status === 'ACTUALIZAR'"
                 (onClick)="updateProvitionalStatus('ACTUALIZAR')"
                 severity="warning"></p-button>
-              <p-button
-                *ngIf="currentUser?.ROL !== 'Líder de grupo'"
-                pTooltip="Se acepta la solicitud y se genera el prestamo de manera automatica."
-                tooltipPosition="bottom"
-                [hidden]="status === 'ACTUALIZAR'"
-                label="Aprobar"
-                (onClick)="updateProvitionalStatus('APROBADO')"
-                severity="success"></p-button>
+              @if (currentUser?.ROL !== 'Líder de grupo') {
+                <p-button
+                  pTooltip="Se acepta la solicitud y se genera el prestamo de manera automatica."
+                  tooltipPosition="bottom"
+                  [hidden]="status === 'ACTUALIZAR'"
+                  label="Aprobar"
+                  (onClick)="updateProvitionalStatus('APROBADO')"
+                  severity="success"></p-button>
+              }
             </div>
             @if (statusProvisional) {
               <p>

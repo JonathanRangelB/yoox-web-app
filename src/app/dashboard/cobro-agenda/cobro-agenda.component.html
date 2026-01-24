@@ -1,0 +1,448 @@
+<p-table
+  styleClass="p-2"
+  #dt
+  sortMode="multiple"
+  [value]="datosAgenda"
+  [paginator]="true"
+  [rows]="10"
+  [rowsPerPageOptions]="[5, 10, 25, 50]"
+  [loading]="loading"
+  [globalFilterFields]="[
+    'id_cliente',
+    'nombreCliente',
+    'nombreGrupo',
+    'nombreGerencia',
+    'folioDeCredito',
+    'diaDePago',
+    'montoPrestamo',
+    'montoPago',
+    'saldoPendiente',
+    'numeroAtrasos',
+    'pagosRestante',
+  ]"
+  scrollHeight="flex">
+  <ng-template pTemplate="caption">
+    <div class="flex justify-content-between align-items-center">
+      <div class="flex gap-2">
+        <p-iconField>
+          <p-inputIcon>
+            <i class="pi pi-search"></i>
+          </p-inputIcon>
+          <input
+            pInputText
+            type="text"
+            pTooltip="Actualmente busca por ID, Cliente, Grupo, Gerencia, Folio, Día de pago, Monto de préstamo, Monto de pago, Saldo pendiente, Pagos atrasados y Pagos restantes"
+            tooltipPosition="bottom"
+            placeholder="Busqueda general..."
+            (input)="onGlobalFilter($event, dt)" />
+        </p-iconField>
+      </div>
+      <p-button icon="pi pi-bars" (onClick)="showFilterMenu()"></p-button>
+    </div>
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      <th pSortableColumn="id_cliente" style="min-width: 8rem">
+        <div class="flex justify-content-between align-items-center">
+          ID cliente
+          <p-sortIcon field="id_cliente" />
+          <p-columnFilter
+            type="text"
+            field="id_cliente"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="nombreCliente" style="min-width: 15rem">
+        <div class="flex justify-content-between align-items-center">
+          Cliente
+          <p-sortIcon field="nombreCliente" />
+          <p-columnFilter
+            type="text"
+            field="nombreCliente"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="nombreGrupo" style="min-width: 15rem">
+        <div class="flex justify-content-between align-items-center">
+          Grupo
+          <p-sortIcon field="nombreGrupo" />
+          <p-columnFilter
+            type="text"
+            field="nombreGrupo"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="nombreGerencia" style="min-width: 15rem">
+        <div class="flex justify-content-between align-items-center">
+          Gerencia
+          <p-sortIcon field="nombreGerencia" />
+          <p-columnFilter
+            type="text"
+            field="nombreGerencia"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="folioDeCredito" style="min-width: 8rem">
+        <div class="flex justify-content-between align-items-center">
+          Folio Prestamo
+          <p-sortIcon field="folioDeCredito" />
+          <p-columnFilter
+            type="text"
+            field="folioDeCredito"
+            display="menu"
+            showOperator="false"
+            showOperator="false"
+            showAddButton="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="diaDePago" style="min-width: 12rem">
+        <div class="flex justify-content-between align-items-center">
+          Dia de pago
+          <p-sortIcon field="diaDePago" />
+          <p-columnFilter
+            type="text"
+            field="diaDePago"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="totalSemanasPrestamo" style="min-width: 8rem">
+        <div class="flex justify-content-between align-items-center">
+          Plazo
+          <p-sortIcon field="totalSemanasPrestamo" />
+          <p-columnFilter
+            type="text"
+            field="totalSemanasPrestamo"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="montoPrestamo" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Préstamo
+          <p-sortIcon field="montoPrestamo" />
+          <p-columnFilter
+            type="text"
+            field="montoPrestamo"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="saldoPendiente" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Saldo pendiente
+          <p-sortIcon field="saldoPendiente" />
+          <p-columnFilter
+            type="text"
+            field="saldoPendiente"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="montoPago" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Monto/Cantidad
+          <p-sortIcon field="montoPago" />
+          <p-columnFilter
+            type="text"
+            field="montoPago"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="pagoActual" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          # Pago
+          <p-sortIcon field="pagoActual" />
+          <p-columnFilter
+            type="text"
+            field="pagoActual"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="numeroAtrasos" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          # Pagos Atrasados
+          <p-sortIcon field="numeroAtrasos" />
+          <p-columnFilter
+            type="text"
+            field="numeroAtrasos"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="pagosRestante" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Pagos Restantes
+          <p-sortIcon field="pagosRestante" />
+          <p-columnFilter
+            type="text"
+            field="pagosRestante"
+            display="menu"
+            showOperator="false"
+            showAddButton="false"
+            showMatchModes="false"
+            class="ml-auto" />
+        </div>
+      </th>
+      <th pSortableColumn="fechaUltimoPago" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Fecha último pago
+          <p-sortIcon field="fechaUltimoPago" />
+          <!-- <p-columnFilter -->
+          <!--   type="date" -->
+          <!--   field="fechaUltimoPago" -->
+          <!--   display="menu" -->
+          <!--   showOperator="false" -->
+          <!--   class="ml-auto" /> -->
+        </div>
+      </th>
+      <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
+        <div class="flex justify-content-between align-items-center">
+          Vencimiento de crédito
+          <p-sortIcon field="fechaVencimiento" />
+          <!-- <p-columnFilter -->
+          <!--   type="date" -->
+          <!--   field="fechaVencimiento" -->
+          <!--   display="menu" -->
+          <!--   showOperator="false" -->
+          <!--   class="ml-auto" /> -->
+        </div>
+      </th>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-cobro>
+    <tr>
+      <td>{{ cobro.id_cliente }}</td>
+      <td>
+        <div class="flex flex-column">
+          <span class="text-sm">{{ cobro.nombreCliente }}</span>
+        </div>
+      </td>
+      <td>
+        <div class="flex flex-column">
+          <span class="text-sm">{{ cobro.nombreGrupo }}</span>
+        </div>
+      </td>
+      <td>
+        <div class="flex flex-column">
+          <span class="text-sm">{{ cobro.nombreGerencia }}</span>
+        </div>
+      </td>
+      <td>
+        <div class="flex flex-column">
+          <span class="text-sm">{{ cobro.folioDeCredito }}</span>
+        </div>
+      </td>
+      <td>
+        <span class="text-sm text-600">{{ cobro.diaDePago }}</span>
+      </td>
+      <td>
+        <span class="text-sm">{{ cobro.totalSemanasPrestamo }}</span>
+      </td>
+      <td class="text-right">
+        <span class="font-weight-bold">{{
+          formatCurrency(cobro.montoPrestamo)
+        }}</span>
+      </td>
+      <td class="text-right">
+        <span class="font-weight-bold text-orange-500">{{
+          formatCurrency(cobro.saldoPendiente)
+        }}</span>
+      </td>
+      <td class="text-right">
+        <span class="font-weight-bold">{{
+          formatCurrency(cobro.montoPago)
+        }}</span>
+      </td>
+      <td class="text-center">
+        <span class="font-weight-bold"
+          >{{ cobro.pagoActual }}/<span class="text-sm">{{
+            cobro.totalSemanasPrestamo
+          }}</span></span
+        >
+      </td>
+      <td>
+        <span class="text-sm text-600">{{ cobro.numeroAtrasos }}</span>
+      </td>
+      <td>
+        <span class="text-sm text-600">{{ cobro.pagosRestante }}</span>
+      </td>
+      <td>
+        <span class="text-sm">{{
+          (cobro.fechaUltimoPago | date: 'dd/MM/yyyy') || 'N/A'
+        }}</span>
+      </td>
+      <td>
+        <span class="text-sm">{{
+          cobro.fechaVencimiento | date: 'dd/MM/yyyy'
+        }}</span>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td colspan="16" class="text-center">
+        <div class="flex flex-column align-items-center">
+          <i class="pi pi-inbox text-4xl text-400 mb-3"></i>
+          <span class="text-600">No se encontraron registros de cobro</span>
+        </div>
+      </td>
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="summary">
+    <div class="flex justify-content-between align-items-center">
+      <span class="text-sm text-600">
+        Registros: {{ datosAgenda.length || 0 }}
+      </span>
+    </div>
+  </ng-template>
+</p-table>
+<p-sidebar [(visible)]="filterMenuOpen" position="right" #sidebar>
+  <ng-template pTemplate="header">
+    <div class="flex align-items-center gap-2">
+      <span class="font-bold">{{ 'Filtrado General' | titlecase }}</span>
+    </div>
+  </ng-template>
+  <div class="p-3">
+    @if (this.currentUser?.ROL?.toLowerCase() !== 'cobrador') {
+      <div class="mb-3">
+        <div class="flex align-items-center gap-2">
+          <span class="font-bold"
+            >{{ 'Menú administrativo' | titlecase }}
+            <i class="pi pi-id-card"></i
+          ></span>
+        </div>
+        <label class="block my-2">Usuario</label>
+        <p-dropdown
+          [(ngModel)]="selectedUser"
+          [options]="users()"
+          #userDropdown
+          placeholder="Seleccione un usuario"
+          optionLabel="NOMBRE"
+          id="ID"
+          styleClass="w-full"
+          filter="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="10"
+          [showClear]="true"
+          (onChange)="onSelectedUser($event)">
+        </p-dropdown>
+      </div>
+
+      <div class="mb-3">
+        <label class="block mb-2">Grupo</label>
+        <p-dropdown
+          [(ngModel)]="selectedGroup"
+          [options]="groups()"
+          #groupdropdown
+          placeholder="Seleccione un grupo"
+          optionLabel="NOMBRE"
+          id="ID"
+          styleClass="w-full"
+          filter="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="10"
+          [showClear]="true"
+          (onChange)="onSelectedGroup($event)">
+        </p-dropdown>
+      </div>
+
+      <div class="mb-3">
+        <label class="block mb-2">Gerencia</label>
+        <p-dropdown
+          [(ngModel)]="selectedManagement"
+          [options]="management()"
+          #managementdropdown
+          placeholder="Seleccione una gerencia"
+          optionLabel="NOMBRE"
+          id="ID"
+          styleClass="w-full"
+          filter="true"
+          [virtualScroll]="true"
+          [virtualScrollItemSize]="10"
+          [showClear]="true"
+          (onChange)="onSelectedManagement($event)">
+        </p-dropdown>
+      </div>
+
+      <div class="flex justify-content-center gap-2">
+        <p-button
+          label="Limpiar"
+          iconPos="right"
+          class="p-button-danger"
+          (click)="restoreDefaults()">
+        </p-button>
+        <p-button
+          label="Aplicar"
+          iconPos="right"
+          class="p-button-danger"
+          [loading]="loading"
+          [disabled]="loading"
+          (click)="requestAgendaData()">
+        </p-button>
+      </div>
+
+      <p-divider />
+    }
+
+    <div class="mb-3 flex flex-column gap-2">
+      <div class="flex align-items-center gap-2">
+        <span class="font-bold"
+          >Acciones de la tabla <i class="pi pi-table"></i
+        ></span>
+      </div>
+      <p-button
+        label="Restaurar filtros"
+        styleClass="w-full"
+        [outlined]="true"
+        icon="pi pi-filter-slash"
+        (onClick)="resetTable(dt)" />
+      <p-button
+        label="Recargar datos"
+        styleClass="w-full"
+        icon="pi pi-refresh"
+        (click)="refreshData()"
+        [loading]="loading" />
+    </div>
+  </div>
+</p-sidebar>

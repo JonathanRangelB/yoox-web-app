@@ -35,12 +35,12 @@
           requestForm.controls['loanrequestid'].valid ||
           !requestForm.controls['loanrequestid'].dirty
         ">
-        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['required']">
-          El número de solicitud es requerido
-        </p>
-        <p *ngIf="requestForm.get('loanrequestid')?.errors?.['pattern']">
-          Debe tener 6 caracteres. Sólo se admiten letras y numeros.
-        </p>
+        @if (requestForm.get('loanrequestid')?.errors?.['required']) {
+          <p>El número de solicitud es requerido</p>
+        }
+        @if (requestForm.get('loanrequestid')?.errors?.['pattern']) {
+          <p>Debe tener 6 caracteres. Sólo se admiten letras y numeros.</p>
+        }
       </small>
       <span class="p-float-label mt-5">
         <input
@@ -79,9 +79,12 @@
         </p>
       }
     </p-panel>
-    <pre *ngIf="isProdEnv !== 'true'">
-      Entorno actual: {{ environmentName }}
-    </pre>
+    @if (isProdEnv !== 'true') {
+      <pre>
+          Entorno actual: {{ environmentName }}
+        </pre
+      >
+    }
     <div class="flex flex-row justify-content-between">
       <p-button
         class="mt-3"

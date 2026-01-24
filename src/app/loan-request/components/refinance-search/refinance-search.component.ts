@@ -10,13 +10,13 @@ import {
 import { environment } from 'src/environments/environment';
 import { HttpClient } from '@angular/common/http';
 import { Refinance } from './types/refinance';
-import { CommonModule } from '@angular/common';
+
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { DropdownChangeEvent, DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-refinance-search',
-  imports: [CommonModule, DropdownModule],
+  imports: [DropdownModule],
   templateUrl: './refinance-search.component.html',
 })
 export class RefinanceSearchComponent implements OnInit {
