@@ -12,24 +12,28 @@ import { AuthService } from 'src/app/login/services/AuthService';
 import { environment } from 'src/environments/environment';
 import { ButtonModule } from 'primeng/button';
 import { PanelModule } from 'primeng/panel';
-import { CommonModule } from '@angular/common';
+
 import { InputTextModule } from 'primeng/inputtext';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-login-page',
   templateUrl: './login-page.component.html',
   styleUrl: './login-page.component.scss',
   imports: [
-    CommonModule,
     ReactiveFormsModule,
     ButtonModule,
     PanelModule,
     InputTextModule,
+    ToastModule,
   ],
+  providers: [MessageService],
 })
 export class LoginPageComponent implements OnInit {
   authService = inject(AuthService);
   router = inject(Router);
+  readonly #messageService = inject(MessageService);
   fb = inject(FormBuilder);
   isProdEnv = environment.PRODUCTION;
   environmentName = environment.ENV_NAME;
@@ -67,11 +71,16 @@ export class LoginPageComponent implements OnInit {
 
   handleSuccessfullLogin = (token: LoginResponse) => {
     const user = this.authService.currentUser;
-    this.loading = false;
     localStorage.setItem('token', token.token);
     localStorage.setItem('idusuario', user!.ID.toString());
     localStorage.setItem('nombreusuario', user!.NOMBRE);
     localStorage.setItem('user', JSON.stringify(user));
+    this.#messageService.add({
+      severity: 'success',
+      summary: 'Bienvenido',
+      detail: 'Seras redirigido a la aplicacion.',
+      life: 3000,
+    });
 
     this.router.navigate(['/dashboard']);
   };

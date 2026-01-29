@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import {
   FormBuilder,
   FormGroup,
@@ -65,12 +65,11 @@ export class PagosComponent implements OnInit {
   public pagosAdelantadosPermitidos?: number;
   public pagosAdelantadosPermitidosRestantes?: number;
 
-  constructor(
-    private confirmationService: ConfirmationService,
-    private messageService: MessageService,
-    private pagosService: PagosService,
-    private fb: FormBuilder
-  ) {}
+  private confirmationService: ConfirmationService =
+    inject(ConfirmationService);
+  private messageService: MessageService = inject(MessageService);
+  private pagosService: PagosService = inject(PagosService);
+  private fb: FormBuilder = inject(FormBuilder);
 
   /**
    * Initializes the component by creating a form group for the folio input field.

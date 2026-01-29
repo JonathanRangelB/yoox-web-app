@@ -43,6 +43,12 @@ export class DashboardComponent {
           routerLink: '/dashboard/request-list',
           command: () => this.toggleSidebar(),
         },
+        {
+          label: 'Agenda de cobro',
+          icon: 'pi pi-fw pi-calendar',
+          routerLink: '/dashboard/cobro-agenda',
+          command: () => this.toggleSidebar(),
+        },
       ],
     },
     {
