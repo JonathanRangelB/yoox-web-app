@@ -307,12 +307,12 @@
       </td>
       <td>
         <span class="text-sm">{{
-          (cobro.fechaUltimoPago | date: 'dd/MM/yyyy') || 'N/A'
+          (cobro.fechaUltimoPago | date: 'dd/MM/yyyy' : 'UTC') || 'N/A'
         }}</span>
       </td>
       <td>
         <span class="text-sm">{{
-          cobro.fechaVencimiento | date: 'dd/MM/yyyy'
+          cobro.fechaVencimiento | date: 'dd/MM/yyyy' : 'UTC'
         }}</span>
       </td>
     </tr>
