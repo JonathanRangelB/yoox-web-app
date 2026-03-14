@@ -779,7 +779,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               colonia_aval: data.colonia_aval,
               municipio_aval: data.municipio_aval,
               estado_aval: estadosDeLaRepublica.find(
-                (estado) => estado.value === data.estado_cliente
+                (estado) => estado.value === data.estado_aval
               ),
               cp_aval: data.cp_aval,
               referencias_dom_aval: data.referencias_dom_aval,

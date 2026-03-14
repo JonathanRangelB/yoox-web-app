@@ -38,7 +38,11 @@
       <p-dataView #dv class="m-2 w-full dataview" [value]="requests()">
         <ng-template pTemplate="list" let-requests>
           <div class="grid grid-nogutter">
-            @for (item of requests; track item; let first = $first) {
+            @for (
+              item of requests;
+              track item.request_number;
+              let first = $first
+            ) {
               <div class="col-12">
                 <div
                   class="flex flex-column sm:flex-row sm:align-items-center p-4 gap-3"
