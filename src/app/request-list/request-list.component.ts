@@ -162,9 +162,7 @@ export class RequestListComponent implements OnInit {
         next: (data: RequestList) => {
           this.showLoadingModal = false;
           this.requests.update(() => data.loanRequests);
-          this.requestUserList.update(() =>
-            data.usersList.sort((a, b) => a.ID - b.ID)
-          );
+          this.requestUserList.update(() => data.usersList);
           this.groups.update(() => data.groups);
           this.management.update(() => data.management);
           this.filterRequest = false;
