@@ -54,7 +54,7 @@ export class DashboardComponent {
     {
       label: 'Desktop APP',
       icon: 'pi pi-fw pi-desktop',
-      url: 'https://www.mediafire.com/file/mg2citv3awjqs8r/InstaladorYOOX-Release-09-03-2025.msi/file', // de momento esto estara hardcodeado hasta que exista un endpoint para obtener la ultima version
+      url: 'https://www.mediafire.com/file/ohqloylfql6hti7/InstaladorYOOX-Release-2026-15-03.msi/file', // de momento esto estara hardcodeado hasta que exista un endpoint para obtener la ultima version
     },
     {
       label: 'Documentación',
