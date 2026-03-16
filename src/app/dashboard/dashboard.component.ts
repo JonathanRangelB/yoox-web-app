@@ -66,10 +66,6 @@ export class DashboardComponent {
     },
   ]);
 
-  toolbarItems: MenuItem[] = [
-    { icon: 'pi pi-bars', command: () => this.toggleSidebar() },
-  ];
-
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;
   }
