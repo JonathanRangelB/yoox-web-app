@@ -43,8 +43,8 @@ export class RequestListService {
     );
   }
 
-  save(filters: any, data: RequestListState) {
-    this.state = { filters, data };
+  save(payload: { filters: any; data: RequestListState }) {
+    this.state = { filters: payload.filters, data: payload.data };
   }
 
   recover() {
