@@ -25,3 +25,17 @@
 .dataview {
   margin-bottom: 0;
 }
+
+.viewport {
+  height: 100%;
+  overflow: auto;
+}
+
+.scroll-container {
+  height: 100%;
+}
+
+#card {
+  height: 100%;
+  background: #1f2937;
+}

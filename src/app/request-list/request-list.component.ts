@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   inject,
@@ -12,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { DataViewModule } from 'primeng/dataview';
+
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
@@ -35,6 +36,7 @@ import {
 import { RequestListService } from './services/request-list.service';
 import { Dropdown, DropdownModule } from 'primeng/dropdown';
 import { SidebarModule } from 'primeng/sidebar';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-request-list',
@@ -42,12 +44,12 @@ import { SidebarModule } from 'primeng/sidebar';
     ButtonModule,
     CardModule,
     CommonModule,
-    DataViewModule,
     DialogModule,
     InputTextModule,
     MenubarModule,
     PaginatorModule,
     ProgressSpinnerModule,
+    ScrollingModule,
     TagModule,
     ToastModule,
     DropdownModule,
@@ -55,6 +57,7 @@ import { SidebarModule } from 'primeng/sidebar';
   ],
   templateUrl: './request-list.component.html',
   styleUrls: ['./request-list.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
   providers: [MessageService],
 })
 export class RequestListComponent implements OnInit {
@@ -90,11 +93,23 @@ export class RequestListComponent implements OnInit {
   rows: number = 5;
 
   ngOnInit(): void {
+    const { data } = this.#requestListService.recover();
     this.showLoadingModal = true;
-    this.getRequestListItems({
-      offSetRows: this.first,
-      fetchRowsNumber: this.rows,
-    });
+    if (data.totalRecords > 0) {
+      this.requests.set(data.loanRequests);
+      this.requestUserList.set(data.usersList);
+      this.groups.set(data.groups);
+      this.management.set(data.management);
+      this.filterRequest = false;
+      this.totalRecords = data.totalRecords;
+      this.unfilteredRequests = [...data.unfilteredRequests];
+      this.showLoadingModal = false;
+    } else {
+      this.getRequestListItems({
+        offSetRows: this.first,
+        fetchRowsNumber: this.rows,
+      });
+    }
   }
 
   // COMPONENT FUNCTIONS
@@ -127,8 +142,8 @@ export class RequestListComponent implements OnInit {
   }
 
   orderbyDate(direction: 'asc' | 'desc') {
-    this.requests.update(() =>
-      this.requests().sort((a, b) => {
+    this.requests.update((requests) =>
+      requests.sort((a, b) => {
         if (direction === 'asc') {
           return (
             new Date(a.created_date).getTime() -
@@ -144,14 +159,18 @@ export class RequestListComponent implements OnInit {
   }
 
   orderbyAmount(direction: 'asc' | 'desc') {
-    this.requests.update(() =>
-      this.requests().sort((a, b) => {
+    this.requests.update((requests) =>
+      requests.sort((a, b) => {
         if (direction === 'asc') {
           return a.cantidad_prestada - b.cantidad_prestada;
         }
         return b.cantidad_prestada - a.cantidad_prestada;
       })
     );
+  }
+
+  trackByRequestNumber(_: number, item: Requests): string {
+    return item.request_number;
   }
 
   getRequestListItems(options: RequestListOptions) {
@@ -161,23 +180,32 @@ export class RequestListComponent implements OnInit {
       .subscribe({
         next: (data: RequestList) => {
           this.showLoadingModal = false;
-          this.requests.update(() => data.loanRequests);
-          this.requestUserList.update(() => data.usersList);
-          this.groups.update(() => data.groups);
-          this.management.update(() => data.management);
+          this.requests.set(data.loanRequests);
+          this.requestUserList.set(data.usersList);
+          this.groups.set(data.groups);
+          this.management.set(data.management);
           this.filterRequest = false;
           this.totalRecords = data.loanRequests[0].CNT;
           this.unfilteredRequests = [...data.loanRequests];
+          this.#requestListService.save(
+            {},
+            {
+              ...data,
+              totalRecords: this.totalRecords,
+              unfilteredRequests: this.unfilteredRequests,
+            }
+          );
         },
         error: (errorRes: HttpErrorResponse) => {
-          this.requests.update(() => []);
+          this.requests.set([]);
           this.unfilteredRequests = [];
           this.showLoadingModal = false;
           this.filterRequest = false;
+          this.#requestListService.clean();
           this.#messageService.add({
             severity: 'error',
             summary: errorRes.error?.message || errorRes.name,
-            detail: errorRes.error?.error || errorRes.statusText,
+            detail: errorRes.error?.error || errorRes.status,
             life: 3000,
           });
         },
