@@ -276,6 +276,7 @@ export class RequestListComponent implements OnInit {
     this.fechaDropdown()?.clear();
     this.cantidadDropdown()?.clear();
     this.requests.update(() => [...this.unfilteredRequests]);
+    this.state.data.loanRequests = this.requests();
   }
 
   applySearchRules() {
