@@ -264,12 +264,7 @@ export class RequestListComponent implements OnInit {
     this.selectedGrupo = null;
     this.selectedGerencia = null;
     this.selectedStatus = null;
-    this.state.filters = {
-      selectedAgente: this.selectedAgente,
-      selectedGrupo: this.selectedGrupo,
-      selectedGerencia: this.selectedGerencia,
-      selectedStatus: this.selectedStatus,
-    };
+    this.setStateFilters();
   }
 
   restoreOrderDefaults() {
@@ -291,12 +286,7 @@ export class RequestListComponent implements OnInit {
         managementIdFilter: this.selectedGerencia.ID,
       }),
     };
-    this.state.filters = {
-      selectedAgente: this.selectedAgente,
-      selectedGrupo: this.selectedGrupo,
-      selectedGerencia: this.selectedGerencia,
-      selectedStatus: this.selectedStatus,
-    };
+    this.setStateFilters();
     this.getRequestListItems(options);
     this.restoreOrderDefaults();
   }
