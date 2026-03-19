@@ -1,7 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, computed } from '@angular/core';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from 'src/app/login/services/AuthService';
 import { version } from '../../../package.json';
+import { DesktopAppService } from './services/desktop-app.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -11,11 +12,13 @@ import { version } from '../../../package.json';
 })
 export class DashboardComponent {
   private authService = inject(AuthService);
+  private desktopAppService = inject(DesktopAppService);
+
   isSidebarVisible = false;
   nombreUsuario = localStorage.getItem('nombreusuario') || 'quien eres?';
   appVersion = version;
 
-  items: MenuItem[] = [
+  menuItems = computed<MenuItem[]>(() => [
     {
       label: 'Altas',
       expanded: true,
@@ -54,18 +57,14 @@ export class DashboardComponent {
     {
       label: 'Desktop APP',
       icon: 'pi pi-fw pi-desktop',
-      url: 'https://www.mediafire.com/file/ohqloylfql6hti7/InstaladorYOOX-Release-2026-15-03.msi/file', // de momento esto estara hardcodeado hasta que exista un endpoint para obtener la ultima version
+      url: this.desktopAppService.desktopAppUrl(),
     },
     {
       label: 'Documentación',
       icon: 'pi pi-fw pi-book',
       url: 'https://yoox-docs.vercel.app/',
     },
-  ];
-
-  menuItems: MenuItem[] = [
-    { icon: 'pi pi-bars', command: () => this.toggleSidebar() },
-  ];
+  ]);
 
   toggleSidebar() {
     this.isSidebarVisible = !this.isSidebarVisible;
