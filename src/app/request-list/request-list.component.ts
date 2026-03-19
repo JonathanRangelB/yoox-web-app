@@ -1,5 +1,6 @@
 import { CommonModule } from '@angular/common';
 import {
+  ChangeDetectionStrategy,
   Component,
   DestroyRef,
   inject,
@@ -12,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 import { ButtonModule } from 'primeng/button';
 import { CardModule } from 'primeng/card';
-import { DataViewModule } from 'primeng/dataview';
+
 import { DialogModule } from 'primeng/dialog';
 import { InputTextModule } from 'primeng/inputtext';
 import { MessageService } from 'primeng/api';
@@ -31,10 +32,12 @@ import {
   RequestListOptions,
   Requests,
   User,
+  State,
 } from './types/requests';
 import { RequestListService } from './services/request-list.service';
 import { Dropdown, DropdownModule } from 'primeng/dropdown';
 import { SidebarModule } from 'primeng/sidebar';
+import { ScrollingModule } from '@angular/cdk/scrolling';
 
 @Component({
   selector: 'app-request-list',
@@ -42,12 +45,12 @@ import { SidebarModule } from 'primeng/sidebar';
     ButtonModule,
     CardModule,
     CommonModule,
-    DataViewModule,
     DialogModule,
     InputTextModule,
     MenubarModule,
     PaginatorModule,
     ProgressSpinnerModule,
+    ScrollingModule,
     TagModule,
     ToastModule,
     DropdownModule,
@@ -56,6 +59,7 @@ import { SidebarModule } from 'primeng/sidebar';
   templateUrl: './request-list.component.html',
   styleUrls: ['./request-list.component.css'],
   providers: [MessageService],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RequestListComponent implements OnInit {
   readonly #destroyRef$ = inject(DestroyRef);
@@ -88,13 +92,20 @@ export class RequestListComponent implements OnInit {
   totalRecords: number = 0;
   first: number = 0;
   rows: number = 5;
+  state!: State;
 
   ngOnInit(): void {
     this.showLoadingModal = true;
-    this.getRequestListItems({
-      offSetRows: this.first,
-      fetchRowsNumber: this.rows,
-    });
+    this.state = this.#requestListService.recover();
+    if (this.state.data.totalRecords > 0) {
+      this.setRecoveredState();
+      this.showLoadingModal = false;
+    } else {
+      this.getRequestListItems({
+        offSetRows: this.first,
+        fetchRowsNumber: this.rows,
+      });
+    }
   }
 
   // COMPONENT FUNCTIONS
@@ -115,6 +126,23 @@ export class RequestListComponent implements OnInit {
     { label: 'Actualizar', value: LoanStatusEnum.actualizar },
   ];
 
+  private setRecoveredState() {
+    const { data, filters } = this.state;
+    this.requests.set(data.loanRequests);
+    this.requestUserList.set(data.usersList);
+    this.groups.set(data.groups);
+    this.management.set(data.management);
+    this.filterRequest = false;
+    this.totalRecords = data.totalRecords;
+    this.unfilteredRequests = [...data.unfilteredRequests];
+    this.selectedGerencia = filters.selectedGerencia;
+    this.selectedGrupo = filters.selectedGrupo;
+    this.selectedAgente = filters.selectedAgente;
+    this.selectedStatus = filters.selectedStatus;
+    this.selectedOrdenFecha = filters.selectedOrdenFecha;
+    this.selectedOrdenCantidad = filters.selectedOrdenCantidad;
+  }
+
   getSeverity(request: Requests) {
     switch (request.loan_request_status) {
       case 'APROBADO':
@@ -127,8 +155,8 @@ export class RequestListComponent implements OnInit {
   }
 
   orderbyDate(direction: 'asc' | 'desc') {
-    this.requests.update(() =>
-      this.requests().sort((a, b) => {
+    this.requests.update((requests) =>
+      [...requests].sort((a, b) => {
         if (direction === 'asc') {
           return (
             new Date(a.created_date).getTime() -
@@ -141,17 +169,23 @@ export class RequestListComponent implements OnInit {
         );
       })
     );
+    this.state.data.loanRequests = this.requests();
   }
 
   orderbyAmount(direction: 'asc' | 'desc') {
-    this.requests.update(() =>
-      this.requests().sort((a, b) => {
+    this.requests.update((requests) =>
+      [...requests].sort((a, b) => {
         if (direction === 'asc') {
           return a.cantidad_prestada - b.cantidad_prestada;
         }
         return b.cantidad_prestada - a.cantidad_prestada;
       })
     );
+    this.state.data.loanRequests = this.requests();
+  }
+
+  trackByRequestNumber(_: number, item: Requests): string {
+    return item.request_number;
   }
 
   getRequestListItems(options: RequestListOptions) {
@@ -160,33 +194,52 @@ export class RequestListComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.#destroyRef$))
       .subscribe({
         next: (data: RequestList) => {
-          this.showLoadingModal = false;
-          this.requests.update(() => data.loanRequests);
-          this.requestUserList.update(() => data.usersList);
-          this.groups.update(() => data.groups);
-          this.management.update(() => data.management);
-          this.filterRequest = false;
-          this.totalRecords = data.loanRequests[0].CNT;
-          this.unfilteredRequests = [...data.loanRequests];
+          this.setSucessfullData(data);
         },
         error: (errorRes: HttpErrorResponse) => {
-          this.requests.update(() => []);
-          this.unfilteredRequests = [];
-          this.showLoadingModal = false;
-          this.filterRequest = false;
-          this.#messageService.add({
-            severity: 'error',
-            summary: errorRes.error?.message || errorRes.name,
-            detail: errorRes.error?.error || errorRes.statusText,
-            life: 3000,
-          });
+          this.setFailedData(errorRes);
         },
       });
+  }
+
+  private setFailedData(errorRes: HttpErrorResponse) {
+    this.requests.set([]);
+    this.unfilteredRequests = [];
+    this.showLoadingModal = false;
+    this.filterRequest = false;
+    this.#requestListService.clean();
+    this.#messageService.add({
+      severity: 'error',
+      summary: errorRes.error?.message || errorRes.name,
+      detail: errorRes.error?.error || errorRes.status,
+      life: 3000,
+    });
+  }
+
+  private setSucessfullData(data: RequestList) {
+    this.showLoadingModal = false;
+    this.requests.set(data.loanRequests);
+    this.requestUserList.set(data.usersList);
+    this.groups.set(data.groups);
+    this.management.set(data.management);
+    this.filterRequest = false;
+    this.totalRecords = data.loanRequests[0].CNT;
+    this.unfilteredRequests = [...data.loanRequests];
+    this.state = {
+      filters: {},
+      data: {
+        ...data,
+        totalRecords: this.totalRecords,
+        unfilteredRequests: this.unfilteredRequests,
+      },
+    };
   }
 
   // EVENTS
   openRecord(solicitud: Requests) {
     const loan_request = solicitud.request_number;
+    this.setStateFilters();
+    this.#requestListService.save(this.state);
     this.router.navigate([`/dashboard/loan-request/view/${loan_request}`]);
   }
 
@@ -211,12 +264,14 @@ export class RequestListComponent implements OnInit {
     this.selectedGrupo = null;
     this.selectedGerencia = null;
     this.selectedStatus = null;
+    this.setStateFilters();
   }
 
   restoreOrderDefaults() {
     this.fechaDropdown()?.clear();
     this.cantidadDropdown()?.clear();
     this.requests.update(() => [...this.unfilteredRequests]);
+    this.state.data.loanRequests = this.requests();
   }
 
   applySearchRules() {
@@ -231,6 +286,7 @@ export class RequestListComponent implements OnInit {
         managementIdFilter: this.selectedGerencia.ID,
       }),
     };
+    this.setStateFilters();
     this.getRequestListItems(options);
     this.restoreOrderDefaults();
   }
@@ -258,6 +314,7 @@ export class RequestListComponent implements OnInit {
     }
   }
 
+  // Filtros
   onAgenteChange(event: any) {
     this.selectedAgente = this.selectedAgente = event.value;
     this.selectedGrupo = null;
@@ -280,6 +337,7 @@ export class RequestListComponent implements OnInit {
     this.selectedStatus = event.value;
   }
 
+  // Ordenamiento
   onOrdenFechaChange(event: any) {
     this.selectedOrdenCantidad = null;
     switch (event.value) {
@@ -302,5 +360,16 @@ export class RequestListComponent implements OnInit {
         this.orderbyAmount('desc');
         break;
     }
+  }
+
+  setStateFilters() {
+    this.state.filters = {
+      selectedAgente: this.selectedAgente,
+      selectedGrupo: this.selectedGrupo,
+      selectedGerencia: this.selectedGerencia,
+      selectedStatus: this.selectedStatus,
+      selectedOrdenFecha: this.selectedOrdenFecha,
+      selectedOrdenCantidad: this.selectedOrdenCantidad,
+    };
   }
 }
