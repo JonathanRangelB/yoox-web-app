@@ -11,12 +11,20 @@
     formControlName="id" />
   <input
     pInputText
+    appUppercase
     placeholder="CURP"
     id="CURP"
     class="col-12 sm:col-6"
     formControlName="curp" />
+  <small id="curp_cliente-help" class="mb-2 text-red-500">
+    @if (customerSearchForm.get('curp')?.errors?.['invalidCurp']) {
+      <ng-container> Formato de CURP invalido</ng-container>
+    }
+  </small>
+
   <input
     pInputText
+    appUppercase
     placeholder="Nombre"
     id="Nombre"
     class="col-12"

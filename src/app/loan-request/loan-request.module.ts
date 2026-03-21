@@ -29,6 +29,7 @@ import { ListS3FilesComponent } from './components/list-s3-files/list-s3-files.c
 import { LoanComponent } from './pages/loan/new-loan.component';
 import { LoanRequestRoutingModule } from './loan-request-routing.module';
 import { RefinanceSearchComponent } from './components/refinance-search/refinance-search.component';
+import { UppercaseDirective } from '../shared/directives/uppercase.directive';
 
 @NgModule({
   declarations: [LoanComponent],
@@ -60,7 +61,8 @@ import { RefinanceSearchComponent } from './components/refinance-search/refinanc
     ListS3FilesComponent,
     CardModule,
     RefinanceSearchComponent,
+    UppercaseDirective,
   ],
   providers: [ConfirmationService, MessageService],
 })
-export class LoanRequestModule {}
+export class LoanRequestModule { }

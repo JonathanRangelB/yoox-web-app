@@ -30,6 +30,7 @@ import {
 } from '../../types/searchCustomers.interface';
 import { estadosDeLaRepublica, tiposCalle } from '../../utils/consts';
 import { ResultadosBusquedaCliente } from '../../types/loan-request.interface';
+import { UppercaseDirective } from 'src/app/shared/directives/uppercase.directive';
 
 @Component({
   selector: 'app-people-search',
@@ -43,6 +44,7 @@ import { ResultadosBusquedaCliente } from '../../types/loan-request.interface';
     TableModule,
     ToastModule,
     TooltipModule,
+    UppercaseDirective,
   ],
   providers: [MessageService],
   templateUrl: './busqueda-clientes.component.html',
