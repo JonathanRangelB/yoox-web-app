@@ -63,3 +63,13 @@ export interface Groups {
   label?: string;
   ID?: number;
 }
+
+export interface RequestListState extends RequestList {
+  unfilteredRequests: Requests[];
+  totalRecords: number;
+}
+
+export interface State {
+  filters: any;
+  data: RequestListState;
+}
