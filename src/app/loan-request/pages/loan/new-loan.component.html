@@ -99,17 +99,17 @@
               placeholder="dd/mm/aaaa"
               [iconDisplay]="'input'"
               [showIcon]="true"
-              [showButtonBar]="true"
+              [touchUI]="true"
               (onSelect)="calculaDiaDeLaSemana($event)"
+              dataType="string"
               dateFormat="dd/mm/yy"
               readonlyInput="true"
               [style]="{ width: '100%' }" />
-            <small
-              id="fecha_inicial-help"
-              class="mb-2 text-red-500"
-              [hidden]="hideField('fecha_inicial')"
-              >Fecha Inicial requerida</small
-            >
+            <p-checkbox
+              class="mt-1"
+              label="Elegir fecha"
+              [binary]="true"
+              (onChange)="setCustomLoanDate()" />
           </div>
 
           <!-- inicio valores calculados -->
@@ -1226,6 +1226,6 @@
     <!-- <i class="pi pi-spin pi-cog" style="font-size: 2rem"></i> -->
   }
 </p-dialog>
-<!-- <pre>{{ mainForm.value | json }}</pre> -->
-<!-- <pre>Errores FormCliente: {{ mainForm.get('formCliente')?.errors | json }}</pre> -->
-<!-- <pre>Errores FormAval: {{ mainForm.get('formAval')?.errors | json }}</pre> -->
+<pre>{{ mainForm.value | json }}</pre>
+<pre>Errores FormCliente: {{ mainForm.get('formCliente')?.errors | json }}</pre>
+<pre>Errores FormAval: {{ mainForm.get('formAval')?.errors | json }}</pre>

@@ -117,7 +117,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   fechaMinima: Date = new Date();
   dia_semana: string | null = null;
   days: string[] = days;
-  cantidadIngresada: number = 0;
+  cantidadIngresada: number = this.minLoanAmount;
   tasa_interes: number = 0;
   cantidad_pagar: number = 0;
   pagoSemanal: number | null = null;
@@ -154,6 +154,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     formName: string;
     inputRef: InputNumber;
   };
+  disabledCalendar = true;
 
   constructor() {
     this.mainForm = this.formInit();
@@ -205,7 +206,9 @@ export class LoanComponent implements OnDestroy, OnInit {
         [Validators.required, Validators.min(this.minLoanAmount)],
       ],
       plazo: ['', Validators.required],
-      fecha_inicial: ['', Validators.required],
+      fecha_inicial: [
+        { value: new Date().toLocaleDateString('es-MX'), disabled: true },
+      ],
       observaciones: [''],
       formCliente: this.#formBuilder.group(
         {
@@ -1055,5 +1058,11 @@ export class LoanComponent implements OnDestroy, OnInit {
         detail: 'No se puede abrir la ubicación.',
         life: 3000,
       });
+  }
+
+  setCustomLoanDate() {
+    this.disabledCalendar = !this.disabledCalendar;
+    if (this.disabledCalendar) this.mainForm.get('fecha_inicial')?.disable();
+    else this.mainForm.get('fecha_inicial')?.enable();
   }
 }

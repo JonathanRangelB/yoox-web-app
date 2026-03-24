@@ -23,6 +23,7 @@ import { StepperModule } from 'primeng/stepper';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
+import { CheckboxModule } from 'primeng/checkbox';
 
 import { BusquedaClientesComponent } from './components/busqueda-clientes/busqueda-clientes.component';
 import { ListS3FilesComponent } from './components/list-s3-files/list-s3-files.component';
@@ -62,6 +63,7 @@ import { UppercaseDirective } from '../shared/directives/uppercase.directive';
     CardModule,
     RefinanceSearchComponent,
     UppercaseDirective,
+    CheckboxModule,
   ],
   providers: [ConfirmationService, MessageService],
 })
