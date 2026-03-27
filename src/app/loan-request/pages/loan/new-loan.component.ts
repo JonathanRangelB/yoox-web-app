@@ -65,6 +65,7 @@ import { AddressService } from '../../services/adress.service';
 import { Refinance } from '../../components/refinance-search/types/refinance';
 import { Stepper } from 'primeng/stepper';
 import { Guarantor } from '../../types/searchCustomers.interface';
+import { CheckboxChangeEvent } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-loan',
@@ -111,11 +112,11 @@ export class LoanComponent implements OnDestroy, OnInit {
   semanasDePlazo: number | undefined;
   id_plazo: number | undefined;
   semana_refinanciamiento: string | undefined = '';
-  fecha_inicial: Date | undefined;
+  fecha_inicial: Date | undefined | '';
   fecha_final_estimada: Date | undefined;
   fecha_final_estimada_string: string | null = null;
-  fechaMinima: Date = new Date();
-  dia_semana: string | null = null;
+  fechaMinima: Date | undefined | '' = new Date();
+  dia_semana: string | null = days[0];
   days: string[] = days;
   cantidadIngresada: number = this.minLoanAmount;
   tasa_interes: number = 0;
@@ -154,7 +155,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     formName: string;
     inputRef: InputNumber;
   };
-  disabledCalendar = true;
+  disabledCalendar = false;
 
   constructor() {
     this.mainForm = this.formInit();
@@ -206,9 +207,7 @@ export class LoanComponent implements OnDestroy, OnInit {
         [Validators.required, Validators.min(this.minLoanAmount)],
       ],
       plazo: ['', Validators.required],
-      fecha_inicial: [
-        { value: new Date().toLocaleDateString('es-MX'), disabled: true },
-      ],
+      fecha_inicial: [{ value: new Date(), disabled: true }],
       observaciones: [''],
       formCliente: this.#formBuilder.group(
         {
@@ -698,7 +697,9 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.closedDate = data.closed_date!;
           this.tasa_interes = data.tasa_de_interes;
           this.cantidadIngresada = data.cantidad_prestada;
-          this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
+          this.fecha_inicial =
+            data.fecha_inicial &&
+            new Date(data.fecha_inicial.replace(/Z$/, ''));
           this.fechaMinima = this.fecha_inicial;
           this.customerFolderName = `${this.loanRequestId}-${data.apellido_paterno_cliente.toUpperCase()}`;
           this.nombre_agente = data.nombre_agente;
@@ -789,9 +790,13 @@ export class LoanComponent implements OnDestroy, OnInit {
             },
           });
           this.calculaFechaFinal();
-          this.calculaDiaDeLaSemana(
-            new Date(data.fecha_inicial.replace(/Z$/, ''))
-          );
+          if (data.fecha_inicial) {
+            this.calculaDiaDeLaSemana(
+              new Date(data.fecha_inicial.replace(/Z$/, ''))
+            );
+            this.disabledCalendar = true;
+            this.mainForm.get('fecha_inicial')?.enable();
+          }
           this.updateAmountValidator(
             data.cantidad_prestada,
             data.cantidad_restante
@@ -1060,9 +1065,10 @@ export class LoanComponent implements OnDestroy, OnInit {
       });
   }
 
-  setCustomLoanDate() {
-    this.disabledCalendar = !this.disabledCalendar;
-    if (this.disabledCalendar) this.mainForm.get('fecha_inicial')?.disable();
-    else this.mainForm.get('fecha_inicial')?.enable();
+  setCustomLoanDate(event: CheckboxChangeEvent) {
+    this.disabledCalendar = event.checked;
+    if (this.disabledCalendar) this.mainForm.get('fecha_inicial')?.enable();
+    else this.mainForm.get('fecha_inicial')?.disable();
+    this.calculaDiaDeLaSemana(this.mainForm.get('fecha_inicial')?.value);
   }
 }

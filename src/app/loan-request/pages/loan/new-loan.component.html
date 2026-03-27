@@ -101,15 +101,16 @@
               [showIcon]="true"
               [touchUI]="true"
               (onSelect)="calculaDiaDeLaSemana($event)"
-              dataType="string"
               dateFormat="dd/mm/yy"
               readonlyInput="true"
               [style]="{ width: '100%' }" />
             <p-checkbox
               class="mt-1"
-              label="Elegir fecha"
-              [binary]="true"
-              (onChange)="setCustomLoanDate()" />
+              label="Elegir fecha inicial"
+              [(ngModel)]="disabledCalendar"
+              [ngModelOptions]="{ standalone: true }"
+              binary="true"
+              (onChange)="setCustomLoanDate($event)" />
           </div>
 
           <!-- inicio valores calculados -->

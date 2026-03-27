@@ -91,8 +91,8 @@ export interface LoanRequest {
   id_plazo: number;
   cantidad_prestada: number;
   dia_semana: string;
-  fecha_inicial: string;
-  fecha_final_estimada: Date;
+  fecha_inicial?: string;
+  fecha_final_estimada?: Date;
   cantidad_pagar: number;
   tasa_de_interes: number;
   observaciones: string;
