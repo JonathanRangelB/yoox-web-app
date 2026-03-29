@@ -207,7 +207,9 @@ export class LoanComponent implements OnDestroy, OnInit {
         [Validators.required, Validators.min(this.minLoanAmount)],
       ],
       plazo: ['', Validators.required],
-      fecha_inicial: [{ value: new Date(), disabled: true }],
+      fecha_inicial: [
+        { value: this.generateLocalISOStringDate(), disabled: true },
+      ],
       observaciones: [''],
       formCliente: this.#formBuilder.group(
         {
@@ -697,9 +699,9 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.closedDate = data.closed_date!;
           this.tasa_interes = data.tasa_de_interes;
           this.cantidadIngresada = data.cantidad_prestada;
-          this.fecha_inicial =
-            data.fecha_inicial &&
-            new Date(data.fecha_inicial.replace(/Z$/, ''));
+          this.fecha_inicial = data.fecha_inicial
+            ? new Date(data.fecha_inicial.replace(/Z$/, ''))
+            : this.generateLocalISOStringDate();
           this.fechaMinima = this.fecha_inicial;
           this.customerFolderName = `${this.loanRequestId}-${data.apellido_paterno_cliente.toUpperCase()}`;
           this.nombre_agente = data.nombre_agente;
@@ -1070,5 +1072,13 @@ export class LoanComponent implements OnDestroy, OnInit {
     if (this.disabledCalendar) this.mainForm.get('fecha_inicial')?.enable();
     else this.mainForm.get('fecha_inicial')?.disable();
     this.calculaDiaDeLaSemana(this.mainForm.get('fecha_inicial')?.value);
+  }
+
+  generateLocalISOStringDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return new Date(`${year}-${month}-${day}T00:00:00.000`);
   }
 }
