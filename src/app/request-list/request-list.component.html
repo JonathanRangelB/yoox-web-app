@@ -17,10 +17,13 @@
           size="small"
           (onClick)="changeSearchTerm()"></p-button>
         <input
+          #searchInput
           type="text"
           id="search"
           pInputText
-          [(ngModel)]="searchInputValue"
+          autocomplete="off"
+          autocorrect="off"
+          spellcheck="false"
           [placeholder]="searchTerm"
           (keypress)="inputSearch($event)"
           class="w-11rem md:w-auto" />
