@@ -294,7 +294,6 @@ export class RequestListComponent implements OnInit {
 
   inputSearch(event: KeyboardEvent | MouseEvent) {
     const inputSearchValue = this.searchInput().nativeElement.value;
-    console.log({ inputSearchValue });
     if (event instanceof KeyboardEvent) {
       if (event.code !== 'Enter') return;
     }
