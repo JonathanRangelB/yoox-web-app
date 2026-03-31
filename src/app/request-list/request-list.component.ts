@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   DestroyRef,
+  ElementRef,
   inject,
   OnInit,
   signal,
@@ -72,6 +73,7 @@ export class RequestListComponent implements OnInit {
   fechaDropdown = viewChild<Dropdown>('fechaDropdown');
   cantidadDropdown = viewChild<Dropdown>('cantidadDropdown');
   statusDropdown = viewChild<Dropdown>('statusDropdown');
+  searchInput = viewChild.required<ElementRef<HTMLInputElement>>('searchInput');
   requests = signal<Requests[]>([]);
   requestUserList = signal<User[]>([]);
   groups = signal<Groups[]>([]);
@@ -83,7 +85,6 @@ export class RequestListComponent implements OnInit {
   selectedOrdenFecha: any = null;
   selectedOrdenCantidad: any = null;
   selectedStatus: any = null;
-  searchInputValue = '';
   searchTerm: 'cliente' | 'folio' = 'cliente';
   searchTermIcon: string = 'pi pi-user';
   showLoadingModal = false;
@@ -292,24 +293,23 @@ export class RequestListComponent implements OnInit {
   }
 
   inputSearch(event: KeyboardEvent | MouseEvent) {
+    const inputSearchValue = this.searchInput().nativeElement.value;
     if (event instanceof KeyboardEvent) {
       if (event.code !== 'Enter') return;
     }
-    if (this.searchInputValue.length < 1) return;
+    if (inputSearchValue.length < 1) return;
     this.showLoadingModal = true;
     if (this.searchTerm === 'cliente') {
-      const nombreCliente = this.searchInputValue;
       this.getRequestListItems({
         offSetRows: this.first,
         fetchRowsNumber: this.rows,
-        nombreCliente,
+        nombreCliente: inputSearchValue,
       });
     } else {
-      const folio = this.searchInputValue;
       this.getRequestListItems({
         offSetRows: this.first,
         fetchRowsNumber: this.rows,
-        folio,
+        folio: inputSearchValue,
       });
     }
   }
