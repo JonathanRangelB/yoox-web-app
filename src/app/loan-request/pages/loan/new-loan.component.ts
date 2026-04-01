@@ -65,6 +65,7 @@ import { AddressService } from '../../services/adress.service';
 import { Refinance } from '../../components/refinance-search/types/refinance';
 import { Stepper } from 'primeng/stepper';
 import { Guarantor } from '../../types/searchCustomers.interface';
+import { CheckboxChangeEvent } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-loan',
@@ -111,13 +112,13 @@ export class LoanComponent implements OnDestroy, OnInit {
   semanasDePlazo: number | undefined;
   id_plazo: number | undefined;
   semana_refinanciamiento: string | undefined = '';
-  fecha_inicial: Date | undefined;
+  fecha_inicial: Date | undefined | '';
   fecha_final_estimada: Date | undefined;
   fecha_final_estimada_string: string | null = null;
-  fechaMinima: Date = new Date();
-  dia_semana: string | null = null;
+  fechaMinima: Date | undefined | '' = new Date();
+  dia_semana: string | null = '';
   days: string[] = days;
-  cantidadIngresada: number = 0;
+  cantidadIngresada: number = this.minLoanAmount;
   tasa_interes: number = 0;
   cantidad_pagar: number = 0;
   pagoSemanal: number | null = null;
@@ -154,6 +155,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     formName: string;
     inputRef: InputNumber;
   };
+  disabledCalendar = false;
 
   constructor() {
     this.mainForm = this.formInit();
@@ -205,7 +207,9 @@ export class LoanComponent implements OnDestroy, OnInit {
         [Validators.required, Validators.min(this.minLoanAmount)],
       ],
       plazo: ['', Validators.required],
-      fecha_inicial: ['', Validators.required],
+      fecha_inicial: [
+        { value: this.generateLocalISOStringDate(), disabled: true },
+      ],
       observaciones: [''],
       formCliente: this.#formBuilder.group(
         {
@@ -591,7 +595,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       user_role: this.currentUser.ROL,
       id_grupo_original: this.id_grupo_original || this.currentUser.ID_GRUPO,
       fecha_final_estimada: this.fecha_final_estimada,
-      dia_semana: this.dia_semana,
+      ...(this.dia_semana ? { dia_semana: this.dia_semana } : {}),
       cantidad_pagar: this.cantidad_pagar,
       id_loan_to_refinance: this.refinanceResults()?.id_prestamo,
     };
@@ -695,7 +699,9 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.closedDate = data.closed_date!;
           this.tasa_interes = data.tasa_de_interes;
           this.cantidadIngresada = data.cantidad_prestada;
-          this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
+          this.fecha_inicial = data.fecha_inicial
+            ? new Date(data.fecha_inicial.replace(/Z$/, ''))
+            : this.generateLocalISOStringDate();
           this.fechaMinima = this.fecha_inicial;
           this.customerFolderName = `${this.loanRequestId}-${data.apellido_paterno_cliente.toUpperCase()}`;
           this.nombre_agente = data.nombre_agente;
@@ -786,9 +792,13 @@ export class LoanComponent implements OnDestroy, OnInit {
             },
           });
           this.calculaFechaFinal();
-          this.calculaDiaDeLaSemana(
-            new Date(data.fecha_inicial.replace(/Z$/, ''))
-          );
+          if (data.fecha_inicial) {
+            this.calculaDiaDeLaSemana(
+              new Date(data.fecha_inicial.replace(/Z$/, ''))
+            );
+            this.disabledCalendar = true;
+            this.mainForm.get('fecha_inicial')?.enable();
+          }
           this.updateAmountValidator(
             data.cantidad_prestada,
             data.cantidad_restante
@@ -1055,5 +1065,20 @@ export class LoanComponent implements OnDestroy, OnInit {
         detail: 'No se puede abrir la ubicación.',
         life: 3000,
       });
+  }
+
+  setCustomLoanDate(event: CheckboxChangeEvent) {
+    this.disabledCalendar = event.checked;
+    if (this.disabledCalendar) this.mainForm.get('fecha_inicial')?.enable();
+    else this.mainForm.get('fecha_inicial')?.disable();
+    this.calculaDiaDeLaSemana(this.mainForm.get('fecha_inicial')?.value);
+  }
+
+  generateLocalISOStringDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return new Date(`${year}-${month}-${day}T00:00:00.000`);
   }
 }

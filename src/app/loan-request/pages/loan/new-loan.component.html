@@ -99,17 +99,18 @@
               placeholder="dd/mm/aaaa"
               [iconDisplay]="'input'"
               [showIcon]="true"
-              [showButtonBar]="true"
+              [touchUI]="true"
               (onSelect)="calculaDiaDeLaSemana($event)"
               dateFormat="dd/mm/yy"
               readonlyInput="true"
               [style]="{ width: '100%' }" />
-            <small
-              id="fecha_inicial-help"
-              class="mb-2 text-red-500"
-              [hidden]="hideField('fecha_inicial')"
-              >Fecha Inicial requerida</small
-            >
+            <p-checkbox
+              class="mt-1"
+              label="Elegir fecha inicial"
+              [(ngModel)]="disabledCalendar"
+              [ngModelOptions]="{ standalone: true }"
+              binary="true"
+              (onChange)="setCustomLoanDate($event)" />
           </div>
 
           <!-- inicio valores calculados -->
@@ -404,7 +405,7 @@
               appUppercase
               formControlName="ocupacion_cliente"
               id="ocupacion_cliente"
-              maxlength="50"
+              maxlength="200"
               aria-describedby="ocupacion_cliente-help" />
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
@@ -832,7 +833,7 @@
                 appUppercase
                 formControlName="ocupacion_aval"
                 id="ocupacion_aval"
-                maxlength="50"
+                maxlength="200"
                 aria-describedby="ocupacion_aval-help" />
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
