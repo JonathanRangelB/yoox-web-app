@@ -116,7 +116,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   fecha_final_estimada: Date | undefined;
   fecha_final_estimada_string: string | null = null;
   fechaMinima: Date | undefined | '' = new Date();
-  dia_semana: string | null = days[0];
+  dia_semana: string | null = '';
   days: string[] = days;
   cantidadIngresada: number = this.minLoanAmount;
   tasa_interes: number = 0;
@@ -595,7 +595,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       user_role: this.currentUser.ROL,
       id_grupo_original: this.id_grupo_original || this.currentUser.ID_GRUPO,
       fecha_final_estimada: this.fecha_final_estimada,
-      dia_semana: this.dia_semana,
+      ...(this.dia_semana ? { dia_semana: this.dia_semana } : {}),
       cantidad_pagar: this.cantidad_pagar,
       id_loan_to_refinance: this.refinanceResults()?.id_prestamo,
     };
