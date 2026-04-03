@@ -400,13 +400,16 @@
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="ocupacion_cliente">Ocupación</label>
-            <input
-              pInputText
+            <textarea
               appUppercase
               formControlName="ocupacion_cliente"
-              id="ocupacion_cliente"
+              rows="4"
+              cols="30"
+              autoResize="true"
               maxlength="200"
-              aria-describedby="ocupacion_cliente-help" />
+              pInputTextarea
+              id="ocupacion_cliente">
+            </textarea>
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="curp_cliente">CURP (Sólo Mayusculas y numeros)</label>
@@ -828,13 +831,16 @@
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="ocupacion_aval">Ocupación</label>
-              <input
-                pInputText
+              <textarea
                 appUppercase
                 formControlName="ocupacion_aval"
-                id="ocupacion_aval"
+                rows="4"
+                cols="30"
+                autoResize="true"
                 maxlength="200"
-                aria-describedby="ocupacion_aval-help" />
+                pInputTextarea
+                id="ocupacion_aval">
+              </textarea>
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="curp_aval">CURP (Sólo Mayusculas y numeros)</label>
