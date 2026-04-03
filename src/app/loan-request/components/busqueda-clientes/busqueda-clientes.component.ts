@@ -254,7 +254,6 @@ export class BusquedaClientesComponent {
       next: (foundCustomers: Customer[]) => {
         this.loading.set(false);
         this.clientesEncontrados.set(foundCustomers);
-        console.log(foundCustomers);
       },
       error: ({ error, errorMessage, errorType }) => {
         this.loading.set(false);
