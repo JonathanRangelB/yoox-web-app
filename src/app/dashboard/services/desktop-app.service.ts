@@ -11,9 +11,14 @@ const DEFAULT_DESKTOP_APP_URL =
 export class DesktopAppService {
   private http = inject(HttpClient);
   private baseUrl = environment.API_URL;
+  private token = localStorage.getItem('token');
   private desktopAppResponse = toSignal(
     this.http
-      .get<{ url: string }>(`${this.baseUrl}desktop-app-url`)
+      .get<{
+        url: string;
+      }>(`${this.baseUrl}desktop-app-url`, {
+        headers: { authorization: `${this.token}` },
+      })
       .pipe(catchError(() => of({ url: DEFAULT_DESKTOP_APP_URL }))),
     { initialValue: { url: DEFAULT_DESKTOP_APP_URL } }
   );
