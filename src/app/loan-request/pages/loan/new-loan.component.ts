@@ -848,7 +848,11 @@ export class LoanComponent implements OnDestroy, OnInit {
     inputRef: InputNumber
   ) {
     if (!event.value) return;
-    this.idDomicilioSearch$.next({ id: +event.value, formName, inputRef });
+    this.idDomicilioSearch$.next({
+      id: Number(event.value),
+      formName,
+      inputRef,
+    });
   }
 
   addressSearchSubjectInit() {
