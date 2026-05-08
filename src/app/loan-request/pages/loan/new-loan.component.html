@@ -1218,7 +1218,49 @@
   <p-confirmDialog
     key="positionDialog"
     [position]="position"
-    rejectButtonStyleClass="p-button-outlined" />
+    rejectButtonStyleClass="p-button-outlined">
+    <ng-template pTemplate="message" let-message>
+      <div class="flex flex-column align-items-center gap-3">
+        <p>{{ message.message }}</p>
+        @if (
+          statusProvisional === 'APROBADO' &&
+          currentUser?.ROL !== 'Cobrador' &&
+          windowMode === 'view'
+        ) {
+          <span
+            >Para
+            <span style="color: #4ade80">aprobar</span>
+            debes de confirmar la informacion de la solicitud:</span
+          >
+          <div
+            class="flex flex-column lg:flex-row align-items-center gap-3 lg:pt-7rem">
+            <label for="date-confirmation">Fecha inicial</label>
+            <p-calendar
+              inputId="date-confirmation"
+              placeholder="dd/mm/aaaa"
+              [iconDisplay]="'input'"
+              [showIcon]="true"
+              [touchUI]="true"
+              (onSelect)="calculaDiaDeLaSemana($event)"
+              dateFormat="dd/mm/yy"
+              readonlyInput="true" />
+            <label for="plazo-confirmation">Plazo</label>
+            <p-dropdown
+              [options]="plazo"
+              optionLabel="semanas_plazo"
+              (onChange)="onPlazoChanged($event)"
+              placeholder="Plazo de semanas" />
+            <small
+              id="plazo-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('plazo')"
+              >Selecciona un plazo</small
+            >
+          </div>
+        }
+      </div>
+    </ng-template>
+  </p-confirmDialog>
 </form>
 <p-dialog
   #dialogMessage

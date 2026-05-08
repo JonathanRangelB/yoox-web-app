@@ -222,6 +222,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           ocupacion_cliente: [''],
           curp_cliente: ['', [Validators.required, curpValidator()]],
           id_domicilio_cliente: [],
+          isCustomerAddressUpdate: [false],
           tipo_calle_cliente: ['', Validators.required],
           nombre_calle_cliente: ['', Validators.required],
           numero_exterior_cliente: [null, Validators.required],
@@ -254,6 +255,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           ocupacion_aval: [''],
           curp_aval: ['', [Validators.required, curpValidator()]],
           id_domicilio_aval: [],
+          isGuarantorAddressUpdate: [false],
           tipo_calle_aval: ['', Validators.required],
           nombre_calle_aval: ['', Validators.required],
           numero_exterior_aval: ['', Validators.required],
@@ -436,7 +438,6 @@ export class LoanComponent implements OnDestroy, OnInit {
       message:
         'Valida que la información de este formulario es correcta y verídica. Estas seguro que deseas continuar con la solicitud?',
       header: 'Confirmación',
-      icon: 'pi pi-info-circle',
       acceptLabel: 'Enviar solicitud',
       acceptIcon: 'none',
       rejectLabel: 'Regresar',
@@ -469,6 +470,10 @@ export class LoanComponent implements OnDestroy, OnInit {
    *
    */
   onFormAccept() {
+    if (!this.approveLoanValidationsPassed()) {
+      this.showLoanNotApprovedMessage();
+      return;
+    }
     this.uploading = true;
     const requestData = this.buildRequestData();
     const loanMode = this.windowMode === 'new' ? 'new' : 'update';
@@ -1084,5 +1089,19 @@ export class LoanComponent implements OnDestroy, OnInit {
     const month = String(now.getMonth() + 1).padStart(2, '0');
     const day = String(now.getDate()).padStart(2, '0');
     return new Date(`${year}-${month}-${day}T00:00:00.000`);
+  }
+
+  approveLoanValidationsPassed() {
+    console.log('Validando aprobación del préstamo...');
+    return true;
+  }
+
+  showLoanNotApprovedMessage() {
+    this.#messageService.add({
+      severity: 'error',
+      summary: 'Rechazado',
+      detail: `Los datos de confirmacion no son correctos, verificalos antes de enviar.`,
+      life: 3000,
+    });
   }
 }
