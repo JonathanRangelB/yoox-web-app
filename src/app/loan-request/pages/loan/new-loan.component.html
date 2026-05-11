@@ -451,17 +451,28 @@
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="id_domicilio_cliente">ID Domicilio 🏡</label>
-            <p-inputNumber
-              #inputRef
-              inputId="id_domicilio_cliente"
-              formControlName="id_domicilio_cliente"
-              placeholder="Solo ID's registrados"
-              min="1"
-              [useGrouping]="false"
-              [showClear]="true"
-              [max]="2147483647"
-              (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
-              [style]="{ width: '100%' }" />
+            <div class="flex align-items-center w-full">
+              <div class="flex-1">
+                <p-inputNumber
+                  #inputRef
+                  inputId="id_domicilio_cliente"
+                  formControlName="id_domicilio_cliente"
+                  placeholder="Solo ID's registrados"
+                  min="1"
+                  [useGrouping]="false"
+                  [showClear]="true"
+                  [max]="2147483647"
+                  (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
+                  [style]="{ width: '100%' }" />
+              </div>
+              <div class="flex align-items-center ml-2">
+                <label for="isCustomerAddressUpdate" class="mr-1">Act</label>
+                <p-checkbox
+                  formControlName="isCustomerAddressUpdate"
+                  binary="true"
+                  inputId="isCustomerAddressUpdate" />
+              </div>
+            </div>
             <small
               id="id_domicilio_cliente-help"
               class="mb-2 text-red-500"
@@ -876,17 +887,28 @@
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="id_domicilio_aval">ID Domicilio 🏡</label>
-              <p-inputNumber
-                #inputRef
-                formControlName="id_domicilio_aval"
-                placeholder="Solo ID's registrados"
-                inputId="id_domicilio_aval"
-                min="1"
-                [useGrouping]="false"
-                [showClear]="true"
-                [max]="2147483647"
-                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
-                [style]="{ width: '100%' }" />
+              <div class="flex align-items-center w-full">
+                <div class="flex-1">
+                  <p-inputNumber
+                    #inputRef
+                    formControlName="id_domicilio_aval"
+                    placeholder="Solo ID's registrados"
+                    inputId="id_domicilio_aval"
+                    min="1"
+                    [useGrouping]="false"
+                    [showClear]="true"
+                    [max]="2147483647"
+                    (onInput)="searchAddressByID($event, 'formAval', inputRef)"
+                    [style]="{ width: '100%' }" />
+                </div>
+                <div class="flex align-items-center ml-2">
+                  <label for="isGuarantorAddressUpdate" class="mr-1">Act</label>
+                  <p-checkbox
+                    formControlName="isGuarantorAddressUpdate"
+                    binary="true"
+                    inputId="isGuarantorAddressUpdate" />
+                </div>
+              </div>
               <small
                 id="id_domicilio_aval-help"
                 class="mb-2 text-red-500"

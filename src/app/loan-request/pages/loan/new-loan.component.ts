@@ -754,6 +754,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               ocupacion_cliente: data.ocupacion_cliente,
               curp_cliente: data.curp_cliente,
               id_domicilio_cliente: data.id_domicilio_cliente,
+              isCustomerAddressUpdate: data.is_customer_address_update,
               tipo_calle_cliente: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_cliente
               ),
@@ -780,6 +781,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               ocupacion_aval: data.ocupacion_aval,
               curp_aval: data.curp_aval,
               id_domicilio_aval: data.id_domicilio_aval,
+              isGuarantorAddressUpdate: data.is_guarantor_address_update,
               tipo_calle_aval: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_aval
               ),
@@ -1099,8 +1101,8 @@ export class LoanComponent implements OnDestroy, OnInit {
   showLoanNotApprovedMessage() {
     this.#messageService.add({
       severity: 'error',
-      summary: 'Rechazado',
-      detail: `Los datos de confirmacion no son correctos, verificalos antes de enviar.`,
+      summary: 'Datos incorrectos',
+      detail: `Los datos de confirmacion son incorrectos, verificalos antes de enviar.`,
       life: 3000,
     });
   }
