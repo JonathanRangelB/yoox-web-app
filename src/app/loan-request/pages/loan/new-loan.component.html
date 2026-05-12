@@ -1258,19 +1258,22 @@
             <label for="date-confirmation">Fecha inicial</label>
             <p-calendar
               inputId="date-confirmation"
+              [(ngModel)]="confirmationDate"
+              [ngModelOptions]="{ standalone: true }"
               placeholder="dd/mm/aaaa"
               [iconDisplay]="'input'"
               [showIcon]="true"
               [touchUI]="true"
               [disabled]="!disabledCalendar"
-              (onSelect)="calculaDiaDeLaSemana($event)"
               dateFormat="dd/mm/yy"
               readonlyInput="true" />
             <label for="plazo-confirmation">Plazo</label>
             <p-dropdown
               [options]="plazo"
+              inputId="plazo-confirmation"
+              [(ngModel)]="confirmationPlazo"
+              [ngModelOptions]="{ standalone: true }"
               optionLabel="semanas_plazo"
-              (onChange)="onPlazoChanged($event)"
               placeholder="Plazo de semanas" />
             <small
               id="plazo-help"

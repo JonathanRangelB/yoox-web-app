@@ -156,6 +156,8 @@ export class LoanComponent implements OnDestroy, OnInit {
     inputRef: InputNumber;
   };
   disabledCalendar = false;
+  confirmationDate: Date | undefined;
+  confirmationPlazo: Plazo | undefined;
 
   constructor() {
     this.mainForm = this.formInit();
@@ -470,7 +472,7 @@ export class LoanComponent implements OnDestroy, OnInit {
    *
    */
   onFormAccept() {
-    if (!this.approveLoanValidationsPassed()) {
+    if (!this.validateConfirmationFields()) {
       this.showLoanNotApprovedMessage();
       return;
     }
@@ -800,6 +802,10 @@ export class LoanComponent implements OnDestroy, OnInit {
             },
           });
           this.calculaFechaFinal();
+          // this.confirmationDate = this.fecha_inicial;
+          // this.confirmationPlazo = plazos.find(
+          //   (plazo) => plazo.id === data.id_plazo
+          // );
           if (data.fecha_inicial) {
             this.calculaDiaDeLaSemana(
               new Date(data.fecha_inicial.replace(/Z$/, ''))
@@ -1094,11 +1100,6 @@ export class LoanComponent implements OnDestroy, OnInit {
     return new Date(`${year}-${month}-${day}T00:00:00.000`);
   }
 
-  approveLoanValidationsPassed() {
-    console.log('Validando aprobación del préstamo...');
-    return true;
-  }
-
   showLoanNotApprovedMessage() {
     this.#messageService.add({
       severity: 'error',
@@ -1106,5 +1107,47 @@ export class LoanComponent implements OnDestroy, OnInit {
       detail: `Los datos de confirmacion son incorrectos, verificalos antes de enviar.`,
       life: 3000,
     });
+  }
+
+  validateConfirmationFields(): boolean {
+    const isConfirmationVisible =
+      this.statusProvisional === 'APROBADO' &&
+      this.currentUser?.ROL !== 'Cobrador' &&
+      this.windowMode === 'view';
+
+    if (!isConfirmationVisible) {
+      return true;
+    }
+
+    if (this.disabledCalendar) {
+      const formDate = this.mainForm.get('fecha_inicial')?.value as
+        | Date
+        | undefined;
+      if (!this.areDatesEqual(formDate, this.confirmationDate)) {
+        console.log('Fechas no son iguales');
+        return false;
+      }
+    }
+    const formPlazo = this.mainForm.get('plazo')?.value as Plazo | undefined;
+    if (!this.arePlazosEqual(formPlazo, this.confirmationPlazo)) {
+      console.log('Plazos no son iguales');
+      return false;
+    }
+    return true;
+  }
+
+  private areDatesEqual(date1?: Date | null, date2?: Date | null): boolean {
+    if (!date1 || !date2) return false;
+    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    return d1.getTime() === d2.getTime();
+  }
+
+  private arePlazosEqual(
+    plazo1?: Plazo | null,
+    plazo2?: Plazo | null
+  ): boolean {
+    if (!plazo1 || !plazo2) return false;
+    return plazo1.id === plazo2.id;
   }
 }
