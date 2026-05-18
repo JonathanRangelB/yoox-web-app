@@ -108,6 +108,8 @@ export interface LoanRequest {
   id_looan: number;
   id_loan_to_refinance: number;
   cantidad_restante: number;
+  is_customer_address_update: boolean;
+  is_guarantor_address_update: boolean;
 }
 
 export interface Plazo {

@@ -451,23 +451,33 @@
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="id_domicilio_cliente">ID Domicilio 🏡</label>
-            <p-inputNumber
-              #inputRef
-              inputId="id_domicilio_cliente"
-              formControlName="id_domicilio_cliente"
-              placeholder="Solo ID's registrados"
-              min="1"
-              [useGrouping]="false"
-              [showClear]="true"
-              [max]="2147483647"
-              (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
-              [style]="{ width: '100%' }" />
-            <small
-              id="id_domicilio_cliente-help"
-              class="mb-2 text-red-500"
-              [hidden]="hideField('formCliente.id_domicilio_cliente')"
-              >ID de domicilio inexistente</small
-            >
+            <div class="flex align-items-center w-full">
+              <div class="flex-1">
+                <p-inputNumber
+                  #inputRef
+                  inputId="id_domicilio_cliente"
+                  formControlName="id_domicilio_cliente"
+                  placeholder="Solo ID's registrados"
+                  min="1"
+                  [useGrouping]="false"
+                  [showClear]="true"
+                  [max]="2147483647"
+                  (onInput)="searchAddressByID($event, 'formCliente', inputRef)"
+                  [style]="{ width: '100%' }" />
+              </div>
+              <div class="flex align-items-center ml-2">
+                <label for="isCustomerAddressUpdate" class="mr-1">Act</label>
+                <p-checkbox
+                  formControlName="isCustomerAddressUpdate"
+                  binary="true"
+                  inputId="isCustomerAddressUpdate" />
+              </div>
+            </div>
+            @if (mainForm.get('formCliente.id_domicilio_cliente')?.errors) {
+              <small id="id_domicilio_cliente-help" class="mb-2 text-red-500"
+                >ID de domicilio inexistente</small
+              >
+            }
           </div>
           <div class="col-12 sm:col-6 flex flex-column">
             <label for="tipo_calle_cliente">Tipo de calle</label>
@@ -636,11 +646,19 @@
           </div>
           <div class="col-12 sm:col-5 flex flex-column">
             <label for="gmaps_url_location">Ubicación en Google Maps</label>
-            <input
-              pInputText
-              formControlName="gmaps_url_location"
-              id="gmaps_url_location"
-              aria-describedby="gmaps_url_location-help" />
+            <div class="flex align-items-center gap-2">
+              <input
+                pInputText
+                formControlName="gmaps_url_location"
+                id="gmaps_url_location"
+                [style]="{ width: '100%' }"
+                aria-describedby="gmaps_url_location-help" />
+              <p-button
+                icon="pi pi-map-marker"
+                pTooltip="Abrir ubicación en Google Maps"
+                tooltipPosition="top"
+                (onClick)="openGmapsLocation()" />
+            </div>
             <small
               id="gmaps_url_location-help"
               class="mb-2 text-red-500"
@@ -649,14 +667,6 @@
                 URL inválida
               }
             </small>
-          </div>
-          <div class="col-12 sm:col-1 flex flex-column pl-0">
-            <p-button
-              class="mt-3"
-              icon="pi pi-map-marker"
-              pTooltip="Abrir ubicación en Google Maps"
-              tooltipPosition="top"
-              (onClick)="openGmapsLocation()" />
           </div>
         </div>
         <div class="flex justify-content-between pb-4 gap-2 pr-3">
@@ -876,23 +886,34 @@
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="id_domicilio_aval">ID Domicilio 🏡</label>
-              <p-inputNumber
-                #inputRef
-                formControlName="id_domicilio_aval"
-                placeholder="Solo ID's registrados"
-                inputId="id_domicilio_aval"
-                min="1"
-                [useGrouping]="false"
-                [showClear]="true"
-                [max]="2147483647"
-                (onInput)="searchAddressByID($event, 'formAval', inputRef)"
-                [style]="{ width: '100%' }" />
-              <small
-                id="id_domicilio_aval-help"
-                class="mb-2 text-red-500"
-                [hidden]="hideField('formAval.id_domicilio_aval')"
-                >ID de domicilio inexistente</small
-              >
+              <div class="flex align-items-center">
+                <div class="flex-initial">
+                  <p-inputNumber
+                    #inputRef
+                    formControlName="id_domicilio_aval"
+                    placeholder="Solo ID's registrados"
+                    inputId="id_domicilio_aval"
+                    min="1"
+                    styleClass="w-auto"
+                    [useGrouping]="false"
+                    [showClear]="true"
+                    [max]="2147483647"
+                    (onInput)="searchAddressByID($event, 'formAval', inputRef)"
+                    [style]="{ width: '80%' }" />
+                </div>
+                <div class="flex align-items-center ml-2">
+                  <label for="isGuarantorAddressUpdate" class="mr-1">Act</label>
+                  <p-checkbox
+                    formControlName="isGuarantorAddressUpdate"
+                    binary="true"
+                    inputId="isGuarantorAddressUpdate" />
+                </div>
+              </div>
+              @if (mainForm.get('formAval.id_domicilio_aval')?.errors) {
+                <small id="id_domicilio_aval-help" class="mb-2 text-red-500"
+                  >ID de domicilio inexistente</small
+                >
+              }
             </div>
             <div class="col-12 sm:col-6 flex flex-column">
               <label for="tipo_calle_aval">Tipo de calle</label>
@@ -1218,7 +1239,53 @@
   <p-confirmDialog
     key="positionDialog"
     [position]="position"
-    rejectButtonStyleClass="p-button-outlined" />
+    rejectButtonStyleClass="p-button-outlined">
+    <ng-template pTemplate="message" let-message>
+      <div class="flex flex-column align-items-center gap-3">
+        <p>{{ message.message }}</p>
+        @if (
+          statusProvisional === 'APROBADO' &&
+          currentUser?.ROL !== 'Cobrador' &&
+          windowMode === 'view'
+        ) {
+          <span
+            >Para
+            <span style="color: #4ade80">aprobar</span>
+            debes de confirmar la informacion de la solicitud:</span
+          >
+          <div
+            class="flex flex-column lg:flex-row align-items-center gap-3 lg:pt-7rem">
+            <label for="date-confirmation">Fecha inicial</label>
+            <p-calendar
+              inputId="date-confirmation"
+              [(ngModel)]="confirmationDate"
+              [ngModelOptions]="{ standalone: true }"
+              placeholder="dd/mm/aaaa"
+              [iconDisplay]="'input'"
+              [showIcon]="true"
+              [touchUI]="true"
+              [disabled]="!disabledCalendar"
+              dateFormat="dd/mm/yy"
+              readonlyInput="true" />
+            <label for="plazo-confirmation">Plazo</label>
+            <p-dropdown
+              [options]="plazo"
+              inputId="plazo-confirmation"
+              [(ngModel)]="confirmationPlazo"
+              [ngModelOptions]="{ standalone: true }"
+              optionLabel="semanas_plazo"
+              placeholder="Plazo de semanas" />
+            <small
+              id="plazo-help"
+              class="mb-2 text-red-500"
+              [hidden]="hideField('plazo')"
+              >Selecciona un plazo</small
+            >
+          </div>
+        }
+      </div>
+    </ng-template>
+  </p-confirmDialog>
 </form>
 <p-dialog
   #dialogMessage
