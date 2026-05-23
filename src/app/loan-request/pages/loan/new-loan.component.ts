@@ -645,9 +645,11 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.mainForm.patchValue({
       formCliente: {
         id_domicilio_cliente: searchResults.id_domicilio_cliente,
+        isCustomerAddressUpdate: true,
       },
       formAval: {
         id_domicilio_aval: searchResults.id_domicilio_aval,
+        isGuarantorAddressUpdate: true,
       },
     });
   }
@@ -662,6 +664,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.mainForm.patchValue({
       formAval: {
         id_domicilio_aval: searchResults.id_domicilio,
+        isGuarantorAddressUpdate: true,
       },
     });
   }
@@ -1133,6 +1136,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       console.log('Plazos no son iguales');
       return false;
     }
+
     return true;
   }
 
