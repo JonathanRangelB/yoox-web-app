@@ -65,6 +65,7 @@ import { AddressService } from '../../services/adress.service';
 import { Refinance } from '../../components/refinance-search/types/refinance';
 import { Stepper } from 'primeng/stepper';
 import { Guarantor } from '../../types/searchCustomers.interface';
+import { CheckboxChangeEvent } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-loan',
@@ -111,13 +112,13 @@ export class LoanComponent implements OnDestroy, OnInit {
   semanasDePlazo: number | undefined;
   id_plazo: number | undefined;
   semana_refinanciamiento: string | undefined = '';
-  fecha_inicial: Date | undefined;
+  fecha_inicial: Date | undefined | '';
   fecha_final_estimada: Date | undefined;
   fecha_final_estimada_string: string | null = null;
-  fechaMinima: Date = new Date();
-  dia_semana: string | null = null;
+  fechaMinima: Date | undefined | '' = new Date();
+  dia_semana: string | null = '';
   days: string[] = days;
-  cantidadIngresada: number = 0;
+  cantidadIngresada: number = this.minLoanAmount;
   tasa_interes: number = 0;
   cantidad_pagar: number = 0;
   pagoSemanal: number | null = null;
@@ -154,6 +155,9 @@ export class LoanComponent implements OnDestroy, OnInit {
     formName: string;
     inputRef: InputNumber;
   };
+  disabledCalendar = false;
+  confirmationDate: Date | undefined;
+  confirmationPlazo: Plazo | undefined;
 
   constructor() {
     this.mainForm = this.formInit();
@@ -205,7 +209,9 @@ export class LoanComponent implements OnDestroy, OnInit {
         [Validators.required, Validators.min(this.minLoanAmount)],
       ],
       plazo: ['', Validators.required],
-      fecha_inicial: ['', Validators.required],
+      fecha_inicial: [
+        { value: this.generateLocalISOStringDate(), disabled: true },
+      ],
       observaciones: [''],
       formCliente: this.#formBuilder.group(
         {
@@ -218,6 +224,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           ocupacion_cliente: [''],
           curp_cliente: ['', [Validators.required, curpValidator()]],
           id_domicilio_cliente: [],
+          isCustomerAddressUpdate: [false],
           tipo_calle_cliente: ['', Validators.required],
           nombre_calle_cliente: ['', Validators.required],
           numero_exterior_cliente: [null, Validators.required],
@@ -250,6 +257,7 @@ export class LoanComponent implements OnDestroy, OnInit {
           ocupacion_aval: [''],
           curp_aval: ['', [Validators.required, curpValidator()]],
           id_domicilio_aval: [],
+          isGuarantorAddressUpdate: [false],
           tipo_calle_aval: ['', Validators.required],
           nombre_calle_aval: ['', Validators.required],
           numero_exterior_aval: ['', Validators.required],
@@ -432,7 +440,6 @@ export class LoanComponent implements OnDestroy, OnInit {
       message:
         'Valida que la información de este formulario es correcta y verídica. Estas seguro que deseas continuar con la solicitud?',
       header: 'Confirmación',
-      icon: 'pi pi-info-circle',
       acceptLabel: 'Enviar solicitud',
       acceptIcon: 'none',
       rejectLabel: 'Regresar',
@@ -465,6 +472,10 @@ export class LoanComponent implements OnDestroy, OnInit {
    *
    */
   onFormAccept() {
+    if (!this.validateConfirmationFields()) {
+      this.showLoanNotApprovedMessage();
+      return;
+    }
     this.uploading = true;
     const requestData = this.buildRequestData();
     const loanMode = this.windowMode === 'new' ? 'new' : 'update';
@@ -591,7 +602,7 @@ export class LoanComponent implements OnDestroy, OnInit {
       user_role: this.currentUser.ROL,
       id_grupo_original: this.id_grupo_original || this.currentUser.ID_GRUPO,
       fecha_final_estimada: this.fecha_final_estimada,
-      dia_semana: this.dia_semana,
+      ...(this.dia_semana ? { dia_semana: this.dia_semana } : {}),
       cantidad_pagar: this.cantidad_pagar,
       id_loan_to_refinance: this.refinanceResults()?.id_prestamo,
     };
@@ -634,9 +645,11 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.mainForm.patchValue({
       formCliente: {
         id_domicilio_cliente: searchResults.id_domicilio_cliente,
+        isCustomerAddressUpdate: true,
       },
       formAval: {
         id_domicilio_aval: searchResults.id_domicilio_aval,
+        isGuarantorAddressUpdate: true,
       },
     });
   }
@@ -651,6 +664,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.mainForm.patchValue({
       formAval: {
         id_domicilio_aval: searchResults.id_domicilio,
+        isGuarantorAddressUpdate: true,
       },
     });
   }
@@ -695,7 +709,9 @@ export class LoanComponent implements OnDestroy, OnInit {
           this.closedDate = data.closed_date!;
           this.tasa_interes = data.tasa_de_interes;
           this.cantidadIngresada = data.cantidad_prestada;
-          this.fecha_inicial = new Date(data.fecha_inicial.replace(/Z$/, ''));
+          this.fecha_inicial = data.fecha_inicial
+            ? new Date(data.fecha_inicial.replace(/Z$/, ''))
+            : this.generateLocalISOStringDate();
           this.fechaMinima = this.fecha_inicial;
           this.customerFolderName = `${this.loanRequestId}-${data.apellido_paterno_cliente.toUpperCase()}`;
           this.nombre_agente = data.nombre_agente;
@@ -743,6 +759,7 @@ export class LoanComponent implements OnDestroy, OnInit {
               ocupacion_cliente: data.ocupacion_cliente,
               curp_cliente: data.curp_cliente,
               id_domicilio_cliente: data.id_domicilio_cliente,
+              isCustomerAddressUpdate: data.is_customer_address_update || false,
               tipo_calle_cliente: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_cliente
               ),
@@ -769,6 +786,8 @@ export class LoanComponent implements OnDestroy, OnInit {
               ocupacion_aval: data.ocupacion_aval,
               curp_aval: data.curp_aval,
               id_domicilio_aval: data.id_domicilio_aval,
+              isGuarantorAddressUpdate:
+                data.is_guarantor_address_update || false,
               tipo_calle_aval: tiposCalle.find(
                 (tipo) => tipo.value === data.tipo_calle_aval
               ),
@@ -786,9 +805,17 @@ export class LoanComponent implements OnDestroy, OnInit {
             },
           });
           this.calculaFechaFinal();
-          this.calculaDiaDeLaSemana(
-            new Date(data.fecha_inicial.replace(/Z$/, ''))
-          );
+          // this.confirmationDate = this.fecha_inicial;
+          // this.confirmationPlazo = plazos.find(
+          //   (plazo) => plazo.id === data.id_plazo
+          // );
+          if (data.fecha_inicial) {
+            this.calculaDiaDeLaSemana(
+              new Date(data.fecha_inicial.replace(/Z$/, ''))
+            );
+            this.disabledCalendar = true;
+            this.mainForm.get('fecha_inicial')?.enable();
+          }
           this.updateAmountValidator(
             data.cantidad_prestada,
             data.cantidad_restante
@@ -838,7 +865,11 @@ export class LoanComponent implements OnDestroy, OnInit {
     inputRef: InputNumber
   ) {
     if (!event.value) return;
-    this.idDomicilioSearch$.next({ id: +event.value, formName, inputRef });
+    this.idDomicilioSearch$.next({
+      id: Number(event.value),
+      formName,
+      inputRef,
+    });
   }
 
   addressSearchSubjectInit() {
@@ -1055,5 +1086,72 @@ export class LoanComponent implements OnDestroy, OnInit {
         detail: 'No se puede abrir la ubicación.',
         life: 3000,
       });
+  }
+
+  setCustomLoanDate(event: CheckboxChangeEvent) {
+    this.disabledCalendar = event.checked;
+    if (this.disabledCalendar) this.mainForm.get('fecha_inicial')?.enable();
+    else this.mainForm.get('fecha_inicial')?.disable();
+    this.calculaDiaDeLaSemana(this.mainForm.get('fecha_inicial')?.value);
+  }
+
+  generateLocalISOStringDate() {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    return new Date(`${year}-${month}-${day}T00:00:00.000`);
+  }
+
+  showLoanNotApprovedMessage() {
+    this.#messageService.add({
+      severity: 'error',
+      summary: 'Datos incorrectos',
+      detail: `Los datos de confirmacion son incorrectos, verificalos antes de enviar.`,
+      life: 3000,
+    });
+  }
+
+  validateConfirmationFields(): boolean {
+    const isConfirmationVisible =
+      this.statusProvisional === 'APROBADO' &&
+      this.currentUser?.ROL !== 'Cobrador' &&
+      this.windowMode === 'view';
+
+    if (!isConfirmationVisible) {
+      return true;
+    }
+
+    if (this.disabledCalendar) {
+      const formDate = this.mainForm.get('fecha_inicial')?.value as
+        | Date
+        | undefined;
+      if (!this.areDatesEqual(formDate, this.confirmationDate)) {
+        console.log('Fechas no son iguales');
+        return false;
+      }
+    }
+    const formPlazo = this.mainForm.get('plazo')?.value as Plazo | undefined;
+    if (!this.arePlazosEqual(formPlazo, this.confirmationPlazo)) {
+      console.log('Plazos no son iguales');
+      return false;
+    }
+
+    return true;
+  }
+
+  private areDatesEqual(date1?: Date | null, date2?: Date | null): boolean {
+    if (!date1 || !date2) return false;
+    const d1 = new Date(date1.getFullYear(), date1.getMonth(), date1.getDate());
+    const d2 = new Date(date2.getFullYear(), date2.getMonth(), date2.getDate());
+    return d1.getTime() === d2.getTime();
+  }
+
+  private arePlazosEqual(
+    plazo1?: Plazo | null,
+    plazo2?: Plazo | null
+  ): boolean {
+    if (!plazo1 || !plazo2) return false;
+    return plazo1.id === plazo2.id;
   }
 }
