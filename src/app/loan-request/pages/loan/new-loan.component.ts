@@ -891,9 +891,16 @@ export class LoanComponent implements OnDestroy, OnInit {
             })),
             catchError((error) => {
               console.error(error);
+              const formName = this.domiciliosInputRef?.formName as string;
               this.mainForm.patchValue({
-                [this.domiciliosInputRef?.formName as string]: {
+                [formName]: {
                   [this.domiciliosInputRef?.inputRef.inputId as string]: null,
+                  ...(formName === 'formCliente'
+                    ? { isCustomerAddressUpdate: false }
+                    : {}),
+                  ...(formName === 'formAval'
+                    ? { isGuarantorAddressUpdate: false }
+                    : {}),
                 },
               });
               this.#messageService.add({
@@ -924,6 +931,7 @@ export class LoanComponent implements OnDestroy, OnInit {
     switch (formName) {
       case 'formCliente':
         this.mainForm.get(formName)?.patchValue({
+          isCustomerAddressUpdate: true,
           tipo_calle_cliente: tiposCalle.find(
             (tipo) => tipo.value === address.tipo_calle
           ),
@@ -943,6 +951,7 @@ export class LoanComponent implements OnDestroy, OnInit {
         break;
       case 'formAval':
         this.mainForm.get(formName)?.patchValue({
+          isGuarantorAddressUpdate: true,
           tipo_calle_aval: tiposCalle.find(
             (tipo) => tipo.value === address.tipo_calle
           ),
