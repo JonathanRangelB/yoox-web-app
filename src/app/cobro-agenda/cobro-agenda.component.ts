@@ -81,7 +81,7 @@ export class CobroAgendaComponent implements OnInit {
         }),
       })
       .subscribe({
-        next: (data) => this.fillFiedlsWithData(data),
+        next: (data) => this.fillFieldsWithData(data),
         error: (error) => {
           this.handleError(error);
         },
@@ -147,7 +147,7 @@ export class CobroAgendaComponent implements OnInit {
     this.selectedGroup = undefined;
   }
 
-  fillFiedlsWithData(data: AgendaDeCobro) {
+  fillFieldsWithData(data: AgendaDeCobro) {
     this.datosAgenda = data.datosAgenda;
     this.respaldoDatosAgenda = [...data.datosAgenda];
     this.users.set(data.usersList);
