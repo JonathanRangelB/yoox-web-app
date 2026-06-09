@@ -10,16 +10,19 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { InputTextModule } from 'primeng/inputtext';
 import { Sidebar, SidebarModule } from 'primeng/sidebar';
-import { TableModule } from 'primeng/table';
+import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
 import { TooltipModule } from 'primeng/tooltip';
 import { AgendaService } from './services/agenda.service';
+import { ExcelExportService } from '../shared/services/excel-export.service';
 import {
   AgendaDeCobro,
   DatosAgenda,
   Group,
 } from './interfaces/cobro-agenda.interface';
 import { getUserFromLocalStorage } from '../shared/utils/functions.utils';
+import { MessageService } from 'primeng/api';
+import { ToastModule } from 'primeng/toast';
 
 @Component({
   selector: 'app-cobro-agenda',
@@ -38,28 +41,28 @@ import { getUserFromLocalStorage } from '../shared/utils/functions.utils';
     SidebarModule,
     TooltipModule,
     DividerModule,
+    ToastModule,
   ],
+  providers: [MessageService],
   templateUrl: './cobro-agenda.component.html',
   styleUrls: ['./cobro-agenda.component.css'],
 })
 export class CobroAgendaComponent implements OnInit {
-  agendaService = inject(AgendaService);
+  readonly #agendaService = inject(AgendaService);
+  readonly #excelExportService = inject(ExcelExportService);
+  readonly #messageService = inject(MessageService);
   selectedRecord: DatosAgenda | null = null;
   datosAgenda: DatosAgenda[] = [];
   respaldoDatosAgenda: DatosAgenda[] = [];
   loading: boolean = false;
+  exporting: boolean = false;
   filterMenuOpen: boolean = false;
   users = signal<Group[]>([]);
   selectedUser: Group | undefined = undefined;
   currentUser = getUserFromLocalStorage();
-  groups = signal<Group[]>([]);
-  selectedGroup: Group | undefined = undefined;
-  management = signal<Group[]>([]);
-  selectedManagement: Group | undefined = undefined;
   userDropdown = viewChild<Dropdown>('userDropdown');
-  groupDropdown = viewChild<Dropdown>('groupdropdown');
-  managementDropdown = viewChild<Dropdown>('managementdropdown');
   sidebar = viewChild<Sidebar>('sidebar');
+  table = viewChild<Table>('dt');
 
   ngOnInit(): void {
     this.requestAgendaData();
@@ -68,16 +71,10 @@ export class CobroAgendaComponent implements OnInit {
   requestAgendaData(): void {
     this.loading = true;
     this.sidebar()!.close(new Event('close'));
-    this.agendaService
+    this.#agendaService
       .getOutstandingCollectionsReport({
         ...(this.selectedUser && {
           userIdFilter: this.selectedUser.ID,
-        }),
-        ...(this.selectedGroup && {
-          groupIdFilter: this.selectedGroup.ID,
-        }),
-        ...(this.selectedManagement && {
-          managementIdFilter: this.selectedManagement.ID,
         }),
       })
       .subscribe({
@@ -131,38 +128,51 @@ export class CobroAgendaComponent implements OnInit {
 
   onSelectedUser(event: any) {
     this.selectedUser = event.value;
-    this.selectedGroup = undefined;
-    this.selectedManagement = undefined;
-  }
-
-  onSelectedGroup(event: any) {
-    this.selectedGroup = event.value;
-    this.selectedUser = undefined;
-    this.selectedManagement = undefined;
-  }
-
-  onSelectedManagement(event: any) {
-    this.selectedManagement = event.value;
-    this.selectedUser = undefined;
-    this.selectedGroup = undefined;
   }
 
   fillFieldsWithData(data: AgendaDeCobro) {
     this.datosAgenda = data.datosAgenda;
     this.respaldoDatosAgenda = [...data.datosAgenda];
     this.users.set(data.usersList);
-    this.groups.set(data.groups);
-    this.management.set(data.management);
     this.loading = false;
   }
 
   restoreDefaults() {
     this.userDropdown()?.clear();
-    this.groupDropdown()?.clear();
-    this.managementDropdown()?.clear();
     this.selectedUser = undefined;
-    this.selectedGroup = undefined;
-    this.selectedManagement = undefined;
+  }
+
+  async exportAll(): Promise<void> {
+    if (this.respaldoDatosAgenda.length === 0) return;
+    this.exporting = true;
+    const dateStr = new Date().toISOString().split('T')[0];
+    await this.#excelExportService.exportAgendaToExcel(
+      this.respaldoDatosAgenda,
+      `agenda-cobro-completa_${dateStr}`
+    );
+    this.exporting = false;
+  }
+
+  async exportFiltered(): Promise<void> {
+    const filtered = this.table()?.filteredValue as DatosAgenda[] | undefined;
+    const dataToExport = filtered ?? this.datosAgenda;
+    if (dataToExport.length === 0) {
+      this.#messageService.add({
+        severity: 'warn',
+        summary: 'No hay datos para exportar',
+        detail:
+          'Tabla vacía o filtros aplicados no coinciden con ningún registro.',
+        life: 3000,
+      });
+      return;
+    }
+    this.exporting = true;
+    const dateStr = new Date().toISOString().split('T')[0];
+    await this.#excelExportService.exportAgendaToExcel(
+      dataToExport,
+      `agenda-cobro-filtrada_${dateStr}`
+    );
+    this.exporting = false;
   }
 
   handleError(error: Error) {
