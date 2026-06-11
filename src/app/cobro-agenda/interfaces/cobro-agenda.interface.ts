@@ -35,6 +35,7 @@ export interface DatosAgenda {
   saldoPendiente: number;
   totalPagos: number;
   totalSemanasPrestamo: number;
+  folioUltimoPrestamo: string;
 }
 
 export interface Group {
