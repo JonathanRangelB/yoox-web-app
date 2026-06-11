@@ -25,7 +25,7 @@ export class ExcelExportService {
       'Pagos Restantes',
       'Fecha último pago',
       'Vencimiento de crédito',
-      'Última solicitud de préstamo aprobada',
+      'Folio de último préstamo aprobado',
     ];
 
     worksheet.addRow(headers);
