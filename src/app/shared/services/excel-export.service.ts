@@ -64,7 +64,7 @@ export class ExcelExportService {
         item.pagosRestante,
         this.parseDate(item.fechaUltimoPago),
         this.parseDate(item.fechaVencimiento),
-        this.parseDate(item.fechaUltimoPago),
+        item.ultimaSolicitudPrestamoAprobada,
       ]);
     });
 
