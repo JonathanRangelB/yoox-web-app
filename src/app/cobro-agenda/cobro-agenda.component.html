@@ -10,8 +10,6 @@
   [globalFilterFields]="[
     'id_cliente',
     'nombreCliente',
-    'nombreGrupo',
-    'nombreGerencia',
     'folioDeCredito',
     'diaDePago',
     'montoPrestamo',
@@ -19,6 +17,8 @@
     'saldoPendiente',
     'numeroAtrasos',
     'pagosRestante',
+    'fechaUltimoPago',
+    'fechaVencimiento',
   ]"
   scrollHeight="flex">
   <ng-template pTemplate="caption">
@@ -31,7 +31,7 @@
           <input
             pInputText
             type="text"
-            pTooltip="Actualmente busca por ID, Cliente, Grupo, Gerencia, Folio, Día de pago, Monto de préstamo, Monto de pago, Saldo pendiente, Pagos atrasados y Pagos restantes"
+            pTooltip="Actualmente busca por ID, Cliente, Folio, Día de pago, Monto de préstamo, Monto de pago, Saldo pendiente, Pagos atrasados, Pagos restantes, Fecha último pago y Vencimiento de crédito"
             tooltipPosition="bottom"
             placeholder="Buscar general..."
             (input)="onGlobalFilter($event, dt)" />
@@ -64,32 +64,6 @@
           <p-columnFilter
             type="text"
             field="nombreCliente"
-            display="menu"
-            showOperator="false"
-            showAddButton="false"
-            class="ml-auto" />
-        </div>
-      </th>
-      <th pSortableColumn="nombreGrupo" style="min-width: 15rem">
-        <div class="flex justify-content-between align-items-center">
-          Grupo
-          <p-sortIcon field="nombreGrupo" />
-          <p-columnFilter
-            type="text"
-            field="nombreGrupo"
-            display="menu"
-            showOperator="false"
-            showAddButton="false"
-            class="ml-auto" />
-        </div>
-      </th>
-      <th pSortableColumn="nombreGerencia" style="min-width: 15rem">
-        <div class="flex justify-content-between align-items-center">
-          Gerencia
-          <p-sortIcon field="nombreGerencia" />
-          <p-columnFilter
-            type="text"
-            field="nombreGerencia"
             display="menu"
             showOperator="false"
             showAddButton="false"
@@ -225,24 +199,20 @@
         <div class="flex justify-content-between align-items-center">
           Fecha último pago
           <p-sortIcon field="fechaUltimoPago" />
-          <!-- <p-columnFilter -->
-          <!--   type="date" -->
-          <!--   field="fechaUltimoPago" -->
-          <!--   display="menu" -->
-          <!--   showOperator="false" -->
-          <!--   class="ml-auto" /> -->
         </div>
       </th>
       <th pSortableColumn="fechaVencimiento" style="min-width: 10rem">
         <div class="flex justify-content-between align-items-center">
           Vencimiento de crédito
           <p-sortIcon field="fechaVencimiento" />
-          <!-- <p-columnFilter -->
-          <!--   type="date" -->
-          <!--   field="fechaVencimiento" -->
-          <!--   display="menu" -->
-          <!--   showOperator="false" -->
-          <!--   class="ml-auto" /> -->
+        </div>
+      </th>
+      <th
+        pSortableColumn="ultimaSolicitudPrestamoAprobada"
+        style="min-width: 14rem">
+        <div class="flex justify-content-between align-items-center">
+          Folio de último préstamo aprobado
+          <p-sortIcon field="ultimaSolicitudPrestamoAprobada" />
         </div>
       </th>
     </tr>
@@ -254,16 +224,6 @@
       <td>
         <div class="flex flex-column">
           <span class="text-sm">{{ cobro.nombreCliente }}</span>
-        </div>
-      </td>
-      <td>
-        <div class="flex flex-column">
-          <span class="text-sm">{{ cobro.nombreGrupo }}</span>
-        </div>
-      </td>
-      <td>
-        <div class="flex flex-column">
-          <span class="text-sm">{{ cobro.nombreGerencia }}</span>
         </div>
       </td>
       <td>
@@ -315,12 +275,17 @@
           cobro.fechaVencimiento | date: 'dd/MM/yyyy' : 'UTC'
         }}</span>
       </td>
+      <td>
+        <span class="text-sm">{{
+          cobro.ultimaSolicitudPrestamoAprobada || 'N/A'
+        }}</span>
+      </td>
     </tr>
   </ng-template>
 
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td colspan="16" class="text-center">
+      <td colspan="14" class="text-center">
         <div class="flex flex-column align-items-center">
           <i class="pi pi-inbox text-4xl text-400 mb-3"></i>
           <span class="text-600">No se encontraron registros de cobro</span>
@@ -369,42 +334,6 @@
         </p-dropdown>
       </div>
 
-      <div class="mb-3">
-        <label class="block mb-2">Grupo</label>
-        <p-dropdown
-          [(ngModel)]="selectedGroup"
-          [options]="groups()"
-          #groupdropdown
-          placeholder="Seleccione un grupo"
-          optionLabel="NOMBRE"
-          id="ID"
-          styleClass="w-full"
-          filter="true"
-          [virtualScroll]="true"
-          [virtualScrollItemSize]="10"
-          [showClear]="true"
-          (onChange)="onSelectedGroup($event)">
-        </p-dropdown>
-      </div>
-
-      <div class="mb-3">
-        <label class="block mb-2">Gerencia</label>
-        <p-dropdown
-          [(ngModel)]="selectedManagement"
-          [options]="management()"
-          #managementdropdown
-          placeholder="Seleccione una gerencia"
-          optionLabel="NOMBRE"
-          id="ID"
-          styleClass="w-full"
-          filter="true"
-          [virtualScroll]="true"
-          [virtualScrollItemSize]="10"
-          [showClear]="true"
-          (onChange)="onSelectedManagement($event)">
-        </p-dropdown>
-      </div>
-
       <div class="flex justify-content-center gap-2">
         <p-button
           label="Limpiar"
@@ -443,6 +372,26 @@
         icon="pi pi-refresh"
         (click)="refreshData()"
         [loading]="loading" />
+      <p-divider />
+      <div class="flex align-items-center gap-2">
+        <span class="font-bold"
+          >Descargar Excel <i class="pi pi-file-excel"></i
+        ></span>
+      </div>
+      <p-button
+        label="Exportar todo"
+        styleClass="w-full"
+        icon="pi pi-file-excel"
+        (click)="exportAll()"
+        [loading]="exporting" />
+      <p-button
+        label="Exportar filtrados"
+        styleClass="w-full"
+        icon="pi pi-filter"
+        (click)="exportFiltered()"
+        [loading]="exporting" />
     </div>
   </div>
 </p-sidebar>
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />
