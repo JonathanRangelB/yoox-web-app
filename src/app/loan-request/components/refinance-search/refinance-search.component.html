@@ -13,7 +13,7 @@
       class="inline-block w-full pr-4"
       inputId="plazo"
       id="plazo"
-      formControlName="plazo"
+      [(ngModel)]="selectedRefinanceValue"
       [options]="refinanceItems()"
       optionLabel="id_prestamo"
       (onChange)="onDropdownChange($event)"

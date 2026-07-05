@@ -94,3 +94,35 @@ src/app/
 - Run specific Cypress test: `cypress run --spec "cypress/e2e/path/to/spec.cy.ts"`
 - Check git status: `git status`
 - View recent commits: `git log --oneline -10`
+
+## Design Context
+
+### Users
+
+The primary users are internal **collection agents and loan officers** at Grupo Financiero YOOX. They use the application in a work context to manage loan requests, register payments, review customer status, and coordinate collection schedules. Their core job is to move money and paperwork accurately and quickly, so the interface must prioritize efficiency, clarity, and trust in every financial transaction.
+
+Secondary users include **customers** who check loan request status on the public landing flow (`request-status`), and **administrators** who oversee the request pipeline. All audiences need to feel they are interacting with a serious, reliable financial institution.
+
+### Brand Personality
+
+- **Voice & tone:** Professional, direct, and institutionally warm. The language is Spanish (Mexico), formal but not cold.
+- **3-word personality:** Premium, sophisticated, exclusive.
+- **Emotional goals:** Confidence, seriousness, calm control. The interface should feel like a trusted financial partner, not a flashy startup or a dated legacy system.
+
+### Aesthetic Direction
+
+- **Visual tone:** Clean and functional, inspired by modern Mexican fintechs.
+- **Color strategy:** Shift the current purple-blue accent (`#667eea → #764ba2`) toward a corporate blue palette that communicates trust and stability. The existing dark theme (`#0f172a`, `#1e293b`) can remain the default, but a light mode must be added and both should feel premium.
+- **Typography:** Use a refined sans-serif system. `Poppins` is already in place for PrimeNG components; body text should be consolidated to a single high-readability family.
+- **References:** Modern Mexican fintech interfaces that combine professionalism with approachable clarity.
+- **Anti-references:** Nothing explicitly off-limits, but avoid loud, overly colorful, or distracting visual noise.
+- **Theme:** Support both light and dark modes with a user-controllable switch and system-preference detection.
+
+### Design Principles
+
+1. **Financial clarity first.** Numbers, statuses, and actions must be scannable at a glance. Use clear hierarchy, generous whitespace, and consistent formatting for currency, dates, and state labels.
+2. **Institutional trust.** A corporate blue palette, subtle shadows, rounded-but-measured corners, and restrained motion create a premium, bank-grade feeling.
+3. **Agent efficiency.** Optimize for repeated daily tasks: fewer clicks, predictable layouts, keyboard-friendly forms, and consistent component behavior across dashboard, tables, and wizards.
+4. **Systematic over bespoke.** Express the brand through PrimeNG theme tokens and shared design tokens rather than one-off styles in individual components. Reuse spacing, color, and type scales across the app.
+5. **Accessibility as a baseline.** Meet WCAG AA minimums for contrast, focus visibility, touch targets, and screen-reader labels. Respect `prefers-reduced-motion`.
+6. **Light and dark, equally premium.** Both color modes must look intentional and polished; neither should feel like an afterthought.
