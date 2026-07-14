@@ -1018,6 +1018,12 @@ export class LoanComponent implements OnDestroy, OnInit {
         refinanceData.cantidad_restante
       );
     }
+    this.#messageService.add({
+      severity: 'success',
+      summary: 'Refinanciamiento seleccionado',
+      detail: 'Aplicando cambios al formulario',
+      life: 3000,
+    });
   }
 
   updateAmountValidator(
@@ -1083,6 +1089,12 @@ export class LoanComponent implements OnDestroy, OnInit {
     this.updateAmountValidator(this.minLoanAmount);
     this.cantidadIngresada = this.minLoanAmount;
     this.calculaPrestamo();
+    this.#messageService.add({
+      severity: 'info',
+      summary: 'Refinanciamiento eliminado',
+      detail: 'Se han eliminado los datos de refinanciamiento del formulario',
+      life: 3000,
+    });
   }
 
   openGmapsLocation() {
