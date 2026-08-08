@@ -1,9 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { RouterTestingModule } from '@angular/router/testing';
 
 import { LandingComponent } from './landing.component';
-import { ToolbarModule } from 'primeng/toolbar';
-import { ButtonModule } from 'primeng/button';
-import { CarouselModule } from 'primeng/carousel';
 
 describe('LandingComponent', () => {
   let component: LandingComponent;
@@ -12,7 +10,7 @@ describe('LandingComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LandingComponent],
-      imports: [ToolbarModule, ButtonModule, CarouselModule],
+      imports: [RouterTestingModule],
     });
     fixture = TestBed.createComponent(LandingComponent);
     component = fixture.componentInstance;
@@ -23,15 +21,17 @@ describe('LandingComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(LandingComponent);
-    fixture.detectChanges();
+  it('should render the hero title', () => {
     const compiled = fixture.nativeElement as HTMLElement;
-    expect(
-      compiled
-        .querySelector('button.contacto')
-        ?.attributes.getNamedItem('label')
-        ?.value.includes('Acceder')
+    expect(compiled.querySelector('.hero-title')?.textContent).toContain(
+      'Financiamiento'
     );
+  });
+
+  it('should calculate the weekly payment for 14 weeks at 40%', () => {
+    component.loanAmount.set(10000);
+    component.selectTerm(0);
+    expect(component.weeklyPayment()).toBe(1000);
+    expect(component.totalPayment()).toBe(14000);
   });
 });

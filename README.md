@@ -16,6 +16,7 @@
   - [Running unit tests](#running-unit-tests)
   - [Running end-to-end tests](#running-end-to-end-tests)
   - [Recommended VScode plugin installations](#recommended-vscode-plugin-installations)
+  - [Recommended AI Tools](#recommended-ai-tools)
   <!--toc:end-->
 
 ## Installation
@@ -104,3 +105,89 @@ Run `ng e2e` to execute the end-to-end tests with [Cypress.io](https://www.cypre
 [Auto Close Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-close-tag)
 
 [Auto Rename Tag](https://marketplace.visualstudio.com/items?itemName=formulahendry.auto-rename-tag)
+
+## Recommended AI Tools
+
+These tools are optional but recommended to get the most out of AI-assisted development in this project.
+
+### Impeccable
+
+[Impeccable](https://impeccable.style) is a cross-provider design skill pack for AI coding assistants. It adds commands such as `/impeccable init`, `/impeccable polish`, and `/impeccable audit` to improve UI/UX quality.
+
+Install it with pnpm:
+
+```bash
+pnpm add -g impeccable
+```
+
+Then install the skills into your AI harness:
+
+```bash
+impeccable skills install
+```
+
+For a project-only install, use `pnpm add -D impeccable` and run `pnpm exec impeccable skills install`. Once installed, run `/impeccable init` inside your AI assistant to set up the project design context.
+
+More details: [npm](https://www.npmjs.com/package/impeccable) · [impeccable.style](https://impeccable.style)
+
+### Bitloops
+
+[Bitloops](https://bitloops.com) captures high-signal context around every code change and keeps your codebase model fresh in the background, helping AI assistants understand the project faster.
+
+Install the Bitloops CLI:
+
+```bash
+curl -fsSL https://bitloops.com/install.sh | bash -s -- --default-config
+```
+
+After cloning this repository, initialize Bitloops inside the project folder so it can track changes:
+
+```bash
+bitloops init
+```
+
+Open the local dashboard at any time with `bitloops dashboard`. Full setup guide: [Bitloops Docs](https://bitloops.com/docs/getting-started/quickstart)
+
+### Context Mode
+
+[context-mode](https://www.npmjs.com/package/context-mode) protects your context window by running analysis, web fetching, and large file reads inside a sandbox. This keeps raw data out of the conversation and reduces token usage.
+
+Install it globally with pnpm:
+
+```bash
+pnpm add -g context-mode
+```
+
+Then configure it for your AI harness.
+
+**Claude Code**
+
+Install the plugin from the marketplace and reload:
+
+```bash
+/plugin marketplace add mksglu/context-mode
+/plugin install context-mode@context-mode
+```
+
+Verify with:
+
+```bash
+/context-mode:ctx-doctor
+```
+
+All checks should show `[x]`. You can also type `ctx stats` in chat to confirm the tools are loaded.
+
+**OpenCode**
+
+Add the plugin to `opencode.json` in your project root (or `~/.config/opencode/opencode.json` for global use):
+
+```json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "plugin": ["context-mode"]
+}
+```
+
+Restart OpenCode, then type `ctx stats` in chat to verify the `ctx_*` tools are available.
+
+For other editors or harnesses, see the [context-mode docs](https://www.npmjs.com/package/context-mode).

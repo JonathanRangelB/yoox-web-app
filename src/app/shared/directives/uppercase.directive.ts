@@ -3,10 +3,9 @@ import { NgControl } from '@angular/forms';
 
 @Directive({
   selector: '[appUppercase]',
-  standalone: true
+  standalone: true,
 })
 export class UppercaseDirective {
-
   private control = inject(NgControl);
 
   @HostListener('input', ['$event'])

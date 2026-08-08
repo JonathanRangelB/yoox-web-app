@@ -1,213 +1,501 @@
-<header class="header">
-  <nav class="nav">
-    <div class="nav-container">
-      <div class="logo">
-        <img
-          src="../../../assets/yoox.svg"
-          alt="yoox logo"
-          class="logo-img"
-          style="view-transition-name: banner" />
-        <span class="logo-text">Grupo financiero YOOX</span>
-      </div>
-      <div class="nav-actions">
-        <p-button styleClass="p-button-outlined" (onClick)="navigateTo('login')"
-          >Acceso Agentes</p-button
-        >
-      </div>
+<a href="#main-content" class="skip-to-content"
+  >Saltar al contenido principal</a
+>
+
+<header class="header" [class.scrolled]="scrolled()">
+  <div class="container header-container">
+    <a href="#" class="logo">
+      <img src="/assets/yoox.svg" alt="YOOX" class="logo-img" />
+      <span class="logo-text">Grupo Financiero <strong>YOOX</strong></span>
+    </a>
+
+    <div class="header-actions">
+      <button
+        class="btn btn-outline"
+        type="button"
+        (click)="navigateTo('requeststatus')">
+        Consulta tu solicitud
+      </button>
+      <button
+        class="btn btn-primary"
+        type="button"
+        (click)="navigateTo('login')">
+        <i class="fas fa-user" aria-hidden="true"></i>
+        <span>Acceso Agentes</span>
+      </button>
     </div>
-  </nav>
+  </div>
 </header>
-<section class="hero">
-  <div class="hero-background">
-    <video
-      class="hero-video"
-      autoplay
-      muted
-      loop
-      playsinline
-      oncanplay="this.style.opacity = 1"
-      onerror="this.style.display = 'none'">
-      <source
-        src="https://cdn.pixabay.com/video/2023/07/23/172893-848187892_large.mp4"
-        type="video/mp4" />
-    </video>
-    <div class="hero-video-overlay"></div>
-  </div>
-  <div class="hero-content">
-    <div class="hero-container">
-      <h1 class="hero-title">
-        Soluciones Financieras <span class="highlight">de Confianza</span>
-      </h1>
-      <p class="hero-subtitle">
-        En Grupo financiero YOOX te ofrecemos las mejores opciones de crédito y
-        financiamiento para hacer realidad tus proyectos personales y
-        empresariales.
-      </p>
-      <p-button
-        label="Consulta tu solicitud"
-        data-cy="consulta_solicitud"
-        icon="pi pi-file-check"
-        styleClass="p-button-lg"
-        (onClick)="navigateTo('requeststatus')"></p-button>
-    </div>
-  </div>
-</section>
 
-<!-- Image Carousel -->
-<section class="carousel-section">
-  <div class="container">
-    <h2 class="section-title">Nuestros Servicios</h2>
-    <div class="carousel-section">
-      <p-carousel
-        [value]="carouselItems"
-        [numVisible]="1"
-        [numScroll]="1"
-        [circular]="true"
-        [autoplayInterval]="5000">
-        <ng-template let-item pTemplate="item">
-          <div class="carousel-item">
-            <img [src]="item.imageUrl" [alt]="item.title" />
-            <h3>{{ item.title }}</h3>
+<main id="main-content">
+  <section class="hero" id="hero">
+    <div class="container hero-container">
+      <div class="hero-content">
+        <h1 class="hero-title">
+          <span class="highlight">Financiamiento</span> inteligente para tu
+          futuro
+        </h1>
+        <p class="hero-subtitle">
+          Obtén el préstamo que necesitas en <strong>24 horas</strong> con tasas
+          competitivas y sin trámites complicados.
+        </p>
+
+        <div class="hero-stats">
+          <div class="stat">
+            <span class="stat-number">5,000+</span>
+            <span class="stat-label">Clientes satisfechos</span>
           </div>
-        </ng-template>
-      </p-carousel>
-    </div>
-  </div>
-</section>
+          <div class="stat">
+            <span class="stat-number">$50M+</span>
+            <span class="stat-label">En préstamos otorgados</span>
+          </div>
+          <div class="stat">
+            <span class="stat-number">4.9</span>
+            <span class="stat-label">Calificación promedio</span>
+          </div>
+        </div>
 
-<section class="benefits">
-  <div class="container">
-    <h2 class="section-title">¿Por qué elegir a Grupo Financiero YOOX?</h2>
-    <div class="benefits-grid">
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <div class="icon-circle">💰</div>
+        <div class="hero-cta">
+          <a href="#hero" class="btn btn-primary btn-lg">
+            <i class="fas fa-calculator" aria-hidden="true"></i>
+            Calcular mi préstamo
+          </a>
+          <button
+            class="btn btn-outline btn-lg"
+            type="button"
+            (click)="navigateTo('requeststatus')">
+            <i class="fas fa-search" aria-hidden="true"></i>
+            Consulta tu solicitud
+          </button>
         </div>
-        <h3>Tasas Competitivas</h3>
-        <p>
-          Ofrecemos las mejores tasas de interés del mercado, adaptadas a tu
-          perfil crediticio.
-        </p>
       </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <div class="icon-circle">⚡</div>
-        </div>
-        <h3>Proceso Rápido</h3>
-        <p>
-          Aprobación en menos de 24 horas con documentación simplificada y
-          proceso digital.
-        </p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <div class="icon-circle">🛡️</div>
-        </div>
-        <h3>Seguridad Total</h3>
-        <p>
-          Tus datos están protegidos con los más altos estándares de seguridad
-          financiera.
-        </p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <div class="icon-circle">🤝</div>
-        </div>
-        <h3>Atención Personalizada</h3>
-        <p>
-          Nuestros asesores te acompañan durante todo el proceso con atención.
-        </p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <div class="icon-circle">📱</div>
-        </div>
-        <h3>Plataforma Digital</h3>
-        <p>
-          Verifica tus solicitudes de crédito desde cualquier lugar con nuestra
-          web.
-        </p>
-      </div>
-      <div class="benefit-card">
-        <div class="benefit-icon">
-          <div class="icon-circle">🎯</div>
-        </div>
-        <h3>Flexibilidad</h3>
-        <p>
-          Planes de pago adaptados a tus posibilidades con opciones de
-          refinanciamiento.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
 
-<section class="values">
-  <div class="container">
-    <h2 class="section-title white">Nuestros Valores</h2>
-    <div class="values-grid">
-      <div class="value-item">
-        <div class="value-number">01</div>
-        <h3>Confianza</h3>
-        <p>
-          Construimos relaciones duraderas basadas en la transparencia y
-          honestidad en cada transacción.
-        </p>
-      </div>
-      <div class="value-item">
-        <div class="value-number">02</div>
-        <h3>Compromiso</h3>
-        <p>
-          Nos comprometemos con el crecimiento financiero de nuestros clientes y
-          la comunidad de Guadalajara.
-        </p>
-      </div>
-      <div class="value-item">
-        <div class="value-number">03</div>
-        <h3>Innovación</h3>
-        <p>
-          Adoptamos las últimas tecnologías para ofrecer servicios financieros
-          modernos y eficientes.
-        </p>
-      </div>
-      <div class="value-item">
-        <div class="value-number">04</div>
-        <h3>Excelencia</h3>
-        <p>
-          Buscamos la excelencia en cada servicio, superando las expectativas de
-          nuestros clientes.
-        </p>
-      </div>
-    </div>
-  </div>
-</section>
+      <div class="hero-calculator">
+        <div class="calculator-card">
+          <h2 class="calculator-title">
+            <i class="fas fa-calculator" aria-hidden="true"></i>
+            Simula tu préstamo
+          </h2>
 
-<footer class="footer">
-  <div class="container">
-    <div class="footer-content">
-      <div class="footer-section">
-        <h4>Grupo Financiero YOOX</h4>
-        <p>Tu socio financiero de confianza en Guadalajara desde 1995.</p>
-        <a routerLink="/terms"><p>Terminos y condiciones</p></a>
-        <a routerLink="/privacy"><p>Privacidad</p></a>
-      </div>
-      <div class="footer-section">
-        <h4>👤 Contacto</h4>
-        <p>📍 Av. Vallarta 1234, Guadalajara, Jalisco</p>
-        <p>📞 (33) 1234-5678</p>
-        <p>✉️ solucionesfinancieras&#64;gmail.com</p>
-      </div>
-      <div class="footer-section">
-        <h4>📅 Horarios</h4>
-        <p>Lunes - Viernes: 9:00 AM - 6:00 PM</p>
-        <p>Sábados y Domingos: Cerrado</p>
+          <div class="calculator-input">
+            <label for="loanAmount">Monto del préstamo</label>
+            <div class="input-with-slider">
+              <input
+                type="range"
+                id="loanAmount"
+                min="1000"
+                max="100000"
+                step="1000"
+                [value]="loanAmount()"
+                (input)="updateLoanAmount($event)" />
+              <span class="loan-value">{{ formatMoney(loanAmount()) }}</span>
+            </div>
+            <div class="range-labels">
+              <span>$1,000</span>
+              <span>$100,000</span>
+            </div>
+          </div>
+
+          <div class="calculator-input">
+            <label>Plazo (semanas)</label>
+            <div
+              class="term-options"
+              role="group"
+              aria-label="Plazo en semanas">
+              @for (term of terms; track term.weeks; let i = $index) {
+                <button
+                  type="button"
+                  class="term-option"
+                  [class.active]="selectedTermIndex() === i"
+                  [attr.aria-pressed]="selectedTermIndex() === i"
+                  (click)="selectTerm(i)">
+                  {{ term.label }}
+                </button>
+              }
+            </div>
+          </div>
+
+          <div class="calculator-result">
+            <div class="result-item">
+              <span class="result-label">Cuota semanal</span>
+              <span class="result-value">{{
+                formatMoney(weeklyPayment())
+              }}</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Tasa de interés</span>
+              <span class="result-value">{{
+                formatRate(selectedTerm().rate)
+              }}</span>
+            </div>
+            <div class="result-item">
+              <span class="result-label">Total a pagar</span>
+              <span class="result-value">{{
+                formatMoney(totalPayment())
+              }}</span>
+            </div>
+          </div>
+
+          <a
+            class="btn btn-primary btn-block"
+            [href]="whatsappUrl()"
+            target="_blank"
+            rel="noopener noreferrer">
+            <i class="fab fa-whatsapp" aria-hidden="true"></i>
+            Solicitar ahora
+          </a>
+
+          <p class="calculator-note">
+            <i class="fas fa-shield-alt" aria-hidden="true"></i>
+            Simulación sin compromiso. No afecta tu score crediticio.
+          </p>
+        </div>
       </div>
     </div>
+  </section>
+
+  <div class="section-divider" aria-hidden="true"></div>
+
+  <section class="benefits" id="beneficios">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          Por qué elegir <span class="highlight">YOOX</span>
+        </h2>
+        <p class="section-subtitle">
+          Ofrecemos las mejores condiciones para tu tranquilidad financiera
+        </p>
+      </div>
+
+      <div class="benefits-grid">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <i class="fas fa-bolt" aria-hidden="true"></i>
+          </div>
+          <h3 class="benefit-title">Aprobación rápida</h3>
+          <p class="benefit-description">
+            Respuesta en menos de 24 horas con documentación mínima requerida.
+          </p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <i class="fas fa-percentage" aria-hidden="true"></i>
+          </div>
+          <h3 class="benefit-title">Tasas claras</h3>
+          <p class="benefit-description">
+            Conoce el monto total y la cuota semanal antes de firmar. Sin letra
+            pequeña.
+          </p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <i class="fas fa-user-shield" aria-hidden="true"></i>
+          </div>
+          <h3 class="benefit-title">Sin prepagos</h3>
+          <p class="benefit-description">
+            Paga tu préstamo anticipadamente sin penalizaciones ni cargos
+            ocultos.
+          </p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <i class="fas fa-headset" aria-hidden="true"></i>
+          </div>
+          <h3 class="benefit-title">Asesoría personal</h3>
+          <p class="benefit-description">
+            Acompañamiento especializado durante todo el proceso.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="products" id="productos">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          Nuestros <span class="highlight">Productos</span> Financieros
+        </h2>
+        <p class="section-subtitle">Soluciones diseñadas para cada necesidad</p>
+      </div>
+
+      <div class="products-tabs">
+        <div class="tabs-header" role="tablist">
+          @for (product of products; track product.id; let i = $index) {
+            <button
+              type="button"
+              class="tab-btn"
+              [class.active]="activeProduct() === product.id"
+              [attr.aria-selected]="activeProduct() === product.id"
+              [attr.aria-controls]="'tab-panel-' + product.id"
+              [id]="'tab-' + product.id"
+              role="tab"
+              (click)="activeProduct.set(product.id)">
+              <i class="fas {{ product.icon }}" aria-hidden="true"></i>
+              {{ product.title }}
+            </button>
+          }
+        </div>
+
+        <div class="tabs-content">
+          @for (product of products; track product.id) {
+            <div
+              class="tab-pane"
+              [class.active]="activeProduct() === product.id"
+              [id]="'tab-panel-' + product.id"
+              role="tabpanel"
+              [attr.aria-labelledby]="'tab-' + product.id">
+              <div class="product-detail">
+                <div class="product-info">
+                  <h3 class="product-title">{{ product.title }}</h3>
+                  <p class="product-description">{{ product.description }}</p>
+
+                  <ul class="product-features">
+                    @for (feature of product.features; track feature.text) {
+                      <li>
+                        <i class="fas fa-check-circle" aria-hidden="true"></i>
+                        {{ feature.text }}
+                      </li>
+                    }
+                  </ul>
+
+                  <div class="product-cta">
+                    <a href="#hero" class="btn btn-primary">
+                      <i class="fas fa-calculator" aria-hidden="true"></i>
+                      Simular préstamo
+                    </a>
+                    <button
+                      class="btn btn-outline"
+                      type="button"
+                      (click)="navigateTo('requeststatus')">
+                      <i class="fas fa-file-alt" aria-hidden="true"></i>
+                      Más información
+                    </button>
+                  </div>
+                </div>
+
+                <div class="product-visual">
+                  <div class="visual-card">
+                    <div class="visual-icon">
+                      <i class="fas fa-chart-line" aria-hidden="true"></i>
+                    </div>
+                    <div class="visual-content">
+                      <h4>Ejemplo de cuota</h4>
+                      <div class="example-detail">
+                        <p>
+                          <strong>{{ product.exampleAmount }}</strong> a
+                          {{ product.exampleTerm }}
+                        </p>
+                        <p>
+                          <strong>Cuota:</strong> {{ product.examplePayment }}
+                        </p>
+                        <p><strong>Tasa:</strong> {{ product.exampleRate }}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="section-divider" aria-hidden="true"></div>
+
+  <section class="testimonials" id="testimonios">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          Lo que dicen <span class="highlight">nuestros clientes</span>
+        </h2>
+        <p class="section-subtitle">
+          Historias reales de personas que confiaron en nosotros
+        </p>
+      </div>
+
+      <div class="testimonials-slider">
+        <div class="slider-container">
+          <div
+            class="slider-track"
+            [style.transform]="
+              'translateX(-' + currentTestimonial() * 100 + '%)'
+            ">
+            @for (item of testimonials; track item.name; let i = $index) {
+              <div
+                class="testimonial-slide"
+                [attr.aria-hidden]="currentTestimonial() !== i">
+                <div class="testimonial-card">
+                  <div class="testimonial-stars">
+                    @for (s of [1, 2, 3, 4, 5]; track s) {
+                      <i class="fas fa-star" aria-hidden="true"></i>
+                    }
+                  </div>
+                  <p class="testimonial-quote">"{{ item.quote }}"</p>
+                  <div class="testimonial-author">
+                    <span class="author-name">{{ item.name }}</span>
+                    <span class="author-role">{{ item.role }}</span>
+                  </div>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+
+        <div class="slider-controls">
+          <button
+            type="button"
+            class="slider-btn prev"
+            (click)="previousTestimonial()"
+            aria-label="Testimonio anterior">
+            <i class="fas fa-chevron-left" aria-hidden="true"></i>
+          </button>
+          <div class="slider-dots">
+            @for (item of testimonials; track item.name; let i = $index) {
+              <button
+                type="button"
+                class="slider-dot"
+                [class.active]="currentTestimonial() === i"
+                [attr.aria-label]="'Ver testimonio ' + (i + 1)"
+                (click)="goToTestimonial(i)"></button>
+            }
+          </div>
+          <button
+            type="button"
+            class="slider-btn next"
+            (click)="nextTestimonial()"
+            aria-label="Testimonio siguiente">
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <h2 class="section-title">
+          Preguntas <span class="highlight">Frecuentes</span>
+        </h2>
+        <p class="section-subtitle">
+          Resolvemos tus dudas más comunes sobre nuestros préstamos
+        </p>
+      </div>
+
+      <div class="faq-container">
+        @for (item of faqItems; track item.question; let i = $index) {
+          <div class="faq-item" [class.open]="activeFaq() === i">
+            <button
+              type="button"
+              class="faq-question"
+              [attr.aria-expanded]="activeFaq() === i"
+              (click)="toggleFaq(i)">
+              <span>{{ item.question }}</span>
+              <i class="fas fa-chevron-down" aria-hidden="true"></i>
+            </button>
+            <div class="faq-answer">
+              <div class="faq-answer-inner">
+                <p>{{ item.answer }}</p>
+              </div>
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer" id="contacto" role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col footer-about">
+        <a href="#" class="footer-logo">
+          <img src="/assets/yoox.svg" alt="YOOX" class="logo-img" />
+          <span>Grupo Financiero <strong>YOOX</strong></span>
+        </a>
+        <p class="footer-description">
+          Tu socio financiero de confianza en Guadalajara, ofreciendo préstamos
+          claros y ágiles para personas y empresas.
+        </p>
+        <div class="footer-social">
+          <a href="#" aria-label="Facebook"
+            ><i class="fab fa-facebook-f" aria-hidden="true"></i
+          ></a>
+          <a href="#" aria-label="Instagram"
+            ><i class="fab fa-instagram" aria-hidden="true"></i
+          ></a>
+          <a href="#" aria-label="Twitter"
+            ><i class="fab fa-twitter" aria-hidden="true"></i
+          ></a>
+          <a href="#" aria-label="LinkedIn"
+            ><i class="fab fa-linkedin-in" aria-hidden="true"></i
+          ></a>
+        </div>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-title">Productos</h3>
+        <ul class="footer-links">
+          <li><a href="#productos">Préstamos Personales</a></li>
+          <li><a href="#productos">Préstamos Empresariales</a></li>
+          <li><a href="#hero">Calculadora de préstamos</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-title">Legal</h3>
+        <ul class="footer-links">
+          <li><a routerLink="/terms">Términos y condiciones</a></li>
+          <li><a routerLink="/privacy">Política de privacidad</a></li>
+          <li><a href="#faq">Preguntas Frecuentes</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-col">
+        <h3 class="footer-title">Contacto</h3>
+        <ul class="footer-contact">
+          <li>
+            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+            <span>Av. Vallarta 1234, Guadalajara, Jalisco</span>
+          </li>
+          <li>
+            <i class="fas fa-phone" aria-hidden="true"></i>
+            <span>(33) 1234-5678</span>
+          </li>
+          <li>
+            <i class="fas fa-envelope" aria-hidden="true"></i>
+            <span>solucionesfinancieras&#64;gmail.com</span>
+          </li>
+          <li>
+            <i class="fas fa-clock" aria-hidden="true"></i>
+            <span>Lun-Vie: 9am - 6pm</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <div class="footer-bottom">
-      <p>
-        &copy; {{ currentYear }} Grupo Financiero YOOX. Todos los derechos
-        reservados.
-      </p>
+      <div class="footer-legal">
+        <p>
+          &copy; {{ currentYear }} Grupo Financiero YOOX. Todos los derechos
+          reservados.
+        </p>
+      </div>
+      <div class="footer-badges">
+        <div class="badge">
+          <i class="fas fa-shield-alt" aria-hidden="true"></i>
+          <span>Seguridad SSL</span>
+        </div>
+        <div class="badge">
+          <i class="fas fa-lock" aria-hidden="true"></i>
+          <span>Datos protegidos</span>
+        </div>
+      </div>
     </div>
   </div>
 </footer>
