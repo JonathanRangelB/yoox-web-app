@@ -1,0 +1,158 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-08-08T00:00:00.000Z",
+  "title": "Design System: YOOX Grupo Financiero",
+  "extensions": {
+    "colorMeta": {
+      "primary": { "role": "primary", "displayName": "Banker's Cobalt", "canonical": "#2563eb", "tonalRamp": ["#172554", "#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"] },
+      "primary-dark": { "role": "primary", "displayName": "Deep Cobalt", "canonical": "#1e40af", "tonalRamp": ["#172554", "#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd"] },
+      "accent": { "role": "secondary", "displayName": "Signal Blue", "canonical": "#3b82f6", "tonalRamp": ["#1e3a8a", "#1e40af", "#1d4ed8", "#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"] },
+      "accent-glow": { "role": "secondary", "displayName": "Signal Glow", "canonical": "rgba(59, 130, 246, 0.35)", "tonalRamp": ["rgba(59,130,246,0.08)", "rgba(59,130,246,0.12)", "rgba(59,130,246,0.18)", "rgba(59,130,246,0.25)", "rgba(59,130,246,0.35)", "rgba(59,130,246,0.45)", "rgba(59,130,246,0.55)", "rgba(59,130,246,0.65)"] },
+      "bg": { "role": "neutral", "displayName": "Midnight Ledger", "canonical": "#0b1120", "tonalRamp": ["#020617", "#0b1120", "#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8"] },
+      "bg-elevated": { "role": "neutral", "displayName": "Elevated Ink", "canonical": "#111827", "tonalRamp": ["#020617", "#0b1120", "#111827", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8"] },
+      "bg-deep": { "role": "neutral", "displayName": "Ledger Abyss", "canonical": "#020617", "tonalRamp": ["#020617", "#0b1120", "#0f172a", "#1e293b", "#334155", "#475569", "#64748b", "#94a3b8"] },
+      "surface": { "role": "neutral", "displayName": "Ledger Slate", "canonical": "#1e293b", "tonalRamp": ["#020617", "#0f172a", "#1e293b", "#243449", "#334155", "#475569", "#64748b", "#94a3b8"] },
+      "surface-hover": { "role": "neutral", "displayName": "Slate Hover", "canonical": "#243449", "tonalRamp": ["#0f172a", "#1e293b", "#243449", "#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1"] },
+      "text": { "role": "neutral", "displayName": "Paper White", "canonical": "#f8fafc", "tonalRamp": ["#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0", "#f1f5f9", "#f8fafc", "#ffffff"] },
+      "text-muted": { "role": "neutral", "displayName": "Fog Slate", "canonical": "#94a3b8", "tonalRamp": ["#334155", "#475569", "#64748b", "#94a3b8", "#cbd5e1", "#e2e8f0", "#f1f5f9", "#f8fafc"] },
+      "border": { "role": "neutral", "displayName": "Hairline Slate", "canonical": "rgba(148, 163, 184, 0.18)", "tonalRamp": ["rgba(148,163,184,0.06)", "rgba(148,163,184,0.10)", "rgba(148,163,184,0.14)", "rgba(148,163,184,0.18)", "rgba(148,163,184,0.24)", "rgba(148,163,184,0.32)", "rgba(148,163,184,0.42)", "rgba(148,163,184,0.55)"] },
+      "shadow-header": { "role": "neutral", "displayName": "Header Shadow", "canonical": "rgba(0, 0, 0, 0.25)", "tonalRamp": ["rgba(0,0,0,0.10)", "rgba(0,0,0,0.15)", "rgba(0,0,0,0.20)", "rgba(0,0,0,0.25)", "rgba(0,0,0,0.30)", "rgba(0,0,0,0.35)", "rgba(0,0,0,0.40)", "rgba(0,0,0,0.45)"] },
+      "shadow-deep": { "role": "neutral", "displayName": "Deep Shadow", "canonical": "rgba(0, 0, 0, 0.35)", "tonalRamp": ["rgba(0,0,0,0.15)", "rgba(0,0,0,0.20)", "rgba(0,0,0,0.25)", "rgba(0,0,0,0.30)", "rgba(0,0,0,0.35)", "rgba(0,0,0,0.40)", "rgba(0,0,0,0.45)", "rgba(0,0,0,0.50)"] },
+      "star-gold": { "role": "tertiary", "displayName": "Star Gold", "canonical": "#fbbf24", "tonalRamp": ["#78350f", "#92400e", "#b45309", "#d97706", "#f59e0b", "#fbbf24", "#fcd34d", "#fde68a"] },
+      "ops-surface": { "role": "neutral", "displayName": "Ops White", "canonical": "#ffffff", "tonalRamp": ["#dee2e6", "#e9ecef", "#f1f3f5", "#f8f9fa", "#fbfcfd", "#ffffff", "#ffffff", "#ffffff"] },
+      "ops-bg": { "role": "neutral", "displayName": "Cool Gray", "canonical": "#f8f9fa", "tonalRamp": ["#495057", "#6c757d", "#adb5bd", "#ced4da", "#dee2e6", "#e9ecef", "#f8f9fa", "#ffffff"] },
+      "ops-border": { "role": "neutral", "displayName": "Cool Border", "canonical": "#dee2e6", "tonalRamp": ["#495057", "#6c757d", "#adb5bd", "#ced4da", "#dee2e6", "#e9ecef", "#f8f9fa", "#ffffff"] },
+      "ops-text": { "role": "neutral", "displayName": "Slate Ink", "canonical": "#495057", "tonalRamp": ["#212529", "#343a40", "#495057", "#6c757d", "#adb5bd", "#ced4da", "#dee2e6", "#e9ecef"] },
+      "ops-text-muted": { "role": "neutral", "displayName": "Muted Gray", "canonical": "#6c757d", "tonalRamp": ["#343a40", "#495057", "#6c757d", "#8f979e", "#adb5bd", "#ced4da", "#dee2e6", "#e9ecef"] },
+      "status-success": { "role": "tertiary", "displayName": "Success Green", "canonical": "#4caf50", "tonalRamp": ["#1b5e20", "#2e7d32", "#388e3c", "#43a047", "#4caf50", "#66bb6a", "#81c784", "#a5d6a7"] },
+      "status-warning": { "role": "tertiary", "displayName": "Warning Amber", "canonical": "#ff9800", "tonalRamp": ["#e65100", "#ef6c00", "#f57c00", "#fb8c00", "#ff9800", "#ffa726", "#ffb74d", "#ffcc80"] },
+      "status-info": { "role": "tertiary", "displayName": "Info Blue", "canonical": "#2196f3", "tonalRamp": ["#0d47a1", "#1565c0", "#1976d2", "#1e88e5", "#2196f3", "#42a5f5", "#64b5f6", "#90caf9"] },
+      "status-danger": { "role": "tertiary", "displayName": "Danger Red", "canonical": "#f44336", "tonalRamp": ["#b71c1c", "#c62828", "#d32f2f", "#e53935", "#f44336", "#ef5350", "#e57373", "#ef9a9a"] }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Display", "purpose": "Hero titles only; one per screen. Poppins 800, tight tracking." },
+      "display-sm": { "displayName": "Display Small", "purpose": "Mobile floor of Display under 768px (2rem)." },
+      "headline": { "displayName": "Headline", "purpose": "Section titles. Poppins 800, tight tracking." },
+      "title-lg": { "displayName": "Title Large", "purpose": "Product titles, hero stat numbers. Poppins 700-800." },
+      "title": { "displayName": "Title", "purpose": "Calculator title, product-detail titles. Poppins 700." },
+      "title-sm": { "displayName": "Title Small", "purpose": "Card titles, header wordmark, calculator loan value. Poppins 700." },
+      "subtitle": { "displayName": "Subtitle", "purpose": "Section subtitles, result values, feature h4s, footer wordmark. Inter 400." },
+      "body-lg": { "displayName": "Body Large", "purpose": "Large buttons, testimonial quotes; mobile hero subtitle. Inter 400-600." },
+      "body": { "displayName": "Body", "purpose": "Paragraphs, FAQ content. Inter 400, line-height 1.6-1.7." },
+      "label-lg": { "displayName": "Label Large", "purpose": "Tab buttons, footer contact lines. Inter 600." },
+      "label": { "displayName": "Label", "purpose": "Form labels, stat labels, chips. Inter 600." },
+      "label-sm": { "displayName": "Fine Print", "purpose": "Range labels, calculator note; ops tags at 600. Inter 400." },
+      "icon": { "displayName": "Icon Glyph", "purpose": "Glyph size inside icon medallions, set via font-size (1.375-1.5rem)." }
+    },
+    "shadows": [
+      { "name": "cta-glow", "value": "0 4px 14px rgba(59, 130, 246, 0.35)", "purpose": "Resting state of the primary button; the only colored shadow in the system." },
+      { "name": "cta-glow-hover", "value": "0 8px 24px rgba(59, 130, 246, 0.35)", "purpose": "Expanded glow on primary-button hover, paired with the -2px lift." },
+      { "name": "float-deep", "value": "0 24px 60px rgba(0, 0, 0, 0.35)", "purpose": "Reserved for the one floating element per screen (calculator card)." },
+      { "name": "header-scroll", "value": "0 8px 30px rgba(0, 0, 0, 0.25)", "purpose": "Fixed header once content is scrolled beneath it." },
+      { "name": "ops-card", "value": "0 2px 4px rgba(0, 0, 0, 0.1)", "purpose": "Single subtle shadow of the light internal ops world." },
+      { "name": "focus-ring", "value": "0 0 0 4px rgba(59, 130, 246, 0.2)", "purpose": "Ops PrimeNG focus; public controls use a 2px Signal Blue outline with 3px offset instead." }
+    ],
+    "motion": [
+      { "name": "ease-standard", "value": "0.2s ease", "purpose": "Default for all state transitions: color, background, border, shadow, transform." },
+      { "name": "ease-slow", "value": "0.3s ease", "purpose": "Header background/border/shadow transition on scroll." },
+      { "name": "lift-button", "value": "translateY(-2px)", "purpose": "Button hover lift." },
+      { "name": "lift-card", "value": "translateY(-6px)", "purpose": "Card hover lift, paired with Signal Blue border." }
+    ],
+    "breakpoints": [
+      { "name": "xs", "value": "480px" },
+      { "name": "md", "value": "768px" },
+      { "name": "lg", "value": "992px" },
+      { "name": "xl", "value": "1024px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Pill CTA with the cobalt gradient and Signal Glow; the one loud element allowed on a dark screen.",
+      "html": "<button class=\"ds-btn-primary\">Solicitar ahora</button>",
+      "css": ".ds-btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border: none; border-radius: 9999px; padding: 0.875rem 1.75rem; font-family: 'Inter', -apple-system, sans-serif; font-size: 1rem; font-weight: 600; color: #ffffff; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35); cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease; } .ds-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35); } .ds-btn-primary:focus-visible { outline: 2px solid #3b82f6; outline-offset: 3px; }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Secondary pill action: hairline border that fills slate and turns Signal Blue on hover.",
+      "html": "<button class=\"ds-btn-outline\">Ver detalles</button>",
+      "css": ".ds-btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: 9999px; padding: 0.875rem 1.75rem; font-family: 'Inter', -apple-system, sans-serif; font-size: 1rem; font-weight: 600; color: #f8fafc; background: transparent; border: 1.5px solid rgba(148, 163, 184, 0.18); cursor: pointer; transition: transform 0.2s ease, background 0.2s ease, border-color 0.2s ease; } .ds-btn-outline:hover { transform: translateY(-2px); background: #1e293b; border-color: #3b82f6; } .ds-btn-outline:focus-visible { outline: 2px solid #3b82f6; outline-offset: 3px; }"
+    },
+    {
+      "name": "Term Chip",
+      "kind": "chip",
+      "refersTo": "chip",
+      "description": "Choice chip for loan terms; active state flips to a solid cobalt fill. Pair of rest + selected shown.",
+      "html": "<div class=\"ds-chip-row\"><button class=\"ds-chip\">12 meses</button><button class=\"ds-chip ds-chip-active\">24 meses</button><button class=\"ds-chip\">36 meses</button></div>",
+      "css": ".ds-chip-row { display: flex; gap: 0.5rem; } .ds-chip { background: #111827; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 0.75rem; padding: 0.625rem 1rem; font-family: 'Inter', -apple-system, sans-serif; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; } .ds-chip:hover { border-color: #3b82f6; color: #f8fafc; } .ds-chip:focus-visible { outline: 2px solid #3b82f6; outline-offset: 2px; } .ds-chip-active, .ds-chip-active:hover { background: #2563eb; border-color: #2563eb; color: #ffffff; }"
+    },
+    {
+      "name": "Benefit Card",
+      "kind": "card",
+      "refersTo": "card",
+      "description": "Standard dark-world container; lifts -6px and gains a Signal Blue border on hover.",
+      "html": "<div class=\"ds-card\"><div class=\"ds-card-icon\"><svg width=\"22\" height=\"22\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"#3b82f6\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\"><path d=\"M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z\"/></svg></div><div class=\"ds-card-title\">Atenci\u00f3n personal</div><p class=\"ds-card-text\">Un oficial de cr\u00e9dito acompa\u00f1a cada solicitud de principio a fin.</p></div>",
+      "css": ".ds-card { background: #1e293b; border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 1.25rem; padding: 2rem; text-align: center; max-width: 300px; transition: transform 0.2s ease, border-color 0.2s ease; } .ds-card:hover { transform: translateY(-6px); border-color: #3b82f6; } .ds-card-icon { display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: rgba(59, 130, 246, 0.12); margin-bottom: 1rem; } .ds-card-title { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 700; color: #f8fafc; margin-bottom: 0.75rem; } .ds-card-text { font-family: 'Inter', -apple-system, sans-serif; font-size: 1rem; line-height: 1.6; color: #94a3b8; margin: 0; }"
+    },
+    {
+      "name": "Loan Calculator Card",
+      "kind": "custom",
+      "refersTo": "card-elevated",
+      "description": "The signature floating instrument: slider + term chips + result, the only element allowed a deep shadow.",
+      "html": "<div class=\"ds-calc\"><div class=\"ds-calc-title\">Calcula tu pr\u00e9stamo</div><div class=\"ds-calc-row\"><span class=\"ds-calc-label\">Monto</span><span class=\"ds-calc-value\">$50,000 MXN</span></div><div class=\"ds-calc-track\"><div class=\"ds-calc-fill\"></div><div class=\"ds-calc-thumb\"></div></div><div class=\"ds-calc-chips\"><button class=\"ds-calc-chip\">12</button><button class=\"ds-calc-chip ds-calc-chip-on\">24</button><button class=\"ds-calc-chip\">36</button></div><div class=\"ds-calc-result\"><span>Pago mensual</span><strong>$2,450</strong></div></div>",
+      "css": ".ds-calc { background: #1e293b; border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 1.5rem; padding: 2rem; width: 100%; max-width: 420px; box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35); font-family: 'Inter', -apple-system, sans-serif; color: #f8fafc; } .ds-calc-title { font-family: 'Poppins', sans-serif; font-size: 1.375rem; font-weight: 700; margin-bottom: 1.5rem; } .ds-calc-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; } .ds-calc-label { font-size: 0.875rem; font-weight: 600; color: #94a3b8; } .ds-calc-value { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 700; white-space: nowrap; } .ds-calc-track { position: relative; height: 6px; border-radius: 9999px; background: #111827; margin: 0.5rem 0 1.25rem; } .ds-calc-fill { position: absolute; left: 0; top: 0; bottom: 0; width: 55%; border-radius: 9999px; background: linear-gradient(90deg, #2563eb, #3b82f6); } .ds-calc-thumb { position: absolute; left: 55%; top: 50%; width: 20px; height: 20px; border-radius: 50%; background: #3b82f6; transform: translate(-50%, -50%); box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2); transition: box-shadow 0.2s ease; } .ds-calc-thumb:hover { box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.3); } .ds-calc-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.5rem; margin-bottom: 1.5rem; } .ds-calc-chip { background: #111827; color: #94a3b8; border: 1px solid rgba(148, 163, 184, 0.18); border-radius: 0.75rem; padding: 0.625rem 0.5rem; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: all 0.2s ease; } .ds-calc-chip:hover { border-color: #3b82f6; color: #f8fafc; } .ds-calc-chip-on, .ds-calc-chip-on:hover { background: #2563eb; border-color: #2563eb; color: #ffffff; } .ds-calc-result { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(148, 163, 184, 0.18); padding-top: 1rem; color: #94a3b8; font-size: 0.875rem; } .ds-calc-result strong { font-family: 'Poppins', sans-serif; font-size: 1.125rem; font-weight: 700; color: #f8fafc; }"
+    },
+    {
+      "name": "Fixed Header Nav",
+      "kind": "nav",
+      "refersTo": "nav-header",
+      "description": "Fixed blurred header; wordmark with Signal Blue strong, pill actions, deepens on scroll.",
+      "html": "<header class=\"ds-nav\"><span class=\"ds-nav-logo\">YOOX<strong>Financiero</strong></span><nav class=\"ds-nav-links\"><a href=\"#\" class=\"ds-nav-link\">Productos</a><a href=\"#\" class=\"ds-nav-link\">Beneficios</a><a href=\"#\" class=\"ds-nav-cta\">Solicitar</a></nav></header>",
+      "css": ".ds-nav { display: flex; align-items: center; justify-content: space-between; padding: 0.875rem 1.5rem; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(148, 163, 184, 0.18); box-shadow: 0 8px 30px rgba(0, 0, 0, 0.25); font-family: 'Inter', -apple-system, sans-serif; } .ds-nav-logo { font-family: 'Poppins', sans-serif; font-size: 1.25rem; font-weight: 600; letter-spacing: -0.01em; color: #f8fafc; } .ds-nav-logo strong { font-weight: 800; color: #3b82f6; margin-left: 2px; } .ds-nav-links { display: flex; align-items: center; gap: 1.5rem; } .ds-nav-link { color: #94a3b8; text-decoration: none; font-size: 0.9375rem; font-weight: 600; transition: color 0.2s ease; } .ds-nav-link:hover { color: #f8fafc; } .ds-nav-cta { display: inline-flex; align-items: center; border-radius: 9999px; padding: 0.5rem 1.25rem; font-size: 0.9375rem; font-weight: 600; color: #ffffff; text-decoration: none; background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%); box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35); transition: transform 0.2s ease, box-shadow 0.2s ease; } .ds-nav-cta:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(59, 130, 246, 0.35); }"
+    },
+    {
+      "name": "Status Tag",
+      "kind": "chip",
+      "refersTo": "tag",
+      "description": "Ops status label from the fixed four-color set; compact, semibold, 4px radius.",
+      "html": "<div class=\"ds-tags\"><span class=\"ds-tag ds-tag-success\">Pagado</span><span class=\"ds-tag ds-tag-warning\">Pendiente</span><span class=\"ds-tag ds-tag-danger\">Vencido</span></div>",
+      "css": ".ds-tags { display: flex; gap: 0.5rem; } .ds-tag { font-family: 'Inter', -apple-system, sans-serif; font-size: 0.75rem; font-weight: 600; padding: 0.25rem 0.5rem; border-radius: 4px; color: #ffffff; } .ds-tag-success { background: #4caf50; } .ds-tag-warning { background: #ff9800; } .ds-tag-danger { background: #f44336; }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Private Bank Desk",
+    "overview": "The system is the calm, polished workspace of a private banker: deep navy surfaces, everything within reach, quiet confidence in every number. It is premium, sophisticated, and exclusive — confidence, seriousness, calm control — while staying institutionally warm, formal but not cold (es-MX). Nothing shouts; the one bright element on a dark screen is the action the user came to take. Two worlds coexist by design: the public world (landing, request-status) is the full expression of the North Star, while the internal ops world runs on PrimeNG lara-light-blue light defaults because agent efficiency outranks expression there.",
+    "keyCharacteristics": [
+      "Dark-first public surfaces; light, table-dense internal ops surfaces.",
+      "One cobalt voice for actions; everything else stays neutral navy until touched.",
+      "Tactile and confident components: every control answers hover with lift, glow, or border.",
+      "Flat at rest — depth appears only as CTA glow, one floating card, and hover feedback.",
+      "Poppins for headings and numbers, Inter for everything the reader parses."
+    ],
+    "rules": [
+      { "name": "The One Voice Rule", "body": "Banker's Cobalt is the only action fill on any screen, used on ≤10% of the surface. Its rarity is the point — if everything is cobalt, nothing is actionable.", "section": "colors" },
+      { "name": "The Signal Discipline Rule", "body": "Signal Blue directs attention: focus rings, active labels, glows, hairlines. It never fills areas and never sets paragraphs.", "section": "colors" },
+      { "name": "The Two Voices Rule", "body": "Poppins (700–800) speaks for headings, numerals, and the wordmark; Inter (400–600) speaks for everything the reader parses. Never set paragraphs in Poppins or headlines in Inter.", "section": "typography" },
+      { "name": "The Tight Headline Rule", "body": "Negative tracking (-0.02em to -0.03em) belongs only to 800-weight Poppins at display/headline sizes. Buttons, labels, and body stay at normal spacing.", "section": "typography" },
+      { "name": "The Flat-At-Rest Rule", "body": "No surface carries a shadow by default. Depth appears only as: the CTA glow, one floating card per screen, and hover-lift feedback. If everything floats, nothing does.", "section": "elevation" }
+    ],
+    "dos": [
+      "Do reserve Banker's Cobalt for primary actions and active states (The One Voice Rule); let everything else stay navy-neutral until touched.",
+      "Do give every interactive element a visible hover — lift, border shift, or glow — on a 0.2s ease transition.",
+      "Do use pill radius on actions, 20–24px on cards, 12px on choice chips (The Radius Hierarchy Rule).",
+      "Do keep the two worlds separate: dark navy for public surfaces, PrimeNG light for internal ops, until the committed light-mode counterpart is designed as a system.",
+      "Do format money as MXN via Intl.NumberFormat('es-MX') and dates in es-MX — financial data must read identically on every screen."
+    ],
+    "donts": [
+      "Don't reintroduce the legacy purple gradient (#667eea → #764ba2). It survives only on the 404 page and is superseded by the cobalt pair; migrate it when that page is next touched.",
+      "Don't fill large areas with Signal Blue or set body text in it (The Signal Discipline Rule).",
+      "Don't add shadows to resting surfaces or float more than one element per screen (The Flat-At-Rest Rule).",
+      "Don't introduce new status hues; the ops set (green/amber/blue/red) is fixed.",
+      "Don't set body copy in Poppins, headlines in Inter, or revive the leftover Roboto / Segoe UI stacks still referenced by mat-typography and old components."
+    ]
+  }
+}
