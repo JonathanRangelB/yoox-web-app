@@ -29,6 +29,10 @@
 
 <main id="main-content">
   <section class="hero hero-v2" id="hero">
+    <ngx-particles
+      [id]="particlesId"
+      [options]="particlesOptions"
+      class="particles-background"></ngx-particles>
     <div class="container hero-container">
       <div class="hero-content">
         <h1 class="hero-title">
@@ -56,7 +60,7 @@
         </div>
 
         <div class="hero-cta">
-          <a href="#hero" class="btn btn-primary btn-lg">
+          <a href="#simulador" class="btn btn-primary btn-lg">
             <i class="fas fa-calculator" aria-hidden="true"></i>
             Calcular mi préstamo
           </a>
@@ -70,7 +74,7 @@
         </div>
       </div>
 
-      <div class="hero-calculator">
+      <div class="hero-calculator" id="simulador">
         <div class="calculator-card">
           <h2 class="calculator-title">
             <i class="fas fa-calculator" aria-hidden="true"></i>
@@ -263,17 +267,10 @@
                   </ul>
 
                   <div class="product-cta">
-                    <a href="#hero" class="btn btn-primary">
+                    <a href="#simulador" class="btn btn-primary">
                       <i class="fas fa-calculator" aria-hidden="true"></i>
                       Simular préstamo
                     </a>
-                    <button
-                      class="btn btn-outline"
-                      type="button"
-                      (click)="navigateTo('requeststatus')">
-                      <i class="fas fa-file-alt" aria-hidden="true"></i>
-                      Más información
-                    </button>
                   </div>
                 </div>
 
@@ -443,7 +440,7 @@
         <ul class="footer-links">
           <li><a href="#productos">Préstamos Personales</a></li>
           <li><a href="#productos">Préstamos Empresariales</a></li>
-          <li><a href="#hero">Calculadora de préstamos</a></li>
+          <li><a href="#simulador">Calculadora de préstamos</a></li>
         </ul>
       </div>
 

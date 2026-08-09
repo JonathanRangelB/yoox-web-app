@@ -257,10 +257,25 @@ h6 {
 }
 
 .hero-container {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
   align-items: center;
+}
+
+.particles-background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+
+  ::ng-deep canvas {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+  }
 }
 
 .hero-content {
@@ -322,6 +337,10 @@ h6 {
 /* Hero calculator card */
 .hero-calculator {
   justify-self: end;
+
+  &#simulador {
+    scroll-margin-top: 100px;
+  }
 }
 
 .calculator-card {

@@ -10,6 +10,9 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { isPlatformBrowser } from '@angular/common';
+import { NgParticlesService } from '@tsparticles/angular';
+import type { ISourceOptions } from '@tsparticles/engine';
+import { loadSlim } from '@tsparticles/slim';
 
 interface TermOption {
   weeks: number;
@@ -53,8 +56,69 @@ interface FaqItem {
 export class LandingComponent implements OnInit, OnDestroy {
   readonly #router = inject(Router);
   readonly #platformId = inject(PLATFORM_ID);
+  readonly #particlesService = inject(NgParticlesService);
   currentYear = new Date().getFullYear();
   scrolled = signal(false);
+
+  readonly particlesId = 'tsparticles';
+  readonly particlesOptions: ISourceOptions = {
+    fullScreen: { enable: false },
+    fpsLimit: 60,
+    interactivity: {
+      events: {
+        onHover: {
+          enable: true,
+          mode: 'repulse',
+        },
+      },
+      modes: {
+        repulse: {
+          distance: 100,
+          duration: 0.4,
+        },
+      },
+    },
+    particles: {
+      color: {
+        value: ['#ffffff', '#93c5fd'],
+      },
+      links: {
+        color: '#93c5fd',
+        distance: 130,
+        enable: true,
+        opacity: 0.12,
+        width: 0.8,
+      },
+      move: {
+        direction: 'none',
+        enable: true,
+        outModes: {
+          default: 'bounce',
+        },
+        random: true,
+        speed: 0.7,
+        straight: false,
+      },
+      number: {
+        density: {
+          enable: true,
+          width: 800,
+          height: 800,
+        },
+        value: 30,
+      },
+      opacity: {
+        value: { min: 0.2, max: 0.45 },
+      },
+      shape: {
+        type: 'circle',
+      },
+      size: {
+        value: { min: 1.5, max: 3.5 },
+      },
+    },
+    detectRetina: true,
+  };
 
   readonly terms: TermOption[] = [
     { weeks: 14, rate: 0.4, label: '14 semanas' },
@@ -185,6 +249,9 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     if (isPlatformBrowser(this.#platformId)) {
+      void this.#particlesService.init(async (engine) => {
+        await loadSlim(engine);
+      });
       this.#rotationInterval = setInterval(() => this.nextTestimonial(), 6000);
     }
   }
