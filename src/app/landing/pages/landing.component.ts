@@ -40,6 +40,7 @@ interface Testimonial {
   quote: string;
   name: string;
   role: string;
+  title: string;
 }
 
 interface FaqItem {
@@ -122,9 +123,7 @@ export class LandingComponent implements OnInit, OnDestroy {
 
   readonly terms: TermOption[] = [
     { weeks: 14, rate: 0.4, label: '14 semanas' },
-    { weeks: 24, rate: 0.56, label: '24 semanas' },
     { weeks: 28, rate: 0.82, label: '28 semanas' },
-    { weeks: 35, rate: 1.1, label: '35 semanas' },
   ];
 
   // Hero calculator
@@ -146,7 +145,7 @@ export class LandingComponent implements OnInit, OnDestroy {
     const amount = this.formatMoney(this.loanAmount());
     const weeks = this.selectedTerm().weeks;
     const text = `Hola, estoy interesado en un préstamo de ${amount} a ${weeks} semanas. ¿Me pueden ayudar con más información?`;
-    return `https://wa.me/523315757197?text=${encodeURIComponent(text)}`;
+    return `https://wa.me/523321532540?text=${encodeURIComponent(text)}`;
   });
 
   readonly products: Product[] = [
@@ -157,10 +156,10 @@ export class LandingComponent implements OnInit, OnDestroy {
       description:
         'Financia tus proyectos personales, viajes, educación o consolidación de deudas con condiciones flexibles.',
       features: [
-        { text: 'Montos desde $1,000 hasta lo que necesites' },
-        { text: 'Plazos de 14 a 35 semanas' },
+        { text: 'Montos desde $1,000' },
+        { text: 'Plazos de 14 a 28 semanas' },
         { text: 'Tasa fija desde 40% sobre el monto' },
-        { text: 'Desembolso en 24 horas' },
+        { text: 'Respuesta en 24 horas' },
       ],
       exampleAmount: '$25,000',
       exampleTerm: '24 semanas',
@@ -174,10 +173,10 @@ export class LandingComponent implements OnInit, OnDestroy {
       description:
         'Impulsa el crecimiento de tu negocio con capital de trabajo, maquinaria o expansión.',
       features: [
-        { text: 'Montos desde $1,000 hasta lo que necesites' },
-        { text: 'Plazos de 14 a 35 semanas' },
+        { text: 'Montos desde $1,000 hasta $150,000' },
+        { text: 'Plazos de 12 semanas' },
         { text: 'Tasa fija desde 40% sobre el monto' },
-        { text: 'Desembolso en 24 horas' },
+        { text: 'Respuesta en 24 horas' },
         { text: 'Asesoría contable y financiera' },
       ],
       exampleAmount: '$50,000',
@@ -191,21 +190,24 @@ export class LandingComponent implements OnInit, OnDestroy {
   readonly testimonials: Testimonial[] = [
     {
       quote:
-        'YOOX me ayudó a consolidar mis deudas en un solo préstamo con pagos semanales que puedo cumplir. El proceso fue rápido y transparente.',
+        'Desde el primer momento me atendieron con mucha amabilidad. El personal fue atento, paciente y siempre estuvo dispuesto a resolver mis dudas. Muy buena atención.',
       name: 'María G.',
       role: 'Cliente personal',
+      title: 'Amabilidad del personal'
     },
     {
       quote:
-        'Como agente, la plataforma me permite dar seguimiento claro a cada solicitud. Mis clientes valoran la claridad de los números.',
+        'Me gustó que desde el inicio me explicaron claramente cuánto iba a pagar, el plazo y los intereses. Todo fue transparente y fácil de entender, sin sorpresas.',
       name: 'Carlos R.',
       role: 'Agente de cobros',
+      title: 'Claridad en pagos, plazos e intereses'
     },
     {
       quote:
-        'En menos de 24 horas tuve el capital para mi negocio. Las cuotas semanales se ajustan perfecto a mi flujo de efectivo.',
+        'El proceso fue rápido y sencillo. Me dieron respuesta en poco tiempo y todo el trámite fue muy ágil. Una excelente opción cuando buscas un crédito sin tantas complicaciones.',
       name: 'Ana L.',
       role: 'Emprendedora',
+      title: 'Agilidad en el proceso'
     },
   ];
   currentTestimonial = signal(0);
@@ -215,12 +217,12 @@ export class LandingComponent implements OnInit, OnDestroy {
     {
       question: '¿Qué documentación necesito para solicitar un préstamo?',
       answer:
-        'Para la mayoría de nuestros préstamos necesitarás: identificación oficial vigente, comprobante de domicilio reciente, comprobante de ingresos (últimos 3 meses) y estado de cuenta bancario. Los requisitos específicos varían según el tipo de préstamo.',
+        'Para la mayoría de nuestros préstamos necesitarás: identificación oficial vigente, comprobante de domicilio reciente, comprobante de ingresos. Los requisitos específicos varían según el tipo de préstamo.',
     },
     {
       question: '¿Cuánto tiempo tarda la aprobación del préstamo?',
       answer:
-        'La aprobación preliminar toma menos de 24 horas en el 90% de los casos. Una vez aprobado, el desembolso de fondos se realiza en 24-48 horas hábiles, dependiendo del producto financiero seleccionado.',
+        'La aprobación preliminar toma menos de 24 horas en el 90% de los casos. Una vez aprobado, el desembolso de fondos se realiza en 2-5 dias hábiles, el tiempo de espera arranca una vez capturada la solicitud.',
     },
     {
       question: '¿La consulta afecta mi score crediticio?',
@@ -228,12 +230,12 @@ export class LandingComponent implements OnInit, OnDestroy {
         'No, nuestra consulta inicial es un "soft pull" que no afecta tu score crediticio. Solo realizamos una consulta completa cuando tú decides continuar con la solicitud formal.',
     },
     {
-      question: '¿Puedo pagar mi préstamo anticipadamente?',
+      question: '¿Puedo liquidar mi préstamo anticipadamente?',
       answer:
         'Sí, todos nuestros préstamos permiten prepago anticipado sin penalizaciones ni cargos adicionales. Puedes abonar capital extra en cualquier momento y reducir el plazo o la cuota.',
     },
     {
-      question: '¿Qué pasa si tengo un historial crediticio limitado?',
+      question: '¿Que requisitos necesito para solicitar mi préstamo?',
       answer:
         'Evaluamos cada solicitud de manera integral. Si tienes historial crediticio limitado, consideramos otros factores como estabilidad laboral, ingresos y referencias personales.',
     },

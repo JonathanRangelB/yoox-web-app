@@ -40,7 +40,7 @@
           futuro
         </h1>
         <p class="hero-subtitle">
-          Obtén el préstamo que necesitas en <strong>24 horas</strong> con tasas
+          Obtén el préstamo que necesitas en <strong>2-3 días hábiles</strong> con tasas
           competitivas y sin trámites complicados.
         </p>
 
@@ -49,14 +49,14 @@
             <span class="stat-number">5,000+</span>
             <span class="stat-label">Clientes satisfechos</span>
           </div>
-          <div class="stat">
-            <span class="stat-number">$50M+</span>
-            <span class="stat-label">En préstamos otorgados</span>
-          </div>
-          <div class="stat">
-            <span class="stat-number">4.9</span>
-            <span class="stat-label">Calificación promedio</span>
-          </div>
+          <!-- <div class="stat"> -->
+          <!--   <span class="stat-number">$50M+</span> -->
+          <!--   <span class="stat-label">En préstamos otorgados</span> -->
+          <!-- </div> -->
+          <!-- <div class="stat"> -->
+          <!--   <span class="stat-number">4.9</span> -->
+          <!--   <span class="stat-label">Calificación promedio</span> -->
+          <!-- </div> -->
         </div>
 
         <div class="hero-cta">
@@ -140,14 +140,14 @@
             </div>
           </div>
 
-          <a
-            class="btn btn-primary btn-block"
-            [href]="whatsappUrl()"
-            target="_blank"
-            rel="noopener noreferrer">
-            <i class="fab fa-whatsapp" aria-hidden="true"></i>
-            Solicitar ahora
-          </a>
+          <!-- <a -->
+          <!--   class="btn btn-primary btn-block" -->
+          <!--   [href]="whatsappUrl()" -->
+          <!--   target="_blank" -->
+          <!--   rel="noopener noreferrer"> -->
+          <!--   <i class="fab fa-whatsapp" aria-hidden="true"></i> -->
+          <!--   Solicitar ahora -->
+          <!-- </a> -->
 
           <p class="calculator-note">
             <i class="fas fa-shield-alt" aria-hidden="true"></i>
@@ -178,7 +178,7 @@
           </div>
           <h3 class="benefit-title">Aprobación rápida</h3>
           <p class="benefit-description">
-            Respuesta en menos de 24 horas con documentación mínima requerida.
+            Respuesta de nuestros asesores en 24 horas con documentación mínima requerida.
           </p>
         </div>
 
@@ -190,17 +190,6 @@
           <p class="benefit-description">
             Conoce el monto total y la cuota semanal antes de firmar. Sin letra
             pequeña.
-          </p>
-        </div>
-
-        <div class="benefit-card">
-          <div class="benefit-icon">
-            <i class="fas fa-user-shield" aria-hidden="true"></i>
-          </div>
-          <h3 class="benefit-title">Sin prepagos</h3>
-          <p class="benefit-description">
-            Paga tu préstamo anticipadamente sin penalizaciones ni cargos
-            ocultos.
           </p>
         </div>
 
@@ -327,11 +316,7 @@
                 class="testimonial-slide"
                 [attr.aria-hidden]="currentTestimonial() !== i">
                 <div class="testimonial-card">
-                  <div class="testimonial-stars">
-                    @for (s of [1, 2, 3, 4, 5]; track s) {
-                      <i class="fas fa-star" aria-hidden="true"></i>
-                    }
-                  </div>
+                  <div class="highlight">{{ item.title }}</div>
                   <p class="testimonial-quote">"{{ item.quote }}"</p>
                   <div class="testimonial-author">
                     <span class="author-name">{{ item.name }}</span>
@@ -456,13 +441,13 @@
       <div class="footer-col">
         <h3 class="footer-title">Contacto</h3>
         <ul class="footer-contact">
-          <li>
-            <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
-            <span>Av. Vallarta 1234, Guadalajara, Jalisco</span>
-          </li>
+          <!-- <li> -->
+          <!--   <i class="fas fa-map-marker-alt" aria-hidden="true"></i> -->
+          <!--   <span>Direccion</span> -->
+          <!-- </li> -->
           <li>
             <i class="fas fa-phone" aria-hidden="true"></i>
-            <span>(33) 1234-5678</span>
+            <span>(33) 2153-2539 y (33) 2153-2540</span>
           </li>
           <li>
             <i class="fas fa-envelope" aria-hidden="true"></i>
