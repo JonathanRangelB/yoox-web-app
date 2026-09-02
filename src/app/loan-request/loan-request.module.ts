@@ -67,4 +67,4 @@ import { UppercaseDirective } from '../shared/directives/uppercase.directive';
   ],
   providers: [ConfirmationService, MessageService],
 })
-export class LoanRequestModule { }
+export class LoanRequestModule {}
