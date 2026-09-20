@@ -52,6 +52,12 @@ export class DashboardComponent {
           routerLink: '/dashboard/cobro-agenda',
           command: () => this.toggleSidebar(),
         },
+        {
+          label: 'Planificador de cobranza',
+          icon: 'pi pi-fw pi-calendar-plus',
+          routerLink: '/dashboard/collection-schedule',
+          command: () => this.toggleSidebar(),
+        },
       ],
     },
     {

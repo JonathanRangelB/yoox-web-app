@@ -1,0 +1,347 @@
+<!-- TODO: Restaurar control de acceso por rol cuando el login provea las gerencias -->
+@if (false) {
+  <div
+    class="flex flex-column align-items-center justify-content-center h-full gap-3">
+    <i class="pi pi-lock text-4xl text-400"></i>
+    <span class="text-600 text-lg text-center">
+      El usuario actual no tiene privilegios. Póngase en contacto con sus
+      supervisores.
+    </span>
+  </div>
+}
+
+<div class="page-container">
+  <!-- Table -->
+  <p-table
+    #dt
+    [value]="displayedData()"
+    [paginator]="true"
+    [rows]="10"
+    [rowsPerPageOptions]="[5, 10, 25, 50]"
+    [loading]="loading()"
+    selectionMode="single"
+    [(selection)]="selectedRecord"
+    (onRowSelect)="onRowSelect($event.data)"
+    sortMode="multiple"
+    [globalFilterFields]="globalFilterFields"
+    scrollHeight="flex"
+    styleClass="p-datatable-sm">
+    <ng-template pTemplate="caption">
+      <div
+        class="flex justify-content-between align-items-center flex-wrap gap-3">
+        <div class="flex align-items-center gap-3 flex-wrap">
+          <p-selectButton
+            [options]="filterModeOptions"
+            [(ngModel)]="filterMode"
+            optionLabel="label"
+            optionValue="value"
+            (onChange)="onFilterModeChange()" />
+          <p-dropdown
+            [options]="currentFilterList()"
+            [(ngModel)]="selectedFilter"
+            optionLabel="NOMBRE"
+            [placeholder]="currentFilterPlaceholder()"
+            [filter]="true"
+            filterBy="NOMBRE"
+            [showClear]="true"
+            styleClass="w-18rem" />
+        </div>
+
+        <div class="flex align-items-center gap-3 flex-wrap">
+          <div class="flex flex-column align-items-end">
+            <span class="text-xs text-500">Cuentas capturadas</span>
+            <span class="font-bold">{{ totalCapturedAccounts() }}</span>
+          </div>
+          <div class="flex flex-column align-items-end">
+            <span class="text-xs text-500">Presupuesto total</span>
+            <span class="font-bold">{{ formatCurrency(totalBudget()) }}</span>
+          </div>
+          <div class="flex flex-column align-items-end">
+            <span class="text-xs text-500">Inversión real total</span>
+            <span class="font-bold">
+              {{ formatCurrency(totalRealInversion()) }}
+            </span>
+          </div>
+          <div class="flex flex-column align-items-end">
+            <span class="text-xs text-500">Fecha contabilización</span>
+            <span class="font-bold">
+              @if (latestAccountingDate()) {
+                {{ latestAccountingDate()! | date: 'dd/MM/yyyy' : 'UTC' }}
+              } @else {
+                N/A
+              }
+            </span>
+          </div>
+          <p-button icon="pi pi-bars" (onClick)="filterMenuOpen.set(true)" />
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template pTemplate="header">
+      <tr>
+        @for (col of tableColumns; track col.field) {
+          <th [pSortableColumn]="col.field" [style.minWidth]="col.width">
+            <div class="flex justify-content-between align-items-center">
+              {{ col.header }}
+              <p-sortIcon [field]="col.field" />
+              <p-columnFilter
+                [type]="col.filterType"
+                [field]="col.field"
+                display="menu"
+                showOperator="false"
+                showAddButton="false"
+                class="ml-auto" />
+            </div>
+          </th>
+        }
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="body" let-record>
+      <tr [pSelectableRow]="record">
+        <td>{{ record.loan_request_id }}</td>
+        <td>
+          {{ record.utc_datetime_stamp | date: 'dd/MM/yyyy' : 'UTC' }}
+        </td>
+        <td>
+          {{ record.loan_request_utc_date | date: 'dd/MM/yyyy' : 'UTC' }}
+        </td>
+        <td>
+          {{
+            record.last_change_loan_request_utc_date
+              | date: 'dd/MM/yyyy' : 'UTC'
+          }}
+        </td>
+        <td>{{ record.collection_agent }}</td>
+        <td>{{ record.request_number }}</td>
+        <td>{{ record.customer_id }}</td>
+        <td>{{ record.customer_name }}</td>
+        <td>{{ record.credit_type }}</td>
+        <td>
+          <p-tag
+            [value]="
+              record.revision_classification === '1'
+                ? 'REVISADO'
+                : 'NO REVISADO'
+            "
+            [severity]="
+              record.revision_classification === '1' ? 'success' : 'warning'
+            " />
+        </td>
+        <td class="text-right">
+          {{ formatCurrency(record.requested_amount) }}
+        </td>
+        <td class="text-right">
+          {{ formatCurrency(record.authorized_amount) }}
+        </td>
+        <td class="text-right">
+          {{ formatCurrency(record.discount_amount) }}
+        </td>
+        <td>{{ record.customer_neighborhood }}</td>
+        <td>{{ record.customer_county }}</td>
+        <td>
+          <p-tag [value]="record.primary_borrower_call_status" />
+        </td>
+        <td>
+          <p-tag [value]="record.guarantor_call_status" />
+        </td>
+        <td>
+          <p-tag
+            [value]="record.current_status"
+            [severity]="getStatusSeverity(record.current_status)" />
+        </td>
+        <td>{{ truncateText(record.observations) }}</td>
+        <td>{{ record.captured_account }}</td>
+        <td class="text-right">
+          {{ formatCurrency(record.budget) }}
+        </td>
+        <td class="text-right">
+          {{ formatCurrency(record.real_inversion) }}
+        </td>
+        <td>
+          {{ record.last_change_utc_date | date: 'dd/MM/yyyy' : 'UTC' }}
+        </td>
+        <td>{{ record.modified_by }}</td>
+        <td>
+          {{ record.accounting_utc_date | date: 'dd/MM/yyyy' : 'UTC' }}
+        </td>
+        <td>{{ record.group_id }}</td>
+        <td>{{ record.management_id }}</td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="emptymessage">
+      <tr>
+        <td [attr.colspan]="tableColumns.length" class="text-center">
+          <div class="flex flex-column align-items-center py-4">
+            <i class="pi pi-inbox text-4xl text-400 mb-2"></i>
+            <span class="text-600">No se encontraron registros</span>
+          </div>
+        </td>
+      </tr>
+    </ng-template>
+
+    <ng-template pTemplate="summary">
+      <div class="flex justify-content-between align-items-center">
+        <span class="text-sm text-600">
+          Registros: {{ displayedData().length || 0 }}
+        </span>
+      </div>
+    </ng-template>
+  </p-table>
+
+  <!-- Edit section -->
+  @if (selectedRecord(); as record) {
+    <div #editSection>
+      <p-fieldset styleClass="mt-4" [toggleable]="true">
+        <ng-template pTemplate="header">
+          <div class="flex align-items-center gap-2">
+            <span class="font-bold"
+              >ID Solicitud: {{ record.loan_request_id }}</span
+            >
+          </div>
+        </ng-template>
+        <div class="flex align-items-center gap-2 mb-3">
+          <span class="text-sm font-medium">Estatus actual:</span>
+          <p-tag
+            [value]="record.current_status"
+            [severity]="getStatusSeverity(record.current_status)"
+            [pTooltip]="getStatusTooltip(record.current_status)"
+            tooltipPosition="top" />
+        </div>
+        <div class="grid">
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 text-sm font-medium">
+              Clasificación de revisión
+            </label>
+            <p-dropdown
+              [options]="revisionOptions"
+              [(ngModel)]="record.revision_classification"
+              optionLabel="label"
+              optionValue="value"
+              [disabled]="isRecordLocked()"
+              styleClass="w-full" />
+          </div>
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 text-sm font-medium">
+              Estatus titular
+            </label>
+            <p-dropdown
+              [options]="callStatusOptions"
+              [(ngModel)]="record.primary_borrower_call_status"
+              [disabled]="isRecordLocked()"
+              styleClass="w-full" />
+          </div>
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 text-sm font-medium"> Estatus aval </label>
+            <p-dropdown
+              [options]="callStatusOptions"
+              [(ngModel)]="record.guarantor_call_status"
+              [disabled]="isRecordLocked()"
+              styleClass="w-full" />
+          </div>
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 text-sm font-medium">
+              Estatus actual
+            </label>
+            <p-dropdown
+              [options]="currentStatusOptions"
+              [(ngModel)]="record.current_status"
+              [disabled]="isRecordLocked()"
+              styleClass="w-full" />
+          </div>
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 text-sm font-medium">
+              Observaciones
+            </label>
+            <textarea
+              pInputTextarea
+              [(ngModel)]="record.observations"
+              [disabled]="isRecordLocked()"
+              [rows]="3"
+              [cols]="30"
+              class="w-full"></textarea>
+          </div>
+          <div class="col-12 md:col-4">
+            <label class="block mb-2 text-sm font-medium">
+              Autorizado por $
+            </label>
+            <p-inputNumber
+              [(ngModel)]="record.authorized_amount"
+              mode="currency"
+              currency="MXN"
+              locale="es-MX"
+              [min]="0"
+              [minFractionDigits]="0"
+              [disabled]="isRecordLocked()"
+              styleClass="w-full" />
+          </div>
+        </div>
+        <div class="flex justify-content-end gap-2 mt-4">
+          <p-button
+            label="Cancelar"
+            icon="pi pi-times"
+            severity="secondary"
+            (onClick)="cancelEdit()" />
+          <p-button
+            label="Guardar"
+            icon="pi pi-check"
+            [loading]="saving()"
+            [disabled]="saving() || isRecordLocked()"
+            (onClick)="confirmSave()" />
+        </div>
+      </p-fieldset>
+    </div>
+  }
+</div>
+
+<!-- Filter sidebar -->
+<p-sidebar [(visible)]="filterMenuOpen" position="right">
+  <ng-template pTemplate="header">
+    <div class="flex align-items-center gap-2">
+      <span class="font-bold">{{ 'Filtrado General' | titlecase }}</span>
+    </div>
+  </ng-template>
+  <div class="p-3 flex flex-column gap-2">
+    <div class="flex align-items-center gap-2 mb-2">
+      <span class="font-bold">
+        Acciones de la tabla <i class="pi pi-table"></i>
+      </span>
+    </div>
+    <p-button
+      label="Restaurar filtros"
+      styleClass="w-full"
+      [outlined]="true"
+      icon="pi pi-filter-slash"
+      (onClick)="resetTable(dt)" />
+    <p-button
+      label="Recargar datos"
+      styleClass="w-full"
+      icon="pi pi-refresh"
+      (onClick)="refreshData()"
+      [loading]="loading()" />
+    <p-divider />
+    <div class="flex align-items-center gap-2 mb-2">
+      <span class="font-bold">
+        Descargar Excel <i class="pi pi-file-excel"></i>
+      </span>
+    </div>
+    <p-button
+      label="Exportar todo"
+      styleClass="w-full"
+      icon="pi pi-file-excel"
+      (onClick)="exportAll()"
+      [loading]="exporting()" />
+    <p-button
+      label="Exportar filtrados"
+      styleClass="w-full"
+      icon="pi pi-filter"
+      (onClick)="exportFiltered(dt)"
+      [loading]="exporting()" />
+  </div>
+</p-sidebar>
+
+<p-confirmDialog />
+
+<p-toast
+  [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />

@@ -90,7 +90,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
   readonly #addressService = inject(AddressService);
-  readonly minLoanAmount = 1000;
+  readonly minLoanAmount = 1008;
   customLoanAmount?: number;
   customLoanRefinanceAmount?: number;
   refinanceResults = signal<Refinance | null>(null);
@@ -1145,8 +1145,7 @@ export class LoanComponent implements OnDestroy, OnInit {
 
     if (this.disabledCalendar) {
       const formDate = this.mainForm.get('fecha_inicial')?.value as
-        | Date
-        | undefined;
+        Date | undefined;
       if (!this.areDatesEqual(formDate, this.confirmationDate)) {
         console.log('Fechas no son iguales');
         return false;
