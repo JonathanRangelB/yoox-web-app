@@ -126,3 +126,7 @@ Secondary users include **customers** who check loan request status on the publi
 4. **Systematic over bespoke.** Express the brand through PrimeNG theme tokens and shared design tokens rather than one-off styles in individual components. Reuse spacing, color, and type scales across the app.
 5. **Accessibility as a baseline.** Meet WCAG AA minimums for contrast, focus visibility, touch targets, and screen-reader labels. Respect `prefers-reduced-motion`.
 6. **Light and dark, equally premium.** Both color modes must look intentional and polished; neither should feel like an afterthought.
+
+### Search inside files
+
+For any file search or grep in the current git-indexed directory, use fff tools, its an MPC, if is not installed use grep as fallback.

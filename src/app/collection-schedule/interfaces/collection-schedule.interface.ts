@@ -1,14 +1,15 @@
-export interface ScheduleAgenda {
+export interface CollectionsPlanner {
   loan_request_id: number;
-  utc_datetime_stamp: Date;
+  insert_utc_datetime_stamp: Date;
   loan_request_utc_date: Date;
   last_change_loan_request_utc_date: Date;
-  collection_agent: number;
-  request_number: string;
+  collection_id_agent: number;
+  collection_name_agent: string;
+  loan_request_number: string;
   customer_id: number;
   customer_name: string;
   credit_type: string;
-  revision_classification: '1' | '0';
+  revised_record: number;
   requested_amount: number;
   authorized_amount: number;
   discount_amount: number;
@@ -18,36 +19,38 @@ export interface ScheduleAgenda {
   guarantor_call_status: string;
   current_status: string;
   observations: string;
-  captured_account: string;
+  captured_account: number;
   budget: number;
   real_inversion: number;
   last_change_utc_date: Date;
   modified_by: number;
-  accounting_utc_date: Date;
+  accounting_date: Date;
   group_id: number;
+  group_name: string;
   management_id: number;
+  management_name: string;
+  close_utc_datetime_stamp: Date;
 }
 
-export interface CollectionSchedulePayload {
+export interface CollectionsPlannerPostRequest {
+  id_user: number;
+}
+
+export interface CollectionsPlannerPatchRequest {
   loan_request_id: number;
-  revision_classification?: string;
-  authorized_amount?: number;
-  primary_borrower_call_status?: string;
-  guarantor_call_status?: string;
-  current_status?: string;
-  observations?: string;
+  revised_record: number;
+  authorized_amount: number;
+  primary_borrower_call_status: string;
+  guarantor_call_status: string;
+  current_status: string;
+  observations: string;
+  modified_by: number;
+  remote_utc_local_datetime: Date;
 }
 
 export interface FilterOption {
   ID: number;
   NOMBRE: string;
-}
-
-export interface CollectionScheduleResponse {
-  data: ScheduleAgenda[];
-  management: FilterOption[];
-  groups: FilterOption[];
-  agents: FilterOption[];
 }
 
 export interface TableColumn {

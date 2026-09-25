@@ -33,8 +33,8 @@ import { getUserFromLocalStorage } from '../shared/utils/functions.utils';
 import { ExcelExportService } from '../shared/services/excel-export.service';
 import { CollectionScheduleService } from './services/collection-schedule.service';
 import {
+  CollectionsPlanner,
   FilterOption,
-  ScheduleAgenda,
   TableColumn,
 } from './interfaces/collection-schedule.interface';
 
@@ -74,10 +74,10 @@ export class CollectionScheduleComponent implements OnInit {
   readonly #excelService = inject(ExcelExportService);
   readonly #confirmationService = inject(ConfirmationService);
 
-  scheduleData = signal<ScheduleAgenda[]>([]);
+  scheduleData = signal<CollectionsPlanner[]>([]);
   loading = signal<boolean>(false);
   saving = signal<boolean>(false);
-  selectedRecord = signal<ScheduleAgenda | null>(null);
+  selectedRecord = signal<CollectionsPlanner | null>(null);
   filterMenuOpen = signal<boolean>(false);
   exporting = signal<boolean>(false);
 
@@ -146,7 +146,7 @@ export class CollectionScheduleComponent implements OnInit {
         return this.scheduleData().filter((r) => r.group_id === filter.ID);
       case 'agente':
         return this.scheduleData().filter(
-          (r) => r.collection_agent === filter.ID
+          (r) => r.collection_id_agent === filter.ID
         );
       default:
         return this.scheduleData();
@@ -154,8 +154,8 @@ export class CollectionScheduleComponent implements OnInit {
   });
 
   revisionOptions = [
-    { label: 'REVISADO', value: '1' },
-    { label: 'NO REVISADO', value: '0' },
+    { label: 'REVISADO', value: 1 },
+    { label: 'NO REVISADO', value: 0 },
   ];
   callStatusOptions = ['LLAMADA PENDIENTE', 'NO LOCALIZABLE', 'CONTESTÓ'];
   currentStatusOptions = [
@@ -173,7 +173,7 @@ export class CollectionScheduleComponent implements OnInit {
       filterType: 'numeric',
     },
     {
-      field: 'utc_datetime_stamp',
+      field: 'insert_utc_datetime_stamp',
       header: 'Fecha Stamp',
       width: '10rem',
       filterType: 'date',
@@ -191,13 +191,13 @@ export class CollectionScheduleComponent implements OnInit {
       filterType: 'date',
     },
     {
-      field: 'collection_agent',
+      field: 'collection_id_agent',
       header: 'Agente',
-      width: '8rem',
-      filterType: 'numeric',
+      width: '14rem',
+      filterType: 'text',
     },
     {
-      field: 'request_number',
+      field: 'loan_request_number',
       header: 'Folio',
       width: '10rem',
       filterType: 'text',
@@ -221,10 +221,10 @@ export class CollectionScheduleComponent implements OnInit {
       filterType: 'text',
     },
     {
-      field: 'revision_classification',
+      field: 'revised_record',
       header: 'Clasificacion',
       width: '10rem',
-      filterType: 'text',
+      filterType: 'numeric',
     },
     {
       field: 'requested_amount',
@@ -284,7 +284,7 @@ export class CollectionScheduleComponent implements OnInit {
       field: 'captured_account',
       header: 'Cuenta Capturada',
       width: '10rem',
-      filterType: 'text',
+      filterType: 'numeric',
     },
     {
       field: 'budget',
@@ -311,26 +311,37 @@ export class CollectionScheduleComponent implements OnInit {
       filterType: 'numeric',
     },
     {
-      field: 'accounting_utc_date',
+      field: 'accounting_date',
       header: 'Fecha Contabilizacion',
       width: '10rem',
       filterType: 'date',
     },
     {
-      field: 'group_id',
-      header: 'Grupo ID',
-      width: '8rem',
-      filterType: 'numeric',
+      field: 'group_name',
+      header: 'Grupo',
+      width: '12rem',
+      filterType: 'text',
     },
     {
-      field: 'management_id',
-      header: 'Gerencia ID',
-      width: '8rem',
-      filterType: 'numeric',
+      field: 'management_name',
+      header: 'Gerencia',
+      width: '12rem',
+      filterType: 'text',
+    },
+    {
+      field: 'close_utc_datetime_stamp',
+      header: 'Fecha Cierre',
+      width: '10rem',
+      filterType: 'date',
     },
   ];
 
-  globalFilterFields = this.tableColumns.map((c) => c.field);
+  globalFilterFields = [
+    ...this.tableColumns.map((c) => c.field),
+    'group_id',
+    'management_id',
+    'collection_name_agent',
+  ];
 
   totalCapturedAccounts = computed(
     () => this.displayedData().filter((r) => !!r.captured_account).length
@@ -343,7 +354,7 @@ export class CollectionScheduleComponent implements OnInit {
   );
   latestAccountingDate = computed(() => {
     const dates = this.displayedData()
-      .map((r) => r.accounting_utc_date)
+      .map((r) => r.accounting_date)
       .filter(Boolean);
     return dates.length
       ? new Date(Math.max(...dates.map((d) => new Date(d).getTime())))
@@ -361,13 +372,11 @@ export class CollectionScheduleComponent implements OnInit {
   loadData(): void {
     this.loading.set(true);
     this.#service.getCollectionSchedule().subscribe({
-      next: (response) => {
+      next: (data) => {
         this.selectedFilter.set(null);
         this.tableRef()?.reset();
-        this.scheduleData.set(response.data);
-        this.managementList.set(response.management);
-        this.groupList.set(response.groups);
-        this.agentList.set(response.agents);
+        this.scheduleData.set(data);
+        this.buildFilterLists(data);
         this.loading.set(false);
       },
       error: (err: Error) => {
@@ -382,11 +391,47 @@ export class CollectionScheduleComponent implements OnInit {
     });
   }
 
+  private buildFilterLists(data: CollectionsPlanner[]): void {
+    const managementMap = new Map<number, string>();
+    const groupMap = new Map<number, string>();
+    const agentMap = new Map<number, string>();
+
+    data.forEach((item) => {
+      if (!managementMap.has(item.management_id)) {
+        managementMap.set(item.management_id, item.management_name);
+      }
+      if (!groupMap.has(item.group_id)) {
+        groupMap.set(item.group_id, item.group_name);
+      }
+      if (!agentMap.has(item.collection_id_agent)) {
+        agentMap.set(item.collection_id_agent, item.collection_name_agent);
+      }
+    });
+
+    this.managementList.set(
+      Array.from(managementMap.entries())
+        .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
+        .sort((a, b) => a.ID - b.ID)
+    );
+
+    this.groupList.set(
+      Array.from(groupMap.entries())
+        .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
+        .sort((a, b) => a.ID - b.ID)
+    );
+
+    this.agentList.set(
+      Array.from(agentMap.entries())
+        .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
+        .sort((a, b) => a.ID - b.ID)
+    );
+  }
+
   onFilterModeChange(): void {
     this.selectedFilter.set(null);
   }
 
-  onRowSelect(record: ScheduleAgenda): void {
+  onRowSelect(record: CollectionsPlanner): void {
     this.selectedRecord.set({ ...record });
     setTimeout(() => {
       this.editSection()?.nativeElement.scrollIntoView({
@@ -419,12 +464,14 @@ export class CollectionScheduleComponent implements OnInit {
     this.#service
       .updateRecord({
         loan_request_id: record.loan_request_id,
-        revision_classification: record.revision_classification,
+        revised_record: record.revised_record,
         authorized_amount: record.authorized_amount,
         primary_borrower_call_status: record.primary_borrower_call_status,
         guarantor_call_status: record.guarantor_call_status,
         current_status: record.current_status,
         observations: record.observations,
+        modified_by: this.currentUser?.ID ?? 0,
+        remote_utc_local_datetime: new Date(),
       })
       .subscribe({
         next: (updated) => {
@@ -523,7 +570,7 @@ export class CollectionScheduleComponent implements OnInit {
   }
 
   async exportFiltered(table: Table): Promise<void> {
-    const filtered = table.filteredValue as ScheduleAgenda[] | undefined;
+    const filtered = table.filteredValue as CollectionsPlanner[] | undefined;
     const dataToExport = filtered ?? this.displayedData();
     if (dataToExport.length === 0) {
       this.#messageService.add({
