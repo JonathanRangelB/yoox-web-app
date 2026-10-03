@@ -21,7 +21,7 @@ export class CollectionScheduleService {
     };
 
     return this.#http.post<CollectionsPlanner[]>(
-      `${this.#baseUrl}collections-planner`,
+      `${this.#baseUrl}collection-schedule`,
       payload,
       {
         headers: {
@@ -35,7 +35,7 @@ export class CollectionScheduleService {
     const token = localStorage.getItem('token');
 
     return this.#http.patch<CollectionsPlanner>(
-      `${this.#baseUrl}collections-planner`,
+      `${this.#baseUrl}collection-schedule`,
       payload,
       {
         headers: {

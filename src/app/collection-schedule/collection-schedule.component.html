@@ -102,16 +102,13 @@
       <tr [pSelectableRow]="record">
         <td>{{ record.loan_request_id }}</td>
         <td>
-          {{ record.insert_utc_datetime_stamp | date: 'dd/MM/yyyy' : 'UTC' }}
+          {{ record.insert_utc_datetime_stamp | date: 'medium' }}
         </td>
         <td>
-          {{ record.loan_request_utc_date | date: 'dd/MM/yyyy' : 'UTC' }}
+          {{ record.loan_request_utc_date | date: 'medium' }}
         </td>
         <td>
-          {{
-            record.last_change_loan_request_utc_date
-              | date: 'dd/MM/yyyy' : 'UTC'
-          }}
+          {{ record.last_change_loan_request_utc_date | date: 'medium' }}
         </td>
         <td>
           {{ record.collection_id_agent }} - {{ record.collection_name_agent }}
@@ -156,16 +153,16 @@
           {{ formatCurrency(record.real_inversion) }}
         </td>
         <td>
-          {{ record.last_change_utc_date | date: 'dd/MM/yyyy' : 'UTC' }}
+          {{ record.last_change_utc_date | date: 'medium' }}
         </td>
         <td>{{ record.modified_by }}</td>
         <td>
-          {{ record.accounting_date | date: 'dd/MM/yyyy' : 'UTC' }}
+          {{ record.accounting_date | date: 'medium' }}
         </td>
         <td>{{ record.group_id }} - {{ record.group_name }}</td>
         <td>{{ record.management_id }} - {{ record.management_name }}</td>
         <td>
-          {{ record.close_utc_datetime_stamp | date: 'dd/MM/yyyy' : 'UTC' }}
+          {{ record.close_utc_datetime_stamp | date: 'medium' }}
         </td>
       </tr>
     </ng-template>
@@ -220,6 +217,7 @@
               optionLabel="label"
               optionValue="value"
               [disabled]="isRecordLocked()"
+              placeholder="Seleccionar clasificación"
               styleClass="w-full" />
           </div>
           <div class="col-12 md:col-4">
@@ -230,6 +228,7 @@
               [options]="callStatusOptions"
               [(ngModel)]="record.primary_borrower_call_status"
               [disabled]="isRecordLocked()"
+              placeholder="Seleccionar estatus"
               styleClass="w-full" />
           </div>
           <div class="col-12 md:col-4">
@@ -238,6 +237,7 @@
               [options]="callStatusOptions"
               [(ngModel)]="record.guarantor_call_status"
               [disabled]="isRecordLocked()"
+              placeholder="Seleccionar estatus"
               styleClass="w-full" />
           </div>
           <div class="col-12 md:col-4">
@@ -341,7 +341,11 @@
   </div>
 </p-sidebar>
 
-<p-confirmDialog />
+<p-confirmDialog>
+  <ng-template pTemplate="message" let-message>
+    <div [innerHTML]="message.message"></div>
+  </ng-template>
+</p-confirmDialog>
 
 <p-toast
   [breakpoints]="{ '920px': { width: '100%', right: '0', left: '0' } }" />

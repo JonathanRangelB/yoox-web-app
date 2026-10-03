@@ -157,7 +157,7 @@ export class CollectionScheduleComponent implements OnInit {
     { label: 'REVISADO', value: 1 },
     { label: 'NO REVISADO', value: 0 },
   ];
-  callStatusOptions = ['LLAMADA PENDIENTE', 'NO LOCALIZABLE', 'CONTESTÓ'];
+  callStatusOptions = ['LLAMADA PENDIENTE', 'NO LOCALIZABLE', 'CONTESTO'];
   currentStatusOptions = [
     'POR DEFINIR',
     'AUTORIZADO',
@@ -432,7 +432,16 @@ export class CollectionScheduleComponent implements OnInit {
   }
 
   onRowSelect(record: CollectionsPlanner): void {
-    this.selectedRecord.set({ ...record });
+    const normalizedRecord: CollectionsPlanner = {
+      ...record,
+      revised_record: record.revised_record === 1 ? 1 : 0,
+      primary_borrower_call_status:
+        record.primary_borrower_call_status || 'LLAMADA PENDIENTE',
+      guarantor_call_status:
+        record.guarantor_call_status || 'LLAMADA PENDIENTE',
+    };
+
+    this.selectedRecord.set(normalizedRecord);
     setTimeout(() => {
       this.editSection()?.nativeElement.scrollIntoView({
         behavior: 'smooth',
@@ -446,12 +455,22 @@ export class CollectionScheduleComponent implements OnInit {
   }
 
   confirmSave(): void {
+    const record = this.selectedRecord();
+    if (!record) return;
+
+    const isCancel = record.current_status === 'CANCELADO';
+
     this.#confirmationService.confirm({
-      message: '¿Está seguro de que desea guardar los cambios?',
-      header: 'Confirmar guardado',
-      icon: 'pi pi-exclamation-circle',
-      acceptLabel: 'Sí, guardar',
+      message: isCancel
+        ? 'Esta acción eliminará el registro de la tabla de forma <span style="color: #ef4444; font-weight: 600;">permanente e irreversible</span>. ¿Está seguro de que desea continuar?'
+        : '¿Está seguro de que desea guardar los cambios?',
+      header: isCancel
+        ? 'Confirmar eliminación permanente'
+        : 'Confirmar guardado',
+      icon: isCancel ? 'pi pi-trash' : 'pi pi-exclamation-circle',
+      acceptLabel: isCancel ? 'Sí, eliminar' : 'Sí, guardar',
       rejectLabel: 'Cancelar',
+      acceptButtonStyleClass: isCancel ? 'p-button-danger' : undefined,
       accept: () => this.executeSave(),
     });
   }
@@ -475,26 +494,40 @@ export class CollectionScheduleComponent implements OnInit {
       })
       .subscribe({
         next: (updated) => {
-          this.scheduleData.update((list) =>
-            list.map((item) =>
-              item.loan_request_id === updated.loan_request_id ? updated : item
-            )
-          );
+          if (updated.current_status === 'CANCELADO') {
+            this.scheduleData.update((list) =>
+              list.filter(
+                (item) => item.loan_request_id !== updated.loan_request_id
+              )
+            );
+          } else {
+            this.scheduleData.update((list) =>
+              list.map((item) =>
+                item.loan_request_id === updated.loan_request_id
+                  ? updated
+                  : item
+              )
+            );
+          }
           this.selectedRecord.set(null);
           this.saving.set(false);
           this.#messageService.add({
             severity: 'success',
             summary: 'Guardado',
-            detail: 'Registro actualizado correctamente',
+            detail:
+              updated.current_status === 'CANCELADO'
+                ? 'Registro eliminado correctamente'
+                : 'Registro actualizado correctamente',
           });
         },
-        error: (err: Error) => {
+        error: ({ error, message }) => {
           this.saving.set(false);
           this.#messageService.add({
             severity: 'error',
             summary: 'Error',
-            detail: err.message,
+            detail: error.error,
           });
+          console.log({ error, message });
         },
       });
   }
