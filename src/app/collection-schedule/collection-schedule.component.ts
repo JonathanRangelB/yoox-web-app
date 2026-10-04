@@ -525,16 +525,14 @@ export class CollectionScheduleComponent implements OnInit {
     const record = this.selectedRecord();
     if (!record) return;
 
-    const isCancel = record.current_status === 'CANCELADO';
-
+    const isCancel = this.editForm.value.current_status === 'CANCELADO';
     this.#confirmationService.confirm({
       message: isCancel
-        ? 'Esta acción eliminará el registro de la tabla de forma <span style="color: #ef4444; font-weight: 600;">permanente e irreversible</span>. ¿Está seguro de que desea continuar?'
+        ? 'Esta acción eliminará el registro de la tabla de solicitudes de forma permanente e irreversible.</br>¿Está seguro de que desea continuar?'
         : '¿Está seguro de que desea guardar los cambios?',
       header: isCancel
         ? 'Confirmar eliminación permanente'
         : 'Confirmar guardado',
-      icon: isCancel ? 'pi pi-trash' : 'pi pi-exclamation-circle',
       acceptLabel: isCancel ? 'Sí, eliminar' : 'Sí, guardar',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: isCancel ? 'p-button-danger' : undefined,
@@ -558,7 +556,7 @@ export class CollectionScheduleComponent implements OnInit {
         current_status: formValue.current_status,
         observations: formValue.observations,
         modified_by: this.currentUser?.ID ?? 0,
-        remote_utc_local_datetime: new Date()
+        remote_utc_local_datetime: new Date(),
       })
       .subscribe({
         next: (updated) => {
