@@ -9,7 +9,12 @@ import {
   viewChild,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
@@ -26,6 +31,7 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { SidebarModule } from 'primeng/sidebar';
 import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
+import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -45,7 +51,7 @@ type FilterMode = 'gerencia' | 'grupo' | 'agente';
   standalone: true,
   imports: [
     CommonModule,
-    FormsModule,
+    ReactiveFormsModule,
     TableModule,
     InputTextModule,
     InputTextareaModule,
@@ -62,6 +68,7 @@ type FilterMode = 'gerencia' | 'grupo' | 'agente';
     FieldsetModule,
     ConfirmDialogModule,
     SelectButtonModule,
+    CalendarModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './collection-schedule.component.html',
@@ -73,6 +80,7 @@ export class CollectionScheduleComponent implements OnInit {
   readonly #messageService = inject(MessageService);
   readonly #excelService = inject(ExcelExportService);
   readonly #confirmationService = inject(ConfirmationService);
+  readonly #fb = inject(FormBuilder);
 
   scheduleData = signal<CollectionsPlanner[]>([]);
   loading = signal<boolean>(false);
@@ -80,6 +88,8 @@ export class CollectionScheduleComponent implements OnInit {
   selectedRecord = signal<CollectionsPlanner | null>(null);
   filterMenuOpen = signal<boolean>(false);
   exporting = signal<boolean>(false);
+  selectedAccountingDate = signal<Date>(new Date());
+  editForm!: FormGroup;
 
   currentUser = getUserFromLocalStorage();
   //TODO: Restaurar control de acceso por rol cuando el login provea las gerencias
@@ -141,7 +151,11 @@ export class CollectionScheduleComponent implements OnInit {
 
     switch (this.filterMode()) {
       case 'gerencia':
-        return this.scheduleData().filter((r) => r.management_id === filter.ID);
+        return this.scheduleData().filter((r) =>
+          filter.ID === -1
+            ? r.management_id == null
+            : r.management_id === filter.ID
+        );
       case 'grupo':
         return this.scheduleData().filter((r) => r.group_id === filter.ID);
       case 'agente':
@@ -347,10 +361,15 @@ export class CollectionScheduleComponent implements OnInit {
     () => this.displayedData().filter((r) => !!r.captured_account).length
   );
   totalBudget = computed(() =>
-    this.displayedData().reduce((sum, r) => sum + (r.budget || 0), 0)
+    this.displayedData().reduce(
+      (sum, r) => sum + ((r.authorized_amount || 0) - (r.discount_amount || 0)),
+      0
+    )
   );
   totalRealInversion = computed(() =>
-    this.displayedData().reduce((sum, r) => sum + (r.real_inversion || 0), 0)
+    this.displayedData()
+      .filter((r) => r.captured_account === 1)
+      .reduce((sum, r) => sum + (r.real_inversion || 0), 0)
   );
   latestAccountingDate = computed(() => {
     const dates = this.displayedData()
@@ -366,12 +385,27 @@ export class CollectionScheduleComponent implements OnInit {
     // if (this.hasAccess()) {
     //   this.loadData();
     // }
+    this.selectedAccountingDate.set(new Date());
     this.loadData();
+  }
+
+  private buildPayload(): { id_user: number } {
+    const user = getUserFromLocalStorage();
+    const date = this.selectedAccountingDate();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return {
+      id_user: user?.ID ?? 0,
+      // accounting_date: `${year}-${month}-${day}`,
+    };
   }
 
   loadData(): void {
     this.loading.set(true);
-    this.#service.getCollectionSchedule().subscribe({
+    const payload = this.buildPayload();
+    this.#service.getCollectionSchedule(payload).subscribe({
       next: (data) => {
         this.selectedFilter.set(null);
         this.tableRef()?.reset();
@@ -395,9 +429,12 @@ export class CollectionScheduleComponent implements OnInit {
     const managementMap = new Map<number, string>();
     const groupMap = new Map<number, string>();
     const agentMap = new Map<number, string>();
+    let hasNullManagement = false;
 
     data.forEach((item) => {
-      if (!managementMap.has(item.management_id)) {
+      if (item.management_id == null) {
+        hasNullManagement = true;
+      } else if (!managementMap.has(item.management_id)) {
         managementMap.set(item.management_id, item.management_name);
       }
       if (!groupMap.has(item.group_id)) {
@@ -408,11 +445,15 @@ export class CollectionScheduleComponent implements OnInit {
       }
     });
 
-    this.managementList.set(
-      Array.from(managementMap.entries())
-        .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
-        .sort((a, b) => a.ID - b.ID)
-    );
+    const managementOptions = Array.from(managementMap.entries())
+      .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
+      .sort((a, b) => a.ID - b.ID);
+
+    if (hasNullManagement) {
+      managementOptions.push({ ID: -1, NOMBRE: 'SIN GERENCIA' });
+    }
+
+    this.managementList.set(managementOptions);
 
     this.groupList.set(
       Array.from(groupMap.entries())
@@ -442,12 +483,38 @@ export class CollectionScheduleComponent implements OnInit {
     };
 
     this.selectedRecord.set(normalizedRecord);
+    this.buildForm(normalizedRecord);
     setTimeout(() => {
       this.editSection()?.nativeElement.scrollIntoView({
         behavior: 'smooth',
         block: 'start',
       });
     }, 100);
+  }
+
+  private buildForm(record: CollectionsPlanner): void {
+    const authorizedAmount =
+      record.authorized_amount && record.authorized_amount > 0
+        ? record.authorized_amount
+        : 1000;
+
+    const locked = this.isRecordLocked();
+
+    this.editForm = this.#fb.group({
+      revised_record: [{ value: record.revised_record, disabled: locked }],
+      primary_borrower_call_status: [
+        { value: record.primary_borrower_call_status, disabled: locked },
+      ],
+      guarantor_call_status: [
+        { value: record.guarantor_call_status, disabled: locked },
+      ],
+      current_status: [{ value: record.current_status, disabled: locked }],
+      observations: [{ value: record.observations, disabled: locked }],
+      authorized_amount: [
+        { value: authorizedAmount, disabled: locked },
+        [Validators.min(1000)],
+      ],
+    });
   }
 
   cancelEdit(): void {
@@ -477,20 +544,21 @@ export class CollectionScheduleComponent implements OnInit {
 
   executeSave(): void {
     const record = this.selectedRecord();
-    if (!record) return;
+    if (!record || this.editForm.invalid) return;
 
+    const formValue = this.editForm.value;
     this.saving.set(true);
     this.#service
       .updateRecord({
         loan_request_id: record.loan_request_id,
-        revised_record: record.revised_record,
-        authorized_amount: record.authorized_amount,
-        primary_borrower_call_status: record.primary_borrower_call_status,
-        guarantor_call_status: record.guarantor_call_status,
-        current_status: record.current_status,
-        observations: record.observations,
+        revised_record: formValue.revised_record,
+        authorized_amount: formValue.authorized_amount,
+        primary_borrower_call_status: formValue.primary_borrower_call_status,
+        guarantor_call_status: formValue.guarantor_call_status,
+        current_status: formValue.current_status,
+        observations: formValue.observations,
         modified_by: this.currentUser?.ID ?? 0,
-        remote_utc_local_datetime: new Date(),
+        remote_utc_local_datetime: new Date()
       })
       .subscribe({
         next: (updated) => {
@@ -555,6 +623,10 @@ export class CollectionScheduleComponent implements OnInit {
   }
 
   refreshData(): void {
+    this.loadData();
+  }
+
+  applyDateFilter(): void {
     this.loadData();
   }
 

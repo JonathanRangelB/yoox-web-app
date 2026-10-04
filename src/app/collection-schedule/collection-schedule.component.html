@@ -32,14 +32,12 @@
         <div class="flex align-items-center gap-3 flex-wrap">
           <p-selectButton
             [options]="filterModeOptions"
-            [(ngModel)]="filterMode"
             optionLabel="label"
             optionValue="value"
             [allowEmpty]="false"
             (onChange)="onFilterModeChange()" />
           <p-dropdown
             [options]="currentFilterList()"
-            [(ngModel)]="selectedFilter"
             optionLabel="NOMBRE"
             [placeholder]="currentFilterPlaceholder()"
             [filter]="true"
@@ -65,13 +63,14 @@
           </div>
           <div class="flex flex-column align-items-end">
             <span class="text-xs text-500">Fecha contabilización</span>
-            <span class="font-bold">
-              @if (latestAccountingDate()) {
-                {{ latestAccountingDate()! | date: 'dd/MM/yyyy' : 'UTC' }}
-              } @else {
-                N/A
-              }
-            </span>
+            <p-calendar
+              dateFormat="dd/mm/yy"
+              [showIcon]="true"
+              [touchUI]="true"
+              iconDisplay="input"
+              styleClass="p-calendar-sm"
+              [style]="{ 'max-width': '9rem' }"
+              (onSelect)="applyDateFilter()" />
           </div>
           <p-button icon="pi pi-bars" (onClick)="filterMenuOpen.set(true)" />
         </div>
@@ -160,7 +159,15 @@
           {{ record.accounting_date | date: 'medium' }}
         </td>
         <td>{{ record.group_id }} - {{ record.group_name }}</td>
-        <td>{{ record.management_id }} - {{ record.management_name }}</td>
+        <td>
+          @if (
+            record.management_id === null && record.management_name === null
+          ) {
+            SIN GERENCIA
+          } @else {
+            {{ record.management_id }} - {{ record.management_name }}
+          }
+        </td>
         <td>
           {{ record.close_utc_datetime_stamp | date: 'medium' }}
         </td>
@@ -206,17 +213,16 @@
             [pTooltip]="getStatusTooltip(record.current_status)"
             tooltipPosition="top" />
         </div>
-        <div class="grid">
+        <form [formGroup]="editForm" class="grid">
           <div class="col-12 md:col-4">
             <label class="block mb-2 text-sm font-medium">
               Clasificación de revisión
             </label>
             <p-dropdown
               [options]="revisionOptions"
-              [(ngModel)]="record.revised_record"
+              formControlName="revised_record"
               optionLabel="label"
               optionValue="value"
-              [disabled]="isRecordLocked()"
               placeholder="Seleccionar clasificación"
               styleClass="w-full" />
           </div>
@@ -226,8 +232,7 @@
             </label>
             <p-dropdown
               [options]="callStatusOptions"
-              [(ngModel)]="record.primary_borrower_call_status"
-              [disabled]="isRecordLocked()"
+              formControlName="primary_borrower_call_status"
               placeholder="Seleccionar estatus"
               styleClass="w-full" />
           </div>
@@ -235,8 +240,7 @@
             <label class="block mb-2 text-sm font-medium"> Estatus aval </label>
             <p-dropdown
               [options]="callStatusOptions"
-              [(ngModel)]="record.guarantor_call_status"
-              [disabled]="isRecordLocked()"
+              formControlName="guarantor_call_status"
               placeholder="Seleccionar estatus"
               styleClass="w-full" />
           </div>
@@ -246,8 +250,7 @@
             </label>
             <p-dropdown
               [options]="currentStatusOptions"
-              [(ngModel)]="record.current_status"
-              [disabled]="isRecordLocked()"
+              formControlName="current_status"
               styleClass="w-full" />
           </div>
           <div class="col-12 md:col-4">
@@ -256,8 +259,7 @@
             </label>
             <textarea
               pInputTextarea
-              [(ngModel)]="record.observations"
-              [disabled]="isRecordLocked()"
+              formControlName="observations"
               [rows]="3"
               [cols]="30"
               class="w-full"></textarea>
@@ -267,16 +269,15 @@
               Autorizado por $
             </label>
             <p-inputNumber
-              [(ngModel)]="record.authorized_amount"
+              formControlName="authorized_amount"
               mode="currency"
               currency="MXN"
               locale="es-MX"
-              [min]="0"
+              [min]="1000"
               [minFractionDigits]="0"
-              [disabled]="isRecordLocked()"
               styleClass="w-full" />
           </div>
-        </div>
+        </form>
         <div class="flex justify-content-end gap-2 mt-4">
           <p-button
             label="Cancelar"
@@ -287,7 +288,7 @@
             label="Guardar"
             icon="pi pi-check"
             [loading]="saving()"
-            [disabled]="saving() || isRecordLocked()"
+            [disabled]="saving() || isRecordLocked() || editForm.invalid"
             (onClick)="confirmSave()" />
         </div>
       </p-fieldset>

@@ -34,6 +34,7 @@ export interface CollectionsPlanner {
 
 export interface CollectionsPlannerPostRequest {
   id_user: number;
+  accounting_date?: string;
 }
 
 export interface CollectionsPlannerPatchRequest {
