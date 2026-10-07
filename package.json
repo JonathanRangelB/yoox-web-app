@@ -84,7 +84,7 @@
     "karma-jasmine-html-reporter": "~2.1.0",
     "prettier": "^3.9.9",
     "prettier-eslint": "^17.1.2",
-    "purgecss": "^7.0.2",
+    "purgecss": "8",
     "typescript": "~5.9.3"
   }
 }
