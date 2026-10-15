@@ -61,16 +61,16 @@
               {{ formatCurrency(totalRealInversion()) }}
             </span>
           </div>
-          <div class="flex flex-column align-items-end">
+          <div class="flex flex-column align-items-end date-picker-wrapper">
             <span class="text-xs text-500">Fecha contabilización</span>
-            <p-calendar
-              dateFormat="dd/mm/yy"
-              [showIcon]="true"
-              [touchUI]="true"
-              iconDisplay="input"
-              styleClass="p-calendar-sm"
-              [style]="{ 'max-width': '9rem' }"
-              (onSelect)="applyDateFilter()" />
+            <p-dropdown
+              [options]="dailyMetricOptions()"
+              optionLabel="label"
+              optionValue="value"
+              [ngModel]="selectedDailyMetric()"
+              (ngModelChange)="onDailyMetricChange($event)"
+              placeholder="Seleccionar fecha"
+              styleClass="w-14rem" />
           </div>
           <p-button icon="pi pi-bars" (onClick)="filterMenuOpen.set(true)" />
         </div>
@@ -268,14 +268,28 @@
             <label class="block mb-2 text-sm font-medium">
               Autorizado por $
             </label>
-            <p-inputNumber
-              formControlName="authorized_amount"
-              mode="currency"
-              currency="MXN"
-              locale="es-MX"
-              [min]="1000"
-              [minFractionDigits]="0"
-              styleClass="w-full" />
+            <div class="flex flex-column">
+              <p-inputNumber
+                formControlName="authorized_amount"
+                mode="currency"
+                currency="MXN"
+                locale="es-MX"
+                [minFractionDigits]="0"
+                styleClass="w-full" />
+              <small
+                id="authorized-amount-error"
+                class="text-red-500"
+                [hidden]="
+                  editForm.controls['authorized_amount'].valid ||
+                  !editForm.controls['authorized_amount'].dirty
+                ">
+                La cantidad mínima es
+                {{
+                  MIN_AUTHORIZED_AMOUNT
+                    | currency: 'MXN' : 'symbol-narrow' : '1.0-0' : 'es-MX'
+                }}.
+              </small>
+            </div>
           </div>
         </form>
         <div class="flex justify-content-end gap-2 mt-4">

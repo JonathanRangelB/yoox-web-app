@@ -12,6 +12,7 @@ import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
+  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
@@ -31,7 +32,6 @@ import { SelectButtonModule } from 'primeng/selectbutton';
 import { SidebarModule } from 'primeng/sidebar';
 import { Table, TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { CalendarModule } from 'primeng/calendar';
 import { ToastModule } from 'primeng/toast';
 import { TooltipModule } from 'primeng/tooltip';
 
@@ -39,7 +39,10 @@ import { getUserFromLocalStorage } from '../shared/utils/functions.utils';
 import { ExcelExportService } from '../shared/services/excel-export.service';
 import { CollectionScheduleService } from './services/collection-schedule.service';
 import {
+  CollectionScheduleDailyMetrics,
+  CollectionScheduleDashboard,
   CollectionsPlanner,
+  CollectionsPlannerPostRequest,
   FilterOption,
   TableColumn,
 } from './interfaces/collection-schedule.interface';
@@ -51,6 +54,7 @@ type FilterMode = 'gerencia' | 'grupo' | 'agente';
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     TableModule,
     InputTextModule,
@@ -68,7 +72,6 @@ type FilterMode = 'gerencia' | 'grupo' | 'agente';
     FieldsetModule,
     ConfirmDialogModule,
     SelectButtonModule,
-    CalendarModule,
   ],
   providers: [MessageService, ConfirmationService],
   templateUrl: './collection-schedule.component.html',
@@ -82,13 +85,14 @@ export class CollectionScheduleComponent implements OnInit {
   readonly #confirmationService = inject(ConfirmationService);
   readonly #fb = inject(FormBuilder);
 
+  dashboardData = signal<CollectionScheduleDashboard | null>(null);
   scheduleData = signal<CollectionsPlanner[]>([]);
   loading = signal<boolean>(false);
   saving = signal<boolean>(false);
   selectedRecord = signal<CollectionsPlanner | null>(null);
   filterMenuOpen = signal<boolean>(false);
   exporting = signal<boolean>(false);
-  selectedAccountingDate = signal<Date>(new Date());
+  selectedDailyMetric = signal<CollectionScheduleDailyMetrics | null>(null);
   editForm!: FormGroup;
 
   currentUser = getUserFromLocalStorage();
@@ -166,6 +170,17 @@ export class CollectionScheduleComponent implements OnInit {
         return this.scheduleData();
     }
   });
+
+  dailyMetricOptions = computed(() => {
+    return (
+      this.dashboardData()?.dailyMetrics?.map((m) => ({
+        label: this.formatDailyMetricLabel(m.accounting_date),
+        value: m,
+      })) ?? []
+    );
+  });
+
+  readonly MIN_AUTHORIZED_AMOUNT = 1000;
 
   revisionOptions = [
     { label: 'REVISADO', value: 1 },
@@ -358,47 +373,25 @@ export class CollectionScheduleComponent implements OnInit {
   ];
 
   totalCapturedAccounts = computed(
-    () => this.displayedData().filter((r) => !!r.captured_account).length
+    () => this.selectedDailyMetric()?.captured_accounts ?? 0
   );
-  totalBudget = computed(() =>
-    this.displayedData().reduce(
-      (sum, r) => sum + ((r.authorized_amount || 0) - (r.discount_amount || 0)),
-      0
-    )
+  totalBudget = computed(() => this.selectedDailyMetric()?.total_budget ?? 0);
+  totalRealInversion = computed(
+    () => this.selectedDailyMetric()?.totalReal_investment ?? 0
   );
-  totalRealInversion = computed(() =>
-    this.displayedData()
-      .filter((r) => r.captured_account === 1)
-      .reduce((sum, r) => sum + (r.real_inversion || 0), 0)
-  );
-  latestAccountingDate = computed(() => {
-    const dates = this.displayedData()
-      .map((r) => r.accounting_date)
-      .filter(Boolean);
-    return dates.length
-      ? new Date(Math.max(...dates.map((d) => new Date(d).getTime())))
-      : null;
-  });
 
   ngOnInit(): void {
     //TODO: Restaurar control de acceso por rol cuando el login provea las gerencias
     // if (this.hasAccess()) {
     //   this.loadData();
     // }
-    this.selectedAccountingDate.set(new Date());
     this.loadData();
   }
 
-  private buildPayload(): { id_user: number } {
+  private buildPayload(): CollectionsPlannerPostRequest {
     const user = getUserFromLocalStorage();
-    const date = this.selectedAccountingDate();
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-
     return {
       id_user: user?.ID ?? 0,
-      // accounting_date: `${year}-${month}-${day}`,
     };
   }
 
@@ -406,11 +399,13 @@ export class CollectionScheduleComponent implements OnInit {
     this.loading.set(true);
     const payload = this.buildPayload();
     this.#service.getCollectionSchedule(payload).subscribe({
-      next: (data) => {
+      next: (dashboard) => {
         this.selectedFilter.set(null);
         this.tableRef()?.reset();
-        this.scheduleData.set(data);
-        this.buildFilterLists(data);
+        this.dashboardData.set(dashboard);
+        this.scheduleData.set(dashboard.records);
+        this.buildFilterLists(dashboard.records);
+        this.initializeSelectedDailyMetric(dashboard.dailyMetrics);
         this.loading.set(false);
       },
       error: (err: Error) => {
@@ -425,7 +420,27 @@ export class CollectionScheduleComponent implements OnInit {
     });
   }
 
-  private buildFilterLists(data: CollectionsPlanner[]): void {
+  private initializeSelectedDailyMetric(
+    metrics: CollectionScheduleDailyMetrics[] | undefined
+  ): void {
+    if (!metrics || metrics.length === 0) {
+      this.selectedDailyMetric.set(null);
+      return;
+    }
+    const today = new Date();
+    const match = metrics.find((m) =>
+      this.isSameDate(m.accounting_date, today)
+    );
+    this.selectedDailyMetric.set(match ?? metrics[0]);
+  }
+
+  private buildFilterLists(data: CollectionsPlanner[] | undefined): void {
+    if (!data || !Array.isArray(data)) {
+      this.managementList.set([]);
+      this.groupList.set([]);
+      this.agentList.set([]);
+      return;
+    }
     const managementMap = new Map<number, string>();
     const groupMap = new Map<number, string>();
     const agentMap = new Map<number, string>();
@@ -435,9 +450,9 @@ export class CollectionScheduleComponent implements OnInit {
       if (item.management_id == null) {
         hasNullManagement = true;
       } else if (!managementMap.has(item.management_id)) {
-        managementMap.set(item.management_id, item.management_name);
+        managementMap.set(item.management_id, item.management_name ?? '');
       }
-      if (!groupMap.has(item.group_id)) {
+      if (item.group_id != null && !groupMap.has(item.group_id)) {
         groupMap.set(item.group_id, item.group_name);
       }
       if (!agentMap.has(item.collection_id_agent)) {
@@ -472,6 +487,10 @@ export class CollectionScheduleComponent implements OnInit {
     this.selectedFilter.set(null);
   }
 
+  onDailyMetricChange(metric: CollectionScheduleDailyMetrics): void {
+    this.selectedDailyMetric.set(metric);
+  }
+
   onRowSelect(record: CollectionsPlanner): void {
     const normalizedRecord: CollectionsPlanner = {
       ...record,
@@ -493,10 +512,7 @@ export class CollectionScheduleComponent implements OnInit {
   }
 
   private buildForm(record: CollectionsPlanner): void {
-    const authorizedAmount =
-      record.authorized_amount && record.authorized_amount > 0
-        ? record.authorized_amount
-        : 1000;
+    const authorizedAmount = record.authorized_amount;
 
     const locked = this.isRecordLocked();
 
@@ -512,7 +528,7 @@ export class CollectionScheduleComponent implements OnInit {
       observations: [{ value: record.observations, disabled: locked }],
       authorized_amount: [
         { value: authorizedAmount, disabled: locked },
-        [Validators.min(1000)],
+        [Validators.required, Validators.min(this.MIN_AUTHORIZED_AMOUNT)],
       ],
     });
   }
@@ -575,6 +591,7 @@ export class CollectionScheduleComponent implements OnInit {
               )
             );
           }
+          this.recalculateDailyMetrics();
           this.selectedRecord.set(null);
           this.saving.set(false);
           this.#messageService.add({
@@ -596,6 +613,81 @@ export class CollectionScheduleComponent implements OnInit {
           console.log({ error, message });
         },
       });
+  }
+
+  private recalculateDailyMetrics(): void {
+    const dashboard = this.dashboardData();
+    if (!dashboard) return;
+
+    const records = this.scheduleData();
+    const updatedMetrics = (dashboard.dailyMetrics ?? []).map((metric) => {
+      const metricDate = metric.accounting_date;
+      const dayRecords = records.filter((r) =>
+        this.isSameDate(r.loan_request_utc_date, metricDate)
+      );
+
+      const captured_accounts = dayRecords.filter(
+        (r) => !!r.captured_account
+      ).length;
+      const total_budget = dayRecords.reduce(
+        (sum, r) =>
+          sum + ((r.authorized_amount || 0) - (r.discount_amount || 0)),
+        0
+      );
+      const totalReal_investment = dayRecords
+        .filter((r) => r.captured_account === 1)
+        .reduce((sum, r) => sum + (r.real_inversion || 0), 0);
+
+      return {
+        ...metric,
+        captured_accounts,
+        total_budget,
+        totalReal_investment,
+      };
+    });
+
+    this.dashboardData.update((d) =>
+      d ? { ...d, dailyMetrics: updatedMetrics } : null
+    );
+
+    const currentSelected = this.selectedDailyMetric();
+    if (currentSelected) {
+      const refreshed = updatedMetrics.find((m) =>
+        this.isSameDate(m.accounting_date, currentSelected.accounting_date)
+      );
+      if (refreshed) {
+        this.selectedDailyMetric.set(refreshed);
+      }
+    }
+  }
+
+  private isSameDate(
+    d1: Date | string | null,
+    d2: Date | string | null
+  ): boolean {
+    if (!d1 || !d2) return false;
+    const date1 = d1 instanceof Date ? d1 : new Date(d1);
+    const date2 = d2 instanceof Date ? d2 : new Date(d2);
+    return (
+      date1.getFullYear() === date2.getFullYear() &&
+      date1.getMonth() === date2.getMonth() &&
+      date1.getDate() === date2.getDate()
+    );
+  }
+
+  private formatDailyMetricLabel(date: Date | string | null): string {
+    if (!date) return 'Sin fecha definida';
+    const d = date instanceof Date ? date : new Date(date);
+    const formatter = new Intl.DateTimeFormat('es-MX', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+    const parts = formatter.formatToParts(d);
+    const day = parts.find((p) => p.type === 'day')?.value ?? '';
+    const month = parts.find((p) => p.type === 'month')?.value ?? '';
+    const year = parts.find((p) => p.type === 'year')?.value ?? '';
+    return `${day} ${month} del ${year}`;
   }
 
   formatCurrency(value: number | null | undefined): string {
@@ -621,10 +713,6 @@ export class CollectionScheduleComponent implements OnInit {
   }
 
   refreshData(): void {
-    this.loadData();
-  }
-
-  applyDateFilter(): void {
     this.loadData();
   }
 
