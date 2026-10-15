@@ -90,7 +90,7 @@ export class LoanComponent implements OnDestroy, OnInit {
   readonly #activatedRoute = inject(ActivatedRoute);
   readonly #router = inject(Router);
   readonly #addressService = inject(AddressService);
-  readonly minLoanAmount = 1008;
+  readonly minLoanAmount = 1000;
   customLoanAmount?: number;
   customLoanRefinanceAmount?: number;
   refinanceResults = signal<Refinance | null>(null);
