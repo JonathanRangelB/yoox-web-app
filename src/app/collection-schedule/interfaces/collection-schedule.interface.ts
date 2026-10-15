@@ -58,7 +58,6 @@ export interface CollectionsPlannerPatchRequest {
   current_status: string;
   observations: string;
   modified_by: number;
-  remote_utc_local_datetime: Date;
 }
 
 export interface FilterOption {

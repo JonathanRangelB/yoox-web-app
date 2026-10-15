@@ -572,7 +572,6 @@ export class CollectionScheduleComponent implements OnInit {
         current_status: formValue.current_status,
         observations: formValue.observations,
         modified_by: this.currentUser?.ID ?? 0,
-        remote_utc_local_datetime: new Date(),
       })
       .subscribe({
         next: (updated) => {
