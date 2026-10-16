@@ -202,8 +202,14 @@ export class CollectionScheduleComponent implements OnInit {
       filterType: 'numeric',
     },
     {
+      field: 'loan_request_number',
+      header: 'Folio',
+      width: '10rem',
+      filterType: 'text',
+    },
+    {
       field: 'insert_utc_datetime_stamp',
-      header: 'Fecha Stamp',
+      header: 'Fecha de registro',
       width: '10rem',
       filterType: 'date',
     },
@@ -223,12 +229,6 @@ export class CollectionScheduleComponent implements OnInit {
       field: 'collection_id_agent',
       header: 'Agente',
       width: '14rem',
-      filterType: 'text',
-    },
-    {
-      field: 'loan_request_number',
-      header: 'Folio',
-      width: '10rem',
       filterType: 'text',
     },
     {

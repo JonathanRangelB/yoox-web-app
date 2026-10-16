@@ -111,19 +111,19 @@
     <ng-template pTemplate="body" let-record>
       <tr [pSelectableRow]="record">
         <td>{{ record.loan_request_id }}</td>
+        <td>{{ record.loan_request_number }}</td>
         <td>
           {{ record.insert_utc_datetime_stamp | date: 'medium' }}
         </td>
         <td>
-          {{ record.loan_request_utc_date | date: 'medium' }}
+          {{ record.loan_request_utc_date | date: 'mediumDate' }}
         </td>
         <td>
-          {{ record.last_change_loan_request_utc_date | date: 'medium' }}
+          {{ record.last_change_loan_request_utc_date | date: 'mediumDate' }}
         </td>
         <td>
           {{ record.collection_id_agent }} - {{ record.collection_name_agent }}
         </td>
-        <td>{{ record.loan_request_number }}</td>
         <td>{{ record.customer_id }}</td>
         <td>{{ record.customer_name }}</td>
         <td>{{ record.credit_type }}</td>
@@ -163,11 +163,11 @@
           {{ formatCurrency(record.real_inversion) }}
         </td>
         <td>
-          {{ record.last_change_utc_date | date: 'medium' }}
+          {{ record.last_change_utc_date | date: 'mediumDate' }}
         </td>
         <td>{{ record.modified_by }}</td>
         <td>
-          {{ record.accounting_date | date: 'medium' }}
+          {{ record.accounting_date | date: 'mediumDate' }}
         </td>
         <td>{{ record.group_id }} - {{ record.group_name }}</td>
         <td>
@@ -180,7 +180,7 @@
           }
         </td>
         <td>
-          {{ record.close_utc_datetime_stamp | date: 'medium' }}
+          {{ record.close_utc_datetime_stamp | date: 'mediumDate' }}
         </td>
       </tr>
     </ng-template>
