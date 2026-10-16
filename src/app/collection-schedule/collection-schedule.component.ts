@@ -487,6 +487,11 @@ export class CollectionScheduleComponent implements OnInit {
     this.selectedFilter.set(null);
   }
 
+  resetFilter(): void {
+    this.filterMode.set('gerencia');
+    this.selectedFilter.set(null);
+  }
+
   onDailyMetricChange(metric: CollectionScheduleDailyMetrics): void {
     this.selectedDailyMetric.set(metric);
   }

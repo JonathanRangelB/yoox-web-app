@@ -35,7 +35,8 @@
             optionLabel="label"
             optionValue="value"
             [allowEmpty]="false"
-            (onChange)="onFilterModeChange()" />
+            [ngModel]="filterMode()"
+            (ngModelChange)="filterMode.set($event); onFilterModeChange()" />
           <p-dropdown
             [options]="currentFilterList()"
             optionLabel="NOMBRE"
@@ -43,7 +44,17 @@
             [filter]="true"
             filterBy="NOMBRE"
             [showClear]="true"
+            [ngModel]="selectedFilter()"
+            (ngModelChange)="selectedFilter.set($event)"
             styleClass="w-18rem" />
+          @if (selectedFilter()) {
+            <p-button
+              icon="pi pi-refresh"
+              severity="primary"
+              (onClick)="resetFilter()"
+              pTooltip="Restablecer seleccion"
+              tooltipPosition="top" />
+          }
         </div>
 
         <div class="flex align-items-center gap-3 flex-wrap">
