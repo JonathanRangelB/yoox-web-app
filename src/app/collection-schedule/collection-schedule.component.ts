@@ -96,11 +96,9 @@ export class CollectionScheduleComponent implements OnInit {
   editForm!: FormGroup;
 
   currentUser = getUserFromLocalStorage();
-  //TODO: Restaurar control de acceso por rol cuando el login provea las gerencias
-  // hasAccess = computed(() =>
-  //   ['NORMAL', 'ADMINISTRADOR'].includes(this.currentUser?.ROL || '')
-  // );
-  hasAccess = computed(() => true);
+  hasAccess = computed(() =>
+    ['NORMAL', 'ADMINISTRADOR'].includes(this.currentUser?.ROL.toUpperCase() || '')
+  );
 
   editSection = viewChild<ElementRef>('editSection');
   tableRef = viewChild<Table>('dt');
@@ -381,11 +379,9 @@ export class CollectionScheduleComponent implements OnInit {
   );
 
   ngOnInit(): void {
-    //TODO: Restaurar control de acceso por rol cuando el login provea las gerencias
-    // if (this.hasAccess()) {
-    //   this.loadData();
-    // }
-    this.loadData();
+    if (this.hasAccess()) {
+      this.loadData();
+    }
   }
 
   private buildPayload(): CollectionsPlannerPostRequest {
