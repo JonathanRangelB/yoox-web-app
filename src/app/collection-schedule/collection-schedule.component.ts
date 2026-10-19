@@ -97,7 +97,7 @@ export class CollectionScheduleComponent implements OnInit {
 
   currentUser = getUserFromLocalStorage();
   hasAccess = computed(() =>
-    ['NORMAL', 'ADMINISTRADOR'].includes(this.currentUser?.ROL.toUpperCase() || '')
+    ['USUARIO NORMAL', 'ADMINISTRADOR'].includes(this.currentUser?.ROL.toUpperCase() || '')
   );
 
   editSection = viewChild<ElementRef>('editSection');
