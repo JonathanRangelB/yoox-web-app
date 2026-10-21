@@ -97,15 +97,20 @@ export class CollectionScheduleComponent implements OnInit {
 
   currentUser = getUserFromLocalStorage();
   hasAccess = computed(() =>
-    ['USUARIO NORMAL', 'ADMINISTRADOR'].includes(this.currentUser?.ROL.toUpperCase() || '')
+    ['USUARIO NORMAL', 'ADMINISTRADOR'].includes(
+      this.currentUser?.ROL.toUpperCase() || ''
+    )
   );
 
   editSection = viewChild<ElementRef>('editSection');
   tableRef = viewChild<Table>('dt');
 
   isRecordLocked = computed(() => {
-    const status = this.selectedRecord()?.current_status;
-    return status === 'AUTORIZADO' || status === 'CANCELADO';
+    const record = this.selectedRecord();
+    return (
+      record?.current_status === 'CANCELADO' ||
+      (record?.current_status === 'AUTORIZADO' && record.captured_account !== 0)
+    );
   });
 
   // Filter mode and lists
@@ -251,7 +256,11 @@ export class CollectionScheduleComponent implements OnInit {
       field: 'revised_record',
       header: 'Clasificacion',
       width: '10rem',
-      filterType: 'numeric',
+      filterType: 'text',
+      filterOptions: this.revisionOptions.map((option) => ({
+        ...option,
+        severity: option.value === 1 ? 'success' : 'warning',
+      })),
     },
     {
       field: 'requested_amount',
@@ -288,18 +297,31 @@ export class CollectionScheduleComponent implements OnInit {
       header: 'Estatus Titular',
       width: '12rem',
       filterType: 'text',
+      filterOptions: this.callStatusOptions.map((value) => ({
+        label: value,
+        value,
+      })),
     },
     {
       field: 'guarantor_call_status',
       header: 'Estatus Aval',
       width: '12rem',
       filterType: 'text',
+      filterOptions: this.callStatusOptions.map((value) => ({
+        label: value,
+        value,
+      })),
     },
     {
       field: 'current_status',
       header: 'Estatus Actual',
       width: '12rem',
       filterType: 'text',
+      filterOptions: this.currentStatusOptions.map((value) => ({
+        label: value,
+        value,
+        severity: this.getStatusSeverity(value),
+      })),
     },
     {
       field: 'observations',
@@ -424,8 +446,11 @@ export class CollectionScheduleComponent implements OnInit {
       return;
     }
     const today = new Date();
+    const todayDate = new Date(
+      Date.UTC(today.getFullYear(), today.getMonth(), today.getDate())
+    );
     const match = metrics.find((m) =>
-      this.isSameDate(m.accounting_date, today)
+      this.isSameDate(m.accounting_date, todayDate)
     );
     this.selectedDailyMetric.set(match ?? metrics[0]);
   }
@@ -540,7 +565,13 @@ export class CollectionScheduleComponent implements OnInit {
 
   confirmSave(): void {
     const record = this.selectedRecord();
-    if (!record) return;
+    if (
+      !record ||
+      this.isRecordLocked() ||
+      this.saving() ||
+      this.editForm.invalid
+    )
+      return;
 
     const isCancel = this.editForm.value.current_status === 'CANCELADO';
     this.#confirmationService.confirm({
@@ -559,7 +590,13 @@ export class CollectionScheduleComponent implements OnInit {
 
   executeSave(): void {
     const record = this.selectedRecord();
-    if (!record || this.editForm.invalid) return;
+    if (
+      !record ||
+      this.isRecordLocked() ||
+      this.saving() ||
+      this.editForm.invalid
+    )
+      return;
 
     const formValue = this.editForm.value;
     this.saving.set(true);
@@ -669,19 +706,21 @@ export class CollectionScheduleComponent implements OnInit {
     const date1 = d1 instanceof Date ? d1 : new Date(d1);
     const date2 = d2 instanceof Date ? d2 : new Date(d2);
     return (
-      date1.getFullYear() === date2.getFullYear() &&
-      date1.getMonth() === date2.getMonth() &&
-      date1.getDate() === date2.getDate()
+      date1.getUTCFullYear() === date2.getUTCFullYear() &&
+      date1.getUTCMonth() === date2.getUTCMonth() &&
+      date1.getUTCDate() === date2.getUTCDate()
     );
   }
 
   private formatDailyMetricLabel(date: Date | string | null): string {
     if (!date) return 'Sin fecha definida';
     const d = date instanceof Date ? date : new Date(date);
+    if (Number.isNaN(d.getTime())) return 'Sin fecha definida';
     const formatter = new Intl.DateTimeFormat('es-MX', {
       day: 'numeric',
       month: 'short',
       year: 'numeric',
+      timeZone: 'UTC',
     });
     const parts = formatter.formatToParts(d);
     const day = parts.find((p) => p.type === 'day')?.value ?? '';
@@ -733,10 +772,12 @@ export class CollectionScheduleComponent implements OnInit {
     }
   }
 
-  getStatusTooltip(status: string): string {
-    switch (status) {
+  getStatusTooltip(record: CollectionsPlanner): string {
+    switch (record.current_status) {
       case 'AUTORIZADO':
-        return 'Este registro ya no puede ser modificado porque su estatus es AUTORIZADO';
+        return record.captured_account === 0
+          ? 'Este registro está AUTORIZADO y puede ser modificado porque su cuenta aún no ha sido capturada'
+          : 'Este registro ya no puede ser modificado porque está AUTORIZADO y su cuenta ya fue capturada';
       case 'CANCELADO':
         return 'Este registro ya no puede ser modificado porque su estatus es CANCELADO';
       case 'EN ESPERA':

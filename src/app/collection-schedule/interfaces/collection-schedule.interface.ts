@@ -70,4 +70,11 @@ export interface TableColumn {
   header: string;
   width: string;
   filterType: string;
+  filterOptions?: TableTagOption[];
+}
+
+export interface TableTagOption {
+  label: string;
+  value: string | number;
+  severity?: 'success' | 'warning' | 'danger' | 'info';
 }

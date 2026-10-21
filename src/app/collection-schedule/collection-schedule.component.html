@@ -3,12 +3,11 @@
     class="flex flex-column align-items-center justify-content-center h-full gap-3">
     <i class="pi pi-lock text-4xl text-400"></i>
     <span class="text-600 text-lg text-center">
-      El usuario actual no tiene privilegios para esta funcionalidad. Póngase en contacto con sus
-      supervisores.
+      El usuario actual no tiene privilegios para esta funcionalidad. Póngase en
+      contacto con sus supervisores.
     </span>
   </div>
-}
-@else {
+} @else {
   <div class="page-container">
     <!-- Table -->
     <p-table
@@ -94,13 +93,52 @@
               <div class="flex justify-content-between align-items-center">
                 {{ col.header }}
                 <p-sortIcon [field]="col.field" />
-                <p-columnFilter
-                  [type]="col.filterType"
-                  [field]="col.field"
-                  display="menu"
-                  showOperator="false"
-                  showAddButton="false"
-                  class="ml-auto" />
+                @if (col.filterOptions; as options) {
+                  <p-columnFilter
+                    [field]="col.field"
+                    matchMode="equals"
+                    display="menu"
+                    [showMatchModes]="false"
+                    [showOperator]="false"
+                    [showAddButton]="false"
+                    [showApplyButton]="false"
+                    class="ml-auto">
+                    <ng-template
+                      pTemplate="filter"
+                      let-value
+                      let-filter="filterCallback">
+                      <p-dropdown
+                        [ngModel]="value"
+                        [options]="options"
+                        optionLabel="label"
+                        optionValue="value"
+                        [ariaLabel]="'Filtrar ' + col.header"
+                        placeholder="Todos"
+                        [showClear]="true"
+                        (onChange)="filter($event.value)"
+                        styleClass="w-full">
+                        <ng-template pTemplate="item" let-option>
+                          <p-tag
+                            [value]="option.label"
+                            [severity]="option.severity" />
+                        </ng-template>
+                        <ng-template pTemplate="selectedItem" let-option>
+                          <p-tag
+                            [value]="option.label"
+                            [severity]="option.severity" />
+                        </ng-template>
+                      </p-dropdown>
+                    </ng-template>
+                  </p-columnFilter>
+                } @else {
+                  <p-columnFilter
+                    [type]="col.filterType"
+                    [field]="col.field"
+                    display="menu"
+                    showOperator="false"
+                    showAddButton="false"
+                    class="ml-auto" />
+                }
               </div>
             </th>
           }
@@ -121,7 +159,8 @@
             {{ record.last_change_loan_request_utc_date | date: 'medium' }}
           </td>
           <td>
-            {{ record.collection_id_agent }} - {{ record.collection_name_agent }}
+            {{ record.collection_id_agent }} -
+            {{ record.collection_name_agent }}
           </td>
           <td>{{ record.customer_id }}</td>
           <td>{{ record.customer_name }}</td>
@@ -129,7 +168,9 @@
           <td>
             <p-tag
               [value]="record.revised_record === 1 ? 'REVISADO' : 'NO REVISADO'"
-              [severity]="record.revised_record === 1 ? 'success' : 'warning'" />
+              [severity]="
+                record.revised_record === 1 ? 'success' : 'warning'
+              " />
           </td>
           <td class="text-right">
             {{ formatCurrency(record.requested_amount) }}
@@ -220,7 +261,7 @@
             <p-tag
               [value]="record.current_status"
               [severity]="getStatusSeverity(record.current_status)"
-              [pTooltip]="getStatusTooltip(record.current_status)"
+              [pTooltip]="getStatusTooltip(record)"
               tooltipPosition="top" />
           </div>
           <form [formGroup]="editForm" class="grid">
@@ -247,7 +288,9 @@
                 styleClass="w-full" />
             </div>
             <div class="col-12 md:col-4">
-              <label class="block mb-2 text-sm font-medium"> Estatus aval </label>
+              <label class="block mb-2 text-sm font-medium">
+                Estatus aval
+              </label>
               <p-dropdown
                 [options]="callStatusOptions"
                 formControlName="guarantor_call_status"
