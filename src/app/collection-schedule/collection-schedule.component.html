@@ -115,10 +115,10 @@
             {{ record.insert_utc_datetime_stamp | date: 'medium' }}
           </td>
           <td>
-            {{ record.loan_request_utc_date | date: 'mediumDate' }}
+            {{ record.loan_request_utc_date | date: 'medium' }}
           </td>
           <td>
-            {{ record.last_change_loan_request_utc_date | date: 'mediumDate' }}
+            {{ record.last_change_loan_request_utc_date | date: 'medium' }}
           </td>
           <td>
             {{ record.collection_id_agent }} - {{ record.collection_name_agent }}
@@ -162,11 +162,11 @@
             {{ formatCurrency(record.real_inversion) }}
           </td>
           <td>
-            {{ record.last_change_utc_date | date: 'mediumDate' }}
+            {{ record.last_change_utc_date | date: 'medium' }}
           </td>
           <td>{{ record.modified_by }}</td>
           <td>
-            {{ record.accounting_date | date: 'mediumDate' }}
+            {{ record.accounting_date | date: 'mediumDate' : 'UTC' }}
           </td>
           <td>{{ record.group_id }} - {{ record.group_name }}</td>
           <td>
@@ -179,7 +179,7 @@
             }
           </td>
           <td>
-            {{ record.close_utc_datetime_stamp | date: 'mediumDate' }}
+            {{ record.close_utc_datetime_stamp | date: 'medium' }}
           </td>
         </tr>
       </ng-template>
