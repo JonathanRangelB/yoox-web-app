@@ -12,7 +12,7 @@
     <!-- Table -->
     <p-table
       #dt
-      [value]="displayedData()"
+      [value]="tableData()"
       [paginator]="true"
       [rows]="10"
       [rowsPerPageOptions]="[5, 10, 25, 50]"
@@ -34,7 +34,9 @@
               optionValue="value"
               [allowEmpty]="false"
               [ngModel]="filterMode()"
-              (ngModelChange)="filterMode.set($event); onFilterModeChange()" />
+              (ngModelChange)="
+                filterMode.set($event); selectedFilter.set(null)
+              " />
             <p-dropdown
               [options]="currentFilterList()"
               optionLabel="NOMBRE"
@@ -77,7 +79,7 @@
                 optionLabel="label"
                 optionValue="value"
                 [ngModel]="selectedDailyMetric()"
-                (ngModelChange)="onDailyMetricChange($event)"
+                (ngModelChange)="selectedDailyMetric.set($event)"
                 placeholder="Seleccionar fecha"
                 styleClass="w-14rem" />
             </div>
@@ -117,23 +119,29 @@
                         [showClear]="true"
                         (onChange)="filter($event.value)"
                         styleClass="w-full">
-                        <ng-template pTemplate="item" let-option>
-                          <p-tag
-                            [value]="option.label"
-                            [severity]="option.severity" />
-                        </ng-template>
-                        <ng-template pTemplate="selectedItem" let-option>
-                          <p-tag
-                            [value]="option.label"
-                            [severity]="option.severity" />
-                        </ng-template>
+                        @if (col.field !== 'credit_type') {
+                          <ng-template pTemplate="item" let-option>
+                            <p-tag
+                              [value]="option.label"
+                              [severity]="option.severity" />
+                          </ng-template>
+                          <ng-template pTemplate="selectedItem" let-option>
+                            <p-tag
+                              [value]="option.label"
+                              [severity]="option.severity" />
+                          </ng-template>
+                        }
                       </p-dropdown>
                     </ng-template>
                   </p-columnFilter>
                 } @else {
                   <p-columnFilter
                     [type]="col.filterType"
-                    [field]="col.field"
+                    [field]="
+                      col.filterType === 'date'
+                        ? col.field + '_filter'
+                        : col.field
+                    "
                     display="menu"
                     showOperator="false"
                     showAddButton="false"
@@ -333,6 +341,7 @@
                   id="authorized-amount-error"
                   class="text-red-500"
                   [hidden]="
+                    editForm.value.current_status === 'CANCELADO' ||
                     editForm.controls['authorized_amount'].valid ||
                     !editForm.controls['authorized_amount'].dirty
                   ">
@@ -355,7 +364,7 @@
               label="Guardar"
               icon="pi pi-check"
               [loading]="saving()"
-              [disabled]="saving() || isRecordLocked() || editForm.invalid"
+              [disabled]="!canSave()"
               (onClick)="confirmSave()" />
           </div>
         </p-fieldset>
@@ -381,12 +390,12 @@
         styleClass="w-full"
         [outlined]="true"
         icon="pi pi-filter-slash"
-        (onClick)="resetTable(dt)" />
+        (onClick)="dt.reset()" />
       <p-button
         label="Recargar datos"
         styleClass="w-full"
         icon="pi pi-refresh"
-        (onClick)="refreshData()"
+        (onClick)="loadData()"
         [loading]="loading()" />
       <p-divider />
       <div class="flex align-items-center gap-2 mb-2">
@@ -409,7 +418,7 @@
     </div>
   </p-sidebar>
 
-  <p-confirmDialog>
+  <p-confirmDialog position="bottom">
     <ng-template pTemplate="message" let-message>
       <div [innerHTML]="message.message"></div>
     </ng-template>

@@ -8,7 +8,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, formatDate } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
@@ -185,6 +185,34 @@ export class CollectionScheduleComponent implements OnInit {
 
   readonly MIN_AUTHORIZED_AMOUNT = 1000;
 
+  tableData = computed(() =>
+    this.displayedData().map((record) => ({
+      ...record,
+      ...Object.fromEntries(
+        this.tableColumns
+          .filter((column) => column.filterType === 'date')
+          .map(({ field }) => {
+            const value = record[field as keyof CollectionsPlanner];
+            let filterDate: Date | null = null;
+            if (value != null) {
+              try {
+                const day = formatDate(
+                  value,
+                  'yyyy-MM-dd',
+                  'en-US',
+                  field === 'accounting_date' ? 'UTC' : undefined
+                );
+                filterDate = new Date(`${day}T00:00:00`);
+              } catch {
+                filterDate = null;
+              }
+            }
+            return [`${field}_filter`, filterDate];
+          })
+      ),
+    }))
+  );
+
   revisionOptions = [
     { label: 'REVISADO', value: 1 },
     { label: 'NO REVISADO', value: 0 },
@@ -251,6 +279,10 @@ export class CollectionScheduleComponent implements OnInit {
       header: 'Tipo Credito',
       width: '10rem',
       filterType: 'text',
+      filterOptions: ['NUEVO', 'RENOVACION', 'REACTIVACION'].map((value) => ({
+        label: value,
+        value,
+      })),
     },
     {
       field: 'revised_record',
@@ -481,9 +513,7 @@ export class CollectionScheduleComponent implements OnInit {
       }
     });
 
-    const managementOptions = Array.from(managementMap.entries())
-      .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
-      .sort((a, b) => a.ID - b.ID);
+    const managementOptions = this.toFilterOptions(managementMap);
 
     if (hasNullManagement) {
       managementOptions.push({ ID: -1, NOMBRE: 'SIN GERENCIA' });
@@ -491,30 +521,19 @@ export class CollectionScheduleComponent implements OnInit {
 
     this.managementList.set(managementOptions);
 
-    this.groupList.set(
-      Array.from(groupMap.entries())
-        .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
-        .sort((a, b) => a.ID - b.ID)
-    );
-
-    this.agentList.set(
-      Array.from(agentMap.entries())
-        .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
-        .sort((a, b) => a.ID - b.ID)
-    );
+    this.groupList.set(this.toFilterOptions(groupMap));
+    this.agentList.set(this.toFilterOptions(agentMap));
   }
 
-  onFilterModeChange(): void {
-    this.selectedFilter.set(null);
+  private toFilterOptions(items: Map<number, string>): FilterOption[] {
+    return Array.from(items.entries())
+      .map(([ID, name]) => ({ ID, NOMBRE: `${ID} - ${name}` }))
+      .sort((a, b) => a.ID - b.ID);
   }
 
   resetFilter(): void {
     this.filterMode.set('gerencia');
     this.selectedFilter.set(null);
-  }
-
-  onDailyMetricChange(metric: CollectionScheduleDailyMetrics): void {
-    this.selectedDailyMetric.set(metric);
   }
 
   onRowSelect(record: CollectionsPlanner): void {
@@ -563,20 +582,24 @@ export class CollectionScheduleComponent implements OnInit {
     this.selectedRecord.set(null);
   }
 
-  confirmSave(): void {
-    const record = this.selectedRecord();
-    if (
-      !record ||
-      this.isRecordLocked() ||
-      this.saving() ||
-      this.editForm.invalid
-    )
-      return;
+  canSave(): boolean {
+    return (
+      !!this.selectedRecord() &&
+      !this.isRecordLocked() &&
+      !this.saving() &&
+      (this.editForm.value.current_status === 'CANCELADO' ||
+        this.editForm.valid)
+    );
+  }
 
+  confirmSave(): void {
+    if (!this.canSave()) return;
+
+    const record = this.selectedRecord()!;
     const isCancel = this.editForm.value.current_status === 'CANCELADO';
     this.#confirmationService.confirm({
       message: isCancel
-        ? 'Esta acción eliminará el registro de la tabla de solicitudes de forma permanente e irreversible.</br>¿Está seguro de que desea continuar?'
+        ? 'Esta acción eliminará el registro de la tabla de solicitudes de forma permanente e irreversible, además el préstamo asociado cambiará a rechazado .</br>¿Está seguro de que desea continuar?'
         : '¿Está seguro de que desea guardar los cambios?',
       header: isCancel
         ? 'Confirmar eliminación permanente'
@@ -584,72 +607,64 @@ export class CollectionScheduleComponent implements OnInit {
       acceptLabel: isCancel ? 'Sí, eliminar' : 'Sí, guardar',
       rejectLabel: 'Cancelar',
       acceptButtonStyleClass: isCancel ? 'p-button-danger' : undefined,
-      accept: () => this.executeSave(),
+      accept: () => {
+        if (!this.canSave() || this.selectedRecord() !== record) return;
+
+        const formValue = this.editForm.value;
+        this.saving.set(true);
+        this.#service
+          .updateRecord({
+            loan_request_id: record.loan_request_id,
+            revised_record: formValue.revised_record,
+            authorized_amount: formValue.authorized_amount,
+            primary_borrower_call_status:
+              formValue.primary_borrower_call_status,
+            guarantor_call_status: formValue.guarantor_call_status,
+            current_status: formValue.current_status,
+            observations: formValue.observations,
+            modified_by: this.currentUser?.ID ?? 0,
+          })
+          .subscribe({
+            next: (updated) => {
+              if (updated.current_status === 'CANCELADO') {
+                this.scheduleData.update((list) =>
+                  list.filter(
+                    (item) => item.loan_request_id !== updated.loan_request_id
+                  )
+                );
+              } else {
+                this.scheduleData.update((list) =>
+                  list.map((item) =>
+                    item.loan_request_id === updated.loan_request_id
+                      ? updated
+                      : item
+                  )
+                );
+              }
+              this.recalculateDailyMetrics();
+              this.selectedRecord.set(null);
+              this.saving.set(false);
+              this.#messageService.add({
+                severity: 'success',
+                summary: 'Guardado',
+                detail:
+                  updated.current_status === 'CANCELADO'
+                    ? 'Registro eliminado correctamente'
+                    : 'Registro actualizado correctamente',
+              });
+            },
+            error: ({ error, message }) => {
+              this.saving.set(false);
+              this.#messageService.add({
+                severity: 'error',
+                summary: 'Error',
+                detail: error.error,
+              });
+              console.log({ error, message });
+            },
+          });
+      },
     });
-  }
-
-  executeSave(): void {
-    const record = this.selectedRecord();
-    if (
-      !record ||
-      this.isRecordLocked() ||
-      this.saving() ||
-      this.editForm.invalid
-    )
-      return;
-
-    const formValue = this.editForm.value;
-    this.saving.set(true);
-    this.#service
-      .updateRecord({
-        loan_request_id: record.loan_request_id,
-        revised_record: formValue.revised_record,
-        authorized_amount: formValue.authorized_amount,
-        primary_borrower_call_status: formValue.primary_borrower_call_status,
-        guarantor_call_status: formValue.guarantor_call_status,
-        current_status: formValue.current_status,
-        observations: formValue.observations,
-        modified_by: this.currentUser?.ID ?? 0,
-      })
-      .subscribe({
-        next: (updated) => {
-          if (updated.current_status === 'CANCELADO') {
-            this.scheduleData.update((list) =>
-              list.filter(
-                (item) => item.loan_request_id !== updated.loan_request_id
-              )
-            );
-          } else {
-            this.scheduleData.update((list) =>
-              list.map((item) =>
-                item.loan_request_id === updated.loan_request_id
-                  ? updated
-                  : item
-              )
-            );
-          }
-          this.recalculateDailyMetrics();
-          this.selectedRecord.set(null);
-          this.saving.set(false);
-          this.#messageService.add({
-            severity: 'success',
-            summary: 'Guardado',
-            detail:
-              updated.current_status === 'CANCELADO'
-                ? 'Registro eliminado correctamente'
-                : 'Registro actualizado correctamente',
-          });
-        },
-        error: ({ error, message }) => {
-          this.saving.set(false);
-          this.#messageService.add({
-            severity: 'error',
-            summary: 'Error',
-            detail: error.error,
-          });
-          console.log({ error, message });
-        },
-      });
   }
 
   private recalculateDailyMetrics(): void {
@@ -747,14 +762,6 @@ export class CollectionScheduleComponent implements OnInit {
     dt.filterGlobal(target.value, 'contains');
   }
 
-  resetTable(table: Table): void {
-    table.reset();
-  }
-
-  refreshData(): void {
-    this.loadData();
-  }
-
   getStatusSeverity(
     status: string
   ): 'success' | 'warning' | 'danger' | 'info' | undefined {
@@ -792,18 +799,17 @@ export class CollectionScheduleComponent implements OnInit {
   async exportAll(): Promise<void> {
     const data = this.scheduleData();
     if (data.length === 0) return;
-    this.exporting.set(true);
-    const dateStr = new Date().toISOString().split('T')[0];
-    await this.#excelService.exportToExcel(
-      data,
-      `planificador-cobranza-completa_${dateStr}`
-    );
-    this.exporting.set(false);
+    await this.exportRecords(data, 'completa');
   }
 
   async exportFiltered(table: Table): Promise<void> {
     const filtered = table.filteredValue as CollectionsPlanner[] | undefined;
-    const dataToExport = filtered ?? this.displayedData();
+    const filteredIds = filtered
+      ? new Set(filtered.map((record) => record.loan_request_id))
+      : null;
+    const dataToExport = this.displayedData().filter(
+      (record) => !filteredIds || filteredIds.has(record.loan_request_id)
+    );
     if (dataToExport.length === 0) {
       this.#messageService.add({
         severity: 'warn',
@@ -814,12 +820,22 @@ export class CollectionScheduleComponent implements OnInit {
       });
       return;
     }
+    await this.exportRecords(dataToExport, 'filtrada');
+  }
+
+  private async exportRecords(
+    data: CollectionsPlanner[],
+    scope: 'completa' | 'filtrada'
+  ): Promise<void> {
     this.exporting.set(true);
-    const dateStr = new Date().toISOString().split('T')[0];
-    await this.#excelService.exportToExcel(
-      dataToExport,
-      `planificador-cobranza-filtrada_${dateStr}`
-    );
-    this.exporting.set(false);
+    try {
+      const dateStr = new Date().toISOString().split('T')[0];
+      await this.#excelService.exportToExcel(
+        data,
+        `planificador-cobranza-${scope}_${dateStr}`
+      );
+    } finally {
+      this.exporting.set(false);
+    }
   }
 }
