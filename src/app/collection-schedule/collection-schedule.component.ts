@@ -626,21 +626,13 @@ export class CollectionScheduleComponent implements OnInit {
           })
           .subscribe({
             next: (updated) => {
-              if (updated.current_status === 'CANCELADO') {
-                this.scheduleData.update((list) =>
-                  list.filter(
-                    (item) => item.loan_request_id !== updated.loan_request_id
-                  )
-                );
-              } else {
-                this.scheduleData.update((list) =>
-                  list.map((item) =>
-                    item.loan_request_id === updated.loan_request_id
-                      ? updated
-                      : item
-                  )
-                );
-              }
+              this.scheduleData.update((list) =>
+                list.map((item) =>
+                  item.loan_request_id === updated.loan_request_id
+                    ? updated
+                    : item
+                )
+              );
               this.recalculateDailyMetrics();
               this.selectedRecord.set(null);
               this.saving.set(false);
