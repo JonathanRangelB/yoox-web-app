@@ -186,6 +186,14 @@ describe('CollectionScheduleComponent', () => {
     ).toBe('text');
   });
 
+  it('assigns the requested severities to call statuses', () => {
+    expect(component.getCallStatusSeverity('LLAMADA PENDIENTE')).toBe(
+      'secondary'
+    );
+    expect(component.getCallStatusSeverity('CONTESTO')).toBe('success');
+    expect(component.getCallStatusSeverity('NO LOCALIZABLE')).toBeUndefined();
+  });
+
   it('does not save when the confirmation dialog is rejected', fakeAsync(() => {
     confirmation.and.callThrough();
     component.onRowSelect(makeRecord());

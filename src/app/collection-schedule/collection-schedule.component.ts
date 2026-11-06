@@ -332,6 +332,7 @@ export class CollectionScheduleComponent implements OnInit {
       filterOptions: this.callStatusOptions.map((value) => ({
         label: value,
         value,
+        severity: this.getCallStatusSeverity(value),
       })),
     },
     {
@@ -342,6 +343,7 @@ export class CollectionScheduleComponent implements OnInit {
       filterOptions: this.callStatusOptions.map((value) => ({
         label: value,
         value,
+        severity: this.getCallStatusSeverity(value),
       })),
     },
     {
@@ -774,6 +776,17 @@ export class CollectionScheduleComponent implements OnInit {
         return 'warning';
       case 'POR DEFINIR':
         return 'info';
+      default:
+        return undefined;
+    }
+  }
+
+  getCallStatusSeverity(status: string): 'secondary' | 'success' | undefined {
+    switch (status) {
+      case 'LLAMADA PENDIENTE':
+        return 'secondary';
+      case 'CONTESTO':
+        return 'success';
       default:
         return undefined;
     }

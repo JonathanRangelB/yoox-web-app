@@ -78,5 +78,5 @@ export interface TableColumn {
 export interface TableTagOption {
   label: string;
   value: string | number;
-  severity?: 'success' | 'warning' | 'danger' | 'info';
+  severity?: 'success' | 'secondary' | 'warning' | 'danger' | 'info';
 }

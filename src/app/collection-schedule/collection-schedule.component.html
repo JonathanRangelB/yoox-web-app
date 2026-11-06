@@ -192,10 +192,18 @@
           <td>{{ record.customer_neighborhood }}</td>
           <td>{{ record.customer_county }}</td>
           <td>
-            <p-tag [value]="record.primary_borrower_call_status" />
+            <p-tag
+              [value]="record.primary_borrower_call_status"
+              [severity]="
+                getCallStatusSeverity(record.primary_borrower_call_status)
+              " />
           </td>
           <td>
-            <p-tag [value]="record.guarantor_call_status" />
+            <p-tag
+              [value]="record.guarantor_call_status"
+              [severity]="
+                getCallStatusSeverity(record.guarantor_call_status)
+              " />
           </td>
           <td>
             <p-tag
@@ -325,7 +333,7 @@
                 formControlName="hours"
                 [rows]="3"
                 [cols]="30"
-                [maxlength]=100
+                [maxlength]="100"
                 class="w-full"></textarea>
             </div>
             <div class="col-12 md:col-4">
