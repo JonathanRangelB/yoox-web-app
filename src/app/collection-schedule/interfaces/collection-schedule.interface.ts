@@ -25,6 +25,7 @@ export interface CollectionsPlanner {
   primary_borrower_call_status: string;
   guarantor_call_status: string;
   current_status: string;
+  hours: string | null;
   observations: string | null;
   captured_account: number;
   budget: number;
@@ -56,6 +57,7 @@ export interface CollectionsPlannerPatchRequest {
   primary_borrower_call_status: string;
   guarantor_call_status: string;
   current_status: string;
+  hours: string;
   observations: string;
   modified_by: number;
 }
@@ -69,7 +71,7 @@ export interface TableColumn {
   field: string;
   header: string;
   width: string;
-  filterType: string;
+  filterType?: string;
   filterOptions?: TableTagOption[];
 }
 

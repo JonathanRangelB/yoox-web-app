@@ -134,7 +134,7 @@
                       </p-dropdown>
                     </ng-template>
                   </p-columnFilter>
-                } @else {
+                } @else if (col.filterType) {
                   <p-columnFilter
                     [type]="col.filterType"
                     [field]="
@@ -202,6 +202,7 @@
               [value]="record.current_status"
               [severity]="getStatusSeverity(record.current_status)" />
           </td>
+          <td>{{ truncateText(record.hours) }}</td>
           <td>{{ truncateText(record.observations) }}</td>
           <td>{{ record.captured_account }}</td>
           <td class="text-right">
@@ -272,6 +273,9 @@
               [pTooltip]="getStatusTooltip(record)"
               tooltipPosition="top" />
           </div>
+          <p class="text-sm mb-3">
+            ID de cliente: {{ record.customer_id }} - {{ record.customer_name }}
+          </p>
           <form [formGroup]="editForm" class="grid">
             <div class="col-12 md:col-4">
               <label class="block mb-2 text-sm font-medium">
@@ -313,6 +317,16 @@
                 [options]="currentStatusOptions"
                 formControlName="current_status"
                 styleClass="w-full" />
+            </div>
+            <div class="col-12 md:col-4">
+              <label class="block mb-2 text-sm font-medium">Horarios</label>
+              <textarea
+                pInputTextarea
+                formControlName="hours"
+                [rows]="3"
+                [cols]="30"
+                [maxlength]=100
+                class="w-full"></textarea>
             </div>
             <div class="col-12 md:col-4">
               <label class="block mb-2 text-sm font-medium">

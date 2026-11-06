@@ -60,6 +60,7 @@ describe('CollectionScheduleComponent', () => {
     primary_borrower_call_status: 'LLAMADA PENDIENTE',
     guarantor_call_status: 'LLAMADA PENDIENTE',
     current_status: 'AUTORIZADO',
+    hours: 'Horario inicial',
     observations: null,
     captured_account: 0,
     budget: 1900,
@@ -121,7 +122,9 @@ describe('CollectionScheduleComponent', () => {
 
   it('allows editing and saving an authorized account pending capture', fakeAsync(() => {
     const record = makeRecord();
-    service.updateRecord.and.returnValue(of(record));
+    const updatedRecord = { ...record, hours: 'Horario actualizado' };
+    service.updateRecord.and.returnValue(of(updatedRecord));
+    component.scheduleData.set([record]);
     component.onRowSelect(record);
     tick(100);
     fixture.detectChanges();
@@ -132,7 +135,10 @@ describe('CollectionScheduleComponent', () => {
     );
     expect(saveButton.disabled).toBeFalse();
 
-    component.editForm.patchValue({ observations: 'Pendiente de captura' });
+    component.editForm.patchValue({
+      hours: 'Horario actualizado',
+      observations: 'Pendiente de captura',
+    });
     saveButton.click();
     expect(service.updateRecord).not.toHaveBeenCalled();
     const dialog = confirmation.calls.mostRecent().args[0];
@@ -142,13 +148,43 @@ describe('CollectionScheduleComponent', () => {
       jasmine.objectContaining({
         loan_request_id: record.loan_request_id,
         current_status: 'AUTORIZADO',
+        hours: 'Horario actualizado',
         observations: 'Pendiente de captura',
       })
     );
     expect(service.updateRecord).toHaveBeenCalledTimes(1);
     expect(component.selectedRecord()).toBeNull();
     expect(component.saving()).toBeFalse();
+    expect(component.scheduleData()).toEqual([updatedRecord]);
   }));
+
+  it('shows customer identity and the hours field when selecting a record', fakeAsync(() => {
+    const record = makeRecord({ customer_id: 42, customer_name: 'Ana Pérez' });
+    component.onRowSelect(record);
+    tick(100);
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain(
+      'ID de cliente: 42 - Ana Pérez'
+    );
+    expect(component.editForm.get('hours')?.value).toBe('Horario inicial');
+    expect(
+      fixture.nativeElement.querySelector('textarea[formcontrolname="hours"]')
+    ).not.toBeNull();
+  }));
+
+  it('places hours between current status and observations with a text filter', () => {
+    const fields = component.tableColumns.map(({ field }) => field);
+    const statusIndex = fields.indexOf('current_status');
+    expect(fields.slice(statusIndex, statusIndex + 3)).toEqual([
+      'current_status',
+      'hours',
+      'observations',
+    ]);
+    expect(
+      component.tableColumns.find(({ field }) => field === 'hours')?.filterType
+    ).toBe('text');
+  });
 
   it('does not save when the confirmation dialog is rejected', fakeAsync(() => {
     confirmation.and.callThrough();

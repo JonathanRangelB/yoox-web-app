@@ -356,6 +356,12 @@ export class CollectionScheduleComponent implements OnInit {
       })),
     },
     {
+      field: 'hours',
+      header: 'Horarios',
+      width: '15rem',
+      filterType: 'text',
+    },
+    {
       field: 'observations',
       header: 'Observaciones',
       width: '15rem',
@@ -570,6 +576,7 @@ export class CollectionScheduleComponent implements OnInit {
         { value: record.guarantor_call_status, disabled: locked },
       ],
       current_status: [{ value: record.current_status, disabled: locked }],
+      hours: [{ value: record.hours, disabled: locked }],
       observations: [{ value: record.observations, disabled: locked }],
       authorized_amount: [
         { value: authorizedAmount, disabled: locked },
@@ -621,6 +628,7 @@ export class CollectionScheduleComponent implements OnInit {
               formValue.primary_borrower_call_status,
             guarantor_call_status: formValue.guarantor_call_status,
             current_status: formValue.current_status,
+            hours: formValue.hours,
             observations: formValue.observations,
             modified_by: this.currentUser?.ID ?? 0,
           })
