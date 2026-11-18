@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject, OnInit, signal, viewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
@@ -24,6 +25,8 @@ import { getUserFromLocalStorage } from '../shared/utils/functions.utils';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
+const APPROVED_LOAN_FOLIO_PATTERN = /^[a-zA-Z0-9]{6}$/;
+
 @Component({
   selector: 'app-cobro-agenda',
   standalone: true,
@@ -38,6 +41,7 @@ import { ToastModule } from 'primeng/toast';
     ButtonModule,
     InputSwitchModule,
     FormsModule,
+    RouterLink,
     SidebarModule,
     TooltipModule,
     DividerModule,
@@ -63,6 +67,10 @@ export class CobroAgendaComponent implements OnInit {
   userDropdown = viewChild<Dropdown>('userDropdown');
   sidebar = viewChild<Sidebar>('sidebar');
   table = viewChild<Table>('dt');
+
+  isValidLoanFolio(value: unknown): boolean {
+    return typeof value === 'string' && APPROVED_LOAN_FOLIO_PATTERN.test(value);
+  }
 
   ngOnInit(): void {
     this.requestAgendaData();

@@ -193,21 +193,21 @@ export class LandingComponent implements OnInit, OnDestroy {
         'Desde el primer momento me atendieron con mucha amabilidad. El personal fue atento, paciente y siempre estuvo dispuesto a resolver mis dudas. Muy buena atención.',
       name: 'María G.',
       role: 'Cliente personal',
-      title: 'Amabilidad del personal'
+      title: 'Amabilidad del personal',
     },
     {
       quote:
         'Me gustó que desde el inicio me explicaron claramente cuánto iba a pagar, el plazo y los intereses. Todo fue transparente y fácil de entender, sin sorpresas.',
       name: 'Carlos R.',
       role: 'Agente de cobros',
-      title: 'Claridad en pagos, plazos e intereses'
+      title: 'Claridad en pagos, plazos e intereses',
     },
     {
       quote:
         'El proceso fue rápido y sencillo. Me dieron respuesta en poco tiempo y todo el trámite fue muy ágil. Una excelente opción cuando buscas un crédito sin tantas complicaciones.',
       name: 'Ana L.',
       role: 'Emprendedora',
-      title: 'Agilidad en el proceso'
+      title: 'Agilidad en el proceso',
     },
   ];
   currentTestimonial = signal(0);

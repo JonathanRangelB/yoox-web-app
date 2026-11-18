@@ -276,9 +276,20 @@
         }}</span>
       </td>
       <td>
-        <span class="text-sm">{{
-          cobro.ultimaSolicitudPrestamoAprobada || 'N/A'
-        }}</span>
+        @if (isValidLoanFolio(cobro.ultimaSolicitudPrestamoAprobada)) {
+          <a
+            class="text-sm underline"
+            [routerLink]="[
+              '/dashboard/loan-request/view',
+              cobro.ultimaSolicitudPrestamoAprobada,
+            ]">
+            {{ cobro.ultimaSolicitudPrestamoAprobada }}
+          </a>
+        } @else {
+          <span class="text-sm">{{
+            cobro.ultimaSolicitudPrestamoAprobada || 'N/A'
+          }}</span>
+        }
       </td>
     </tr>
   </ng-template>

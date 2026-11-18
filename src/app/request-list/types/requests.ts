@@ -30,11 +30,7 @@ export interface RequestListOptions {
 }
 
 export type LoanStatus =
-  | 'ACTUALIZAR'
-  | 'APROBADO'
-  | 'EN REVISION'
-  | 'RECHAZADO'
-  | 'TODOS';
+  'ACTUALIZAR' | 'APROBADO' | 'EN REVISION' | 'RECHAZADO' | 'TODOS';
 
 export interface SearchOptions {
   status: LoanStatus;

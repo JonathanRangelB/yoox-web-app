@@ -40,6 +40,13 @@ const routes: Routes = [
             (c) => c.CobroAgendaComponent
           ),
       },
+      {
+        path: 'collection-schedule',
+        loadComponent: () =>
+          import('../collection-schedule/collection-schedule.component').then(
+            (c) => c.CollectionScheduleComponent
+          ),
+      },
       { path: '**', redirectTo: 'not-found' },
     ],
   },

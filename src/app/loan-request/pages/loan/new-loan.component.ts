@@ -1145,8 +1145,7 @@ export class LoanComponent implements OnDestroy, OnInit {
 
     if (this.disabledCalendar) {
       const formDate = this.mainForm.get('fecha_inicial')?.value as
-        | Date
-        | undefined;
+        Date | undefined;
       if (!this.areDatesEqual(formDate, this.confirmationDate)) {
         console.log('Fechas no son iguales');
         return false;

@@ -2,6 +2,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 
 import { LandingComponent } from './landing.component';
+import { NgxParticlesModule } from '@tsparticles/angular';
 
 describe('LandingComponent', () => {
   let component: LandingComponent;
@@ -10,7 +11,7 @@ describe('LandingComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [LandingComponent],
-      imports: [RouterTestingModule],
+      imports: [RouterTestingModule, NgxParticlesModule],
     });
     fixture = TestBed.createComponent(LandingComponent);
     component = fixture.componentInstance;
