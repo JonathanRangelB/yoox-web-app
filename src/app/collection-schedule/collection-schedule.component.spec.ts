@@ -9,6 +9,7 @@ import { registerLocaleData } from '@angular/common';
 import localeEsMx from '@angular/common/locales/es-MX';
 import { By } from '@angular/platform-browser';
 import { provideNoopAnimations } from '@angular/platform-browser/animations';
+import { provideRouter } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { Dropdown } from 'primeng/dropdown';
 import { Calendar } from 'primeng/calendar';
@@ -103,6 +104,7 @@ describe('CollectionScheduleComponent', () => {
       imports: [CollectionScheduleComponent],
       providers: [
         provideNoopAnimations(),
+        provideRouter([]),
         { provide: CollectionScheduleService, useValue: service },
       ],
     }).compileComponents();

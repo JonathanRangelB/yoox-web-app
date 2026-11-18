@@ -16,6 +16,7 @@ import {
   ReactiveFormsModule,
   Validators,
 } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import { ButtonModule } from 'primeng/button';
 import { DividerModule } from 'primeng/divider';
@@ -56,6 +57,7 @@ type FilterMode = 'gerencia' | 'grupo' | 'agente';
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
+    RouterLink,
     TableModule,
     InputTextModule,
     InputTextareaModule,

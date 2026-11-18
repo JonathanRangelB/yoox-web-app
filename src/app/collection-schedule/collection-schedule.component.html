@@ -156,7 +156,18 @@
       <ng-template pTemplate="body" let-record>
         <tr [pSelectableRow]="record">
           <td>{{ record.loan_request_id }}</td>
-          <td>{{ record.loan_request_number }}</td>
+          <td>
+            <a
+              class="underline"
+              [routerLink]="[
+                '/dashboard/loan-request/view',
+                record.loan_request_number,
+              ]"
+              (click)="$event.stopPropagation()"
+              (keydown.enter)="$event.stopPropagation()">
+              {{ record.loan_request_number }}
+            </a>
+          </td>
           <td>
             {{ record.insert_utc_datetime_stamp | date: 'medium' }}
           </td>
