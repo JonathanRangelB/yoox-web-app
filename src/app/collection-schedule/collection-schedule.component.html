@@ -22,7 +22,8 @@
       (onRowSelect)="onRowSelect($event.data)"
       sortMode="multiple"
       [globalFilterFields]="globalFilterFields"
-      scrollHeight="flex"
+      [scrollable]="true"
+      scrollHeight="60vh"
       styleClass="p-datatable-sm">
       <ng-template pTemplate="caption">
         <div
@@ -91,7 +92,11 @@
       <ng-template pTemplate="header">
         <tr>
           @for (col of tableColumns; track col.field) {
-            <th [pSortableColumn]="col.field" [style.minWidth]="col.width">
+            <th
+              pFrozenColumn
+              [frozen]="col.frozen && !esMovil"
+              [pSortableColumn]="col.field"
+              [style.minWidth]="col.width">
               <div class="flex justify-content-between align-items-center">
                 {{ col.header }}
                 <p-sortIcon [field]="col.field" />
@@ -147,6 +152,24 @@
                     showAddButton="false"
                     class="ml-auto" />
                 }
+                <button
+                  type="button"
+                  class="column-pin"
+                  [class.column-pin-active]="col.frozen && !esMovil"
+                  [disabled]="esMovil"
+                  [attr.aria-pressed]="col.frozen && !esMovil"
+                  [attr.aria-label]="
+                    (col.frozen ? 'Descongelar ' : 'Congelar ') + col.header
+                  "
+                  [pTooltip]="
+                    esMovil
+                      ? 'Congelamiento no disponible en móvil'
+                      : (col.frozen ? 'Descongelar ' : 'Congelar ') + col.header
+                  "
+                  (click)="$event.stopPropagation(); toggleFrozen(col)"
+                  (keydown)="$event.stopPropagation()">
+                  <i class="pi pi-thumbtack" aria-hidden="true"></i>
+                </button>
               </div>
             </th>
           }
@@ -155,101 +178,125 @@
 
       <ng-template pTemplate="body" let-record>
         <tr [pSelectableRow]="record">
-          <td>{{ record.loan_request_id }}</td>
-          <td>
-            <a
-              class="underline"
-              [routerLink]="[
-                '/dashboard/loan-request/view',
-                record.loan_request_number,
-              ]"
-              (click)="$event.stopPropagation()"
-              (keydown.enter)="$event.stopPropagation()">
-              {{ record.loan_request_number }}
-            </a>
-          </td>
-          <td>
-            {{ record.insert_utc_datetime_stamp | date: 'medium' }}
-          </td>
-          <td>
-            {{ record.loan_request_utc_date | date: 'medium' }}
-          </td>
-          <td>
-            {{ record.last_change_loan_request_utc_date | date: 'medium' }}
-          </td>
-          <td>
-            {{ record.collection_id_agent }} -
-            {{ record.collection_name_agent }}
-          </td>
-          <td>{{ record.customer_id }}</td>
-          <td>{{ record.customer_name }}</td>
-          <td>{{ record.credit_type }}</td>
-          <td>
-            <p-tag
-              [value]="record.revised_record === 1 ? 'REVISADO' : 'NO REVISADO'"
-              [severity]="
-                record.revised_record === 1 ? 'success' : 'warning'
-              " />
-          </td>
-          <td class="text-right">
-            {{ formatCurrency(record.requested_amount) }}
-          </td>
-          <td class="text-right">
-            {{ formatCurrency(record.authorized_amount) }}
-          </td>
-          <td class="text-right">
-            {{ formatCurrency(record.discount_amount) }}
-          </td>
-          <td>{{ record.customer_neighborhood }}</td>
-          <td>{{ record.customer_county }}</td>
-          <td>
-            <p-tag
-              [value]="record.primary_borrower_call_status"
-              [severity]="
-                getCallStatusSeverity(record.primary_borrower_call_status)
-              " />
-          </td>
-          <td>
-            <p-tag
-              [value]="record.guarantor_call_status"
-              [severity]="
-                getCallStatusSeverity(record.guarantor_call_status)
-              " />
-          </td>
-          <td>
-            <p-tag
-              [value]="record.current_status"
-              [severity]="getStatusSeverity(record.current_status)" />
-          </td>
-          <td>{{ truncateText(record.hours) }}</td>
-          <td>{{ truncateText(record.observations) }}</td>
-          <td>{{ record.captured_account }}</td>
-          <td class="text-right">
-            {{ formatCurrency(record.budget) }}
-          </td>
-          <td class="text-right">
-            {{ formatCurrency(record.real_inversion) }}
-          </td>
-          <td>
-            {{ record.last_change_utc_date | date: 'medium' }}
-          </td>
-          <td>{{ record.modified_by }}</td>
-          <td>
-            {{ record.accounting_date | date: 'mediumDate' : 'UTC' }}
-          </td>
-          <td>{{ record.group_id }} - {{ record.group_name }}</td>
-          <td>
-            @if (
-              record.management_id === null && record.management_name === null
-            ) {
-              SIN GERENCIA
-            } @else {
-              {{ record.management_id }} - {{ record.management_name }}
-            }
-          </td>
-          <td>
-            {{ record.close_utc_datetime_stamp | date: 'medium' }}
-          </td>
+          @for (col of tableColumns; track col.field) {
+            <td
+              pFrozenColumn
+              [frozen]="col.frozen && !esMovil"
+              [style.minWidth]="col.width"
+              [class.text-right]="
+                [
+                  'requested_amount',
+                  'authorized_amount',
+                  'discount_amount',
+                  'budget',
+                  'real_inversion',
+                ].includes(col.field)
+              ">
+              @switch (col.field) {
+                @case ('loan_request_number') {
+                  <a
+                    class="underline"
+                    [routerLink]="[
+                      '/dashboard/loan-request/view',
+                      record.loan_request_number,
+                    ]"
+                    (click)="$event.stopPropagation()"
+                    (keydown.enter)="$event.stopPropagation()">
+                    {{ record.loan_request_number }}
+                  </a>
+                }
+                @case ('insert_utc_datetime_stamp') {
+                  {{ record.insert_utc_datetime_stamp | date: 'medium' }}
+                }
+                @case ('loan_request_utc_date') {
+                  {{ record.loan_request_utc_date | date: 'medium' }}
+                }
+                @case ('last_change_loan_request_utc_date') {
+                  {{
+                    record.last_change_loan_request_utc_date | date: 'medium'
+                  }}
+                }
+                @case ('collection_id_agent') {
+                  {{ record.collection_id_agent }} -
+                  {{ record.collection_name_agent }}
+                }
+                @case ('revised_record') {
+                  <p-tag
+                    [value]="
+                      record.revised_record === 1 ? 'REVISADO' : 'NO REVISADO'
+                    "
+                    [severity]="
+                      record.revised_record === 1 ? 'success' : 'warning'
+                    " />
+                }
+                @case ('requested_amount') {
+                  {{ formatCurrency(record.requested_amount) }}
+                }
+                @case ('authorized_amount') {
+                  {{ formatCurrency(record.authorized_amount) }}
+                }
+                @case ('discount_amount') {
+                  {{ formatCurrency(record.discount_amount) }}
+                }
+                @case ('primary_borrower_call_status') {
+                  <p-tag
+                    [value]="record.primary_borrower_call_status"
+                    [severity]="
+                      getCallStatusSeverity(record.primary_borrower_call_status)
+                    " />
+                }
+                @case ('guarantor_call_status') {
+                  <p-tag
+                    [value]="record.guarantor_call_status"
+                    [severity]="
+                      getCallStatusSeverity(record.guarantor_call_status)
+                    " />
+                }
+                @case ('current_status') {
+                  <p-tag
+                    [value]="record.current_status"
+                    [severity]="getStatusSeverity(record.current_status)" />
+                }
+                @case ('hours') {
+                  {{ truncateText(record.hours) }}
+                }
+                @case ('observations') {
+                  {{ truncateText(record.observations) }}
+                }
+                @case ('budget') {
+                  {{ formatCurrency(record.budget) }}
+                }
+                @case ('real_inversion') {
+                  {{ formatCurrency(record.real_inversion) }}
+                }
+                @case ('last_change_utc_date') {
+                  {{ record.last_change_utc_date | date: 'medium' }}
+                }
+                @case ('accounting_date') {
+                  {{ record.accounting_date | date: 'mediumDate' : 'UTC' }}
+                }
+                @case ('group_name') {
+                  {{ record.group_id }} - {{ record.group_name }}
+                }
+                @case ('management_name') {
+                  @if (
+                    record.management_id === null &&
+                    record.management_name === null
+                  ) {
+                    SIN GERENCIA
+                  } @else {
+                    {{ record.management_id }} - {{ record.management_name }}
+                  }
+                }
+                @case ('close_utc_datetime_stamp') {
+                  {{ record.close_utc_datetime_stamp | date: 'medium' }}
+                }
+                @default {
+                  {{ record[col.field] }}
+                }
+              }
+            </td>
+          }
         </tr>
       </ng-template>
 
