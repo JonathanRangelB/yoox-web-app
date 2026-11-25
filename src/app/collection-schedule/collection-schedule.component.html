@@ -124,7 +124,10 @@
                         [showClear]="true"
                         (onChange)="filter($event.value)"
                         styleClass="w-full">
-                        @if (col.field !== 'credit_type') {
+                        @if (
+                          col.field !== 'credit_type' &&
+                          col.field !== 'captured_account'
+                        ) {
                           <ng-template pTemplate="item" let-option>
                             <p-tag
                               [value]="option.label"
@@ -196,6 +199,8 @@
                 @case ('loan_request_number') {
                   <a
                     class="underline"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     [routerLink]="[
                       '/dashboard/loan-request/view',
                       record.loan_request_number,
@@ -262,6 +267,9 @@
                 }
                 @case ('observations') {
                   {{ truncateText(record.observations) }}
+                }
+                @case ('captured_account') {
+                  {{ record.captured_account === 1 ? 'Si' : 'No' }}
                 }
                 @case ('budget') {
                   {{ formatCurrency(record.budget) }}

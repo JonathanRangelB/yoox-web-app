@@ -367,7 +367,7 @@ export class CollectionScheduleComponent implements OnInit {
       },
       {
         field: 'current_status',
-        header: 'Estatus Actual',
+        header: 'Estatus en Planificador',
         width: '12rem',
         filterType: 'text',
         filterOptions: this.currentStatusOptions.map((value) => ({
@@ -393,6 +393,10 @@ export class CollectionScheduleComponent implements OnInit {
         header: 'Cuenta Capturada',
         width: '10rem',
         filterType: 'numeric',
+        filterOptions: [
+          { label: 'Si', value: 1 },
+          { label: 'No', value: 0 },
+        ],
       },
       {
         field: 'budget',

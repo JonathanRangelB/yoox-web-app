@@ -34,3 +34,26 @@ body {
 .p-component {
   font-family: var(--font-family);
 }
+
+.p-datatable {
+  background: var(--surface-card);
+}
+
+.p-datatable.p-datatable-scrollable .p-frozen-column {
+  background: var(--surface-card);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-highlight > td.p-frozen-column,
+.p-datatable .p-sortable-column.p-frozen-column.p-highlight {
+  background: linear-gradient(var(--highlight-bg), var(--highlight-bg))
+    var(--surface-card);
+}
+
+.p-datatable.p-datatable-hoverable-rows
+  .p-datatable-tbody
+  > tr:not(.p-highlight):hover
+  > td.p-frozen-column,
+.p-datatable .p-sortable-column.p-frozen-column:not(.p-highlight):hover {
+  background: linear-gradient(var(--surface-hover), var(--surface-hover))
+    var(--surface-card);
+}

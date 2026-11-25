@@ -279,6 +279,8 @@
         @if (isValidLoanFolio(cobro.ultimaSolicitudPrestamoAprobada)) {
           <a
             class="text-sm underline"
+            target="_blank"
+            rel="noopener noreferrer"
             [routerLink]="[
               '/dashboard/loan-request/view',
               cobro.ultimaSolicitudPrestamoAprobada,
