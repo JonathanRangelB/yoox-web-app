@@ -8,6 +8,9 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { BreakpointObserver } from '@angular/cdk/layout';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map } from 'rxjs';
 import { CommonModule, formatDate } from '@angular/common';
 import {
   FormBuilder,
@@ -86,6 +89,19 @@ export class CollectionScheduleComponent implements OnInit {
   readonly #excelService = inject(ExcelExportService);
   readonly #confirmationService = inject(ConfirmationService);
   readonly #fb = inject(FormBuilder);
+
+  readonly #breakpointObserver = inject(BreakpointObserver);
+  readonly #mobileQuery = '(max-width: 767.98px)';
+  readonly #isMobile = toSignal(
+    this.#breakpointObserver
+      .observe(this.#mobileQuery)
+      .pipe(map((state) => state.matches)),
+    { initialValue: this.#breakpointObserver.isMatched(this.#mobileQuery) }
+  );
+
+  get esMovil(): boolean {
+    return this.#isMobile();
+  }
 
   dashboardData = signal<CollectionScheduleDashboard | null>(null);
   scheduleData = signal<CollectionsPlanner[]>([]);
@@ -227,205 +243,225 @@ export class CollectionScheduleComponent implements OnInit {
     'CANCELADO',
   ];
 
-  tableColumns: TableColumn[] = [
-    {
-      field: 'loan_request_id',
-      header: 'ID Solicitud',
-      width: '8rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'loan_request_number',
-      header: 'Folio',
-      width: '10rem',
-      filterType: 'text',
-    },
-    {
-      field: 'insert_utc_datetime_stamp',
-      header: 'Fecha de registro',
-      width: '10rem',
-      filterType: 'date',
-    },
-    {
-      field: 'loan_request_utc_date',
-      header: 'Fecha Solicitud',
-      width: '10rem',
-      filterType: 'date',
-    },
-    {
-      field: 'last_change_loan_request_utc_date',
-      header: 'Fecha Ult Mod Sol',
-      width: '10rem',
-      filterType: 'date',
-    },
-    {
-      field: 'collection_id_agent',
-      header: 'Agente',
-      width: '14rem',
-      filterType: 'text',
-    },
-    {
-      field: 'customer_id',
-      header: 'Cod Cliente',
-      width: '8rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'customer_name',
-      header: 'Nombre Cliente',
-      width: '15rem',
-      filterType: 'text',
-    },
-    {
-      field: 'credit_type',
-      header: 'Tipo Credito',
-      width: '10rem',
-      filterType: 'text',
-      filterOptions: ['NUEVO', 'RENOVACION', 'REACTIVACION'].map((value) => ({
-        label: value,
-        value,
-      })),
-    },
-    {
-      field: 'revised_record',
-      header: 'Clasificacion',
-      width: '10rem',
-      filterType: 'text',
-      filterOptions: this.revisionOptions.map((option) => ({
-        ...option,
-        severity: option.value === 1 ? 'success' : 'warning',
-      })),
-    },
-    {
-      field: 'requested_amount',
-      header: 'Cant Solicitada',
-      width: '10rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'authorized_amount',
-      header: 'Autorizado',
-      width: '10rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'discount_amount',
-      header: 'Descuentos',
-      width: '10rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'customer_neighborhood',
-      header: 'Colonia',
-      width: '12rem',
-      filterType: 'text',
-    },
-    {
-      field: 'customer_county',
-      header: 'Municipio',
-      width: '12rem',
-      filterType: 'text',
-    },
-    {
-      field: 'primary_borrower_call_status',
-      header: 'Estatus Titular',
-      width: '12rem',
-      filterType: 'text',
-      filterOptions: this.callStatusOptions.map((value) => ({
-        label: value,
-        value,
-        severity: this.getCallStatusSeverity(value),
-      })),
-    },
-    {
-      field: 'guarantor_call_status',
-      header: 'Estatus Aval',
-      width: '12rem',
-      filterType: 'text',
-      filterOptions: this.callStatusOptions.map((value) => ({
-        label: value,
-        value,
-        severity: this.getCallStatusSeverity(value),
-      })),
-    },
-    {
-      field: 'current_status',
-      header: 'Estatus Actual',
-      width: '12rem',
-      filterType: 'text',
-      filterOptions: this.currentStatusOptions.map((value) => ({
-        label: value,
-        value,
-        severity: this.getStatusSeverity(value),
-      })),
-    },
-    {
-      field: 'hours',
-      header: 'Horarios',
-      width: '15rem',
-      filterType: 'text',
-    },
-    {
-      field: 'observations',
-      header: 'Observaciones',
-      width: '15rem',
-      filterType: 'text',
-    },
-    {
-      field: 'captured_account',
-      header: 'Cuenta Capturada',
-      width: '10rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'budget',
-      header: 'Presupuesto',
-      width: '10rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'real_inversion',
-      header: 'Inversion Real',
-      width: '10rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'last_change_utc_date',
-      header: 'Fecha Ult Revision',
-      width: '10rem',
-      filterType: 'date',
-    },
-    {
-      field: 'modified_by',
-      header: 'Modificado Por',
-      width: '10rem',
-      filterType: 'numeric',
-    },
-    {
-      field: 'accounting_date',
-      header: 'Fecha Contabilizacion',
-      width: '10rem',
-      filterType: 'date',
-    },
-    {
-      field: 'group_name',
-      header: 'Grupo',
-      width: '12rem',
-      filterType: 'text',
-    },
-    {
-      field: 'management_name',
-      header: 'Gerencia',
-      width: '12rem',
-      filterType: 'text',
-    },
-    {
-      field: 'close_utc_datetime_stamp',
-      header: 'Fecha Cierre',
-      width: '10rem',
-      filterType: 'date',
-    },
-  ];
+  tableColumns: TableColumn[] = (
+    [
+      {
+        field: 'loan_request_id',
+        header: 'ID Solicitud',
+        width: '8rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'loan_request_number',
+        header: 'Folio',
+        width: '10rem',
+        filterType: 'text',
+      },
+      {
+        field: 'insert_utc_datetime_stamp',
+        header: 'Fecha de registro',
+        width: '11rem',
+        filterType: 'date',
+      },
+      {
+        field: 'loan_request_utc_date',
+        header: 'Fecha Solicitud',
+        width: '10rem',
+        filterType: 'date',
+      },
+      {
+        field: 'last_change_loan_request_utc_date',
+        header: 'Fecha Ult Mod Sol',
+        width: '11rem',
+        filterType: 'date',
+      },
+      {
+        field: 'collection_id_agent',
+        header: 'Agente',
+        width: '14rem',
+        filterType: 'text',
+      },
+      {
+        field: 'customer_id',
+        header: 'Cod Cliente',
+        width: '8rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'customer_name',
+        header: 'Nombre Cliente',
+        width: '15rem',
+        filterType: 'text',
+      },
+      {
+        field: 'credit_type',
+        header: 'Tipo Credito',
+        width: '10rem',
+        filterType: 'text',
+        filterOptions: ['NUEVO', 'RENOVACION', 'REACTIVACION'].map((value) => ({
+          label: value,
+          value,
+        })),
+      },
+      {
+        field: 'revised_record',
+        header: 'Clasificacion',
+        width: '10rem',
+        filterType: 'text',
+        filterOptions: this.revisionOptions.map((option) => ({
+          ...option,
+          severity: option.value === 1 ? 'success' : 'warning',
+        })),
+      },
+      {
+        field: 'requested_amount',
+        header: 'Cant Solicitada',
+        width: '10rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'authorized_amount',
+        header: 'Autorizado',
+        width: '10rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'discount_amount',
+        header: 'Descuentos',
+        width: '10rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'customer_neighborhood',
+        header: 'Colonia',
+        width: '12rem',
+        filterType: 'text',
+      },
+      {
+        field: 'customer_county',
+        header: 'Municipio',
+        width: '12rem',
+        filterType: 'text',
+      },
+      {
+        field: 'primary_borrower_call_status',
+        header: 'Estatus Titular',
+        width: '12rem',
+        filterType: 'text',
+        filterOptions: this.callStatusOptions.map((value) => ({
+          label: value,
+          value,
+          severity: this.getCallStatusSeverity(value),
+        })),
+      },
+      {
+        field: 'guarantor_call_status',
+        header: 'Estatus Aval',
+        width: '12rem',
+        filterType: 'text',
+        filterOptions: this.callStatusOptions.map((value) => ({
+          label: value,
+          value,
+          severity: this.getCallStatusSeverity(value),
+        })),
+      },
+      {
+        field: 'current_status',
+        header: 'Estatus en Planificador',
+        width: '12rem',
+        filterType: 'text',
+        filterOptions: this.currentStatusOptions.map((value) => ({
+          label: value,
+          value,
+          severity: this.getStatusSeverity(value),
+        })),
+      },
+      {
+        field: 'hours',
+        header: 'Horarios',
+        width: '15rem',
+        filterType: 'text',
+      },
+      {
+        field: 'observations',
+        header: 'Observaciones',
+        width: '15rem',
+        filterType: 'text',
+      },
+      {
+        field: 'captured_account',
+        header: 'Cuenta Capturada',
+        width: '10rem',
+        filterType: 'numeric',
+        filterOptions: [
+          { label: 'Si', value: 1 },
+          { label: 'No', value: 0 },
+        ],
+      },
+      {
+        field: 'budget',
+        header: 'Presupuesto',
+        width: '10rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'real_inversion',
+        header: 'Inversion Real',
+        width: '10rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'last_change_utc_date',
+        header: 'Fecha Ult Revision',
+        width: '11rem',
+        filterType: 'date',
+      },
+      {
+        field: 'modified_by',
+        header: 'Modificado Por',
+        width: '10rem',
+        filterType: 'numeric',
+      },
+      {
+        field: 'accounting_date',
+        header: 'Fecha Contabilizacion',
+        width: '10rem',
+        filterType: 'date',
+      },
+      {
+        field: 'group_name',
+        header: 'Grupo',
+        width: '12rem',
+        filterType: 'text',
+      },
+      {
+        field: 'management_name',
+        header: 'Gerencia',
+        width: '12rem',
+        filterType: 'text',
+      },
+      {
+        field: 'close_utc_datetime_stamp',
+        header: 'Fecha Cierre',
+        width: '10rem',
+        filterType: 'date',
+      },
+    ] satisfies Omit<TableColumn, 'frozen' | 'originalIndex'>[]
+  ).map((column, originalIndex) => ({
+    ...column,
+    frozen: false,
+    originalIndex,
+  }));
+
+  toggleFrozen(column: TableColumn): void {
+    if (this.esMovil) return;
+
+    column.frozen = !column.frozen;
+    this.tableColumns = [...this.tableColumns].sort(
+      (a, b) =>
+        Number(b.frozen) - Number(a.frozen) || a.originalIndex - b.originalIndex
+    );
+  }
 
   globalFilterFields = [
     ...this.tableColumns.map((c) => c.field),

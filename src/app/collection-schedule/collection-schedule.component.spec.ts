@@ -13,8 +13,9 @@ import { provideRouter } from '@angular/router';
 import { ConfirmationService } from 'primeng/api';
 import { Dropdown } from 'primeng/dropdown';
 import { Calendar } from 'primeng/calendar';
-import { ColumnFilter } from 'primeng/table';
-import { of, Subject } from 'rxjs';
+import { ColumnFilter, FrozenColumn } from 'primeng/table';
+import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
+import { BehaviorSubject, of, Subject } from 'rxjs';
 import { CollectionScheduleService } from './services/collection-schedule.service';
 import { ExcelExportService } from '../shared/services/excel-export.service';
 import {
@@ -38,6 +39,7 @@ describe('CollectionScheduleComponent', () => {
   let fixture: ComponentFixture<CollectionScheduleComponent>;
   let service: jasmine.SpyObj<CollectionScheduleService>;
   let confirmation: jasmine.Spy<ConfirmationService['confirm']>;
+  let breakpoint: BehaviorSubject<BreakpointState>;
 
   const makeRecord = (
     overrides: Partial<CollectionsPlanner> = {}
@@ -87,6 +89,10 @@ describe('CollectionScheduleComponent', () => {
   beforeAll(() => registerLocaleData(localeEsMx));
 
   beforeEach(async () => {
+    breakpoint = new BehaviorSubject<BreakpointState>({
+      matches: false,
+      breakpoints: { '(max-width: 767.98px)': false },
+    });
     service = jasmine.createSpyObj<CollectionScheduleService>(
       'CollectionScheduleService',
       ['getCollectionSchedule', 'updateRecord']
@@ -104,6 +110,13 @@ describe('CollectionScheduleComponent', () => {
       imports: [CollectionScheduleComponent],
       providers: [
         provideNoopAnimations(),
+        {
+          provide: BreakpointObserver,
+          useValue: {
+            observe: () => breakpoint.asObservable(),
+            isMatched: () => breakpoint.value.matches,
+          },
+        },
         provideRouter([]),
         { provide: CollectionScheduleService, useValue: service },
       ],
@@ -120,6 +133,74 @@ describe('CollectionScheduleComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('pins columns in original order and restores their position when unpinned', () => {
+    const original = [...component.tableColumns];
+    const customer = original.find((col) => col.field === 'customer_name')!;
+    const folio = original.find((col) => col.field === 'loan_request_number')!;
+
+    component.toggleFrozen(customer);
+    component.toggleFrozen(folio);
+    expect(component.tableColumns.slice(0, 2)).toEqual([folio, customer]);
+
+    component.toggleFrozen(folio);
+    expect(component.tableColumns).toEqual([
+      customer,
+      ...original.filter((col) => col !== customer),
+    ]);
+    component.toggleFrozen(customer);
+    expect(component.tableColumns).toEqual(original);
+  });
+
+  it('keeps headers and cells aligned when pinning without sorting rows', () => {
+    component.scheduleData.set([makeRecord()]);
+    fixture.detectChanges();
+    const table = component.tableRef()!;
+    const sort = spyOn(table, 'sort');
+    const pins: NodeListOf<HTMLButtonElement> =
+      fixture.nativeElement.querySelectorAll('.column-pin');
+    pins[7].click();
+    fixture.detectChanges();
+
+    const header: HTMLElement = fixture.nativeElement.querySelector('thead th');
+    const cell: HTMLElement = fixture.nativeElement.querySelector('tbody td');
+    expect(header.textContent).toContain('Nombre Cliente');
+    expect(cell.textContent?.trim()).toBe('Cliente');
+    expect(header.classList.contains('p-frozen-column')).toBeTrue();
+    expect(cell.classList.contains('p-frozen-column')).toBeTrue();
+    expect(header.style.minWidth).toBe('15rem');
+    expect(cell.style.minWidth).toBe('15rem');
+    expect(sort).not.toHaveBeenCalled();
+    expect(table.scrollable).toBeTrue();
+    expect(table.scrollHeight).toBe('60vh');
+  });
+
+  it('disables frozen headers and cells on mobile and restores them on desktop', () => {
+    component.scheduleData.set([makeRecord()]);
+    const column = component.tableColumns[7];
+    component.toggleFrozen(column);
+    fixture.detectChanges();
+    const frozenCells = () =>
+      fixture.debugElement
+        .queryAll(By.directive(FrozenColumn))
+        .filter((el) => el.injector.get(FrozenColumn).frozen);
+    expect(frozenCells().length).toBe(2);
+
+    breakpoint.next({ matches: true, breakpoints: {} });
+    fixture.detectChanges();
+    expect(component.esMovil).toBeTrue();
+    expect(frozenCells().length).toBe(0);
+    expect(
+      fixture.nativeElement.querySelector('.column-pin').disabled
+    ).toBeTrue();
+    component.toggleFrozen(column);
+    expect(column.frozen).toBeTrue();
+
+    breakpoint.next({ matches: false, breakpoints: {} });
+    fixture.detectChanges();
+    expect(frozenCells().length).toBe(2);
+    expect(component.tableColumns[0]).toBe(column);
   });
 
   it('allows editing and saving an authorized account pending capture', fakeAsync(() => {

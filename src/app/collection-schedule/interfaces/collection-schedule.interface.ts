@@ -68,9 +68,11 @@ export interface FilterOption {
 }
 
 export interface TableColumn {
-  field: string;
+  field: keyof CollectionsPlanner;
   header: string;
   width: string;
+  frozen: boolean;
+  originalIndex: number;
   filterType?: string;
   filterOptions?: TableTagOption[];
 }
