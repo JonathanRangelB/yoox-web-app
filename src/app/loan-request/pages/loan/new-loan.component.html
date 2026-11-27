@@ -10,19 +10,19 @@
     <p>Folio de solicitud: {{ loanRequestId }}</p>
     <p>Carpeta de documentación: {{ customerFolderName }}</p>
     <p>Creado por: {{ nombre_agente }}</p>
-    <p>Fecha de creación: {{ createdDate | date: 'medium' : 'UTC' }}</p>
+    <p>Fecha de creación: {{ createdDate | date: 'medium' }}</p>
     @if (modifiedBy) {
       <p>Modificado por: {{ modified_by_name }}</p>
     }
     @if (modifiedDate) {
-      <p>Fecha de modificación: {{ modifiedDate | date: 'medium' : 'UTC' }}</p>
+      <p>Fecha de modificación: {{ modifiedDate | date: 'medium' }}</p>
     }
 
     @if (closed_by_name) {
       <p>Cerrado por: {{ closed_by_name }}</p>
     }
     @if (closedDate) {
-      <p>Fecha de cierre: {{ closedDate | date: 'medium' : 'UTC' }}</p>
+      <p>Fecha de cierre: {{ closedDate | date: 'medium' }}</p>
     }
   </p-card>
 }
