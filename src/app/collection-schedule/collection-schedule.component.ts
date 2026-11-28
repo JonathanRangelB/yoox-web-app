@@ -488,6 +488,7 @@ export class CollectionScheduleComponent implements OnInit {
     const user = getUserFromLocalStorage();
     return {
       id_user: user?.ID ?? 0,
+      timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
     };
   }
 

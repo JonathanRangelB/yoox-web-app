@@ -46,6 +46,7 @@ export interface CollectionScheduleDashboard {
 }
 
 export interface CollectionsPlannerPostRequest {
+  timeZone: string;
   id_user: number;
   accounting_date?: string;
 }
